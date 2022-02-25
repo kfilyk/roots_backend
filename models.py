@@ -79,13 +79,13 @@ class AuthUserUserPermissions(models.Model):
 
 class Device(models.Model):
     devicename = models.CharField(db_column='deviceName', primary_key=True, max_length=45)  # Field name made lowercase.
-    experimentid = models.IntegerField(db_column='experimentID')  # Field name made lowercase.
-    user = models.CharField(max_length=45, blank=True, null=True)
+    userid = models.IntegerField(db_column='userID', blank=True, null=True)  # Field name made lowercase.
     token = models.CharField(max_length=45, blank=True, null=True)
     creationdate = models.DateTimeField(db_column='creationDate', blank=True, null=True)  # Field name made lowercase.
     lastupdate = models.DateTimeField(db_column='lastUpdate', blank=True, null=True)  # Field name made lowercase.
-    isonline = models.CharField(db_column='isOnline', max_length=1, blank=True, null=True)  # Field name made lowercase.
+    isonline = models.TextField(db_column='isOnline', blank=True, null=True)  # Field name made lowercase. This field type is a guess.
     macaddress = models.CharField(db_column='macAddress', max_length=45, blank=True, null=True)  # Field name made lowercase.
+    experimentid = models.IntegerField(db_column='experimentID', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -162,13 +162,13 @@ class Experimentreading(models.Model):
     reservoirtds = models.IntegerField(db_column='reservoirTDS', blank=True, null=True)  # Field name made lowercase.
     reservoirph = models.IntegerField(db_column='reservoirPH', blank=True, null=True)  # Field name made lowercase.
     watertemp = models.DecimalField(db_column='waterTemp', max_digits=2, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
-    fillresflag = models.CharField(db_column='fillResFlag', max_length=1, blank=True, null=True)  # Field name made lowercase.
+    fillresflag = models.TextField(db_column='fillResFlag', blank=True, null=True)  # Field name made lowercase. This field type is a guess.
     airtemp = models.DecimalField(db_column='airTemp', max_digits=2, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
     airhum = models.DecimalField(db_column='airHum', max_digits=2, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
     recipestage = models.IntegerField(db_column='recipeStage', blank=True, null=True)  # Field name made lowercase.
     roomtemp = models.DecimalField(db_column='roomTemp', max_digits=2, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
     roomhum = models.DecimalField(db_column='roomHum', max_digits=2, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
-    refillreservoirflag = models.CharField(db_column='refillReservoirFlag', max_length=1, blank=True, null=True)  # Field name made lowercase.
+    refillreservoirflag = models.TextField(db_column='refillReservoirFlag', blank=True, null=True)  # Field name made lowercase. This field type is a guess.
     photo = models.CharField(max_length=100, blank=True, null=True)
     nutrientscore = models.DecimalField(db_column='nutrientScore', max_digits=2, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
 
