@@ -86,6 +86,8 @@ DATABASES = {
         'PASSWORD': 'avaadmin1337',              # <-- UPDATED line
         'HOST'    : 'ava-plant-science.cm9g9ozzwvhm.us-east-1.rds.amazonaws.com',                # <-- UPDATED line
         'PORT'    : '3306',
+        'sql_mode': 'traditional',
+
     }
 }
 
