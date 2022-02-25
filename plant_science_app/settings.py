@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -48,6 +50,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'plant_science_app.urls'
@@ -76,8 +80,12 @@ WSGI_APPLICATION = 'plant_science_app.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': str(BASE_DIR / 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'plant-science',
+        'USER'    : 'root',                     # <-- UPDATED line
+        'PASSWORD': 'avaadmin1337',              # <-- UPDATED line
+        'HOST'    : 'ava-plant-science.cm9g9ozzwvhm.us-east-1.rds.amazonaws.com',                # <-- UPDATED line
+        'PORT'    : '3306',
     }
 }
 
