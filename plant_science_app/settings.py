@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
+    #local
+    'dashboard',
 ]
 
 MIDDLEWARE = [
@@ -81,10 +83,10 @@ WSGI_APPLICATION = 'plant_science_app.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'plant-science',
+        'NAME': 'plant_science',
         'USER'    : 'root',                     # <-- UPDATED line
-        'PASSWORD': 'avaadmin1337',              # <-- UPDATED line
-        'HOST'    : 'ava-plant-science.cm9g9ozzwvhm.us-east-1.rds.amazonaws.com',                # <-- UPDATED line
+        'PASSWORD': 'avabyte0126',              # <-- UPDATED line
+        'HOST'    : 'plant-science.cm9g9ozzwvhm.us-east-1.rds.amazonaws.com',                # <-- UPDATED line
         'PORT'    : '3306',
         'sql_mode': 'traditional',
 
