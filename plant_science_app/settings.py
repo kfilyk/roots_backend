@@ -89,7 +89,6 @@ DATABASES = {
         'HOST'    : 'plant-science.cm9g9ozzwvhm.us-east-1.rds.amazonaws.com',                # <-- UPDATED line
         'PORT'    : '3306',
         'sql_mode': 'traditional',
-
     }
 }
 
@@ -136,3 +135,7 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CORS_ORIGIN_WHITELIST = [
+     'http://localhost:3000'
+]

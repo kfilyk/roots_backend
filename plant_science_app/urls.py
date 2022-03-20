@@ -18,8 +18,15 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import include, path
+from rest_framework import routers
+from dashboard import views
+
+router = routers.DefaultRouter()
+router.register(r'devices', views.DeviceView, 'dashboard')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('dashboard/', include('dashboard.urls')),
+    path('api/', include(router.urls)),
+
 ]
