@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Device
+from .models import Device, Experiment
 
 # https://www.digitalocean.com/community/tutorials/build-a-to-do-application-using-django-and-react
 
@@ -7,4 +7,9 @@ from .models import Device
 class DeviceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Device
-        fields = ('device', 'name', 'user', 'token', 'creation_date', 'last_update', 'is_online', 'mac_address', 'experiment')
+        fields = ('id', 'name', 'user', 'token', 'registration_date', 'last_update', 'is_online', 'mac_address', 'experiment')
+
+class ExperimentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Experiment
+        fields = ('id', 'description', 'recipe', 'device', 'score', 'start_date', 'end_date', 'pod1', 'pod2', 'pod3', 'pod4', 'pod5', 'pod6', 'pod7', 'pod8', 'pod9', 'pod10')

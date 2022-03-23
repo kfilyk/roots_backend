@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'corsheaders',
     #local
     'dashboard',
+    #'dashboard.user',
 ]
 
 MIDDLEWARE = [

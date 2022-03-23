@@ -8,28 +8,26 @@ class App extends Component {
     this.state = {
       viewCompleted: false,
       deviceList: [],
+      experimentList: [],
       modal: false,
       activeItem: {
-        title: "",
-        description: "",
-        completed: false,
+        name: "",
+        experiment: "",
+        is_online: false,
       },
     };
   }
 
   componentDidMount() {
-    this.refreshList();
+    this.refreshDeviceList();
+    console.log(this.state.deviceList)
   }
 
-  refreshList = () => {
-    console.log("FLAG: ")
-
+  refreshDeviceList = () => {
     axios
       .get("/api/devices/")
-      .then((res) => console.log( "FLAG: ", res.data ))
-
-      //.then((res) => this.setState({ deviceList: res.data }))
-      
+      //.then((res) => console.log(res.data))
+      .then((res) => this.setState({ deviceList: res.data }))
       .catch((err) => console.log(err));
   };
 
@@ -42,22 +40,22 @@ class App extends Component {
     if (item.id) {
       axios
         .put(`/api/devices/${item.id}/`, item)
-        .then((res) => this.refreshList());
+        .then((res) => this.refreshDeviceList());
       return;
     }
     axios
       .post("/api/devices/", item)
-      .then((res) => this.refreshList());
+      .then((res) => this.refreshDeviceList());
   };
 
   handleDelete = (item) => {
     axios
       .delete(`/api/devices/${item.id}/`)
-      .then((res) => this.refreshList());
+      .then((res) => this.refreshDeviceList());
   };
 
   createItem = () => {
-    const item = { title: "", description: "", completed: false };
+    const item = { name: "", experiment: "", is_online: false };
 
     this.setState({ activeItem: item, modal: !this.state.modal });
   };
@@ -96,22 +94,27 @@ class App extends Component {
   renderItems = () => {
     const { viewCompleted } = this.state;
     const newItems = this.state.deviceList.filter(
-      (item) => item.completed === viewCompleted
+      (item) => item.is_online === viewCompleted
     );
 
     return newItems.map((item) => (
+      // display list of all items
+
       <li
         key={item.id}
         className="list-group-item d-flex justify-content-between align-items-center"
       >
+        {item.name}
         <span
           className={`todo-title mr-2 ${
             this.state.viewCompleted ? "completed-todo" : ""
           }`}
-          title={item.description}
+          title={item.experiment}
         >
-          {item.title}
+          {item.experiment}
+
         </span>
+
         <span>
           <button
             className="btn btn-secondary mr-2"

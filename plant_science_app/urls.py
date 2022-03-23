@@ -23,10 +23,12 @@ from dashboard import views
 
 router = routers.DefaultRouter()
 router.register(r'devices', views.DeviceView, 'dashboard')
+router.register(r'experiments', views.ExperimentView, 'dashboard')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('dashboard/', include('dashboard.urls')),
+    # 'dashboard' path would hypothetically connect the urls.py file in 'dashboard' app - but code has been commented out. dashboard app exclusively for accessing database objects instead. 'frontend' used for displaying urls at :3000 port.
+    #path('dashboard/', include('dashboard.urls')),
     path('api/', include(router.urls)),
 
 ]

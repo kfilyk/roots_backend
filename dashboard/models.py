@@ -23,11 +23,11 @@ set FOREIGN_KEY_CHECKS = 0;
 # https://djangoadventures.com/how-to-integrate-django-with-existing-database/
 
 class Device(models.Model):
-    device = models.AutoField(db_column='d_device_id', primary_key=True)
+    id = models.AutoField(db_column='d_id', primary_key=True)
     name = models.CharField(db_column='d_name', max_length=45, blank=True, null=True)  # Field name made lowercase.
     user = models.ForeignKey(settings.AUTH_USER_MODEL, db_column='d_user_id', on_delete=models.CASCADE, blank=True, null=True)  # Field name made lowercase.
     token = models.CharField(max_length=45, blank=True, null=True)
-    creation_date = models.DateTimeField(db_column='d_creation_date', blank=True, null=True)  # Field name made lowercase.
+    registration_date = models.DateTimeField(db_column='d_registration_date', auto_now_add=True)  # Field name made lowercase.
     last_update = models.DateTimeField(db_column='d_last_update', blank=True, null=True)  # Field name made lowercase.
     is_online = models.BooleanField(db_column='d_is_online', default=False)  # Field name made lowercase. This field type is a guess.
     mac_address = models.CharField(db_column='d_mac_address', max_length=45, blank=True, null=True)  # Field name made lowercase.
@@ -38,14 +38,23 @@ class Device(models.Model):
         db_table = 'device'
 
 class Experiment(models.Model):
-    experiment = models.AutoField(db_column='e_experiment_id', primary_key=True)  # Field name made lowercase.
-    #experiment_readings = models.OneToOneField("ExperimentReading", models.DO_NOTHING, db_column='e_experiment', primary_key=True)  # Field name made lowercase.
-    pod_pack = models.ForeignKey("PodPack", models.DO_NOTHING, db_column='e_podpack_id', blank=True, null=True)  # Field name made lowercase.
+    id = models.AutoField(db_column='e_id', primary_key=True)  # Field name made lowercase.
+    description = models.CharField(db_column='e_description', max_length=255, blank=True, null=True)
     recipe = models.ForeignKey("Recipe", models.DO_NOTHING, db_column='e_recipe_id', blank=True, null=True)  # Field name made lowercase.
     device = models.ForeignKey("Device", models.DO_NOTHING, related_name='+', db_column='e_device_id', blank=True, null=True)  # Field name made lowercase.
     score = models.DecimalField(db_column='e_score', max_digits=2, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
     start_date = models.DateTimeField(db_column='e_start_date', blank=True, null=True)  # Field name made lowercase.
     end_date = models.DateTimeField(db_column='e_end_date', blank=True, null=True)  # Field name made lowercase.
+    pod1 = models.ForeignKey("Pod", models.DO_NOTHING, related_name='+', db_column='e_pod1', blank=True, null=True)
+    pod2 = models.ForeignKey("Pod", models.DO_NOTHING, related_name='+', db_column='e_pod2', blank=True, null=True)
+    pod3 = models.ForeignKey("Pod", models.DO_NOTHING, related_name='+', db_column='e_pod3', blank=True, null=True)
+    pod4 = models.ForeignKey("Pod", models.DO_NOTHING, related_name='+', db_column='e_pod4', blank=True, null=True)
+    pod5 = models.ForeignKey("Pod", models.DO_NOTHING, related_name='+', db_column='e_pod5', blank=True, null=True)
+    pod6 = models.ForeignKey("Pod", models.DO_NOTHING, related_name='+', db_column='e_pod6', blank=True, null=True)
+    pod7 = models.ForeignKey("Pod", models.DO_NOTHING, related_name='+', db_column='e_pod7', blank=True, null=True)
+    pod8 = models.ForeignKey("Pod", models.DO_NOTHING, related_name='+', db_column='e_pod8', blank=True, null=True)
+    pod9 = models.ForeignKey("Pod", models.DO_NOTHING, related_name='+', db_column='e_pod9', blank=True, null=True)
+    pod10 = models.ForeignKey("Pod", models.DO_NOTHING, related_name='+', db_column='e_pod10', blank=True, null=True)
 
     class Meta:
         managed = True
@@ -53,25 +62,25 @@ class Experiment(models.Model):
 
 # many experiment readings per one experiment
 class ExperimentReading(models.Model):
-    experiment_reading_id = models.AutoField(db_column='er_experiment_reading_id', primary_key=True)  # Field name made lowercase.
-    experiment_id = models.IntegerField(db_column='er_experiment_id', blank=True, null=True)  # Field name made lowercase.
+    id = models.AutoField(db_column='er_id', primary_key=True)  # Field name made lowercase.
+    experiment = models.ForeignKey("Experiment", models.DO_NOTHING, db_column='er_experiment_id', blank=True, null=True)  # delete experiment readings if experiment is deleted
     water_level = models.IntegerField(db_column='er_water_level', blank=True, null=True)  # Field name made lowercase.
-    timestamp = models.DateTimeField(blank=True, null=True)
+    reading_date = models.DateTimeField(db_column='er_reading_date', auto_now_add=True)
     water_tds = models.IntegerField(db_column='er_water_tds', blank=True, null=True)  # Field name made lowercase.
     water_ph = models.IntegerField(db_column='er_water_ph', blank=True, null=True)  # Field name made lowercase.
     electrical_conductance = models.IntegerField(db_column='er_electrical_conductance', blank=True, null=True)  # Field name made lowercase.
-    reservoirtds = models.IntegerField(db_column='er_reservoir_tds', blank=True, null=True)  # Field name made lowercase.
-    reservoirph = models.IntegerField(db_column='reservoirPH', blank=True, null=True)  # Field name made lowercase.
-    watertemp = models.DecimalField(db_column='waterTemp', max_digits=2, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
-    fillresflag = models.TextField(db_column='fillResFlag', blank=True, null=True)  # Field name made lowercase. This field type is a guess.
-    airtemp = models.DecimalField(db_column='airTemp', max_digits=2, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
-    airhum = models.DecimalField(db_column='airHum', max_digits=2, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
-    recipestage = models.IntegerField(db_column='recipeStage', blank=True, null=True)  # Field name made lowercase.
-    roomtemp = models.DecimalField(db_column='roomTemp', max_digits=2, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
-    roomhum = models.DecimalField(db_column='roomHum', max_digits=2, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
-    refillreservoirflag = models.TextField(db_column='refillReservoirFlag', blank=True, null=True)  # Field name made lowercase. This field type is a guess.
-    photo = models.CharField(max_length=100, blank=True, null=True)
-    nutrientscore = models.DecimalField(db_column='nutrientScore', max_digits=2, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
+    reservoir_tds = models.IntegerField(db_column='er_reservoir_tds', blank=True, null=True)  # Field name made lowercase.
+    reservoir_ph = models.IntegerField(db_column='er_reservoir_ph', blank=True, null=True)  # Field name made lowercase.
+    water_temp = models.DecimalField(db_column='er_water_temp', max_digits=2, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
+    fill_res_flag = models.BooleanField(db_column='er_fill_res_flag', default=False)  # Field name made lowercase. This field type is a guess.
+    air_temp = models.DecimalField(db_column='er_air_temp', max_digits=2, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
+    air_hum = models.DecimalField(db_column='er_air_hum', max_digits=2, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
+    recipe_stage = models.IntegerField(db_column='er_recipe_stage', blank=True, null=True)  # Field name made lowercase.
+    room_temp = models.DecimalField(db_column='er_room_temp', max_digits=2, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
+    room_hum = models.DecimalField(db_column='er_room_hum', max_digits=2, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
+    refill_reservoir_flag = models.BooleanField(db_column='er_refill_reservoir_flag', default=False)  # Field name made lowercase. This field type is a guess.
+    photo_link = models.CharField(db_column='er_photo_link', max_length=100, blank=True, null=True)
+    nutrient_score = models.DecimalField(db_column='er_nutrient_score', max_digits=2, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = True
@@ -79,9 +88,9 @@ class ExperimentReading(models.Model):
 
 
 class Plant(models.Model):
-    plantid = models.AutoField(db_column='plantID', primary_key=True)  # Field name made lowercase.
-    plantname = models.CharField(db_column='plantName', max_length=45)  # Field name made lowercase.
-    supplier = models.CharField(max_length=45, blank=True, null=True)
+    id = models.AutoField(db_column='pl_id', primary_key=True)  # Field name made lowercase.
+    name = models.CharField(db_column='pl_name', max_length=45)  # Field name made lowercase.
+    supplier = models.CharField(db_column = 'pl_supplier', max_length=45, blank=True, null=True)
 
     class Meta:
         managed = True
@@ -89,32 +98,21 @@ class Plant(models.Model):
 
 
 class Pod(models.Model):
-    podid = models.AutoField(db_column='podID', primary_key=True)  
-    experimentid = models.CharField(db_column='experimentID', max_length=45, blank=True, null=True)  # Field name made lowercase.
-    podreading = models.CharField(db_column='podReading', max_length=45, blank=True, null=True)  # Field name made lowercase.
-    plantid = models.ForeignKey(Plant, models.DO_NOTHING, db_column='plantID', blank=True, null=True)  # type of plant for this pod
-    position = models.IntegerField(blank=True, null=True) # position of pod in byte
+    id = models.AutoField(db_column='po_id', primary_key=True)  
+    experiment = models.ForeignKey("Experiment", models.DO_NOTHING, db_column='er_experiment_id')  # Can only create pods when there is an experiment to link to it
+    plant = models.ForeignKey(Plant, models.DO_NOTHING, db_column='po_plant_id', blank=True, null=True)  # type of plant for this pod
+    position = models.IntegerField(db_column = 'po_position', blank=True, null=True) # position of pod in byte
 
     class Meta:
         managed = True
         db_table = 'pod'
 
-
-class PodPack(models.Model):
-    podpackid = models.AutoField(db_column='podPackID', primary_key=True)  # More like a pod 'group': pods could be completely unique. identify the specific podpack
-    experimentid = models.ForeignKey(Experiment, models.DO_NOTHING, db_column='experimentID', blank=True, null=True)  
-    # should have up to 10 of these!! pod1id, pod2id, pod3id ....
-    podid = models.ForeignKey(Pod, models.DO_NOTHING, db_column='podID', blank=True, null=True)  # each podpack has a number of pods in it
-
-    class Meta:
-        managed = True
-        db_table = 'pod_pack'
-
-
 class Recipe(models.Model):
-    recipename = models.CharField(db_column='recipeName', primary_key=True, max_length=45)  # Field name made lowercase.
-    recipedata = models.CharField(db_column='recipeData', max_length=45, blank=True, null=True)  # Field name made lowercase.
+    id = models.CharField(db_column='r_id', primary_key=True, max_length=45)  # Field name made lowercase.
+    data = models.CharField(db_column='r_data', max_length=45, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = True
         db_table = 'recipe'
+
+## eventually build pod_reading here
