@@ -20,6 +20,7 @@ from django.contrib import admin
 from django.urls import include, path
 from rest_framework import routers
 from dashboard import views
+from django.urls import path, include, re_path
 
 router = routers.DefaultRouter()
 router.register(r'devices', views.DeviceView, 'dashboard')
@@ -30,5 +31,5 @@ urlpatterns = [
     # 'dashboard' path would hypothetically connect the urls.py file in 'dashboard' app - but code has been commented out. dashboard app exclusively for accessing database objects instead. 'frontend' used for displaying urls at :3000 port.
     #path('dashboard/', include('dashboard.urls')),
     path('api/', include(router.urls)),
-
+    path('auth/', include('dashboard.urls')),
 ]
