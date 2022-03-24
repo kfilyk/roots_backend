@@ -21,6 +21,7 @@ from django.urls import include, path
 from rest_framework import routers
 from dashboard import views
 from django.urls import path, include, re_path
+from rest_framework.response import Response
 
 router = routers.DefaultRouter()
 router.register(r'devices', views.DeviceView, 'dashboard')

@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from rest_framework.generics import CreateAPIView
 from django.contrib.auth import get_user_model
+from rest_framework.authtoken.models import Token
 
 # https://www.digitalocean.com/community/tutorials/build-a-to-do-application-using-django-and-react
 
