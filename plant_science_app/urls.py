@@ -29,6 +29,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # 'dashboard' path would hypothetically connect the urls.py file in 'dashboard' app - but code has been commented out. dashboard app exclusively for accessing database objects instead. 'frontend' used for displaying urls at :3000 port.
     #path('dashboard/', include('dashboard.urls')),
-    path('api/', include(router.urls)),
+    path('api/', include(router.urls)), # api/devices -> pass a json formatted devices list from DeviceView
 
 ]

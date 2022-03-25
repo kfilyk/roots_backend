@@ -7,8 +7,8 @@ from .models import Device
 
 class DeviceView(viewsets.ModelViewSet):
     serializer_class = DeviceSerializer
-    #queryset = Device.objects.filter(user=1)
-    queryset = Device.objects.all()
+    queryset = Device.objects.all() # json formatted queryset # select * from devices;
+
 
 class ExperimentView(viewsets.ModelViewSet):
     serializer_class = ExperimentSerializer

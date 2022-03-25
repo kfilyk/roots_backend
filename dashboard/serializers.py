@@ -7,7 +7,7 @@ from .models import Device, Experiment
 class DeviceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Device
-        fields = ('id', 'name', 'user', 'token', 'registration_date', 'last_update', 'is_online', 'mac_address', 'experiment')
+        fields = ('id', 'name', 'user', 'token', 'registration_date', 'last_update', 'is_online', 'mac_address', 'experiment') # columns of the database table we are turning into a json object
 
 class ExperimentSerializer(serializers.ModelSerializer):
     class Meta:
