@@ -71,15 +71,19 @@ class LoginOrCreateForm extends Component {
       payload.first_name = this.state.firstName;
       payload.last_name = this.state.lastName;
     }
-    console.log(axios.defaults.baseURL)
     axios
       .post(`/auth/${endpoint}/`, payload)
+
       .then(response => {
-        const { token, user } = response.data;
+        const { token, user } = response.data;       
+        console.log("TOKEN: ", token)
+        console.log("USER: ", user)
         // We set the returned token as the default authorization header
         axios.defaults.headers.common.user = user
         axios.defaults.headers.common.Authorization = `Token ${token}`;
-        console.log(response.data)
+        console.log(axios.defaults.headers.common.user)
+        console.log(axios.defaults.headers.common.Authorization)
+
         this.setState({isSignedUp:true, session_user: user, session_token:token})
       })
       .catch(error => console.log(error));
@@ -109,7 +113,7 @@ class LoginOrCreateForm extends Component {
     } = style;
 
     if (this.state.isSignedUp) {
-      return <Navigate to = {{ pathname: "/" }} />;
+      return <Navigate to = {{ pathname: "/dashboard" }} />;
     } else {
       return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
