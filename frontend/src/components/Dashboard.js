@@ -1,8 +1,9 @@
 
 
-import React, { Component } from "react";
+import React, { Component, } from "react";
 import Modal from "./Modal";
 import axios from "axios";
+import Login from './components/Login';
 
 class Dashboard extends Component {
   constructor(props) {
@@ -74,6 +75,22 @@ class Dashboard extends Component {
     return this.setState({ viewCompleted: false });
   };
 
+  handleRequest() {
+    // This request will only succeed if the Authorization header
+    // contains the API token
+    axios
+      .get('/auth/logout/')
+      
+      /*
+      .then(response => {
+        Actions.auth()
+      })
+      */
+      axios.defaults.headers.common.Authorization = null
+      .catch(error =>  console.log(error));
+  }
+
+
   renderTabList = () => {
     return (
       <div className="nav nav-tabs">
@@ -136,37 +153,50 @@ class Dashboard extends Component {
   };
 
   render() {
-    return (
-      <main className="container">
-        <h1 className="text-white text-uppercase text-center my-4">Plant Science Dashboard</h1>
-        <div className="row">
-          <div className="col-md-6 col-sm-10 mx-auto p-0">
-            <div className="card p-3">
-              <div className="mb-4">
-                <button
-                  className="btn btn-primary"
-                  onClick={this.createItem}
-                >
-                  Add task
-                </button>
+
+    // if no token
+    if (axios.defaults.headers.common.Authorization == null) {
+      return (
+        <Login/>
+      )
+    } else {
+      return (
+        <main className="container">
+          <h1 className="text-white text-uppercase text-center my-4">Plant Science Dashboard</h1>
+          <div className="row">
+            <div className="col-md-6 col-sm-10 mx-auto p-0">
+              <div className="card p-3">
+                <div className="mb-4">
+                  <button
+                    className="btn btn-primary"
+                    onClick={this.createItem}
+                  >
+                    Add task
+                  </button>
+                </div>
+                {this.renderTabList()}
+                <ul className="list-group list-group-flush border-top-0">
+                  {this.renderItems()}
+                </ul>
               </div>
-              {this.renderTabList()}
-              <ul className="list-group list-group-flush border-top-0">
-                {this.renderItems()}
-              </ul>
             </div>
           </div>
-        </div>
-        {this.state.modal ? (
-          <Modal
-            activeItem={this.state.activeItem}
-            toggle={this.toggle}
-            onSave={this.handleSubmit}
-          />
-        ) : null}
-      </main>
-    );
+          <View>
+            <Button title="Logout" onPress={this.handleRequest.bind(this)}/>
+          </View>
+          {this.state.modal ? (
+            <Modal
+              activeItem={this.state.activeItem}
+              toggle={this.toggle}
+              onSave={this.handleSubmit}
+            />
+          ) : null}
+        </main>
+
+      );
   }
+  }
+  
 }
 
 export default Dashboard;

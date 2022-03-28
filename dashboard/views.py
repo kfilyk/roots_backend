@@ -11,13 +11,11 @@ from rest_framework.authtoken.models import Token
 # https://www.digitalocean.com/community/tutorials/build-a-to-do-application-using-django-and-react
 
 class DeviceView(viewsets.ModelViewSet):
-    print(get_user_model())
     serializer_class = DeviceSerializer
     queryset = Device.objects.all() # json formatted queryset # select * from devices;
 
 
 class ExperimentView(viewsets.ModelViewSet):
-    print(get_user_model())
     serializer_class = ExperimentSerializer
     #queryset = Experiment.objects.filter(user=1)
     queryset = Experiment.objects.all()
@@ -34,6 +32,7 @@ class CreateUserAPIView(CreateAPIView):
         # We create a token than will be used for future auth
         token = Token.objects.create(user=serializer.instance)
         token_data = {"token": token.key}
+
         return Response(
             {**serializer.data, **token_data},
             status=status.HTTP_201_CREATED,
@@ -41,7 +40,7 @@ class CreateUserAPIView(CreateAPIView):
         )
 
 class LogoutUserAPIView(APIView):
-    queryset = get_user_model().objects.all()
+    queryset = get_user_model().objects.all() # django specific user type
 
     def get(self, request, format=None):
         # simply delete the token to force a login

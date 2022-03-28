@@ -12,7 +12,9 @@ class LoginOrCreateForm extends Component {
     password: '',
     firstName: '',
     lastName: '',
-    isSignedUp: false
+    isSignedUp: false,
+    session_user: '',
+    session_token: ''
   }
 
   onUsernameChange(text) {
@@ -74,10 +76,9 @@ class LoginOrCreateForm extends Component {
       .post(`/auth/${endpoint}/`, payload)
       .then(response => {
         const { token, user } = response.data;
-  
         // We set the returned token as the default authorization header
         axios.defaults.headers.common.Authorization = `Token ${token}`;
-        this.setState({isSignedUp:true})
+        this.setState({isSignedUp:true, session_user: user, session_token:token})
       })
       .catch(error => console.log(error));
   }
