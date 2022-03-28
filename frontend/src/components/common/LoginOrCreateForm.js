@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 import { Button, View, Text, TextInput, StyleSheet } from 'react-native';
-import { Actions } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import axios from 'axios';
 
 
@@ -11,7 +11,8 @@ class LoginOrCreateForm extends Component {
     username: '',
     password: '',
     firstName: '',
-    lastName: ''
+    lastName: '',
+    isSignedUp: false
   }
 
   onUsernameChange(text) {
@@ -76,9 +77,7 @@ class LoginOrCreateForm extends Component {
   
         // We set the returned token as the default authorization header
         axios.defaults.headers.common.Authorization = `Token ${token}`;
-        
-        // Navigate to the home screen
-        Actions.main();
+        this.setState({isSignedUp:true})
       })
       .catch(error => console.log(error));
   }
@@ -89,7 +88,7 @@ class LoginOrCreateForm extends Component {
       return (
         <Text style={accountCreateTextStyle}>
           Or 
-          <Text style={{ color: 'blue' }} onPress={() => Actions.register()}>
+          <Text style={{ color: 'blue' }} onPress={() => <Navigate to = {{ pathname: "/register" }} />}>
             {' Sign-up'}
           </Text>
         </Text>
@@ -106,38 +105,42 @@ class LoginOrCreateForm extends Component {
       accountCreateContainerStyle
     } = style;
 
-    return (
-      <View style={{ flex: 1, backgroundColor: 'white' }}>
-        <View style={formContainerStyle}>
-          <View style={fieldStyle}>
-            <TextInput
-              placeholder="username"
-              autoCorrect={false}
-              autoCapitalize="none"
-              onChangeText={this.onUsernameChange.bind(this)}
-              style={textInputStyle}
-            />
+    if (this.state.isSignedUp) {
+      return <Navigate to = {{ pathname: "/" }} />;
+    } else {
+      return (
+        <View style={{ flex: 1, backgroundColor: 'white' }}>
+          <View style={formContainerStyle}>
+            <View style={fieldStyle}>
+              <TextInput
+                placeholder="username"
+                autoCorrect={false}
+                autoCapitalize="none"
+                onChangeText={this.onUsernameChange.bind(this)}
+                style={textInputStyle}
+              />
+            </View>
+            <View style={fieldStyle}>
+              <TextInput
+                secureTextEntry
+                autoCapitalize="none"
+                autoCorrect={false}
+                placeholder="password"
+                onChangeText={this.onPasswordChange.bind(this)}
+                style={textInputStyle}
+              />
+            </View>
+            {this.renderCreateForm()}
           </View>
-          <View style={fieldStyle}>
-            <TextInput
-              secureTextEntry
-              autoCapitalize="none"
-              autoCorrect={false}
-              placeholder="password"
-              onChangeText={this.onPasswordChange.bind(this)}
-              style={textInputStyle}
-            />
+          <View style={buttonContainerStyle}>
+            {this.renderButton()}
+            <View style={accountCreateContainerStyle}>
+              {this.renderCreateLink()}
+            </View>
           </View>
-          {this.renderCreateForm()}
         </View>
-        <View style={buttonContainerStyle}>
-          {this.renderButton()}
-          <View style={accountCreateContainerStyle}>
-            {this.renderCreateLink()}
-          </View>
-        </View>
-      </View>
-    );
+      );
+    }
   }
 }
 

@@ -11,8 +11,10 @@ const validAuth = () => {
   return token !== '';
 };
 */
+// user_id = xyz;
 
 const RouterComponent = () => {
+  // replace false statement with _is_logged_in token statement
   if (false) {
     return <Login />;
   } else {
