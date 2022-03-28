@@ -66,18 +66,20 @@ class LoginOrCreateForm extends Component {
   handleRequest() {
     const endpoint = this.props.create ? 'register' : 'login';
     const payload = { username: this.state.username, password: this.state.password } 
-    
+
     if (this.props.create) {
       payload.first_name = this.state.firstName;
       payload.last_name = this.state.lastName;
     }
-    
+    console.log(axios.defaults.baseURL)
     axios
-      .post(`/auth/${endpoint}/`, payload)
+      .post(`/auth/${endpoint}`, payload)
       .then(response => {
         const { token, user } = response.data;
         // We set the returned token as the default authorization header
+        axios.defaults.headers.common.user = user
         axios.defaults.headers.common.Authorization = `Token ${token}`;
+        console.log(response.data)
         this.setState({isSignedUp:true, session_user: user, session_token:token})
       })
       .catch(error => console.log(error));

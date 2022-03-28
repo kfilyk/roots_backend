@@ -3,7 +3,7 @@
 import React, { Component, } from "react";
 import Modal from "./Modal";
 import axios from "axios";
-import Login from './components/Login';
+import Login from './Login';
 
 class Dashboard extends Component {
   constructor(props) {
@@ -181,9 +181,7 @@ class Dashboard extends Component {
               </div>
             </div>
           </div>
-          <View>
-            <Button title="Logout" onPress={this.handleRequest.bind(this)}/>
-          </View>
+          <button title="Logout" onPress={this.handleRequest.bind(this)}/>
           {this.state.modal ? (
             <Modal
               activeItem={this.state.activeItem}
