@@ -12,7 +12,7 @@ export default class App extends Component {
   }
 
   componentWillMount() {
-    axios.defaults.baseURL = 'http://0.0.0.0:8000';
+    axios.defaults.baseURL = 'http://localhost:8000';
     axios.defaults.timeout = 10000;
   };
 }

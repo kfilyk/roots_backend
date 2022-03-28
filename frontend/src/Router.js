@@ -4,6 +4,7 @@ import Login from './components/Login';
 import Register from './components/Register';
 import NotFoundPage from './components/NotFoundPage';
 import Dashboard from './components/Dashboard';
+import axios from "axios";
 
 /*
 const validAuth = () => {
@@ -15,7 +16,8 @@ const validAuth = () => {
 
 const RouterComponent = () => {
   // replace false statement with _is_logged_in token statement
-  if (false) {
+  console.log(axios.defaults.headers.common.Authorization)
+  if (axios.defaults.headers.common.Authorization == null) {
     return <Login />;
   } else {
     return (

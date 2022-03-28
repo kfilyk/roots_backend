@@ -12,9 +12,6 @@ class LoginOrCreateForm extends Component {
     password: '',
     firstName: '',
     lastName: '',
-    isSignedUp: false,
-    session_user: '',
-    session_token: ''
   }
 
   onUsernameChange(text) {
@@ -75,18 +72,13 @@ class LoginOrCreateForm extends Component {
       .post(`/auth/${endpoint}/`, payload)
 
       .then(response => {
-        const { token, user } = response.data;       
-        console.log("TOKEN: ", token)
-        console.log("USER: ", user)
+        const { token } = response.data;       
         // We set the returned token as the default authorization header
-        axios.defaults.headers.common.user = user
         axios.defaults.headers.common.Authorization = `Token ${token}`;
-        console.log(axios.defaults.headers.common.user)
-        console.log(axios.defaults.headers.common.Authorization)
 
-        this.setState({isSignedUp:true, session_user: user, session_token:token})
       })
       .catch(error => console.log(error));
+      console.log("(ENDS)")
   }
 
   renderCreateLink() {
@@ -112,8 +104,9 @@ class LoginOrCreateForm extends Component {
       accountCreateContainerStyle
     } = style;
 
-    if (this.state.isSignedUp) {
-      return <Navigate to = {{ pathname: "/dashboard" }} />;
+    console.log("TOKEN: ", axios.defaults.headers.common.Authorization)
+    if (axios.defaults.headers.common.Authorization != null) {
+      return <Navigate to = {{ pathname: "/" }} />;
     } else {
       return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>

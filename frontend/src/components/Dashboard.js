@@ -1,6 +1,7 @@
 
 
 import React, { Component, } from "react";
+import { Navigate } from "react-router-dom";
 import Modal from "./Modal";
 import axios from "axios";
 import Login from './Login';
@@ -22,10 +23,13 @@ class Dashboard extends Component {
   }
 
   componentDidMount() {
+    console.log("AUTH: ", axios.defaults.headers.common.Authorization)
     this.refreshDeviceList();
     console.log(this.state.deviceList)
+
   };
 
+  // use token to get user id, then use user id to get view
   refreshDeviceList = () => {
     axios
       .get("/api/devices/")
@@ -156,9 +160,7 @@ class Dashboard extends Component {
 
     // if no token
     if (axios.defaults.headers.common.Authorization == null) {
-      return (
-        <Login/>
-      )
+      <Login/>;
     } else {
       return (
         <main className="container">
@@ -180,8 +182,10 @@ class Dashboard extends Component {
                 </ul>
               </div>
             </div>
+            <button className="btn btn-primary" title="Logout" onClick={this.handleRequest.bind(this)}>
+              Logout
+            </button>
           </div>
-          <button title="Logout" onPress={this.handleRequest.bind(this)}/>
           {this.state.modal ? (
             <Modal
               activeItem={this.state.activeItem}
