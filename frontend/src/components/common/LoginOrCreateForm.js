@@ -73,7 +73,7 @@ class LoginOrCreateForm extends Component {
     }
     console.log(axios.defaults.baseURL)
     axios
-      .post(`/auth/${endpoint}`, payload)
+      .post(`/auth/${endpoint}/`, payload)
       .then(response => {
         const { token, user } = response.data;
         // We set the returned token as the default authorization header
