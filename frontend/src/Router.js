@@ -11,7 +11,9 @@ const RouterComponent = () => {
   console.log("ROUTER: " + localStorage.getItem("token"))
   console.log("AXIOS: " + axios.defaults.headers.common.Authorization)
 
-  if (localStorage.getItem("token") == null ) { // ||  === null
+  // everytime a person refreshes this page, check their preexisting token to see if its the same as in the db
+
+  if (localStorage.getItem("token") == null) { // ||  === null
     return <Login />;
   } else {
     return (
