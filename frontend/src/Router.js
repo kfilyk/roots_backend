@@ -12,9 +12,15 @@ const RouterComponent = () => {
   console.log("AXIOS: " + axios.defaults.headers.common.Authorization)
 
   // everytime a person refreshes this page, check their preexisting token to see if its the same as in the db
-
-  if (localStorage.getItem("token") == null) { // ||  === null
-    return <Login />;
+  if (localStorage.getItem("token") === null){
+    return (
+      <BrowserRouter>
+        <Routes>
+          <Route index element={<Login />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </BrowserRouter>
+    );
   } else {
     return (
       <BrowserRouter>
@@ -25,6 +31,7 @@ const RouterComponent = () => {
       </BrowserRouter>
     );
   }
+
 };
 
 

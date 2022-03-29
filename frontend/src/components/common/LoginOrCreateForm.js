@@ -76,7 +76,6 @@
          localStorage.setItem('token', token)
          console.log("TOKEN: " + localStorage.getItem("token"));
          axios.defaults.headers.common.Authorization = token;
-         <Navigate to = {{ pathname: "/" }} />;
        })
        .catch(error => console.log(error));
    }
@@ -104,12 +103,6 @@
        accountCreateContainerStyle
      } = style;
  
-    //  console.log("TOKEN: ", axios.defaults.headers.common.Authorization)
-     console.log(localStorage.getItem("token"))
-     if (localStorage.getItem("token") != null) {
-       console.log("go to dashboard")
-       return <Navigate to = {{ pathname: "/" }} />;
-     } else {
        return (
          <View style={{ flex: 1, backgroundColor: 'white' }}>
            <View style={formContainerStyle}>
@@ -143,7 +136,7 @@
          </View>
        );
      }
-   }
+
  }
  
  

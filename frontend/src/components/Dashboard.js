@@ -91,19 +91,19 @@ class Dashboard extends Component {
   logout() {
     // This request will only succeed if the Authorization header
     // contains the API token
-    axios.defaults.headers.common.Authorization = localStorage.getItem('token')
+    var token = localStorage.getItem('token')
+    axios.defaults.headers.common = {'Authorization': `Token ${token}`}
     console.log(localStorage.getItem('token'))
     axios
       .get('/auth/logout/')
 
       .then(response => {
-        localStorage.setItem('token', null);;
-
+        localStorage.removeItem('token');
+        this.forceUpdate()
       })
       .catch(error =>  console.log(error))  
-    axios.defaults.headers.common.Authorization = null
-    localStorage.setItem('token', null)
-    this.forceUpdate()
+    // localStorage.removeItem('token');
+    
     }
 
   renderTabList = () => {

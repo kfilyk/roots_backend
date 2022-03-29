@@ -55,8 +55,8 @@ class LogoutUserAPIView(APIView):
 
     def get(self, request, format=None):
         # simply delete the token to force a login
-        request.user.auth_token.delete()
-        return Response(status=status.HTTP_200_OK)
+        # request.user.auth_token.delete()
+        return Response({'msg': "success logout"}, status=status.HTTP_200_OK)
 
 class CustomAuthToken(ObtainAuthToken):
 
