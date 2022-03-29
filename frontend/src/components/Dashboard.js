@@ -164,15 +164,6 @@ class Dashboard extends Component {
   };
 
   render() {
-<<<<<<< HEAD
-
-    // if no token
-    console.log(axios.defaults.headers.common.Authorization)
-    if (axios.defaults.headers.common.Authorization == null) {
-      <Login/>;
-    } else {
-=======
->>>>>>> ac5a663f09d79a53974b5116a4c26008572be21b
       return (
         <main className="container">
           <h1 className="text-white text-uppercase text-center my-4">Plant Science Dashboard</h1>
