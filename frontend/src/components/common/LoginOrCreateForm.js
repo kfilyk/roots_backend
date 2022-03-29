@@ -78,7 +78,6 @@ class LoginOrCreateForm extends Component {
 
       })
       .catch(error => console.log(error));
-      console.log("(ENDS)")
   }
 
   renderCreateLink() {
@@ -105,7 +104,7 @@ class LoginOrCreateForm extends Component {
     } = style;
 
     console.log("TOKEN: ", axios.defaults.headers.common.Authorization)
-    if (axios.defaults.headers.common.Authorization != null) {
+    if (axios.defaults.headers.common.Authorization != null || axios.defaults.headers.common.Authorization !== undefined) {
       return <Navigate to = {{ pathname: "/" }} />;
     } else {
       return (

@@ -84,12 +84,6 @@ class Dashboard extends Component {
     // contains the API token
     axios
       .get('/auth/logout/')
-      
-      /*
-      .then(response => {
-        Actions.auth()
-      })
-      */
       axios.defaults.headers.common.Authorization = null
       .catch(error =>  console.log(error));
   }
@@ -159,6 +153,7 @@ class Dashboard extends Component {
   render() {
 
     // if no token
+    console.log(axios.defaults.headers.common.Authorization)
     if (axios.defaults.headers.common.Authorization == null) {
       <Login/>;
     } else {
