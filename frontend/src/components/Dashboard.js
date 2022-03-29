@@ -30,7 +30,16 @@ class Dashboard extends Component {
   };
 
   // use token to get user id, then use user id to get view
+  // refreshDeviceList = () => {
+  //   axios
+  //     .get("/api/devices/")
+  //     //.then((res) => console.log(res.data))
+  //     .then((res) => this.setState({ deviceList: res.data }))
+  //     .catch((err) => console.log(err));
+  // };
+
   refreshDeviceList = () => {
+    console.log("R")
     axios
       .get("/api/devices/")
       //.then((res) => console.log(res.data))
@@ -84,10 +93,14 @@ class Dashboard extends Component {
     // contains the API token
     axios
       .get('/auth/logout/')
-      axios.defaults.headers.common.Authorization = null
-      .catch(error =>  console.log(error));
-  }
 
+      .then(response => {
+        axios.defaults.headers.common.Authorization = null
+        localStorage.setItem('token', null);;
+
+      })
+      .catch(error =>  console.log(error))  
+    }
 
   renderTabList = () => {
     return (
@@ -151,12 +164,15 @@ class Dashboard extends Component {
   };
 
   render() {
+<<<<<<< HEAD
 
     // if no token
     console.log(axios.defaults.headers.common.Authorization)
     if (axios.defaults.headers.common.Authorization == null) {
       <Login/>;
     } else {
+=======
+>>>>>>> ac5a663f09d79a53974b5116a4c26008572be21b
       return (
         <main className="container">
           <h1 className="text-white text-uppercase text-center my-4">Plant Science Dashboard</h1>
@@ -191,7 +207,6 @@ class Dashboard extends Component {
         </main>
 
       );
-  }
   }
   
 }

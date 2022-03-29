@@ -16,8 +16,8 @@ const validAuth = () => {
 
 const RouterComponent = () => {
   // replace false statement with _is_logged_in token statement
-  console.log(axios.defaults.headers.common.Authorization)
-  if (axios.defaults.headers.common.Authorization == null) {
+  console.log("ROUTER:" + localStorage.getItem("token"))
+  if (localStorage.getItem("token") == null || axios.defaults.headers.common.Authorization === null) {
     return <Login />;
   } else {
     return (
