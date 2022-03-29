@@ -73,9 +73,10 @@
        .then(response => {
          const { token } = response.data;       
          // We set the returned token as the default authorization header
-         console.log("TOKEN: " + localStorage.setItem('token', token));
+         localStorage.setItem('token', token)
+         console.log("TOKEN: " + localStorage.getItem("token"));
+         axios.defaults.headers.common.Authorization = token;
          <Navigate to = {{ pathname: "/" }} />;
-        //  axios.defaults.headers.common.Authorization = `Token ${token}`;
        })
        .catch(error => console.log(error));
    }

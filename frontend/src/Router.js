@@ -6,18 +6,12 @@ import NotFoundPage from './components/NotFoundPage';
 import Dashboard from './components/Dashboard';
 import axios from "axios";
 
-/*
-const validAuth = () => {
-  const { token } = WithUser();
-  return token !== '';
-};
-*/
-// user_id = xyz;
-
 const RouterComponent = () => {
   // replace false statement with _is_logged_in token statement
-  console.log("ROUTER:" + localStorage.getItem("token"))
-  if (localStorage.getItem("token") == null || axios.defaults.headers.common.Authorization === null) {
+  console.log("ROUTER: " + localStorage.getItem("token"))
+  console.log("AXIOS: " + axios.defaults.headers.common.Authorization)
+
+  if (localStorage.getItem("token") == null ) { // ||  === null
     return <Login />;
   } else {
     return (

@@ -88,7 +88,7 @@ class Dashboard extends Component {
     return this.setState({ viewCompleted: false });
   };
 
-  handleRequest() {
+  logout() {
     // This request will only succeed if the Authorization header
     // contains the API token
     axios
@@ -100,6 +100,7 @@ class Dashboard extends Component {
 
       })
       .catch(error =>  console.log(error))  
+    this.forceUpdate()
     }
 
   renderTabList = () => {
@@ -184,7 +185,7 @@ class Dashboard extends Component {
                 </ul>
               </div>
             </div>
-            <button className="btn btn-primary" title="Logout" onClick={this.handleRequest.bind(this)}>
+            <button className="btn btn-primary" title="Logout" onClick={this.logout.bind(this)}>
               Logout
             </button>
           </div>
