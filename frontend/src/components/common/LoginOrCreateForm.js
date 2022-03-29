@@ -12,7 +12,6 @@
      password: '',
      firstName: '',
      lastName: '',
-     token: '',
    }
  
    onUsernameChange(text) {
@@ -75,9 +74,9 @@
        .then(response => {
          const { token } = response.data;       
          // We set the returned token as the default authorization header
-         localStorage.setItem('token', token);
-         axios.defaults.headers.common.Authorization = `Token ${token}`;
-         this.setState({token: token})
+         console.log("TOKEN: " + localStorage.setItem('token', token));
+         <Navigate to = {{ pathname: "/" }} />;
+        //  axios.defaults.headers.common.Authorization = `Token ${token}`;
        })
        .catch(error => console.log(error));
    }
@@ -105,8 +104,9 @@
        accountCreateContainerStyle
      } = style;
  
-     console.log("TOKEN: ", axios.defaults.headers.common.Authorization)
-     if (axios.defaults.headers.common.Authorization != null) {
+    //  console.log("TOKEN: ", axios.defaults.headers.common.Authorization)
+     console.log(localStorage.getItem("token"))
+     if (localStorage.getItem("token") != null) {
        console.log("go to dashboard")
        return <Navigate to = {{ pathname: "/" }} />;
      } else {
