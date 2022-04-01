@@ -41,8 +41,7 @@ class Dashboard extends Component {
       axios
         .post("/auth/token")
         .then(res => {
-          console.log("RESPONSE 1: ", res)
-          // old token! status 201
+          console.log("RESPONSE: ", res)
           if (!res.data.status || res.data.status === 201) {
             //window.location.href = window.location.toString() + "/home";
             console.log("redirect to login");

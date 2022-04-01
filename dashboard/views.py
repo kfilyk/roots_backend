@@ -1,6 +1,6 @@
 from dashboard.models import Device, Experiment
 from rest_framework import viewsets
-from .serializers import DeviceSerializer, ExperimentSerializer, CreateUserSerializer
+from .serializers import DeviceSerializer, ExperimentSerializer, CreateUserSerializer, GetUserSerializer
 from .models import Device
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
@@ -26,7 +26,6 @@ class DeviceView(viewsets.ModelViewSet):
 
 class ExperimentView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
-
     serializer_class = ExperimentSerializer
     #queryset = Experiment.objects.filter(user=1)
     queryset = Experiment.objects.all()
@@ -59,16 +58,24 @@ class LogoutUserAPIView(APIView):
         return Response({'msg': "success logout"}, status=status.HTTP_200_OK)
 
 # get authorization
-class CustomAuthToken(ObtainAuthToken):
-
+class VerifyUser(ObtainAuthToken):
+    serializer_class = GetUserSerializer
+    permission_classes = (IsAuthenticated,) 
+    print("FLAG1")
     def post(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.data,
-                                           context={'request': request})
+        print("FLAG1")
+
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+
+        headers = self.get_success_headers(serializer.data)
+        print("SERIALIZER: ", serializer)
         user = serializer.validated_data['user']
-        token, created = Token.objects.get_or_create(user=user)
-        return Response({
-            'token': token.key,
-            'user_id': user.pk,
-            'email': user.email
-        })
+        return Response (
+            {
+            'username': user.username,
+            'email': user.email,
+            },
+            status=status.HTTP_201_CREATED,
+            headers=headers,
+        )

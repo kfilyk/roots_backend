@@ -9,9 +9,11 @@ class LoginOrCreateForm extends Component {
 
   componentDidMount() {
     if (window.localStorage.getItem("token")) {
+      
       // if a token is found, set the authorization and attempt to vlaidate it against the server
-      axios.defaults.headers.common.Authorization = window.localStorage.getItem("token");
+      axios.defaults.headers.common.Authorization = window.localStorage.getItem('token') // window.localStorage.getItem("token");
       axios
+
         .post("/auth/token/")
         .then(res => {
           console.log("RESPONSE 1: ", res)
