@@ -1,6 +1,6 @@
 from dashboard.models import Device, Experiment
 from rest_framework import viewsets
-from .serializers import DeviceSerializer, ExperimentSerializer, CreateUserSerializer, GetUserSerializer
+from .serializers import DeviceSerializer, ExperimentSerializer, CreateUserSerializer, UserSerializer
 from .models import Device
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
@@ -11,7 +11,6 @@ from django.contrib.auth import get_user_model
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.permissions import IsAuthenticated 
-from rest_framework.views import APIView
 
 # https://www.digitalocean.com/community/tutorials/build-a-to-do-application-using-django-and-react
 
@@ -58,24 +57,12 @@ class LogoutUserAPIView(APIView):
         return Response({'msg': "success logout"}, status=status.HTTP_200_OK)
 
 # get authorization
-class VerifyUser(ObtainAuthToken):
-    serializer_class = GetUserSerializer
+class VerifyUserView(APIView):
+    model = get_user_model()
+    serializer_class = UserSerializer
     permission_classes = (IsAuthenticated,) 
-    print("FLAG1")
+
     def post(self, request, *args, **kwargs):
         print("FLAG1")
-
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        headers = self.get_success_headers(serializer.data)
-        print("SERIALIZER: ", serializer)
-        user = serializer.validated_data['user']
-        return Response (
-            {
-            'username': user.username,
-            'email': user.email,
-            },
-            status=status.HTTP_201_CREATED,
-            headers=headers,
-        )
+        if request.user:
+            return Response(UserSerializer(request.user).data)

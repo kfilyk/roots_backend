@@ -10,6 +10,8 @@ class Dashboard extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      user: '',
+      isLoggedIn: true,
       viewCompleted: false,
       deviceList: [],
       experimentList: [],
@@ -24,42 +26,37 @@ class Dashboard extends Component {
 
   // runs after all components mounted on client side
   componentDidMount() {
-    console.log("AUTH: ", axios.defaults.headers.common.Authorization)
-    this.refreshDeviceList();
-    console.log(this.state.deviceList)
-
     // if no token found, redirect to login
     if (!window.localStorage.getItem("token")) {
-      //redirect to Login
-      console.log("redirect to login");
-      this.props.history.push("/");
+      this.setState({ isLoggedIn: false})
+      this.logout()
     }
 
     if (window.localStorage.getItem("token")) {
       // if a token is found, set the authorization and attempt to vlaidate it against the server
       axios.defaults.headers.common.Authorization = window.localStorage.getItem("token");
-      axios
-        .post("/auth/token")
-        .then(res => {
-          console.log("RESPONSE: ", res)
-          if (!res.data.status || res.data.status === 201) {
-            //window.location.href = window.location.toString() + "/home";
-            console.log("redirect to login");
-            this.props.history.push("/");
-          }
-        })
-        .catch(res => console.log(res));
-    }
-  };
 
-  // use token to get user id, then use user id to get view
-  // refreshDeviceList = () => {
-  //   axios
-  //     .get("/api/devices/")
-  //     //.then((res) => console.log(res.data))
-  //     .then((res) => this.setState({ deviceList: res.data }))
-  //     .catch((err) => console.log(err));
-  // };
+      axios
+        .post("/auth/token/")
+        .then(res => {
+          if (res.status === 200) {
+            console.log("RESPONSE 1: ", res)
+          }
+          this.setState({ user: res.data.username })
+        })
+      .catch(res => {
+        console.log(res)
+        this.setState({ isLoggedIn: false})
+        this.logout()
+      });
+    }
+
+    console.log("AUTH: ", axios.defaults.headers.common.Authorization)
+    this.refreshDeviceList();
+    console.log(this.state.deviceList)
+    console.log("IS TOKEN: ", window.localStorage.getItem("token"))
+
+  };
 
   refreshDeviceList = () => {
     console.log("R")
@@ -126,8 +123,7 @@ class Dashboard extends Component {
       })
       .catch(error =>  console.log(error))  
       // localStorage.removeItem('token');
-      this.props.history.push("/dashboard");
-    }
+  }
 
   renderTabList = () => {
     return (

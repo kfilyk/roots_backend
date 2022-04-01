@@ -7,21 +7,30 @@ import axios from 'axios';
 
 class LoginOrCreateForm extends Component {
 
+  constructor(props) {
+    super(props)
+    this.state = {
+      isLoggedIn: false
+    }
+  }
+
   componentDidMount() {
     if (window.localStorage.getItem("token")) {
-      
-      // if a token is found, set the authorization and attempt to vlaidate it against the server
-      axios.defaults.headers.common.Authorization = window.localStorage.getItem('token') // window.localStorage.getItem("token");
-      axios
+      console.log("POST")
 
+      // if a token is found, set the authorization and attempt to vlaidate it against the server
+      axios.defaults.headers.common.Authorization = `Token ${window.localStorage.getItem('token')}`
+      console.log(axios.defaults.headers.common.Authorization)
+
+      axios
         .post("/auth/token/")
         .then(res => {
-          console.log("RESPONSE 1: ", res)
-          // old token! status 201
-          if (res.data.status !== 201) {
+          console.log("STATUS ERROR! ", res)
+
+          if (res.status === 200) {
+            console.log("RESPONSE 1: ", res)
             //window.location.href = window.location.toString() + "/home";
-            console.log("redirect to login");
-            this.props.history.push("/dashboard");
+            this.setState({ isLoggedIn: true})
           }
         })
         .catch(res => console.log(res));
@@ -118,6 +127,10 @@ class LoginOrCreateForm extends Component {
   }
  
   render() {
+    if(this.state.isLoggedIn){
+      return <Navigate to = {{ pathname: "/dashboard" }} />;
+    }
+
     const {
       formContainerStyle,
       fieldStyle,
