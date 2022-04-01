@@ -34,7 +34,7 @@ class Dashboard extends Component {
 
     if (window.localStorage.getItem("token")) {
       // if a token is found, set the authorization and attempt to vlaidate it against the server
-      axios.defaults.headers.common.Authorization = window.localStorage.getItem("token");
+      axios.defaults.headers.common.Authorization = `Token ${window.localStorage.getItem("token")}`;
 
       axios
         .post("/auth/token/")
@@ -51,7 +51,6 @@ class Dashboard extends Component {
       });
     }
 
-    console.log("AUTH: ", axios.defaults.headers.common.Authorization)
     this.refreshDeviceList();
     console.log(this.state.deviceList)
     console.log("IS TOKEN: ", window.localStorage.getItem("token"))
@@ -187,6 +186,10 @@ class Dashboard extends Component {
   };
 
   render() {
+      if (!this.state.isLoggedIn) {
+        return <Navigate to = {{ pathname: "/" }} />;
+      }
+
       return (
         <main className="container">
           <h1 className="text-white text-uppercase text-center my-4">Plant Science Dashboard</h1>

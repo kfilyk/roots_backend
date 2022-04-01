@@ -25,7 +25,6 @@ class LoginOrCreateForm extends Component {
       axios
         .post("/auth/token/")
         .then(res => {
-          console.log("STATUS ERROR! ", res)
 
           if (res.status === 200) {
             console.log("RESPONSE 1: ", res)
@@ -107,9 +106,9 @@ class LoginOrCreateForm extends Component {
         localStorage.setItem('token', token)
         console.log("TOKEN: " + localStorage.getItem("token"));
         axios.defaults.headers.common.Authorization = token;
+        this.setState({ isLoggedIn:true })
       })
       .catch(error => console.log(error));
-    this.props.history.push("/dashboard");
   }
  
   renderCreateLink() {
