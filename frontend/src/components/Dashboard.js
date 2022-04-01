@@ -43,18 +43,18 @@ class Dashboard extends Component {
             console.log("RESPONSE 1: ", res)
           }
           this.setState({ user: res.data.username })
+          this.refreshDeviceList();
+          console.log(this.state.deviceList)
+          console.log("IS TOKEN: ", window.localStorage.getItem("token"))
+
         })
       .catch(res => {
         console.log(res)
         this.setState({ isLoggedIn: false})
         this.logout()
+        console.log("AUTO LOGGED OUT!")
       });
     }
-
-    this.refreshDeviceList();
-    console.log(this.state.deviceList)
-    console.log("IS TOKEN: ", window.localStorage.getItem("token"))
-
   };
 
   refreshDeviceList = () => {
@@ -65,6 +65,7 @@ class Dashboard extends Component {
       .then((res) => this.setState({ deviceList: res.data }))
       .catch((err) => console.log(err));
   };
+
 
   toggle = () => {
     this.setState({ modal: !this.state.modal });
@@ -110,17 +111,15 @@ class Dashboard extends Component {
   logout() {
     // This request will only succeed if the Authorization header
     // contains the API token
-    axios.defaults.headers.common.Authorization =  `Token ${window.localStorage.getItem('token')}`
+    //axios.defaults.headers.common.Authorization =  `Token ${window.localStorage.getItem('token')}`
     axios
       .get('/auth/logout/')
 
       .then(response => {
         localStorage.removeItem('token');
-        this.forceUpdate()
       })
       .catch(error =>  console.log(error))  
       this.setState({isLoggedIn: false})
-      // localStorage.removeItem('token');
   }
 
   renderTabList = () => {
@@ -130,13 +129,13 @@ class Dashboard extends Component {
           className={this.state.viewCompleted ? "nav-link active" : "nav-link"}
           onClick={() => this.displayCompleted(true)}
         >
-          Complete
+          Active
         </span>
         <span
           className={this.state.viewCompleted ? "nav-link" : "nav-link active"}
           onClick={() => this.displayCompleted(false)}
         >
-          Incomplete
+          Inactive
         </span>
       </div>
     );
@@ -200,7 +199,7 @@ class Dashboard extends Component {
                     className="btn btn-primary"
                     onClick={this.createItem}
                   >
-                    Add task
+                    Add Device
                   </button>
                 </div>
                 {this.renderTabList()}

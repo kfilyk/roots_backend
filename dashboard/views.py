@@ -16,7 +16,6 @@ from rest_framework.permissions import IsAuthenticated
 
 class DeviceView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
-    queryset = Device.objects.all()
     serializer_class = DeviceSerializer
 
     def get_queryset(self):
@@ -26,8 +25,10 @@ class DeviceView(viewsets.ModelViewSet):
 class ExperimentView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
     serializer_class = ExperimentSerializer
-    #queryset = Experiment.objects.filter(user=1)
-    queryset = Experiment.objects.all()
+    
+    def get_queryset(self):
+        user = self.request.user
+        return Experiment.objects.filter(device = user)
 
 class CreateUserAPIView(CreateAPIView):
     serializer_class = CreateUserSerializer

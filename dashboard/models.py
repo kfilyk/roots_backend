@@ -42,6 +42,7 @@ class Experiment(models.Model):
     description = models.CharField(db_column='e_description', max_length=255, blank=True, null=True)
     recipe = models.ForeignKey("Recipe", models.DO_NOTHING, db_column='e_recipe_id', blank=True, null=True)  # Field name made lowercase.
     device = models.ForeignKey("Device", models.DO_NOTHING, related_name='+', db_column='e_device_id', blank=True, null=True)  # Field name made lowercase.
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, db_column='e_user_id', on_delete=models.CASCADE, blank=True, null=True)
     score = models.DecimalField(db_column='e_score', max_digits=2, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
     start_date = models.DateTimeField(db_column='e_start_date', blank=True, null=True)  # Field name made lowercase.
     end_date = models.DateTimeField(db_column='e_end_date', blank=True, null=True)  # Field name made lowercase.

@@ -10,7 +10,11 @@ class LoginOrCreateForm extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      isLoggedIn: false
+      isLoggedIn: false,
+      username: '',
+      password: '',
+      firstName: '',
+      lastName: '',
     }
   }
 
@@ -35,13 +39,6 @@ class LoginOrCreateForm extends Component {
         .catch(res => console.log(res));
     }
   };
-
-  state = {
-    username: '',
-    password: '',
-    firstName: '',
-    lastName: '',
-  }
  
   onUsernameChange(text) {
     this.setState({ username: text });
