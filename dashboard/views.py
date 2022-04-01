@@ -58,6 +58,7 @@ class LogoutUserAPIView(APIView):
         # request.user.auth_token.delete()
         return Response({'msg': "success logout"}, status=status.HTTP_200_OK)
 
+# get authorization
 class CustomAuthToken(ObtainAuthToken):
 
     def post(self, request, *args, **kwargs):
@@ -71,12 +72,3 @@ class CustomAuthToken(ObtainAuthToken):
             'user_id': user.pk,
             'email': user.email
         })
-'''
-def dashboard(request):
-    return HttpResponse("Hello, world.")
-
-def dashboard2(request, *args, **kwargs):
-    devices=Device.objects.all()
-    return HttpResponse(devices)
-    return render(request, "dashboard/index.html", {'devices':devices})
-'''

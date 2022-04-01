@@ -22,11 +22,35 @@ class Dashboard extends Component {
     };
   }
 
+  // runs after all components mounted on client side
   componentDidMount() {
     console.log("AUTH: ", axios.defaults.headers.common.Authorization)
     this.refreshDeviceList();
     console.log(this.state.deviceList)
 
+    // if no token found, redirect to login
+    if (!window.localStorage.getItem("token")) {
+      //redirect to Login
+      console.log("redirect to login");
+      this.props.history.push("/");
+    }
+
+    if (window.localStorage.getItem("token")) {
+      // if a token is found, set the authorization and attempt to vlaidate it against the server
+      axios.defaults.headers.common.Authorization = window.localStorage.getItem("token");
+      axios
+        .post("/auth/token")
+        .then(res => {
+          console.log("RESPONSE 1: ", res)
+          // old token! status 201
+          if (!res.data.status || res.data.status === 201) {
+            //window.location.href = window.location.toString() + "/home";
+            console.log("redirect to login");
+            this.props.history.push("/");
+          }
+        })
+        .catch(res => console.log(res));
+    }
   };
 
   // use token to get user id, then use user id to get view
@@ -102,8 +126,8 @@ class Dashboard extends Component {
         this.forceUpdate()
       })
       .catch(error =>  console.log(error))  
-    // localStorage.removeItem('token');
-    
+      // localStorage.removeItem('token');
+      this.props.history.push("/dashboard");
     }
 
   renderTabList = () => {

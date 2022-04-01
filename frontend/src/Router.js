@@ -1,7 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from './components/Login';
-import Register from './components/Register';
 import NotFoundPage from './components/NotFoundPage';
 import Dashboard from './components/Dashboard';
 import axios from "axios";
@@ -12,26 +11,15 @@ const RouterComponent = () => {
   console.log("AXIOS: " + axios.defaults.headers.common.Authorization)
 
   // everytime a person refreshes this page, check their preexisting token to see if its the same as in the db
-  if (localStorage.getItem("token") === null){
-    return (
-      <BrowserRouter>
-        <Routes>
-          <Route index element={<Login />} />
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-      </BrowserRouter>
-    );
-  } else {
-    return (
-      <BrowserRouter>
-        <Routes>
-          <Route index element={<Dashboard />} />
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-      </BrowserRouter>
-    );
-  }
-
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route exact path={"/"} element={<Login />} />
+        <Route exact path={"/dashboard"} element={<Dashboard />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </BrowserRouter>
+  );
 };
 
 
