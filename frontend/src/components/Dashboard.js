@@ -110,9 +110,7 @@ class Dashboard extends Component {
   logout() {
     // This request will only succeed if the Authorization header
     // contains the API token
-    var token = localStorage.getItem('token')
-    axios.defaults.headers.common = {'Authorization': `Token ${token}`}
-    console.log(localStorage.getItem('token'))
+    axios.defaults.headers.common.Authorization =  `Token ${window.localStorage.getItem('token')}`
     axios
       .get('/auth/logout/')
 
@@ -121,6 +119,7 @@ class Dashboard extends Component {
         this.forceUpdate()
       })
       .catch(error =>  console.log(error))  
+      this.setState({isLoggedIn: false})
       // localStorage.removeItem('token');
   }
 
