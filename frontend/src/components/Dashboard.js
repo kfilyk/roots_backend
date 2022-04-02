@@ -4,7 +4,7 @@ import React, { Component, } from "react";
 import { Navigate } from "react-router-dom";
 import Modal from "./Modal";
 import axios from "axios";
-import Login from './Login';
+import user from './user_brown.png';
 
 class Dashboard extends Component {
   constructor(props) {
@@ -12,9 +12,11 @@ class Dashboard extends Component {
     this.state = {
       user: '',
       isLoggedIn: true,
-      viewCompleted: false,
+      selectedTab: "device",
       deviceList: [],
       experimentList: [],
+      recipeList: [],
+
       modal: false,
       activeItem: {
         name: "",
@@ -40,11 +42,13 @@ class Dashboard extends Component {
         .post("/auth/token/")
         .then(res => {
           if (res.status === 200) {
-            console.log("RESPONSE 1: ", res)
+            console.log("STATUS 200 (SUCCESSFUL): ", res)
           }
           this.setState({ user: res.data.username })
-          this.refreshDeviceList();
-          console.log(this.state.deviceList)
+          this.getDevices();
+          this.getExperiments();
+          this.getRecipes();
+
           console.log("IS TOKEN: ", window.localStorage.getItem("token"))
 
         })
@@ -57,15 +61,30 @@ class Dashboard extends Component {
     }
   };
 
-  refreshDeviceList = () => {
-    console.log("R")
+  getDevices = () => {
     axios
       .get("/api/devices/")
       //.then((res) => console.log(res.data))
-      .then((res) => this.setState({ deviceList: res.data }))
+      .then((res) => {
+        console.log("DEVICE RESPONSE: ", res)
+        this.setState({ deviceList: res.data })
+      })
       .catch((err) => console.log(err));
   };
 
+  getExperiments = () => {
+    axios
+      .get("/api/experiments/")
+      .then((res) => this.setState({ experimentList: res.data }))
+      .catch((err) => console.log(err));
+  };
+
+  getRecipes = () => {
+    axios
+      .get("/api/recipes/")
+      .then((res) => this.setState({ recipeList: res.data }))
+      .catch((err) => console.log(err));
+  };
 
   toggle = () => {
     this.setState({ modal: !this.state.modal });
@@ -76,18 +95,19 @@ class Dashboard extends Component {
     if (item.id) {
       axios
         .put(`/api/devices/${item.id}/`, item)
-        .then((res) => this.refreshDeviceList());
+        .then((res) => this.getDevices());
       return;
     }
     axios
       .post("/api/devices/", item)
-      .then((res) => this.refreshDeviceList());
+      .then((res) => this.getDevices());
   };
 
   handleDelete = (item) => {
+    //console.log(item.type)
     axios
       .delete(`/api/devices/${item.id}/`)
-      .then((res) => this.refreshDeviceList());
+      .then((res) => this.getDevices());
   };
 
   createItem = () => {
@@ -96,17 +116,10 @@ class Dashboard extends Component {
     this.setState({ activeItem: item, modal: !this.state.modal });
   };
 
-  editItem = (item) => {
+  handleEdit = (item) => {
     this.setState({ activeItem: item, modal: !this.state.modal });
   };
 
-  displayCompleted = (status) => {
-    if (status) {
-      return this.setState({ viewCompleted: true });
-    }
-
-    return this.setState({ viewCompleted: false });
-  };
 
   logout() {
     // This request will only succeed if the Authorization header
@@ -125,50 +138,106 @@ class Dashboard extends Component {
   renderTabList = () => {
     return (
       <div className="nav nav-tabs">
-        <span
-          className={this.state.viewCompleted ? "nav-link active" : "nav-link"}
-          onClick={() => this.displayCompleted(true)}
-        >
-          Active
+        <span className={this.state.selectedTab === "device" ? "nav-link active" : "nav-link"} onClick={() => this.setState({ selectedTab: "device" })}>
+          Devices
         </span>
-        <span
-          className={this.state.viewCompleted ? "nav-link" : "nav-link active"}
-          onClick={() => this.displayCompleted(false)}
-        >
-          Inactive
+        <span className={this.state.selectedTab === "experiment" ? "nav-link active" : "nav-link"} onClick={() => this.setState({ selectedTab: "experiment" })}>
+          Experiments
+        </span>
+        <span className={this.state.selectedTab === "recipe" ? "nav-link active" : "nav-link"} onClick={() => this.setState({ selectedTab: "recipe" })}>
+          Recipes
+        </span>
+        <span className={this.state.selectedTab === "plant" ? "nav-link active" : "nav-link"} onClick={() => this.setState({ selectedTab: "plant" })}>
+          Plants
         </span>
       </div>
     );
   };
 
   renderItems = () => {
-    const { viewCompleted } = this.state;
-    const newItems = this.state.deviceList.filter(
-      (item) => item.is_online === viewCompleted
-    );
+    let items_list = [];
+    if (this.state.selectedTab === "device"){
+      items_list = this.state.deviceList;
 
-    return newItems.map((item) => (
+      return items_list.map((item) => (
+        // display list of all items
+        <li key={ ''+this.state.selectedTab+' '+ item.id } className="list-group-item d-flex justify-content-between align-items-center" >
+          { item.id }: "{ item.name }"<br></br>
+          REGISTRATION_DATE: { item.registration_date }<br></br>
+          EXPERIMENT: { item.experiment }<br></br>
+          MAC ADDRESS: { item.mac_address }<br></br>
+  
+          <span>
+            <button
+              className="btn btn-secondary mr-2"
+              onClick={() => this.handleEdit(item)}
+            >
+              Edit
+            </button>
+            <button
+              className="btn btn-danger"
+              onClick={() => this.handleDelete(item)}
+            >
+              Delete
+            </button>
+          </span>
+        </li>
+      ));
+
+    } else if (this.state.selectedTab === "experiment") {
+      items_list = this.state.experimentList;
+
+      return items_list.map((item) => (
+        // display list of all items
+        <li key={ ''+this.state.selectedTab+' '+ item.id } className="list-group-item d-flex justify-content-between align-items-center" >
+          ID: { item.id }<br></br>
+          DEVICE: { item.device }<br></br>
+          DESCRIPTION: { item.description }<br></br>
+          SCORE: { item.score }<br></br>
+          START DATE: { item.start_date }<br></br>
+          END DATE: { item.end_date }<br></br>
+          POD1: { item.pod1 }<br></br>
+          POD2: { item.pod2 }<br></br>
+          POD3: { item.pod3 }<br></br>
+          POD4: { item.pod4 }<br></br>
+          POD5: { item.pod5 }<br></br>
+          POD6: { item.pod6 }<br></br>
+          POD7: { item.pod7 }<br></br>
+          POD8: { item.pod8 }<br></br>
+          POD9: { item.pod9 }<br></br>
+          POD10: { item.pod10 }<br></br>
+
+          <span>
+            <button
+              className="btn btn-secondary mr-2"
+              onClick={() => this.handleEdit(item)}
+            >
+              Edit
+            </button>
+            <button
+              className="btn btn-danger"
+              onClick={() => this.handleDelete(item)}
+            >
+              Delete
+            </button>
+          </span>
+        </li>
+      ));
+
+    } else if (this.state.selectedTab === "recipe") {
+      items_list = this.state.recipeList;
+    }
+
+    return items_list.map((item) => (
       // display list of all items
-
-      <li
-        key={item.id}
-        className="list-group-item d-flex justify-content-between align-items-center"
-      >
-        {item.name}
-        <span
-          className={`todo-title mr-2 ${
-            this.state.viewCompleted ? "completed-todo" : ""
-          }`}
-          title={item.experiment}
-        >
-          {item.experiment}
-
-        </span>
+      <li key={ ''+this.state.selectedTab+' '+ item.id } className="list-group-item d-flex justify-content-between align-items-center" >
+        ID: { item.id }<br></br>
+        { item.data }<br></br>
 
         <span>
           <button
             className="btn btn-secondary mr-2"
-            onClick={() => this.editItem(item)}
+            onClick={() => this.handleEdit(item)}
           >
             Edit
           </button>
@@ -190,35 +259,42 @@ class Dashboard extends Component {
 
       return (
         <main className="container">
-          <h1 className="text-white text-uppercase text-center my-4">Plant Science Dashboard</h1>
-          <div className="row">
-            <div className="col-md-6 col-sm-10 mx-auto p-0">
-              <div className="card p-3">
-                <div className="mb-4">
-                  <button
-                    className="btn btn-primary"
-                    onClick={this.createItem}
-                  >
-                    Add Device
-                  </button>
+          <div className="header">
+            <h1 className="title">AVA PLANT SCIENCE DATA PLATFORM</h1>
+            <div className="user_container">
+              <div className="user_img_frame">
+                <img className="user_img" src={user} alt="NO IMG!"/>
+              </div>
+              <p className="user_current"> Signed In As: { this.state.user } </p>
+                
+            </div>
+          </div>
+          <div className="dashboard">
+            <button className="btn btn-primary" title="Logout" onClick={this.logout.bind(this)}>
+                Logout
+            </button>
+            <div className="row">
+              <div className="col-md-6 col-sm-10 mx-auto p-0">
+                <div className="card p-3">
+                  <div className="mb-4">
+                    <button className="btn btn-primary" onClick={this.createItem} > Add Device </button>
+                  </div>
+                  {this.renderTabList()}
+                  <ul className="list-group list-group-flush border-top-0">
+                    {this.renderItems()}
+                  </ul>
                 </div>
-                {this.renderTabList()}
-                <ul className="list-group list-group-flush border-top-0">
-                  {this.renderItems()}
-                </ul>
               </div>
             </div>
-            <button className="btn btn-primary" title="Logout" onClick={this.logout.bind(this)}>
-              Logout
-            </button>
+
+            {this.state.modal ? (
+              <Modal
+                activeItem={this.state.activeItem}
+                toggle={this.toggle}
+                onSave={this.handleSubmit}
+              />
+            ) : null}
           </div>
-          {this.state.modal ? (
-            <Modal
-              activeItem={this.state.activeItem}
-              toggle={this.toggle}
-              onSave={this.handleSubmit}
-            />
-          ) : null}
         </main>
 
       );
