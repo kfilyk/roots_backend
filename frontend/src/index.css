@@ -4,6 +4,12 @@
 }
 
 @font-face {
+  font-family: "Brandon Grotesque Black";
+  src:url("./fonts/Brandon-Grotesque-Font-Family/brandon-grotesque-black-58a8a3e824392.otf");
+}
+
+
+@font-face {
   font-family: "Windsor D";
   src:url("./fonts/WindsorD.ttf");
 }
@@ -53,4 +59,25 @@ body {
 .dashboard {
   padding: 10px;
   background-color: #FFFFFF;
+}
+
+.nav {
+  text-align: center;
+  display:table;
+  width: 100%;
+  table-layout: fixed;
+  box-shadow: 0 5px 6px -6px #888888;
+  padding:5px;
+}
+.nav-link {
+  font-family: "Brandon Grotesque Black";
+  display:table-cell;
+  text-align: center;
+
+}
+
+.nav-link:hover {
+  transition:1s;
+  background-color: #DDDDDD;
+
 }

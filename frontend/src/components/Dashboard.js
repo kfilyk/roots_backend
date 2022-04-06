@@ -139,16 +139,16 @@ class Dashboard extends Component {
     return (
       <div className="nav nav-tabs">
         <span className={this.state.selectedTab === "device" ? "nav-link active" : "nav-link"} onClick={() => this.setState({ selectedTab: "device" })}>
-          Devices
+          DEVICES
         </span>
         <span className={this.state.selectedTab === "experiment" ? "nav-link active" : "nav-link"} onClick={() => this.setState({ selectedTab: "experiment" })}>
-          Experiments
+          EXPERIMENTS
         </span>
         <span className={this.state.selectedTab === "recipe" ? "nav-link active" : "nav-link"} onClick={() => this.setState({ selectedTab: "recipe" })}>
-          Recipes
+          RECIPES
         </span>
         <span className={this.state.selectedTab === "plant" ? "nav-link active" : "nav-link"} onClick={() => this.setState({ selectedTab: "plant" })}>
-          Plants
+          PLANTS
         </span>
       </div>
     );
@@ -268,21 +268,22 @@ class Dashboard extends Component {
               <p className="user_current"> Signed In As: { this.state.user } </p>
                 
             </div>
-          </div>
-          <div className="dashboard">
             <button className="btn btn-primary" title="Logout" onClick={this.logout.bind(this)}>
                 Logout
             </button>
+          </div>
+
+          <div className="dashboard">
+
             <div className="row">
               <div className="col-md-6 col-sm-10 mx-auto p-0">
                 <div className="card p-3">
-                  <div className="mb-4">
-                    <button className="btn btn-primary" onClick={this.createItem} > Add Device </button>
-                  </div>
                   {this.renderTabList()}
                   <ul className="list-group list-group-flush border-top-0">
                     {this.renderItems()}
                   </ul>
+                  <button className="btn btn-primary" onClick={this.createItem} > Add Device </button>
+
                 </div>
               </div>
             </div>
