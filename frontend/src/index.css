@@ -67,12 +67,14 @@ body {
   width: 100%;
   table-layout: fixed;
   box-shadow: 0 5px 6px -6px #888888;
-  padding:5px;
+  padding: 0px;
 }
 .nav-link {
   font-family: "Brandon Grotesque Black";
   display:table-cell;
   text-align: center;
+  margin: 0px;
+  padding: 0px;
 
 }
 

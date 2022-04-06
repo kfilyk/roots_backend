@@ -137,7 +137,7 @@ class Dashboard extends Component {
 
   renderTabList = () => {
     return (
-      <div className="nav nav-tabs">
+      <div className="nav">
         <span className={this.state.selectedTab === "device" ? "nav-link active" : "nav-link"} onClick={() => this.setState({ selectedTab: "device" })}>
           DEVICES
         </span>
