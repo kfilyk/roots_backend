@@ -262,15 +262,13 @@ class Dashboard extends Component {
           <div className="header">
             <h1 className="title">AVA PLANT SCIENCE DATA PLATFORM</h1>
             <div className="user_container">
+              <button id="logout" title="Logout" onClick={this.logout.bind(this)}>
+                <span>{ this.state.user }</span>
+              </button>
               <div className="user_img_frame">
                 <img className="user_img" src={user} alt="NO IMG!"/>
               </div>
-              <p className="user_current"> Signed In As: { this.state.user } </p>
-                
             </div>
-            <button className="btn btn-primary" title="Logout" onClick={this.logout.bind(this)}>
-                Logout
-            </button>
           </div>
 
           <div className="dashboard">

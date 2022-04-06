@@ -30,8 +30,10 @@
 /* right side */
 
 .user_container {
-  display:table-cell; 
-  vertical-align: middle; 
+  display: flex;
+  align-items:center;
+  flex-direction: row-reverse;
+  padding-right: 0.5em;
 }
 
 .user_current {
@@ -44,9 +46,32 @@
   height:100%;
 }
 
+.user_container > * {
+  height:30px;
+}
+
 .user_img{
   height:30px;
-  
+}
+
+#logout{
+  border: none;
+  background: none;
+  border-radius: 0.75em;
+  color: #B3896A;
+  font-family: "Brandon Grotesque";
+  text-transform: uppercase;
+  text-decoration: underline;
+  font-size: 1.25em;
+  width: 80px
+}
+
+#logout:hover span {
+  display: none
+}
+
+#logout:hover:before {
+  content: "Logout"
 }
 
 body {
