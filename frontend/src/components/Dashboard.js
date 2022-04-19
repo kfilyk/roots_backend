@@ -16,6 +16,7 @@ class Dashboard extends Component {
       deviceList: [],
       experimentList: [],
       recipeList: [],
+      plantList: [],
 
       modal: false,
       activeItem: {
@@ -48,6 +49,7 @@ class Dashboard extends Component {
           this.getDevices();
           this.getExperiments();
           this.getRecipes();
+          this.getPlants();
 
           console.log("IS TOKEN: ", window.localStorage.getItem("token"))
 
@@ -83,6 +85,13 @@ class Dashboard extends Component {
     axios
       .get("/api/recipes/")
       .then((res) => this.setState({ recipeList: res.data }))
+      .catch((err) => console.log(err));
+  };
+
+  getPlants = () => {
+    axios
+      .get("/api/plants/")
+      .then((res) => this.setState({ plantList: res.data }))
       .catch((err) => console.log(err));
   };
 
@@ -226,31 +235,58 @@ class Dashboard extends Component {
 
     } else if (this.state.selectedTab === "recipe") {
       items_list = this.state.recipeList;
+
+      return items_list.map((item) => (
+        // display list of all items
+        <li key={ ''+this.state.selectedTab+' '+ item.id } className="list-group-item d-flex justify-content-between align-items-center" >
+          ID: { item.id }<br></br>
+          Recipe Name: { item.name} We need to add this into Models.py<br></br>
+          Recipe Data: { item.data}<br></br>
+
+          <span>
+            <button
+              className="btn btn-secondary mr-2"
+              onClick={() => this.handleEdit(item)}
+            >
+              Edit
+            </button>
+            <button
+              className="btn btn-danger"
+              onClick={() => this.handleDelete(item)}
+            >
+              Delete
+            </button>
+          </span>
+        </li>
+      ));
+    } else if (this.state.selectedTab === "plant") {
+      items_list = this.state.plantList;
+
+      return items_list.map((item) => (
+        // display list of all items
+        <li key={ ''+this.state.selectedTab+' '+ item.id } className="list-group-item d-flex justify-content-between align-items-center" >
+                  ID: { item.id }<br></br>
+                  Plant Name: { item.name}<br></br>
+                  Plant Supplier: { item.supplier}<br></br>
+        
+                  <span>
+                    <button
+                      className="btn btn-secondary mr-2"
+                      onClick={() => this.handleEdit(item)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="btn btn-danger"
+                      onClick={() => this.handleDelete(item)}
+                    >
+                      Delete
+                    </button>
+                  </span>
+                </li>
+            ));
+          };
     }
-
-    return items_list.map((item) => (
-      // display list of all items
-      <li key={ ''+this.state.selectedTab+' '+ item.id } className="list-group-item d-flex justify-content-between align-items-center" >
-        ID: { item.id }<br></br>
-        { item.data }<br></br>
-
-        <span>
-          <button
-            className="btn btn-secondary mr-2"
-            onClick={() => this.handleEdit(item)}
-          >
-            Edit
-          </button>
-          <button
-            className="btn btn-danger"
-            onClick={() => this.handleDelete(item)}
-          >
-            Delete
-          </button>
-        </span>
-      </li>
-    ));
-  };
 
   render() {
       if (!this.state.isLoggedIn) {

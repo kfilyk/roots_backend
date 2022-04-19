@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Device, Experiment, Recipe
+from .models import Device, Experiment, Recipe, Plant
 from django.contrib.auth import get_user_model
 
 # https://www.digitalocean.com/community/tutorials/build-a-to-do-application-using-django-and-react
@@ -19,6 +19,12 @@ class RecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = ('id', 'data')
+
+class PlantSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Plant
+        fields = ('id', 'name', 'supplier')
+
 
 class CreateUserSerializer(serializers.ModelSerializer):
     username = serializers.CharField()

@@ -1,6 +1,6 @@
-from dashboard.models import Device, Experiment, Recipe
+from dashboard.models import Device, Experiment, Recipe, Plant
 from rest_framework import viewsets
-from .serializers import DeviceSerializer, ExperimentSerializer, CreateUserSerializer, UserSerializer, RecipeSerializer
+from .serializers import DeviceSerializer, ExperimentSerializer, CreateUserSerializer, UserSerializer, RecipeSerializer, PlantSerializer
 #from .models import Device
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
@@ -37,6 +37,14 @@ class RecipeView(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         return Recipe.objects.all()
+
+class PlantView(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated,) 
+    serializer_class = PlantSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        return Plant.objects.all()
 
 class CreateUserAPIView(CreateAPIView):
     serializer_class = CreateUserSerializer
