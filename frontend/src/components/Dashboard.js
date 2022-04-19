@@ -95,6 +95,12 @@ class Dashboard extends Component {
       .catch((err) => console.log(err));
   };
 
+  deleteEntry = (id) => {
+    axios
+      .delete(`/api/${this.state.selectedTab}s/${id}/`)
+      .catch((err) => console.log(err));
+  };
+
   toggle = () => {
     this.setState({ modal: !this.state.modal });
   };
@@ -183,12 +189,7 @@ class Dashboard extends Component {
             >
               Edit
             </button>
-            <button
-              className="btn btn-danger"
-              onClick={() => this.handleDelete(item)}
-            >
-              Delete
-            </button>
+            <button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) this.deleteEntry(item.id) }}> Delete </button>
           </span>
         </li>
       ));
@@ -223,12 +224,7 @@ class Dashboard extends Component {
             >
               Edit
             </button>
-            <button
-              className="btn btn-danger"
-              onClick={() => this.handleDelete(item)}
-            >
-              Delete
-            </button>
+            <button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) this.deleteEntry(item.id) }}> Delete </button>
           </span>
         </li>
       ));
@@ -250,12 +246,7 @@ class Dashboard extends Component {
             >
               Edit
             </button>
-            <button
-              className="btn btn-danger"
-              onClick={() => this.handleDelete(item)}
-            >
-              Delete
-            </button>
+            <button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) this.deleteEntry(item.id) }}> Delete </button>
           </span>
         </li>
       ));
@@ -276,12 +267,8 @@ class Dashboard extends Component {
                     >
                       Edit
                     </button>
-                    <button
-                      className="btn btn-danger"
-                      onClick={() => this.handleDelete(item)}
-                    >
-                      Delete
-                    </button>
+
+                    <button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) this.deleteEntry(item.id) }}> Delete </button>
                   </span>
                 </li>
             ));
