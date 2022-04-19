@@ -3,6 +3,7 @@
 import React, { Component, } from "react";
 import { Navigate } from "react-router-dom";
 import Modal from "./Modal";
+import Popup from './Popup';
 import axios from "axios";
 import user from './user_brown.png';
 
@@ -183,12 +184,6 @@ class Dashboard extends Component {
           MAC ADDRESS: { item.mac_address }<br></br>
   
           <span>
-            <button
-              className="btn btn-secondary mr-2"
-              onClick={() => this.handleEdit(item)}
-            >
-              Edit
-            </button>
             <button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) this.deleteEntry(item.id) }}> Delete </button>
           </span>
         </li>
@@ -261,13 +256,7 @@ class Dashboard extends Component {
                   Plant Supplier: { item.supplier}<br></br>
         
                   <span>
-                    <button
-                      className="btn btn-secondary mr-2"
-                      onClick={() => this.handleEdit(item)}
-                    >
-                      Edit
-                    </button>
-
+                  <Popup id={item.id} name={item.name} supplier={item.supplier}/>
                     <button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) this.deleteEntry(item.id) }}> Delete </button>
                   </span>
                 </li>
