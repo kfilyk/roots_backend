@@ -3,7 +3,7 @@
 import React, { Component, } from "react";
 import { Navigate } from "react-router-dom";
 import Modal from "./Modal";
-import Popup from './Popup';
+import ListPlantModal from './ListPlantModal';
 import axios from "axios";
 import user from './user_brown.png';
 
@@ -246,23 +246,11 @@ class Dashboard extends Component {
         </li>
       ));
     } else if (this.state.selectedTab === "plant") {
-      items_list = this.state.plantList;
 
-      return items_list.map((item) => (
-        // display list of all items
-        <li key={ ''+this.state.selectedTab+' '+ item.id } className="list-group-item d-flex justify-content-between align-items-center" >
-                  ID: { item.id }<br></br>
-                  Plant Name: { item.name}<br></br>
-                  Plant Supplier: { item.supplier}<br></br>
-        
-                  <span>
-                  <Popup id={item.id} name={item.name} supplier={item.supplier}/>
-                    <button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) this.deleteEntry(item.id) }}> Delete </button>
-                  </span>
-                </li>
-            ));
-          };
-    }
+      return(
+        <ListPlantModal plantList={this.state.plantList}/>
+      );
+    }}
 
   render() {
       if (!this.state.isLoggedIn) {
