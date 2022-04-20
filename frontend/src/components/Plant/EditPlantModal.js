@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import Popup from "reactjs-popup";
-import {Input, Label,} from "reactstrap";
 import axios from "axios";
 
 export default class CustomModal extends Component {
