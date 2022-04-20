@@ -42,10 +42,10 @@ class Device(models.Model):
 class Experiment(models.Model):
     id = models.AutoField(db_column='e_id', primary_key=True)  
     description = models.CharField(db_column='e_description', max_length=255, blank=True, null=True)
-    recipe = models.ForeignKey("Recipe", models.DO_NOTHING, db_column='e_recipe_id', blank=True, null=True)  
-    recipe_stage = models.IntegerField(db_column='e_recipe_stage', blank=True, null=True) # 
-    # recipe day
-    # experiment day
+    recipe_stage = models.ForeignKey("Stage", blank=True, null=True) # 
+    stages = models.CharField(db_column='e_stages', max_length=255, blank=True, null=True) # this is a list in the format = [stage_id_1, stage_id_2, stage_id_3 ... stage_id_n]
+    day = models.IntegerField(db_column='e_day', default = 0) 
+    stage_day = models.IntegerField(db_column='e_stage_day', default = 0) 
     device = models.ForeignKey("Device", models.DO_NOTHING, related_name='+', db_column='e_device_id', blank=True, null=True)  
     score = models.DecimalField(db_column='e_score', max_digits=2, decimal_places=2, blank=True, null=True) # score should be the averaged score of all pod Experiment Readings
     user = models.ForeignKey(settings.AUTH_USER_MODEL, db_column='e_user_id', on_delete=models.CASCADE, blank=True, null=True)  
@@ -67,32 +67,32 @@ class Experiment(models.Model):
         db_table = 'experiment'
 
 # many readings per experiment - is written by a user to the db in reference to an experiment
-class ExperimentReading(models.Model):
-    id = models.AutoField(db_column='er_id', primary_key=True)  
-    experiment = models.ForeignKey("Experiment", models.DO_NOTHING, db_column='er_experiment_id', blank=True, null=True)  # delete experiment readings if experiment is deleted
-    water_level = models.IntegerField(db_column='er_water_level', blank=True, null=True) 
-    reading_date = models.DateTimeField(db_column='er_reading_date', auto_now_add=True)
-    electrical_conductance = models.IntegerField(db_column='er_electrical_conductance', blank=True, null=True) 
-    reservoir_tds = models.IntegerField(db_column='er_reservoir_tds', blank=True, null=True) 
-    reservoir_ph = models.IntegerField(db_column='er_reservoir_ph', blank=True, null=True)  
-    recipe_stage = models.IntegerField(db_column='er_recipe_stage', blank=True, null=True) # 
-    temperature = models.DecimalField(db_column='er_temperature', max_digits=2, decimal_places=2, blank=True, null=True) 
-    humidity = models.DecimalField(db_column='er_humidity', max_digits=2, decimal_places=2, blank=True, null=True)
-    photo_link = models.CharField(db_column='er_photo_link', max_length=100, blank=True, null=True)
-    pod1_score = models.DecimalField(db_column='er_pod1_score', max_digits=2, decimal_places=2, blank=True, null=True)
-    pod2_score = models.DecimalField(db_column='er_pod2_score', max_digits=2, decimal_places=2, blank=True, null=True)
-    pod3_score = models.DecimalField(db_column='er_pod3_score', max_digits=2, decimal_places=2, blank=True, null=True)
-    pod4_score = models.DecimalField(db_column='er_pod4_score', max_digits=2, decimal_places=2, blank=True, null=True)
-    pod5_score = models.DecimalField(db_column='er_pod5_score', max_digits=2, decimal_places=2, blank=True, null=True)
-    pod6_score = models.DecimalField(db_column='er_pod6_score', max_digits=2, decimal_places=2, blank=True, null=True)
-    pod7_score = models.DecimalField(db_column='er_pod7_score', max_digits=2, decimal_places=2, blank=True, null=True)
-    pod8_score = models.DecimalField(db_column='er_pod8_score', max_digits=2, decimal_places=2, blank=True, null=True)
-    pod9_score = models.DecimalField(db_column='er_pod9_score', max_digits=2, decimal_places=2, blank=True, null=True)
-    pod10_score = models.DecimalField(db_column='er_pod10_score', max_digits=2, decimal_places=2, blank=True, null=True)
+class Reading(models.Model):
+    id = models.AutoField(db_column='r_id', primary_key=True)  
+    experiment = models.ForeignKey("Experiment", models.DO_NOTHING, db_column='r_experiment_id', blank=True, null=True)  # delete experiment readings if experiment is deleted
+    water_level = models.IntegerField(db_column='r_water_level', blank=True, null=True) 
+    reading_date = models.DateTimeField(db_column='r_reading_date', auto_now_add=True)
+    electrical_conductance = models.IntegerField(db_column='r_electrical_conductance', blank=True, null=True) 
+    reservoir_tds = models.IntegerField(db_column='r_reservoir_tds', blank=True, null=True) 
+    reservoir_ph = models.IntegerField(db_column='r_reservoir_ph', blank=True, null=True)  
+    recipe_stage = models.IntegerField(db_column='r_recipe_stage', blank=True, null=True) # 
+    temperature = models.DecimalField(db_column='r_temperature', max_digits=2, decimal_places=2, blank=True, null=True) 
+    humidity = models.DecimalField(db_column='r_humidity', max_digits=2, decimal_places=2, blank=True, null=True)
+    photo_link = models.CharField(db_column='r_photo_link', max_length=100, blank=True, null=True)
+    pod1_score = models.DecimalField(db_column='r_pod1_score', max_digits=2, decimal_places=2, blank=True, null=True)
+    pod2_score = models.DecimalField(db_column='r_pod2_score', max_digits=2, decimal_places=2, blank=True, null=True)
+    pod3_score = models.DecimalField(db_column='r_pod3_score', max_digits=2, decimal_places=2, blank=True, null=True)
+    pod4_score = models.DecimalField(db_column='r_pod4_score', max_digits=2, decimal_places=2, blank=True, null=True)
+    pod5_score = models.DecimalField(db_column='r_pod5_score', max_digits=2, decimal_places=2, blank=True, null=True)
+    pod6_score = models.DecimalField(db_column='r_pod6_score', max_digits=2, decimal_places=2, blank=True, null=True)
+    pod7_score = models.DecimalField(db_column='r_pod7_score', max_digits=2, decimal_places=2, blank=True, null=True)
+    pod8_score = models.DecimalField(db_column='r_pod8_score', max_digits=2, decimal_places=2, blank=True, null=True)
+    pod9_score = models.DecimalField(db_column='r_pod9_score', max_digits=2, decimal_places=2, blank=True, null=True)
+    pod10_score = models.DecimalField(db_column='r_pod10_score', max_digits=2, decimal_places=2, blank=True, null=True)
 
     class Meta:
         managed = True
-        db_table = 'experiment_reading'
+        db_table = 'reading'
 
 
 class Plant(models.Model): # types: basil, 
@@ -118,30 +118,25 @@ class Pod(models.Model):
         managed = True
         db_table = 'pod'
 
-class Recipe(models.Model):
-    id = models.CharField(db_column='r_id', primary_key=True, max_length=45) 
-    name = models.CharField(db_column='r_name', max_length=45, blank=True, null=True)  
-    data = models.CharField(db_column='r_data', max_length=45, blank=True, null=True)  
-    score = models.DecimalField(db_column='r_score', max_digits=2, decimal_places=2, blank=True, null=True)
-    #author = 
-    #stages = # list
-    #current_stage = 
+class Stage(models.Model): # generic periodic stage setting to be used by a recipe 
+    id = models.CharField(db_column='s_id', primary_key=True, max_length=45) # name of stage - not necessarily a nubmer
+    author = models.CharField(db_column='s_author', max_length=45) 
+    days = models.IntegerField(db_column = 's_days')
+    watering_cycles = models.IntegerField(db_column = 's_watering_cycles') # number of times per day watered
+    nutrient_cycles =  models.IntegerField(db_column = 's_nutrient_cycles') # number of times per day applied nutrients 
+    nutrient_type = models.CharField(db_column='s_nutrient_type', max_length=45, blank=True, null=True)   
+    # probably will need to specify nutrient application days
+    blue_intensity = models.IntegerField(db_column = 's_blue_intensity')
+    red_intensity = models.IntegerField(db_column = 's_red_intensity')
+    white1_intensity = models.IntegerField(db_column = 's_white1_intensity')
+    white2_intensity = models.IntegerField(db_column = 's_white2_intensity')
+    blue_hours = models.IntegerField(db_column = 's_blue_hours') # denotes hours left on per day
+    red_hours = models.IntegerField(db_column = 's_red_hours')
+    white1_hours = models.IntegerField(db_column = 's_white1_hours')
+    white2_hours = models.IntegerField(db_column = 's_white2_hours')
+    score = models.DecimalField(db_column='s_score', max_digits=2, decimal_places=2, blank=True, null=True)
 
     class Meta:
         managed = True
-        db_table = 'recipe'
+        db_table = 'stage'
 
-'''
-class RecipeStage(models.Model):
-    duration
-    nutrient_type = models.CharField(db_column='e_nutrients', max_length=45, blank=True, null=True)   
-    nutrient_amount
-    nutrient_application_days = # list
-    bluelight
-    redlight
-    whitelight
-'''
-
-
-
-## eventually build pod_reading here

@@ -224,7 +224,6 @@ class Dashboard extends Component {
       items_list = this.state.deviceList;
       experiment_list = this.state.experimentList;
 
-
       return items_list.map((item) => {
         
         const e = experiment_list.filter(experiment => experiment.id === item.experiment)[0] ?? {} // could also use ||
