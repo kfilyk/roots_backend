@@ -27,6 +27,7 @@ export default class CustomModal extends Component {
         //DO SOMETHING HERE???
       })
       .catch((err) => console.log(err));
+    this.props.getPlants()
   };
 
   handleChange (e) {

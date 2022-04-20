@@ -42,7 +42,7 @@ class Device(models.Model):
 class Experiment(models.Model):
     id = models.AutoField(db_column='e_id', primary_key=True)  
     description = models.CharField(db_column='e_description', max_length=255, blank=True, null=True)
-    recipe_stage = models.ForeignKey("Stage", blank=True, null=True) # 
+    recipe_stage = models.ForeignKey("Stage", models.DO_NOTHING, related_name='+', db_column='e_recipe_stage',blank=True, null=True) # 
     stages = models.CharField(db_column='e_stages', max_length=255, blank=True, null=True) # this is a list in the format = [stage_id_1, stage_id_2, stage_id_3 ... stage_id_n]
     day = models.IntegerField(db_column='e_day', default = 0) 
     stage_day = models.IntegerField(db_column='e_stage_day', default = 0) 
@@ -110,7 +110,7 @@ class Pod(models.Model):
     experiment = models.ForeignKey("Experiment", models.DO_NOTHING, db_column='po_experiment_id')  # pods created automatically when an experiment is created
     plant = models.ForeignKey(Plant, models.DO_NOTHING, db_column='po_plant_id', blank=True, null=True)  # type of plant for this pod 
     position = models.IntegerField(db_column = 'po_position', blank=True, null=True) # position of pod in byte
-    stage = models.IntegerField(db_column = 'po_state', default = 0) #planted = 0, sprouted = 1, true leaves = 3, harvested = 4, died early = 5
+    state = models.IntegerField(db_column = 'po_state', default = 0) #planted = 0, sprouted = 1, true leaves = 3, harvested = 4, died early = 5
     score = models.DecimalField(db_column='po_score', max_digits=2, decimal_places=2, blank=True, null=True) # Averaged score of Experiment Readings for a specific pod
     start_date = models.DateTimeField(db_column='po_start_date', blank=True, null=True) # start date is 
     end_date = models.DateTimeField(db_column='po_end_date', blank=True, null=True)  
@@ -130,10 +130,7 @@ class Stage(models.Model): # generic periodic stage setting to be used by a reci
     red_intensity = models.IntegerField(db_column = 's_red_intensity')
     white1_intensity = models.IntegerField(db_column = 's_white1_intensity')
     white2_intensity = models.IntegerField(db_column = 's_white2_intensity')
-    blue_hours = models.IntegerField(db_column = 's_blue_hours') # denotes hours left on per day
-    red_hours = models.IntegerField(db_column = 's_red_hours')
-    white1_hours = models.IntegerField(db_column = 's_white1_hours')
-    white2_hours = models.IntegerField(db_column = 's_white2_hours')
+    lights_on_hours = models.IntegerField(db_column = 's_lights_on_hours') # denotes hours left on per day
     score = models.DecimalField(db_column='s_score', max_digits=2, decimal_places=2, blank=True, null=True)
 
     class Meta:

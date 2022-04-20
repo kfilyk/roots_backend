@@ -32,6 +32,7 @@ class Dashboard extends Component {
         experiment: "",
         is_online: false,
       },
+      
     };
   }
 
@@ -326,7 +327,7 @@ class Dashboard extends Component {
       return(
         <>
           <ListPlantModal plantList={this.state.plantList}/>
-          <AddPlantModal></AddPlantModal>
+          <AddPlantModal></AddPlantModal> 
         </>
       );
     }}

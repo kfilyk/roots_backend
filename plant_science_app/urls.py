@@ -26,7 +26,7 @@ from rest_framework.response import Response
 router = routers.DefaultRouter()
 router.register(r'devices', views.DeviceView, 'dashboard')
 router.register(r'experiments', views.ExperimentView, 'dashboard')
-router.register(r'recipes', views.RecipeView, 'dashboard')
+router.register(r'stages', views.StageView, 'dashboard')
 router.register(r'plants', views.PlantView, 'dashboard')
 
 urlpatterns = [

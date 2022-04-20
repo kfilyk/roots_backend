@@ -1,6 +1,6 @@
-from dashboard.models import Device, Experiment, Recipe, Plant
+from dashboard.models import Device, Experiment, Stage, Plant
 from rest_framework import viewsets
-from .serializers import DeviceSerializer, ExperimentSerializer, CreateUserSerializer, UserSerializer, RecipeSerializer, PlantSerializer
+from .serializers import DeviceSerializer, ExperimentSerializer, CreateUserSerializer, UserSerializer, StageSerializer, PlantSerializer
 #from .models import Device
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
@@ -30,13 +30,13 @@ class ExperimentView(viewsets.ModelViewSet):
         user = self.request.user
         return Experiment.objects.filter(user = user.id)
 
-class RecipeView(viewsets.ModelViewSet):
+class StageView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
-    serializer_class = RecipeSerializer
+    serializer_class = StageSerializer
 
     def get_queryset(self):
         user = self.request.user
-        return Recipe.objects.all()
+        return Stage.objects.all()
 
 class PlantView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
