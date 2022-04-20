@@ -30,6 +30,7 @@
 /* right side */
 
 .user_container {
+  font-family: "Brandon Grotesque Black";
   display: flex;
   align-items:center;
   flex-direction: row-reverse;
@@ -55,6 +56,7 @@
 }
 
 #logout{
+  transition:0.5s;
   border: none;
   background: none;
   border-radius: 0.75em;
@@ -67,10 +69,12 @@
 }
 
 #logout:hover span {
+  transition:0.5s;
   display: none
 }
 
 #logout:hover:before {
+  transition:0.5s;
   content: "Logout"
 }
 
@@ -95,16 +99,73 @@ body {
   padding: 0px;
 }
 .nav-link {
+  transition:0.5s;
   font-family: "Brandon Grotesque Black";
   display:table-cell;
   text-align: center;
   margin: 0px;
-  padding: 0px;
+  padding: 5px;
 
 }
 
 .nav-link:hover {
-  transition:1s;
-  background-color: #DDDDDD;
+  transition:0.5s;
+  box-shadow: 0 5px 6px -6px #555555;
 
+}
+
+.modal {
+  position: fixed; /* Stay in place */
+  z-index: 10; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+.modal_body {
+  background-color: #fefefe;
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; /* Could be more or less, depending on screen size */
+}
+
+ul {
+  margin:0px;
+  padding:0px;
+}
+
+.item {
+  display: table;
+  width:100%;
+  padding:10px;
+}
+.edit {
+  padding:10px;
+  display: table-cell;
+}
+
+.info {
+  padding:10px;
+  display: table-cell;
+}
+
+.device_name {
+  font-weight: bolder;
+}
+
+.experiment_container {
+  display: table-cell;
+  color: #161616;
+  padding:10px;
+}
+
+.experiment {
+  margin:10px;
+  padding:10px;
+  border-radius: 10px;
 }

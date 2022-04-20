@@ -6,6 +6,12 @@ import Modal from "./Modal";
 import axios from "axios";
 import user from './user_brown.png';
 
+function getColor(value){
+  // hue value from 0 to 360
+  var hue=(value*120).toString(10); 
+  return ["hsl(",hue,", 50%, 50%)"].join("");
+}
+
 class Dashboard extends Component {
   constructor(props) {
     super(props);
@@ -16,6 +22,7 @@ class Dashboard extends Component {
       deviceList: [],
       experimentList: [],
       recipeList: [],
+      plantList: [],
 
       modal: false,
       activeItem: {
@@ -26,7 +33,7 @@ class Dashboard extends Component {
     };
   }
 
-  // runs after all components mounted on client side
+  // runs before rendering mounted on client side
   componentDidMount() {
     // if no token found, redirect to login
     if (!window.localStorage.getItem("token")) {
@@ -45,9 +52,10 @@ class Dashboard extends Component {
             console.log("STATUS 200 (SUCCESSFUL): ", res)
           }
           this.setState({ user: res.data.username })
-          this.getDevices();
           this.getExperiments();
+          this.getDevices();
           this.getRecipes();
+          this.getPlants();
 
           console.log("IS TOKEN: ", window.localStorage.getItem("token"))
 
@@ -64,7 +72,6 @@ class Dashboard extends Component {
   getDevices = () => {
     axios
       .get("/api/devices/")
-      //.then((res) => console.log(res.data))
       .then((res) => {
         console.log("DEVICE RESPONSE: ", res)
         this.setState({ deviceList: res.data })
@@ -86,28 +93,81 @@ class Dashboard extends Component {
       .catch((err) => console.log(err));
   };
 
+  getPlants = () => {
+    axios
+      .get("/api/plants/")
+      .then((res) => this.setState({ plantList: res.data }))
+      .catch((err) => console.log(err));
+  };
+
   toggle = () => {
     this.setState({ modal: !this.state.modal });
   };
 
   handleSubmit = (item) => {
     this.toggle();
-    if (item.id) {
+    if (this.state.selectedTab === 'device') {
+      if (item.id) {
+        axios
+          .put(`/api/devices/${item.id}/`, item)
+          .then((res) => this.getDevices());
+        return;
+      }
       axios
-        .put(`/api/devices/${item.id}/`, item)
+        .post("/api/devices/", item)
         .then((res) => this.getDevices());
-      return;
+    } else if(this.state.selectedTab ==='experiment') {
+      if (item.id) {
+        axios
+          .put(`/api/experiments/${item.id}/`, item)
+          .then((res) => this.getExperiments());
+        return;
+      }
+      axios
+        .post("/api/experiments/", item)
+        .then((res) => this.getExperiments());      
+    } else if(this.state.selectedTab ==='recipe') {
+      if (item.id) {
+        axios
+          .put(`/api/recipes/${item.id}/`, item)
+          .then((res) => this.getRecipes());
+        return;
+      }
+      axios
+        .post("/api/recipes/", item)
+        .then((res) => this.getRecipes());         
+    } else if(this.state.selectedTab ==='plant') {
+      if (item.id) {
+        axios
+          .put(`/api/plants/${item.id}/`, item)
+          .then((res) => this.getPlants());
+        return;
+      }
+      axios
+        .post("/api/plants/", item)
+        .then((res) => this.getPlants());         
     }
-    axios
-      .post("/api/devices/", item)
-      .then((res) => this.getDevices());
   };
 
   handleDelete = (item) => {
     //console.log(item.type)
-    axios
+    if (this.state.selectedTab === 'device') {
+      axios
       .delete(`/api/devices/${item.id}/`)
       .then((res) => this.getDevices());
+    } else if(this.state.selectedTab ==='experiment') {
+      axios
+      .delete(`/api/experiments/${item.id}/`)
+      .then((res) => this.getDevices());
+    } else if(this.state.selectedTab ==='recipe') {
+      axios
+      .delete(`/api/recipes/${item.id}/`, item)
+      .then((res) => this.getExperiments());      
+    } else if(this.state.selectedTab ==='plant') {
+      axios
+      .delete(`/api/plants/${item.id}/`, item)
+      .then((res) => this.getPlants());      
+    }
   };
 
   createItem = () => {
@@ -155,34 +215,52 @@ class Dashboard extends Component {
   };
 
   renderItems = () => {
+
     let items_list = [];
+    let experiment_list = [];
     if (this.state.selectedTab === "device"){
       items_list = this.state.deviceList;
+      experiment_list = this.state.experimentList;
 
-      return items_list.map((item) => (
-        // display list of all items
-        <li key={ ''+this.state.selectedTab+' '+ item.id } className="list-group-item d-flex justify-content-between align-items-center" >
-          { item.id }: "{ item.name }"<br></br>
-          REGISTRATION_DATE: { item.registration_date }<br></br>
-          EXPERIMENT: { item.experiment }<br></br>
-          MAC ADDRESS: { item.mac_address }<br></br>
+
+      return items_list.map((item) => {
+        
+        const e = experiment_list.filter(experiment => experiment.id === item.experiment)[0] ?? {} // could also use ||
+        // red to green: FF0000 -> 00FF00
+
+        let hsl = getColor(e.score)
   
-          <span>
-            <button
-              className="btn btn-secondary mr-2"
+        // display list of all items
+        return <li key={ ''+this.state.selectedTab+' '+ item.id } className="item">
+          <div className="edit">
+            <button className="btn btn-secondary mr-2"
               onClick={() => this.handleEdit(item)}
             >
               Edit
             </button>
-            <button
-              className="btn btn-danger"
+            <button className="btn btn-danger"
               onClick={() => this.handleDelete(item)}
             >
               Delete
             </button>
-          </span>
+          </div>
+          <div className="info">
+            <div className="device_name">{ item.name }</div>
+            <div>Registered: { item.registration_date }</div>
+            <div> Mac: { item.mac_address }</div>
+          </div>
+          <div className="experiment_containter">
+            <div className="experiment" style= {{border: 'solid '+hsl+' 6px'}} >
+              <div>{ e.description }</div>
+              <div>{ e.start_date } -> { e.end_date }</div>
+              <div>{ e.score } </div>
+            </div>
+
+          </div>
+
         </li>
-      ));
+
+      });
 
     } else if (this.state.selectedTab === "experiment") {
       items_list = this.state.experimentList;
@@ -226,30 +304,55 @@ class Dashboard extends Component {
 
     } else if (this.state.selectedTab === "recipe") {
       items_list = this.state.recipeList;
+
+      return items_list.map((item) => (
+        // display list of all items
+        <li key={ ''+this.state.selectedTab+' '+ item.id } className="list-group-item d-flex justify-content-between align-items-center" >
+          ID: { item.id }<br></br>
+          { item.data }<br></br>
+
+          <span>
+            <button
+              className="btn btn-secondary mr-2"
+              onClick={() => this.handleEdit(item)}
+            >
+              Edit
+            </button>
+            <button
+              className="btn btn-danger"
+              onClick={() => this.handleDelete(item)}
+            >
+              Delete
+            </button>
+          </span>
+        </li>
+      ));
+    } else if (this.state.selectedTab === "plant") {
+      items_list = this.state.plantList;
+
+      return items_list.map((item) => (
+        // display list of all items
+        <li key={ ''+this.state.selectedTab+' '+ item.id } className="list-group-item d-flex justify-content-between align-items-center" >
+          ID: { item.id }<br></br>
+          { item.data }<br></br>
+
+          <span>
+            <button
+              className="btn btn-secondary mr-2"
+              onClick={() => this.handleEdit(item)}
+            >
+              Edit
+            </button>
+            <button
+              className="btn btn-danger"
+              onClick={() => this.handleDelete(item)}
+            >
+              Delete
+            </button>
+          </span>
+        </li>
+      ));
     }
-
-    return items_list.map((item) => (
-      // display list of all items
-      <li key={ ''+this.state.selectedTab+' '+ item.id } className="list-group-item d-flex justify-content-between align-items-center" >
-        ID: { item.id }<br></br>
-        { item.data }<br></br>
-
-        <span>
-          <button
-            className="btn btn-secondary mr-2"
-            onClick={() => this.handleEdit(item)}
-          >
-            Edit
-          </button>
-          <button
-            className="btn btn-danger"
-            onClick={() => this.handleDelete(item)}
-          >
-            Delete
-          </button>
-        </span>
-      </li>
-    ));
   };
 
   render() {
@@ -280,17 +383,18 @@ class Dashboard extends Component {
                   <ul className="list-group list-group-flush border-top-0">
                     {this.renderItems()}
                   </ul>
-                  <button className="btn btn-primary" onClick={this.createItem} > Add Device </button>
+                  <button className="btn btn-primary" onClick={this.createItem} > Add {this.state.selectedTab} </button>
 
                 </div>
               </div>
             </div>
 
             {this.state.modal ? (
-              <Modal
-                activeItem={this.state.activeItem}
-                toggle={this.toggle}
-                onSave={this.handleSubmit}
+              <Modal 
+              activeItem={this.state.activeItem}
+              toggle={this.toggle}
+              onSave={this.handleSubmit}
+              selectedTab={this.state.selectedTab}
               />
             ) : null}
           </div>
