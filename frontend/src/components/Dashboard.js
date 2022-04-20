@@ -3,6 +3,7 @@
 import React, { Component, } from "react";
 import { Navigate } from "react-router-dom";
 import Modal from "./Modal";
+import ListPlantModal from './ListPlantModal';
 import axios from "axios";
 import user from './user_brown.png';
 
@@ -97,6 +98,12 @@ class Dashboard extends Component {
     axios
       .get("/api/plants/")
       .then((res) => this.setState({ plantList: res.data }))
+      .catch((err) => console.log(err));
+  };
+
+  deleteEntry = (id) => {
+    axios
+      .delete(`/api/${this.state.selectedTab}s/${id}/`)
       .catch((err) => console.log(err));
   };
 
@@ -258,6 +265,9 @@ class Dashboard extends Component {
 
           </div>
 
+          <span>
+            <button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) this.deleteEntry(item.id) }}> Delete </button>
+          </span>
         </li>
 
       });
@@ -292,12 +302,7 @@ class Dashboard extends Component {
             >
               Edit
             </button>
-            <button
-              className="btn btn-danger"
-              onClick={() => this.handleDelete(item)}
-            >
-              Delete
-            </button>
+            <button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) this.deleteEntry(item.id) }}> Delete </button>
           </span>
         </li>
       ));
@@ -309,7 +314,8 @@ class Dashboard extends Component {
         // display list of all items
         <li key={ ''+this.state.selectedTab+' '+ item.id } className="list-group-item d-flex justify-content-between align-items-center" >
           ID: { item.id }<br></br>
-          { item.data }<br></br>
+          Recipe Name: { item.name}<br></br>
+          Recipe Data: { item.data}<br></br>
 
           <span>
             <button
@@ -318,42 +324,15 @@ class Dashboard extends Component {
             >
               Edit
             </button>
-            <button
-              className="btn btn-danger"
-              onClick={() => this.handleDelete(item)}
-            >
-              Delete
-            </button>
+            <button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) this.deleteEntry(item.id) }}> Delete </button>
           </span>
         </li>
       ));
     } else if (this.state.selectedTab === "plant") {
-      items_list = this.state.plantList;
-
-      return items_list.map((item) => (
-        // display list of all items
-        <li key={ ''+this.state.selectedTab+' '+ item.id } className="list-group-item d-flex justify-content-between align-items-center" >
-          ID: { item.id }<br></br>
-          { item.data }<br></br>
-
-          <span>
-            <button
-              className="btn btn-secondary mr-2"
-              onClick={() => this.handleEdit(item)}
-            >
-              Edit
-            </button>
-            <button
-              className="btn btn-danger"
-              onClick={() => this.handleDelete(item)}
-            >
-              Delete
-            </button>
-          </span>
-        </li>
-      ));
-    }
-  };
+      return(
+        <ListPlantModal plantList={this.state.plantList}/>
+      );
+    }}
 
   render() {
       if (!this.state.isLoggedIn) {

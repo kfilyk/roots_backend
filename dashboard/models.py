@@ -119,7 +119,8 @@ class Pod(models.Model):
         db_table = 'pod'
 
 class Recipe(models.Model):
-    id = models.CharField(db_column='r_id', primary_key=True, max_length=45)  
+    id = models.CharField(db_column='r_id', primary_key=True, max_length=45) 
+    name = models.CharField(db_column='r_name', max_length=45, blank=True, null=True)  
     data = models.CharField(db_column='r_data', max_length=45, blank=True, null=True)  
     score = models.DecimalField(db_column='r_score', max_digits=2, decimal_places=2, blank=True, null=True)
     #author = 

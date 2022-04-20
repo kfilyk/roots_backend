@@ -23,7 +23,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 class PlantSerializer(serializers.ModelSerializer):
     class Meta:
         model = Plant
-        fields = ('id', 'data')
+        fields = ('id', 'name', 'supplier')
 
 class CreateUserSerializer(serializers.ModelSerializer):
     username = serializers.CharField()

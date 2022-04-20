@@ -46,7 +46,6 @@ class PlantView(viewsets.ModelViewSet):
         user = self.request.user
         return Plant.objects.all()
 
-
 class CreateUserAPIView(CreateAPIView):
     serializer_class = CreateUserSerializer
     permission_classes = [AllowAny]
