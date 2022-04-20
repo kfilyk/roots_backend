@@ -3,7 +3,8 @@
 import React, { Component, } from "react";
 import { Navigate } from "react-router-dom";
 import Modal from "./Modal";
-import ListPlantModal from './ListPlantModal';
+import ListPlantModal from './Plant/ListPlantModal';
+import AddPlantModal from './Plant/AddPlantModal';
 import axios from "axios";
 import user from './user_brown.png';
 
@@ -98,12 +99,6 @@ class Dashboard extends Component {
     axios
       .get("/api/plants/")
       .then((res) => this.setState({ plantList: res.data }))
-      .catch((err) => console.log(err));
-  };
-
-  deleteEntry = (id) => {
-    axios
-      .delete(`/api/${this.state.selectedTab}s/${id}/`)
       .catch((err) => console.log(err));
   };
 
@@ -330,7 +325,10 @@ class Dashboard extends Component {
       ));
     } else if (this.state.selectedTab === "plant") {
       return(
-        <ListPlantModal plantList={this.state.plantList}/>
+        <>
+          <ListPlantModal plantList={this.state.plantList}/>
+          <AddPlantModal></AddPlantModal>
+        </>
       );
     }}
 

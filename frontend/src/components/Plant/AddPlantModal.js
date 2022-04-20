@@ -7,21 +7,22 @@ export default class CustomModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        id: this.props.id,
-        name: this.props.name,
-        supplier: this.props.supplier
+        name: '',
+        supplier: ''
     };
 
-    this.editEntry = this.editEntry.bind(this);
+    this.addEntry = this.addEntry.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
 
   addEntry(e) {
-    
-    axios
-      .post(`/api/plants/${this.state.id}/`, 
+    if (window.localStorage.getItem("token")) {
+      // if a token is found, set the authorization and attempt to vlaidate it against the server
+      axios.defaults.headers.common.Authorization = `Token ${window.localStorage.getItem("token")}`;
+
+      axios
+      .post(`/api/plants/`, 
         { 
-            id: `${this.state.id}`,
             name: `${this.state.name}`,
             supplier: `${this.state.supplier}`
         })
@@ -29,6 +30,10 @@ export default class CustomModal extends Component {
         //DO SOMETHING HERE???
       })
       .catch((err) => console.log(err));
+    } else {
+      console.log("Error with ADD")
+    }
+
   };
 
   handleChange (e) {
@@ -49,7 +54,6 @@ export default class CustomModal extends Component {
             </button>
             <div className="header"> Add New Plant </div>
             <div className="content">
-            <br></br>
             <label> Name: </label>
                 <input name="name" value={this.state.name} onChange={this.handleChange} />
             <br></br>
@@ -57,7 +61,7 @@ export default class CustomModal extends Component {
                 <input name="supplier" value={this.state.supplier} onChange={this.handleChange} />
             </div>
             <div className="actions">
-              <button onClick={this.editEntry}>Add New Plant</button>
+              <button onClick={this.addEntry}>Save</button>
             </div>
           </div>
         )}

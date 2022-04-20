@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import EditPlantModal from "./EditPlantModal";
+import axios from "axios";
 
 export default class CustomModal extends Component {
   constructor(props) {
@@ -8,7 +9,15 @@ export default class CustomModal extends Component {
         plantList: this.props.plantList
     };
 
+    this.deleteEntry = this.deleteEntry.bind(this);
+
   }
+
+  deleteEntry = (id) => {
+    axios
+      .delete(`/api/plants/${id}/`)
+      .catch((err) => console.log(err));
+  };
 
   render() {
     return (
