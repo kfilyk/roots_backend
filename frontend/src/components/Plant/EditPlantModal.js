@@ -13,6 +13,8 @@ export default class CustomModal extends Component {
 
     this.editEntry = this.editEntry.bind(this);
     this.handleChange = this.handleChange.bind(this);
+
+
   }
 
   editEntry(e) {
@@ -24,10 +26,9 @@ export default class CustomModal extends Component {
             supplier: `${this.state.supplier}`
         })
       .then((res) => {
-        //DO SOMETHING HERE???
+        this.props.setPlant()
       })
       .catch((err) => console.log(err));
-    this.props.getPlants()
   };
 
   handleChange (e) {

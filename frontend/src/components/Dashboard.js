@@ -34,6 +34,11 @@ class Dashboard extends Component {
       },
       
     };
+    this.setPlant = this.setPlant.bind(this)
+  }
+
+  setPlant(){
+    this.getPlants()
   }
 
   // runs before rendering mounted on client side
@@ -326,7 +331,7 @@ class Dashboard extends Component {
     } else if (this.state.selectedTab === "plant") {
       return(
         <>
-          <ListPlantModal plantList={this.state.plantList}/>
+          <ListPlantModal setPlant={this.setPlant} plantList={this.state.plantList}/>
           <AddPlantModal></AddPlantModal> 
         </>
       );

@@ -10,7 +10,6 @@ export default class CustomModal extends Component {
     };
 
     this.deleteEntry = this.deleteEntry.bind(this);
-
   }
 
   deleteEntry = (id) => {
@@ -29,8 +28,9 @@ export default class CustomModal extends Component {
                   Plant Supplier: { item.supplier}<br></br>
         
                   <span>
-                  <EditPlantModal id={item.id} name={item.name} supplier={item.supplier}/>
+                  <EditPlantModal setPlant={this.props.setPlant} id={item.id} name={item.name} supplier={item.supplier}/>
                     <button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) this.deleteEntry(item.id) }}> Delete </button>
+                    {/* <button onClick={() => {this.props.setPlantList("HI")}}> TEST </button> */}
                   </span>
                 </li>
       ))
