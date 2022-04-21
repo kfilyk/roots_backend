@@ -4,6 +4,8 @@ import React, { Component, } from "react";
 import { Navigate } from "react-router-dom";
 import ListPlantModal from './Plant/ListPlantModal';
 import AddPlantModal from './Plant/AddPlantModal';
+import ListStageModal from './Stage/ListStageModal';
+import AddStageModal from './Stage/AddStageModal';
 import axios from "axios";
 import user from './user_brown.png';
 
@@ -34,6 +36,7 @@ class Dashboard extends Component {
       },
     };
     this.updatePlantList = this.updatePlantList.bind(this)
+    this.getStages = this.getStages.bind(this)
   }
 
   updatePlantList(){
@@ -302,26 +305,12 @@ class Dashboard extends Component {
       ));
 
     } else if (this.state.selectedTab === "stage") {
-      items_list = this.state.stageList;
-
-      return items_list.map((item) => (
-        // display list of all items
-        <li key={ ''+this.state.selectedTab+' '+ item.id } className="list-group-item d-flex justify-content-between align-items-center" >
-          ID: { item.id }<br></br>
-          Stage Name: { item.name}<br></br>
-          Stage Data: { item.data}<br></br>
-
-          <span>
-            <button
-              className="btn btn-secondary mr-2"
-              onClick={() => this.handleEdit(item)}
-            >
-              Edit
-            </button>
-            <button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) this.deleteEntry(item.id) }}> Delete </button>
-          </span>
-        </li>
-      ));
+      return(
+        <>
+          <ListStageModal getStages={this.getStages} stageList={this.state.stageList}/>
+          <AddStageModal getStages={this.getStages}></AddStageModal> 
+        </>
+      );
     } else if (this.state.selectedTab === "plant") {
       return(
         <>

@@ -123,7 +123,7 @@ class Stage(models.Model): # generic periodic stage setting to be used by a reci
     author = models.CharField(db_column='s_author', max_length=45) 
     days = models.IntegerField(db_column = 's_days')
     watering_cycles = models.IntegerField(db_column = 's_watering_cycles') # number of times per day watered
-    nutrient_cycles =  models.IntegerField(db_column = 's_nutrient_cycles') # number of times per day applied nutrients 
+    watering_cycles =  models.IntegerField(db_column = 's_nutrient_cycles') # number of times per day applied nutrients 
     nutrient_type = models.CharField(db_column='s_nutrient_type', max_length=45, blank=True, null=True)   
     # probably will need to specify nutrient application days
     blue_intensity = models.IntegerField(db_column = 's_blue_intensity')
@@ -136,4 +136,3 @@ class Stage(models.Model): # generic periodic stage setting to be used by a reci
     class Meta:
         managed = True
         db_table = 'stage'
-
