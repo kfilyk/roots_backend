@@ -333,7 +333,7 @@ class Dashboard extends Component {
       return(
         <>
           <ListPlantModal updatePlantList={this.updatePlantList} plantList={this.state.plantList}/>
-          <AddPlantModal></AddPlantModal> 
+          <AddPlantModal updatePlantList={this.updatePlantList}></AddPlantModal> 
         </>
       );
     }}

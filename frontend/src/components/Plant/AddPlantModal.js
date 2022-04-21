@@ -1,39 +1,32 @@
 import React, { Component } from "react";
 import Popup from "reactjs-popup";
-import {Input, Label,} from "reactstrap";
 import axios from "axios";
 
 export default class CustomModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        name: '',
-        supplier: ''
+        name: 'defaultPlantName',
+        supplier: 'defaultSupplierName'
     };
 
     this.addEntry = this.addEntry.bind(this);
     this.handleChange = this.handleChange.bind(this);
+
+
   }
 
   addEntry(e) {
-    if (window.localStorage.getItem("token")) {
-      // if a token is found, set the authorization and attempt to vlaidate it against the server
-      axios.defaults.headers.common.Authorization = `Token ${window.localStorage.getItem("token")}`;
-
-      axios
+    axios
       .post(`/api/plants/`, 
         { 
             name: `${this.state.name}`,
             supplier: `${this.state.supplier}`
         })
       .then((res) => {
-        //DO SOMETHING HERE???
+        this.props.updatePlantList()
       })
       .catch((err) => console.log(err));
-    } else {
-      console.log("Error with ADD")
-    }
-
   };
 
   handleChange (e) {
@@ -43,7 +36,7 @@ export default class CustomModal extends Component {
   render() {
     return (
       <Popup
-        trigger={<button className="button"> Add </button>}
+        trigger={<button className="button"> Add New Plant </button>}
         modal
         nested
       >
@@ -54,6 +47,7 @@ export default class CustomModal extends Component {
             </button>
             <div className="header"> Add New Plant </div>
             <div className="content">
+            <br></br>
             <label> Name: </label>
                 <input name="name" value={this.state.name} onChange={this.handleChange} />
             <br></br>
@@ -61,7 +55,10 @@ export default class CustomModal extends Component {
                 <input name="supplier" value={this.state.supplier} onChange={this.handleChange} />
             </div>
             <div className="actions">
-              <button onClick={this.addEntry}>Save</button>
+              <button onClick={() => {
+              this.addEntry()
+              close();
+            }}>Save</button>
             </div>
           </div>
         )}
