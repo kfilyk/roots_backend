@@ -23,7 +23,7 @@ class Dashboard extends Component {
       selectedTab: "device",
       deviceList: [],
       experimentList: [],
-      recipeList: [],
+      stageList: [],
       plantList: [],
 
       modal: false,
@@ -96,7 +96,7 @@ class Dashboard extends Component {
   getStages = () => {
     axios
       .get("/api/stages/")
-      .then((res) => this.setState({ recipeList: res.data }))
+      .then((res) => this.setState({ stageList: res.data }))
       .catch((err) => console.log(err));
   };
 
@@ -128,16 +128,16 @@ class Dashboard extends Component {
       axios
         .post("/api/experiments/", item)
         .then((res) => this.getExperiments());      
-    } else if(this.state.selectedTab ==='recipe') {
+    } else if(this.state.selectedTab ==='stage') {
       if (item.id) {
         axios
-          .put(`/api/recipes/${item.id}/`, item)
-          .then((res) => this.getRecipes());
+          .put(`/api/stages/${item.id}/`, item)
+          .then((res) => this.getStages());
         return;
       }
       axios
-        .post("/api/recipes/", item)
-        .then((res) => this.getRecipes());         
+        .post("/api/stages/", item)
+        .then((res) => this.getStages());         
     } else if(this.state.selectedTab ==='plant') {
       if (item.id) {
         axios
@@ -161,9 +161,9 @@ class Dashboard extends Component {
       axios
       .delete(`/api/experiments/${item.id}/`)
       .then((res) => this.getDevices());
-    } else if(this.state.selectedTab ==='recipe') {
+    } else if(this.state.selectedTab ==='stage') {
       axios
-      .delete(`/api/recipes/${item.id}/`, item)
+      .delete(`/api/stages/${item.id}/`, item)
       .then((res) => this.getExperiments());      
     } else if(this.state.selectedTab ==='plant') {
       axios
@@ -206,8 +206,8 @@ class Dashboard extends Component {
         <span className={this.state.selectedTab === "experiment" ? "nav-link active" : "nav-link"} onClick={() => this.setState({ selectedTab: "experiment" })}>
           EXPERIMENTS
         </span>
-        <span className={this.state.selectedTab === "recipe" ? "nav-link active" : "nav-link"} onClick={() => this.setState({ selectedTab: "recipe" })}>
-          RECIPES
+        <span className={this.state.selectedTab === "stage" ? "nav-link active" : "nav-link"} onClick={() => this.setState({ selectedTab: "stage" })}>
+          STAGES
         </span>
         <span className={this.state.selectedTab === "plant" ? "nav-link active" : "nav-link"} onClick={() => this.setState({ selectedTab: "plant" })}>
           PLANTS
@@ -301,15 +301,15 @@ class Dashboard extends Component {
         </li>
       ));
 
-    } else if (this.state.selectedTab === "recipe") {
-      items_list = this.state.recipeList;
+    } else if (this.state.selectedTab === "stage") {
+      items_list = this.state.stageList;
 
       return items_list.map((item) => (
         // display list of all items
         <li key={ ''+this.state.selectedTab+' '+ item.id } className="list-group-item d-flex justify-content-between align-items-center" >
           ID: { item.id }<br></br>
-          Recipe Name: { item.name}<br></br>
-          Recipe Data: { item.data}<br></br>
+          Stage Name: { item.name}<br></br>
+          Stage Data: { item.data}<br></br>
 
           <span>
             <button
