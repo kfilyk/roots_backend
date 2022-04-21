@@ -42,7 +42,7 @@ class Device(models.Model):
 class Experiment(models.Model):
     id = models.AutoField(db_column='e_id', primary_key=True)  
     description = models.CharField(db_column='e_description', max_length=255, blank=True, null=True)
-    recipe_stage = models.ForeignKey("Stage", models.DO_NOTHING, related_name='+', db_column='e_recipe_stage',blank=True, null=True) # 
+    current_stage = models.ForeignKey("Stage", models.DO_NOTHING, related_name='+', db_column='e_current_stage',blank=True, null=True) # 
     stages = models.CharField(db_column='e_stages', max_length=255, blank=True, null=True) # this is a list in the format = [stage_id_1, stage_id_2, stage_id_3 ... stage_id_n]
     day = models.IntegerField(db_column='e_day', default = 0) 
     stage_day = models.IntegerField(db_column='e_stage_day', default = 0) 
