@@ -61,7 +61,7 @@ class Dashboard extends Component {
           this.setState({ user: res.data.username })
           this.getExperiments();
           this.getDevices();
-          this.getRecipes();
+          this.getStages();
           this.getPlants();
 
           console.log("IS TOKEN: ", window.localStorage.getItem("token"))
@@ -93,9 +93,9 @@ class Dashboard extends Component {
       .catch((err) => console.log(err));
   };
 
-  getRecipes = () => {
+  getStages = () => {
     axios
-      .get("/api/recipes/")
+      .get("/api/stages/")
       .then((res) => this.setState({ recipeList: res.data }))
       .catch((err) => console.log(err));
   };
