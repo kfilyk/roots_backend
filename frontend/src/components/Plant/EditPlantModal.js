@@ -59,7 +59,10 @@ export default class CustomModal extends Component {
                 <input name="supplier" value={this.state.supplier} onChange={this.handleChange} />
             </div>
             <div className="actions">
-              <button onClick={this.editEntry}>Save</button>
+              <button onClick={() => {
+              this.editEntry()
+              close();
+            }}>Save</button>
             </div>
           </div>
         )}

@@ -14,6 +14,7 @@ function getColor(value){
   return ["hsl(",hue,", 50%, 50%)"].join("");
 }
 
+
 class Dashboard extends Component {
   constructor(props) {
     super(props);
