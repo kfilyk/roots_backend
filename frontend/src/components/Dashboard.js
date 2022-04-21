@@ -14,6 +14,7 @@ function getColor(value){
   return ["hsl(",hue,", 50%, 50%)"].join("");
 }
 
+
 class Dashboard extends Component {
   constructor(props) {
     super(props);
@@ -33,8 +34,11 @@ class Dashboard extends Component {
         is_online: false,
       },
     };
-    this.getPlants = this.getPlants.bind(this);
+    this.updatePlantList = this.updatePlantList.bind(this)
+  }
 
+  updatePlantList(){
+    this.getPlants()
   }
 
   // runs before rendering mounted on client side
@@ -322,8 +326,8 @@ class Dashboard extends Component {
     } else if (this.state.selectedTab === "plant") {
       return(
         <>
-          <ListPlantModal plantList={this.state.plantList}/>
-          <AddPlantModal getPlants={this.getPlants}></AddPlantModal> 
+          <ListPlantModal updatePlantList={this.updatePlantList} plantList={this.state.plantList}/>
+          <AddPlantModal updatePlantList={this.updatePlantList}></AddPlantModal> 
         </>
       );
     }}

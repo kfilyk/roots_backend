@@ -13,6 +13,8 @@ export default class CustomModal extends Component {
 
     this.editEntry = this.editEntry.bind(this);
     this.handleChange = this.handleChange.bind(this);
+
+
   }
 
   editEntry(e) {
@@ -24,10 +26,9 @@ export default class CustomModal extends Component {
             supplier: `${this.state.supplier}`
         })
       .then((res) => {
-        // DO SOMETHING HERE??
+        this.props.updatePlantList()
       })
       .catch((err) => console.log(err));
-    
   };
 
   handleChange (e) {
@@ -58,7 +59,10 @@ export default class CustomModal extends Component {
                 <input name="supplier" value={this.state.supplier} onChange={this.handleChange} />
             </div>
             <div className="actions">
-              <button onClick={this.editEntry}>Save</button>
+              <button onClick={() => {
+              this.editEntry()
+              close();
+            }}>Save</button>
             </div>
           </div>
         )}
