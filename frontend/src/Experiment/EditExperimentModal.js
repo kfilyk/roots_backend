@@ -6,19 +6,22 @@ export default class CustomModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        name: '',
-        supplier: ''
+        id: this.props.id,
+        name: this.props.name,
+        supplier: this.props.supplier
     };
-    this.addEntry = this.addEntry.bind(this);
+
+    this.editEntry = this.editEntry.bind(this);
     this.handleChange = this.handleChange.bind(this);
 
 
   }
 
-  addEntry(e) {
+  editEntry(e) {
     axios
-      .post(`/api/plants/`, 
+      .patch(`/api/plants/${this.state.id}/`, 
         { 
+            id: `${this.state.id}`,
             name: `${this.state.name}`,
             supplier: `${this.state.supplier}`
         })
@@ -34,19 +37,17 @@ export default class CustomModal extends Component {
 
   render() {
     return (
-      <Popup
-        trigger={<button className="button"> Add New Plant </button>}
-        modal
-        nested
-      >
+      <Popup trigger={<button className="button"> Edit </button>} modal nested>
         {(close) => (
           <div className="modal">
             <div className="modal_body">
               <button className="close" onClick={close}>
                 &times;
               </button>
-              <div className="header"> Add New Plant </div>
-              <div className="content">
+              <div className="modal_type"> Edit Plant </div>
+              <div className="modal_content">
+              <label> Id: </label>
+                  {this.state.id}
               <br></br>
               <label> Name: </label>
                   <input name="name" value={this.state.name} onChange={this.handleChange} />
@@ -56,7 +57,7 @@ export default class CustomModal extends Component {
               </div>
               <div className="actions">
                 <button onClick={() => {
-                this.addEntry()
+                this.editEntry()
                 close();
               }}>Save</button>
               </div>
