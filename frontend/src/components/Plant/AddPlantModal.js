@@ -41,23 +41,25 @@ export default class CustomModal extends Component {
       >
         {(close) => (
           <div className="modal">
-            <button className="close" onClick={close}>
-              &times;
-            </button>
-            <div className="header"> Add New Plant </div>
-            <div className="content">
-            <br></br>
-            <label> Name: </label>
-                <input name="name" value={this.state.name} onChange={this.handleChange} />
-            <br></br>
-            <label> Supplier: </label>
-                <input name="supplier" value={this.state.supplier} onChange={this.handleChange} />
-            </div>
-            <div className="actions">
-              <button onClick={() => {
-              this.addEntry()
-              close();
-            }}>Save</button>
+            <div className="modal_body">
+              <button className="close" onClick={close}>
+                &times;
+              </button>
+              <div className="header"> Add New Plant </div>
+              <div className="content">
+              <br></br>
+              <label> Name: </label>
+                  <input name="name" value={this.state.name} onChange={this.handleChange} />
+              <br></br>
+              <label> Supplier: </label>
+                  <input name="supplier" value={this.state.supplier} onChange={this.handleChange} />
+              </div>
+              <div className="actions">
+                <button onClick={() => {
+                this.addEntry()
+                close();
+              }}>Save</button>
+              </div>
             </div>
           </div>
         )}

@@ -18,7 +18,7 @@ class ExperimentSerializer(serializers.ModelSerializer):
 class StageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stage
-        fields = ('id', 'author', 'days')
+        fields = ('id', 'author', 'days', 'watering_cycles', 'nutrient_cycles', 'nutrient_type', 'blue_intensity', 'red_intensity', 'white1_intensity', 'white2_intensity', 'lights_on_hours', 'score')
 
 class PlantSerializer(serializers.ModelSerializer):
     class Meta:

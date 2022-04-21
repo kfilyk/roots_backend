@@ -37,32 +37,30 @@ export default class CustomModal extends Component {
 
   render() {
     return (
-      <Popup
-        trigger={<button className="button"> Edit </button>}
-        modal
-        nested
-      >
+      <Popup trigger={<button className="button"> Edit </button>} modal nested>
         {(close) => (
           <div className="modal">
-            <button className="close" onClick={close}>
-              &times;
-            </button>
-            <div className="header"> Editing </div>
-            <div className="content">
-            <label> Id: </label>
-                {this.state.id}
-            <br></br>
-            <label> Name: </label>
-                <input name="name" value={this.state.name} onChange={this.handleChange} />
-            <br></br>
-            <label> Supplier: </label>
-                <input name="supplier" value={this.state.supplier} onChange={this.handleChange} />
-            </div>
-            <div className="actions">
-              <button onClick={() => {
-              this.editEntry()
-              close();
-            }}>Save</button>
+            <div className="modal_body">
+              <button className="close" onClick={close}>
+                &times;
+              </button>
+              <div className="modal_type"> Edit Plant </div>
+              <div className="modal_content">
+              <label> Id: </label>
+                  {this.state.id}
+              <br></br>
+              <label> Name: </label>
+                  <input name="name" value={this.state.name} onChange={this.handleChange} />
+              <br></br>
+              <label> Supplier: </label>
+                  <input name="supplier" value={this.state.supplier} onChange={this.handleChange} />
+              </div>
+              <div className="actions">
+                <button onClick={() => {
+                this.editEntry()
+                close();
+              }}>Save</button>
+              </div>
             </div>
           </div>
         )}

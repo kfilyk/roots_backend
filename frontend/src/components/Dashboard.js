@@ -2,7 +2,6 @@
 
 import React, { Component, } from "react";
 import { Navigate } from "react-router-dom";
-import Modal from "./Modal";
 import ListPlantModal from './Plant/ListPlantModal';
 import AddPlantModal from './Plant/AddPlantModal';
 import axios from "axios";
@@ -176,11 +175,11 @@ class Dashboard extends Component {
   createItem = () => {
     const item = { name: "", experiment: "", is_online: false };
 
-    this.setState({ activeItem: item, modal: !this.state.modal });
+    this.setState({ activeItem: item });
   };
 
   handleEdit = (item) => {
-    this.setState({ activeItem: item, modal: !this.state.modal });
+    this.setState({ activeItem: item });
   };
 
 
