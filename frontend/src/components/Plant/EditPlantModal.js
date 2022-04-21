@@ -24,10 +24,10 @@ export default class CustomModal extends Component {
             supplier: `${this.state.supplier}`
         })
       .then((res) => {
-        //DO SOMETHING HERE???
+        // DO SOMETHING HERE??
       })
       .catch((err) => console.log(err));
-    this.props.getPlants()
+    
   };
 
   handleChange (e) {

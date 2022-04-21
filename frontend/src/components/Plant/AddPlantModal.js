@@ -10,12 +10,12 @@ export default class CustomModal extends Component {
         name: '',
         supplier: ''
     };
-
     this.addEntry = this.addEntry.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
 
   addEntry(e) {
+    console.log("FLAG: addEntry fired")
     if (window.localStorage.getItem("token")) {
       // if a token is found, set the authorization and attempt to vlaidate it against the server
       axios.defaults.headers.common.Authorization = `Token ${window.localStorage.getItem("token")}`;
@@ -27,13 +27,14 @@ export default class CustomModal extends Component {
             supplier: `${this.state.supplier}`
         })
       .then((res) => {
-        //DO SOMETHING HERE???
+        console.log("FLAG")
+        console.log(this.props)
+        this.props.getPlants();
       })
       .catch((err) => console.log(err));
     } else {
       console.log("Error with ADD")
     }
-
   };
 
   handleChange (e) {
@@ -61,7 +62,7 @@ export default class CustomModal extends Component {
                 <input name="supplier" value={this.state.supplier} onChange={this.handleChange} />
             </div>
             <div className="actions">
-              <button onClick={this.addEntry}>Save</button>
+              <button onClick={() => {this.addEntry(); close();}}>Save</button>
             </div>
           </div>
         )}

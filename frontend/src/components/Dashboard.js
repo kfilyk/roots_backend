@@ -32,8 +32,9 @@ class Dashboard extends Component {
         experiment: "",
         is_online: false,
       },
-      
     };
+    this.getPlants = this.getPlants.bind(this);
+
   }
 
   // runs before rendering mounted on client side
@@ -103,12 +104,7 @@ class Dashboard extends Component {
       .catch((err) => console.log(err));
   };
 
-  toggle = () => {
-    this.setState({ modal: !this.state.modal });
-  };
-
   handleSubmit = (item) => {
-    this.toggle();
     if (this.state.selectedTab === 'device') {
       if (item.id) {
         axios
@@ -254,7 +250,7 @@ class Dashboard extends Component {
           <div className="experiment_containter">
             <div className="experiment" style= {{border: 'solid '+hsl+' 6px'}} >
               <div>{ e.description }</div>
-              <div>{ e.start_date } -> { e.end_date }</div>
+              <div>{ e.start_date } {"->"} { e.end_date }</div>
               <div>{ e.score } </div>
             </div>
 
@@ -327,7 +323,7 @@ class Dashboard extends Component {
       return(
         <>
           <ListPlantModal plantList={this.state.plantList}/>
-          <AddPlantModal></AddPlantModal> 
+          <AddPlantModal getPlants={this.getPlants}></AddPlantModal> 
         </>
       );
     }}
@@ -360,20 +356,11 @@ class Dashboard extends Component {
                   <ul className="list-group list-group-flush border-top-0">
                     {this.renderItems()}
                   </ul>
-                  <button className="btn btn-primary" onClick={this.createItem} > Add {this.state.selectedTab} </button>
+                  {/*<button className="btn btn-primary" onClick={this.createItem} > Add {this.state.selectedTab} </button> */}
 
                 </div>
               </div>
             </div>
-
-            {this.state.modal ? (
-              <Modal 
-              activeItem={this.state.activeItem}
-              toggle={this.toggle}
-              onSave={this.handleSubmit}
-              selectedTab={this.state.selectedTab}
-              />
-            ) : null}
           </div>
         </main>
 

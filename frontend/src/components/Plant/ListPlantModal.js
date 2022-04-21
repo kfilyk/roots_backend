@@ -10,7 +10,6 @@ export default class CustomModal extends Component {
     };
 
     this.deleteEntry = this.deleteEntry.bind(this);
-
   }
 
   deleteEntry = (id) => {
