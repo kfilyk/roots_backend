@@ -35,10 +35,10 @@ class Dashboard extends Component {
       },
       
     };
-    this.setPlant = this.setPlant.bind(this)
+    this.updatePlantList = this.updatePlantList.bind(this)
   }
 
-  setPlant(){
+  updatePlantList(){
     this.getPlants()
   }
 
@@ -332,7 +332,7 @@ class Dashboard extends Component {
     } else if (this.state.selectedTab === "plant") {
       return(
         <>
-          <ListPlantModal setPlant={this.setPlant} plantList={this.state.plantList}/>
+          <ListPlantModal updatePlantList={this.updatePlantList} plantList={this.state.plantList}/>
           <AddPlantModal></AddPlantModal> 
         </>
       );

@@ -26,7 +26,7 @@ export default class CustomModal extends Component {
             supplier: `${this.state.supplier}`
         })
       .then((res) => {
-        this.props.setPlant()
+        this.props.updatePlantList()
       })
       .catch((err) => console.log(err));
   };

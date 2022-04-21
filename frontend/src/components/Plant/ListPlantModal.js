@@ -19,6 +19,9 @@ export default class CustomModal extends Component {
   deleteEntry = (id) => {
     axios
       .delete(`/api/plants/${id}/`)
+      .then((res) => {
+        this.props.updatePlantList()
+      })
       .catch((err) => console.log(err));
   };
 
@@ -32,7 +35,7 @@ export default class CustomModal extends Component {
                   Plant Supplier: { item.supplier}<br></br>
         
                   <span>
-                  <EditPlantModal setPlant={this.props.setPlant} id={item.id} name={item.name} supplier={item.supplier}/>
+                  <EditPlantModal updatePlantList={this.props.updatePlantList} id={item.id} name={item.name} supplier={item.supplier}/>
                     <button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) this.deleteEntry(item.id) }}> Delete </button>
                   </span>
                 </li>
