@@ -34,7 +34,7 @@ export default class CustomModal extends Component {
                   Author: { item.author }<br></br>
                   Days: { item.days }<br></br>
                   Watering_cycles: { item.watering_cycles }<br></br>
-                  Nutrient_cycles: { item.watering_cycles }<br></br>
+                  Nutrient_cycles: { item.nutrient_cycles }<br></br>
                   Nutrient_type: { item.nutrient_type }<br></br>
                   Blue_intensity: { item.blue_intensity }<br></br>
                   Red_intensity: { item.red_intensity }<br></br>
@@ -44,8 +44,8 @@ export default class CustomModal extends Component {
                   Score: { item.score }<br></br>
         
                   <span>
-                  <EditStageModal getStages={this.props.getStages} stage_id={item.id}/>
-                    <button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) this.deleteEntry(item.id) }}> Delete </button>
+                  <EditStageModal getStages={this.props.getStages} stageData={item}/>
+                    <button onClick={() => { if (window.confirm(`You are about to delete ${item.id} by ${item.author}`)) this.deleteEntry(item.id) }}> Delete </button>
                   </span>
                 </li>
       ))
