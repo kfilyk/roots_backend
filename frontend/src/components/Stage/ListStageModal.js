@@ -66,6 +66,7 @@ export default class CustomModal extends Component {
           <th> White2 Intn. </th>
           <th> Lights On (hrs) </th>
           <th> Score </th>
+          <th> Actions </th>
         </tr>
         {this.renderItems()}
       </table>
