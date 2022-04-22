@@ -8,7 +8,6 @@ export default class CustomModal extends Component {
     this.state = {
         stageList: this.props.stageList
     };
-    console.log(props)
     this.deleteEntry = this.deleteEntry.bind(this);
   }
 
@@ -25,30 +24,51 @@ export default class CustomModal extends Component {
       .catch((err) => console.log(err));
   };
 
-  render() {
+  renderItems = () => {
     return (
       this.state.stageList.map((item) => (
         // display list of all items
-        <li key={ item.id } className="list-group-item d-flex justify-content-between align-items-center" >
-                  ID: { item.id }<br></br>
-                  Author: { item.author }<br></br>
-                  Days: { item.days }<br></br>
-                  Watering_cycles: { item.watering_cycles }<br></br>
-                  Nutrient_cycles: { item.nutrient_cycles }<br></br>
-                  Nutrient_type: { item.nutrient_type }<br></br>
-                  Blue_intensity: { item.blue_intensity }<br></br>
-                  Red_intensity: { item.red_intensity }<br></br>
-                  White1_intensity: { item.white1_intensity }<br></br>
-                  White2_intensity: { item.white2_intensity }<br></br>
-                  Lights_on_hours: { item.lights_on_hours }<br></br>
-                  Score: { item.score }<br></br>
-        
-                  <span>
-                  <EditStageModal getStages={this.props.getStages} stageData={item}/>
-                    <button onClick={() => { if (window.confirm(`You are about to delete ${item.id} by ${item.author}`)) this.deleteEntry(item.id) }}> Delete </button>
-                  </span>
-                </li>
+        <tr key={ item.id }>
+            <td> { item.id } </td>
+            <td> { item.author } </td>
+            <td> { item.days } </td>
+            <td> { item.watering_cycles } </td>
+            <td> { item.nutrient_cycles } </td>
+            <td> { item.nutrient_type } </td>
+            <td> { item.blue_intensity } </td>
+            <td> { item.red_intensity } </td>
+            <td> { item.white1_intensity } </td>
+            <td> { item.white2_intensity } </td>
+            <td> { item.lights_on_hours } </td>
+            <td> { item.score } </td>
+            <td>                  
+              <EditStageModal getStages={this.props.getStages} stageData={item}/>
+              <button onClick={() => { if (window.confirm(`You are about to delete ${item.id} by ${item.author}`)) this.deleteEntry(item.id) }}> Delete </button>
+            </td>
+        </tr>
       ))
     );
+  }
+
+  render() {
+    return (
+      <table width="100%">
+        <tr>
+          <th> ID </th>
+          <th> Author </th>
+          <th> Days </th>
+          <th> Watering Cycles </th>
+          <th> Nutr. Cycles </th>
+          <th> Nutr. Type </th>
+          <th> Blue Intn. </th>
+          <th> Red Intn. </th>
+          <th> White1 Intn. </th>
+          <th> White2 Intn. </th>
+          <th> Lights On (hrs) </th>
+          <th> Score </th>
+        </tr>
+        {this.renderItems()}
+      </table>
+    )
   }
 }

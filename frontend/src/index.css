@@ -173,13 +173,17 @@ ul {
 th {
   font-size: 1.2em;
   font-weight: bold;
-  border-bottom: 1px black;
+  background-color: #E7DDDC
 }
 
 td {
-  text-align:center
+  text-align:center;
 }
 
 button {
   margin: 5px;
+}
+
+table tr:nth-child(odd) td{
+  background-color: #F8F3F2;
 }
