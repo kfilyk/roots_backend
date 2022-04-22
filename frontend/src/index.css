@@ -169,3 +169,21 @@ ul {
   padding:10px;
   border-radius: 10px;
 }
+
+th {
+  font-size: 1.2em;
+  font-weight: bold;
+  background-color: #E7DDDC
+}
+
+td {
+  text-align:center;
+}
+
+button {
+  margin: 5px;
+}
+
+table tr:nth-child(odd) td{
+  background-color: #F8F3F2;
+}

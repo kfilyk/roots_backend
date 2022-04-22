@@ -25,21 +25,34 @@ export default class CustomModal extends Component {
       .catch((err) => console.log(err));
   };
 
-  render() {
+  renderItems = () => {
     return (
       this.state.plantList.map((item) => (
         // display list of all items
-        <li key={ ''+this.state.selectedTab+' '+ item.id } className="list-group-item d-flex justify-content-between align-items-center" >
-                  ID: { item.id }<br></br>
-                  Plant Name: { item.name}<br></br>
-                  Plant Supplier: { item.supplier}<br></br>
-        
-                  <span>
-                  <EditPlantModal updatePlantList={this.props.updatePlantList} id={item.id} name={item.name} supplier={item.supplier}/>
+        <tr key={ ''+this.state.selectedTab+' '+ item.id } className="list-group-item d-flex justify-content-between align-items-center" >
+                  <td>{ item.id }</td>
+                  <td>{item.name}</td>
+                  <td>{item.supplier}</td>
+                  <td>                  
+                    <EditPlantModal updatePlantList={this.props.updatePlantList} id={item.id} name={item.name} supplier={item.supplier}/>
                     <button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) this.deleteEntry(item.id) }}> Delete </button>
-                  </span>
-                </li>
+                  </td>
+        </tr>
       ))
     );
+  }
+
+  render() {
+    return (
+      <table width="100%">
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Supplier</th>
+          <th>Actions</th>
+        </tr>
+        {this.renderItems()}
+      </table>
+    )
   }
 }
