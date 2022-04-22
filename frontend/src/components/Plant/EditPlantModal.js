@@ -5,10 +5,11 @@ import axios from "axios";
 export default class CustomModal extends Component {
   constructor(props) {
     super(props);
+    console.log(props)
     this.state = {
-        id: this.props.id,
-        name: this.props.name,
-        supplier: this.props.supplier
+        id: this.props.plantData.id,
+        name: this.props.plantData.name,
+        supplier: this.props.plantData.supplier
     };
 
     this.editEntry = this.editEntry.bind(this);
@@ -26,7 +27,7 @@ export default class CustomModal extends Component {
             supplier: `${this.state.supplier}`
         })
       .then((res) => {
-        this.props.updatePlantList()
+        this.props.getPlants()
       })
       .catch((err) => console.log(err));
   };
@@ -37,7 +38,7 @@ export default class CustomModal extends Component {
 
   render() {
     return (
-      <Popup trigger={<button className="button"> Edit </button>} modal nested>
+      <Popup trigger={<button className="button" class='actionsButton'> Edit </button>} modal nested>
         {(close) => (
           <div className="modal">
             <div className="modal_body">
@@ -56,7 +57,7 @@ export default class CustomModal extends Component {
                   <input name="supplier" value={this.state.supplier} onChange={this.handleChange} />
               </div>
               <div className="actions">
-                <button onClick={() => {
+                <button class='actionsButton' onClick={() => {
                 this.editEntry()
                 close();
               }}>Save</button>

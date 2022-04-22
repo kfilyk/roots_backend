@@ -62,7 +62,7 @@ export default class CustomModal extends Component {
 
   render() {
     return (
-      <Popup trigger={<button className="button"> Add Stage </button>} modal nested>
+      <Popup trigger={<button className="button" class='actionsButton'>  Add Stage </button>} modal nested>
         {(close) => (
           <div className="modal">
             <div className="modal_body">
@@ -110,7 +110,7 @@ export default class CustomModal extends Component {
                                       
               </div>
               <div className="actions">
-                <button onClick={() => {
+                <button class='actionsButton' onClick={() => {
                 this.addEntry()
                 close();
               }}>Add New Stage</button>

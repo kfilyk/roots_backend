@@ -54,7 +54,7 @@ export default class CustomModal extends Component {
 
   render() {
     return (
-      <Popup trigger={<button className="button"> Edit </button>} modal nested>
+      <Popup trigger={<button className="button" class='actionsButton'> Edit </button>} modal nested>
         {(close) => (
           <div className="modal">
             <div className="modal_body">
@@ -102,7 +102,7 @@ export default class CustomModal extends Component {
                                       
               </div>
               <div className="actions">
-                <button onClick={() => {
+                <button class='actionsButton' onClick={() => {
                 this.editEntry()
                 close();
               }}>Save</button>

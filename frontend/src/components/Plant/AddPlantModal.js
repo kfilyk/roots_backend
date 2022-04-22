@@ -23,7 +23,7 @@ export default class CustomModal extends Component {
             supplier: `${this.state.supplier}`
         })
       .then((res) => {
-        this.props.updatePlantList()
+        this.props.getPlants()
       })
       .catch((err) => console.log(err));
   };
@@ -35,7 +35,7 @@ export default class CustomModal extends Component {
   render() {
     return (
       <Popup
-        trigger={<button className="button"> Add New Plant </button>}
+        trigger={<button className="button" class='actionsButton'> Add New Plant </button>}
         modal
         nested
       >
@@ -55,7 +55,7 @@ export default class CustomModal extends Component {
                   <input name="supplier" value={this.state.supplier} onChange={this.handleChange} />
               </div>
               <div className="actions">
-                <button onClick={() => {
+                <button class='actionsButton' onClick={() => {
                 this.addEntry()
                 close();
               }}>Save</button>

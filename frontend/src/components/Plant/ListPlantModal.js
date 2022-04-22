@@ -20,7 +20,7 @@ export default class CustomModal extends Component {
     axios
       .delete(`/api/plants/${id}/`)
       .then((res) => {
-        this.props.updatePlantList()
+        this.props.getPlants()
       })
       .catch((err) => console.log(err));
   };
@@ -29,13 +29,13 @@ export default class CustomModal extends Component {
     return (
       this.state.plantList.map((item) => (
         // display list of all items
-        <tr key={ ''+this.state.selectedTab+' '+ item.id } className="list-group-item d-flex justify-content-between align-items-center" >
+        <tr key={ item.id } className="list-group-item d-flex justify-content-between align-items-center" >
                   <td>{ item.id }</td>
                   <td>{item.name}</td>
                   <td>{item.supplier}</td>
                   <td>                  
-                    <EditPlantModal updatePlantList={this.props.updatePlantList} id={item.id} name={item.name} supplier={item.supplier}/>
-                    <button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) this.deleteEntry(item.id) }}> Delete </button>
+                    <EditPlantModal getPlants={this.props.getPlants} plantData={item}/>
+                    <button class='actionsButton' onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) this.deleteEntry(item.id) }}> Delete </button>
                   </td>
         </tr>
       ))

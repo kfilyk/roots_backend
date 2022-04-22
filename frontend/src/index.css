@@ -172,7 +172,7 @@ ul {
 
 th {
   font-size: 1.2em;
-  font-weight: bold;
+  font-weight: bolder;
   background-color: #E7DDDC
 }
 
@@ -180,8 +180,13 @@ td {
   text-align:center;
 }
 
-button {
+.actionsButton {
   margin: 5px;
+  border: 1px solid #a8866e;
+  background-color: #EFEAE3;
+  color: #B3896A;
+  padding: 5px 10px;
+  border-radius: 5px;
 }
 
 table tr:nth-child(odd) td{

@@ -32,16 +32,11 @@ class Dashboard extends Component {
         is_online: false,
       },
     };
-    this.updatePlantList = this.updatePlantList.bind(this)
     this.updateExperimentList = this.updateExperimentList.bind(this)
 
     this.getStages = this.getStages.bind(this)
+    this.getPlants = this.getPlants.bind(this)
   }
-
-  updatePlantList(){
-    this.getPlants()
-  }
-
 
   updateExperimentList(){
     this.getExperiments()
@@ -280,8 +275,8 @@ class Dashboard extends Component {
     } else if (this.state.selectedTab === "plant") {
       return(
         <>
-          <ListPlantModal updatePlantList={this.updatePlantList} plantList={this.state.plantList}/>
-          <AddPlantModal updatePlantList={this.updatePlantList}></AddPlantModal> 
+          <ListPlantModal getPlants={this.getPlants} plantList={this.state.plantList}/>
+          <AddPlantModal getPlants={this.getPlants}></AddPlantModal> 
         </>
       );
     }}
