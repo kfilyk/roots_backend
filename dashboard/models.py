@@ -136,4 +136,3 @@ class Stage(models.Model): # generic periodic stage setting to be used by a reci
     class Meta:
         managed = True
         db_table = 'stage'
-

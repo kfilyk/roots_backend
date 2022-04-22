@@ -4,17 +4,13 @@ import React, { Component, } from "react";
 import { Navigate } from "react-router-dom";
 import ListPlantModal from './Plant/ListPlantModal';
 import AddPlantModal from './Plant/AddPlantModal';
-
-import ListExperimentModal from './Plant/ListExperimentModal';
-import AddExperimentModal from './Plant/AddExperimentModal';
+import ListExperimentModal from './Experiment/ListExperimentModal';
+import AddExperimentModal from './Experiment/AddExperimentModal';
+import Experiment from './Experiment/Experiment';
+import ListStageModal from './Stage/ListStageModal';
+import AddStageModal from './Stage/AddStageModal';
 import axios from "axios";
 import user from './user_brown.png';
-
-function getColor(value){
-  // hue value from 0 to 360
-  var hue=(value*120).toString(10); 
-  return ["hsl(",hue,", 50%, 50%)"].join("");
-}
 
 
 class Dashboard extends Component {
@@ -37,10 +33,18 @@ class Dashboard extends Component {
       },
     };
     this.updatePlantList = this.updatePlantList.bind(this)
+    this.updateExperimentList = this.updateExperimentList.bind(this)
+
+    this.getStages = this.getStages.bind(this)
   }
 
   updatePlantList(){
     this.getPlants()
+  }
+
+
+  updateExperimentList(){
+    this.getExperiments()
   }
 
   // runs before rendering mounted on client side
@@ -230,9 +234,6 @@ class Dashboard extends Component {
       return items_list.map((item) => {
         
         const e = experiment_list.filter(experiment => experiment.id === item.experiment)[0] ?? {} // could also use ||
-        // red to green: FF0000 -> 00FF00
-
-        let hsl = getColor(e.score)
   
         // display list of all items
         return <li key={ ''+this.state.selectedTab+' '+ item.id } className="item">
@@ -251,17 +252,9 @@ class Dashboard extends Component {
           <div className="info">
             <div className="device_name">{ item.name }</div>
             <div>Registered: { item.registration_date }</div>
-            <div> Mac: { item.mac_address }</div>
+            <div>Mac: { item.mac_address }</div>
           </div>
-          <div className="experiment_containter">
-            <div className="experiment" style= {{border: 'solid '+hsl+' 6px'}} >
-              <div>{ e.description }</div>
-              <div>{ e.start_date } {"->"} { e.end_date }</div>
-              <div>{ e.score } </div>
-            </div>
-
-          </div>
-
+          <Experiment experiment = {e}></Experiment>
           <span>
             <button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) this.deleteEntry(item.id) }}> Delete </button>
           </span>
@@ -272,31 +265,18 @@ class Dashboard extends Component {
     } else if (this.state.selectedTab === "experiment") {
       return(
         <>
-          <ListExperimentModal updatePlantList={this.updatePlantList} plantList={this.state.plantList}/>
+          <ListExperimentModal updateExperimentList={this.updateExperimentList} experimentList={this.state.experimentList}/>
+          <AddExperimentModal updateExperimentList={this.updateExperimentList}></AddExperimentModal>
         </>
       );
 
     } else if (this.state.selectedTab === "stage") {
-      items_list = this.state.stageList;
-
-      return items_list.map((item) => (
-        // display list of all items
-        <li key={ ''+this.state.selectedTab+' '+ item.id } className="list-group-item d-flex justify-content-between align-items-center" >
-          ID: { item.id }<br></br>
-          Stage Name: { item.name}<br></br>
-          Stage Data: { item.data}<br></br>
-
-          <span>
-            <button
-              className="btn btn-secondary mr-2"
-              onClick={() => this.handleEdit(item)}
-            >
-              Edit
-            </button>
-            <button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) this.deleteEntry(item.id) }}> Delete </button>
-          </span>
-        </li>
-      ));
+      return(
+        <>
+          <ListStageModal getStages={this.getStages} stageList={this.state.stageList}/>
+          <AddStageModal getStages={this.getStages}></AddStageModal> 
+        </>
+      );
     } else if (this.state.selectedTab === "plant") {
       return(
         <>

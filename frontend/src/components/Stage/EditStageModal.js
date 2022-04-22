@@ -19,7 +19,7 @@ export default class CustomModal extends Component {
 
   editEntry(e) {
     axios
-      .patch(`/api/plants/${this.state.id}/`, 
+      .patch(`/api/stages/${this.state.id}/`, 
         { 
             id: `${this.state.id}`,
             name: `${this.state.name}`,
