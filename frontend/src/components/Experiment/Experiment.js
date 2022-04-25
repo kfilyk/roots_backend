@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import EditExperimentModal from "./EditExperimentModal"
-
+import PodCarousel from "./PodCarousel"
+import ProgressCircle from "./ProgressCircle";
 
 function getColor(value){
     // hue value from 0 to 360
@@ -14,19 +15,26 @@ export default class CustomModal extends Component {
       this.state = {
           experiment: this.props.experiment
       };
-
+      
+      console.log(props)
     }
     render() {
         let hsl = getColor(this.state.experiment.score)
 
         return (
             <div className="experiment_containter">
-                <div className="experiment" style= {{border: 'solid '+hsl+' 6px'}} >
-                    <div>{ this.state.experiment.description }</div>
-                    <div>{ this.state.experiment.start_date } {"->"} { this.state.experiment.end_date }</div>
-                    <div>{ this.state.experiment.score } </div>
-                    <EditExperimentModal></EditExperimentModal>
-
+                <div id="experiment" style= {{border: 'solid '+hsl+' 6px'}} >
+                    <div id="progressCircles">
+                        <div>Exp: { this.state.experiment.description }</div>
+                        <div>Device: { this.state.experiment.device }</div>
+                        {/* <div>{ this.state.experiment.start_date } {"->"} { this.state.experiment.end_date }</div> */}
+                        {/* <div>{ this.state.experiment.score } </div> */}
+                        <ProgressCircle progress1='44' progress2='90'></ProgressCircle>
+                        <EditExperimentModal></EditExperimentModal>
+                    </div>
+                    <div id="podCarousel">
+                        <PodCarousel></PodCarousel>
+                    </div>
                 </div>
             </div>
         )
