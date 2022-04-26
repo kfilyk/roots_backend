@@ -32,16 +32,10 @@ class Dashboard extends Component {
         is_online: false,
       },
     };
-    this.updateExperimentList = this.updateExperimentList.bind(this)
-
     this.getStages = this.getStages.bind(this)
     this.getPlants = this.getPlants.bind(this)
+    this.getExperiments = this.getExperiments.bind(this)
   }
-
-  updateExperimentList(){
-    this.getExperiments()
-  }
-
   // runs before rendering mounted on client side
   componentDidMount() {
     // if no token found, redirect to login
@@ -260,8 +254,8 @@ class Dashboard extends Component {
     } else if (this.state.selectedTab === "experiment") {
       return(
         <>
-          <ListExperimentModal updateExperimentList={this.updateExperimentList} experimentList={this.state.experimentList}/>
-          <AddExperimentModal updateExperimentList={this.updateExperimentList}></AddExperimentModal>
+          <ListExperimentModal getExperiments={this.getExperiments} experimentList={this.state.experimentList}/>
+          <AddExperimentModal getExperiments={this.getExperiments}></AddExperimentModal>
         </>
       );
 

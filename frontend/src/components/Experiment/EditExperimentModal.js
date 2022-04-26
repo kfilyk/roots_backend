@@ -6,61 +6,60 @@ export default class CustomModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        id: this.props.id,
-        description: this.props.description,
-        start_date: this.props.start_date,
-        end_date: this.props.end_date,
-        score: this.props.score,
-        device_id: this.props.device_id,
-        pod1:this.props.pod1,
-        pod2:this.props.pod2,
-        pod3:this.props.pod3,
-        pod4:this.props.pod4,
-        pod5:this.props.pod5,
-        pod6:this.props.pod6,
-        pod7:this.props.pod7,
-        pod8:this.props.pod8,
-        pod9:this.props.pod9,
-        pod10:this.props.pod10,
-        user: this.props.user,
-        day:this.props.day,
-        stage_day:this.props.stage_day,
-        stages:this.props.stages,
-        current_stage: this.props.current_stage
+      id: this.props.experiment.id,
+      description: this.props.experiment.description,
+      start_date: this.props.experiment.start_date.substring(0,10),
+      end_date: this.props.experiment.end_date.substring(0,10),
+      score: this.props.experiment.score,
+      device: this.props.experiment.device,
+      pod1:this.props.experiment.pod1,
+      pod2:this.props.experiment.pod2,
+      pod3:this.props.experiment.pod3,
+      pod4:this.props.experiment.pod4,
+      pod5:this.props.experiment.pod5,
+      pod6:this.props.experiment.pod6,
+      pod7:this.props.experiment.pod7,
+      pod8:this.props.experiment.pod8,
+      pod9:this.props.experiment.pod9,
+      pod10:this.props.experiment.pod10,
+      user: this.props.experiment.user,
+      day:this.props.experiment.day,
+      stage_day:this.props.experiment.stage_day,
+      stages:this.props.experiment.stages,
+      current_stage: this.props.experiment.current_stage
     };
-    this.addEntry = this.addEntry.bind(this);
+    this.editEntry = this.editEntry.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    
   }
 
-  addEntry(e) {
+  editEntry(e) {
     axios
-      .post(`/api/experiments/`, 
-        { 
-          id: `${this.state.id}`,
-          description: `${this.state.description}`,
-          start_date: `${this.state.start_date}`,
-          end_date: `${this.state.end_date}`,
-          score: `${this.state.score}`,
-          device_id: `${this.state.device_id}`,
-          pod1:`${this.state.pod1}`,
-          pod2:`${this.state.pod2}`,
-          pod3:`${this.state.pod3}`,
-          pod4:`${this.state.pod4}`,
-          pod5:`${this.state.pod5}`,
-          pod6:`${this.state.pod6}`,
-          pod7:`${this.state.pod7}`,
-          pod8:`${this.state.pod8}`,
-          pod9:`${this.state.pod9}`,
-          pod10:`${this.state.pod10}`,
-          user: `${this.state.user}`,
-          day:`${this.state.day}`,
-          stage_day:`${this.state.stage_day}`,
-          stages:`${this.state.stages}`,
-          current_stage:`${this.state.current_stage}`
+      .patch(`/api/experiments/${this.state.id}/`, 
+        {
+          description: this.state.description,
+          start_date: this.state.start_date,
+          end_date: this.state.end_date,
+          score: this.state.score,
+          device: this.state.device_id,
+          pod1: this.state.pod1,
+          pod2: this.state.pod2,
+          pod3: this.state.pod3,
+          pod4: this.state.pod4,
+          pod5: this.state.pod5,
+          pod6: this.state.pod6,
+          pod7: this.state.pod7,
+          pod8: this.state.pod8,
+          pod9: this.state.pod9,
+          pod10: this.state.pod10,
+          user: this.state.user,
+          day: this.state.day,
+          stage_day: this.state.stage_day,
+          stages: this.state.stages,
+          current_stage: this.state.current_stage
         })
       .then((res) => {
-        this.props.updateExperimentList()
+        this.props.getExperiments()
+        console.log("EDIT")
       })
       .catch((err) => console.log(err));
   };
@@ -82,7 +81,7 @@ export default class CustomModal extends Component {
               <button className="close" onClick={close}>
                 &times;
               </button>
-              <div className="header"> Create Experiment </div>
+              <div className="header"> Edit Experiment </div>
               <div className="content">
                 <br></br>
                 <label> Description: </label>
@@ -95,12 +94,11 @@ export default class CustomModal extends Component {
                 <input type="date"  name="end_date" value={this.state.end_date} onChange={this.handleChange} />
                 <br></br>
                 <label> Device: </label>
-                <input name="device" value={this.state.device} onChange={this.handleChange} />
-
+                {this.state.device}
               </div>
               <div className="actions">
                 <button onClick={() => {
-                this.addEntry()
+                this.editEntry()
                 close();
               }}>Save</button>
               </div>

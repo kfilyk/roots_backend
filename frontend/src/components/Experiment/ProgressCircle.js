@@ -5,7 +5,8 @@ export default class CustomModal extends Component {
       super(props);
       this.state = {
           progress1: this.props.progress1,
-          progress2: this.props.progress2
+          progress2: this.props.progress2,
+          colour: this.props.colour
       };
       
     }
@@ -14,7 +15,7 @@ export default class CustomModal extends Component {
             //https://codepen.io/sergiopedercini/pen/jmKdbj
             <div class="flex-wrapper">
                 <div class="single-chart">
-                    <svg viewBox="0 0 36 36" class="circular-chart blue">
+                    <svg viewBox="0 0 36 36" class={'circular-chart '+ this.state.colour}>
                     <path class="circle-bg"
                         d="M18 2.0845
                         a 15.9155 15.9155 0 0 1 0 31.831

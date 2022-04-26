@@ -12,7 +12,7 @@ export default class CustomModal extends Component {
         //   pod4: this.props.experiment.pod4,
         //   pod5: this.props.experiment.pod5,
       };
-      console.log(props)
+    //   console.log(props)
     }
 
     getPodScore(e) {

@@ -17,6 +17,11 @@ export default class CustomModal extends Component {
       };
 
     }
+
+    componentWillReceiveProps(nextProps) {
+        this.setState({ experimentList: nextProps.experimentList })
+      }
+
     render() {
         let hsl = getColor(this.state.experiment.score)
 
@@ -28,8 +33,8 @@ export default class CustomModal extends Component {
                         <div>Device: { this.state.experiment.device }</div>
                         {/* <div>{ this.state.experiment.start_date } {"->"} { this.state.experiment.end_date }</div> */}
                         {/* <div>{ this.state.experiment.score } </div> */}
-                        <ProgressCircle progress1='44' progress2='90'></ProgressCircle>
-                        <EditExperimentModal></EditExperimentModal>
+                        <ProgressCircle progress1='44' progress2='90' colour='green'></ProgressCircle>
+                        <EditExperimentModal getExperiments={this.props.getExperiments} experiment={this.state.experiment}></EditExperimentModal>
                     </div>
                     <div id="podCarousel">
                         <PodCarousel experimentId={this.props.experiment.id}></PodCarousel>
