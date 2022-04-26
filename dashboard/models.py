@@ -114,6 +114,7 @@ class Pod(models.Model):
     score = models.DecimalField(db_column='po_score', max_digits=2, decimal_places=2, blank=True, null=True) # Averaged score of Experiment Readings for a specific pod
     start_date = models.DateTimeField(db_column='po_start_date', blank=True, null=True) # start date is 
     end_date = models.DateTimeField(db_column='po_end_date', blank=True, null=True)  
+    
     class Meta:
         managed = True
         db_table = 'pod'

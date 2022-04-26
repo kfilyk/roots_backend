@@ -1,7 +1,8 @@
-from dashboard.models import Device, Experiment, Stage, Plant
+from dashboard.models import Device, Experiment, Stage, Plant, Pod
 from rest_framework import viewsets
-from .serializers import DeviceSerializer, ExperimentSerializer, CreateUserSerializer, UserSerializer, StageSerializer, PlantSerializer
+from .serializers import DeviceSerializer, ExperimentSerializer, CreateUserSerializer, UserSerializer, StageSerializer, PlantSerializer, PodSerializer
 #from .models import Device
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from rest_framework.generics import CreateAPIView
@@ -37,6 +38,16 @@ class StageView(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         return Stage.objects.all()
+
+class PodView(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated,) 
+    serializer_class = PodSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['experiment']
+
+    def get_queryset(self):
+        user = self.request.user
+        return Pod.objects.all()
 
 class PlantView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 

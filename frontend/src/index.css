@@ -134,6 +134,10 @@ body {
   width: 80%; /* Could be more or less, depending on screen size */
 }
 
+.modal_content{
+  display:flex
+}
+
 ul {
   margin:0px;
   padding:0px;
@@ -249,11 +253,11 @@ table tr:nth-child(odd) td{
 }
 
 #progressCircles{
-  flex-grow: 1;
+  flex-grow: 2;
 }
 
 #podCarousel{
-  flex-grow: 7;
+  flex-grow: 5;
 }
 
 .single-chart {

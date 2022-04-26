@@ -15,8 +15,7 @@ export default class CustomModal extends Component {
       this.state = {
           experiment: this.props.experiment
       };
-      
-      console.log(props)
+
     }
     render() {
         let hsl = getColor(this.state.experiment.score)
@@ -33,7 +32,7 @@ export default class CustomModal extends Component {
                         <EditExperimentModal></EditExperimentModal>
                     </div>
                     <div id="podCarousel">
-                        <PodCarousel></PodCarousel>
+                        <PodCarousel experimentId={this.props.experiment.id}></PodCarousel>
                     </div>
                 </div>
             </div>

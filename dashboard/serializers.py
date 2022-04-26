@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Device, Experiment, Stage, Plant
+from .models import Device, Experiment, Stage, Plant, Pod
 from django.contrib.auth import get_user_model
 
 # https://www.digitalocean.com/community/tutorials/build-a-to-do-application-using-django-and-react
@@ -19,6 +19,11 @@ class StageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stage
         fields = ('id', 'author', 'days', 'watering_cycles', 'nutrient_cycles', 'nutrient_type', 'blue_intensity', 'red_intensity', 'white1_intensity', 'white2_intensity', 'lights_on_hours', 'score')
+
+class PodSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Pod
+        fields = ('id', 'experiment', 'plant', 'position', 'state', 'score', 'start_date', 'end_date')
 
 class PlantSerializer(serializers.ModelSerializer):
     class Meta:

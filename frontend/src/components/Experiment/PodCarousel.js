@@ -1,17 +1,30 @@
 import React, { Component } from "react";
+import axios from "axios";
   
 export default class CustomModal extends Component {
     constructor(props) {
       super(props);
       this.state = {
-        //   pod1: this.props.pods.p1,
-        //   pod2: this.props.pods.p2,
-        //   pod3: this.props.pods.p3,
-        //   pod4: this.props.pods.p4,
-        //   pod5: this.props.pods.p5,
+          id: this.props.experimentId
+        //   pod1: this.props.experiment.pod1,
+        //   pod2: this.props.experiment.pod2,
+        //   pod3: this.props.experiment.pod3,
+        //   pod4: this.props.experiment.pod4,
+        //   pod5: this.props.experiment.pod5,
       };
-      
+      console.log(props)
     }
+
+    getPodScore(e) {
+        axios
+            .get(`/api/pods/${this.state.id}/`)
+            .then((res) => {
+                console.log(res)
+            })
+            .catch((err) => console.log(err));
+        this.setState({[e.target.name]: e.target.value})
+    }
+
     render() {
         return (
             //https://codepen.io/sergiopedercini/pen/jmKdbj

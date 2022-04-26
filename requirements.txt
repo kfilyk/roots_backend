@@ -2,3 +2,4 @@ django
 pymysql
 djangorestframework
 django-cors-headers
+django-filter
