@@ -28,16 +28,20 @@ export default class CustomModal extends Component {
         return (
             <div className="experiment_containter">
                 <div id="experiment" style= {{border: 'solid '+hsl+' 6px'}} >
-                    <div id="progressCircles">
+                    <div id="experimentLeft">
                         <div>Exp: { this.state.experiment.description }</div>
                         <div>Device: { this.state.experiment.device }</div>
                         <div>{ this.state.experiment.start_date } {"->"} { this.state.experiment.end_date }</div>
                         <div>{ this.state.experiment.score } </div>
-                        <ProgressCircle progress={{value: 0.50, caption: 'Completion', colour: 'blue'}}></ProgressCircle>
-                        <ProgressCircle progress={{value: this.state.experiment.score, caption: 'Score', colour: 'green'}}></ProgressCircle>
-                        <EditExperimentModal getExperiments={this.props.getExperiments} experiment={this.state.experiment}></EditExperimentModal>
+                        <div class="flex-wrapper">
+                            <ProgressCircle progress={{value: 0.50, caption: 'Completion', colour: 'blue'}}></ProgressCircle>
+                            <ProgressCircle progress={{value: this.state.experiment.score, caption: 'Score', colour: 'green'}}></ProgressCircle>
+                        </div>
+                        <div className='actions'>
+                        <EditExperimentModal classs='actionsButton' getExperiments={this.props.getExperiments} experiment={this.state.experiment}></EditExperimentModal>
+                        </div>
                     </div>
-                    <div id="podCarousel">
+                    <div id="experimentRight">
                         <PodCarousel experimentId={this.props.experiment.id}></PodCarousel>
                     </div>
                 </div>

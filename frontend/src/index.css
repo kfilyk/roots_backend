@@ -200,6 +200,7 @@ table tr:nth-child(odd) td{
 
 .flex-wrapper {
   display: flex;
+  flex-direction: row;
 }
 
 
@@ -252,12 +253,17 @@ table tr:nth-child(odd) td{
   text-anchor: middle;
 }
 
-#progressCircles{
-  flex-grow: 2;
+#experimentLeft{
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
 
-#podCarousel{
-  flex-grow: 5;
+#experimentRight{
+ display: flex;
+ align-items: center; 
+ flex-direction: row;
+ flex-grow: 4;
 }
 
 .single-chart {

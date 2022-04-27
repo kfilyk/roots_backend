@@ -15,7 +15,6 @@ export default class CustomModal extends Component {
     render() {
         return (
             //https://codepen.io/sergiopedercini/pen/jmKdbj
-            <div class="flex-wrapper">
                 <div class="single-chart">
                     <svg viewBox="0 0 36 36" class={'circular-chart '+ this.state.colour}>
                     <path class="circle-bg"
@@ -33,7 +32,6 @@ export default class CustomModal extends Component {
                     </svg>
                     <div>{this.state.caption}</div>
                 </div>
-            </div>
         )
     }
 }
