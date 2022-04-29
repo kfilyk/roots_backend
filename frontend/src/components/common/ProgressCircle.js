@@ -23,7 +23,7 @@ export default class CustomModal extends Component {
                         a 15.9155 15.9155 0 0 1 0 -31.831"
                     />
                     <path class="circle"
-                        stroke-dasharray={this.state.value + ' 100'}
+                        strokeDasharray={this.state.value + ' 100'}
                         d="M18 2.0845
                         a 15.9155 15.9155 0 0 1 0 31.831
                         a 15.9155 15.9155 0 0 1 0 -31.831"

@@ -14,8 +14,6 @@ export default class CustomModal extends Component {
 
     this.editEntry = this.editEntry.bind(this);
     this.handleChange = this.handleChange.bind(this);
-
-
   }
 
   editEntry(e) {

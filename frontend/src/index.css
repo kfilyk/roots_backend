@@ -111,7 +111,6 @@ body {
 .nav-link:hover {
   transition:0.5s;
   box-shadow: 0 5px 6px -6px #555555;
-
 }
 
 .modal {
@@ -147,6 +146,7 @@ ul {
   display: table;
   width:100%;
   padding:10px;
+  box-shadow: 0 5px 6px -6px #555555;
 }
 .edit {
   padding:10px;
@@ -186,12 +186,12 @@ td {
 }
 
 .actionsButton {
-  margin: 5px;
-  border: 1px solid #a8866e;
-  background-color: #EFEAE3;
-  color: #B3896A;
-  padding: 5px 10px;
-  border-radius: 5px;
+  border: 0px;
+  background-color: #B3896A;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 20px;
+  margin-right: 5px;
 }
 
 table tr:nth-child(odd) td{
