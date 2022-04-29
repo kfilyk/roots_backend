@@ -129,28 +129,10 @@ body {
   background-color: #fefefe;
   margin: 15% auto; /* 15% from the top and centered */
   padding: 20px;
-  width: max-content;
+  width: 30%;
   display: flex;
   flex-direction: column;
   align-items: center; /* Could be more or less, depending on screen size */
-}
-
-.modal_content{
-  display:flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-}
-
-.labelsContainer{
-  display:flex;
-  flex-direction: column;
-  margin-right: 2%;
-}
-
-.inputsContainer{
-  display:flex;
-  flex-direction: column;
 }
 
 ul {
@@ -286,4 +268,30 @@ table tr:nth-child(odd) td{
 .single-chart {
   width: 30%;
   justify-content: space-around ;
+}
+
+.modal_content{
+  display: flex;
+  flex-direction: column;
+}
+
+.formRow{
+  display: flex;
+  margin-bottom: 5%;
+}
+
+.formRow :first-child {
+  width: 40%;
+}
+
+.formRow > * {
+  flex: 0 0 auto;
+}
+
+.modal_type{
+  margin: 2% 0 12% 0%;
+}
+
+.save{
+  margin-top: 40%;
 }

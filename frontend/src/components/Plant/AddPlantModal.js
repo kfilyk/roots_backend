@@ -35,7 +35,7 @@ export default class CustomModal extends Component {
   render() {
     return (
       <Popup
-        trigger={<button className="button" class='actionsButton'> Add New Plant </button>}
+        trigger={<button className="button" class='actionsButton'> + </button>}
         modal
         nested
       >
@@ -45,17 +45,19 @@ export default class CustomModal extends Component {
               <button className="close" onClick={close}>
                 &times;
               </button>
-              <div className="header"> Add New Plant </div>
-              <div className="content">
-              <br></br>
-              <label> Name: </label>
-                  <input name="name" value={this.state.name} onChange={this.handleChange} />
-              <br></br>
-              <label> Supplier: </label>
-                  <input name="supplier" value={this.state.supplier} onChange={this.handleChange} />
+              <div className="modal_type"> Add New Plant </div>
+              <div className="modal_content">
+
+                    <div class="formRow">
+                      <label> Name: </label> <input name="name" value={this.state.name} onChange={this.handleChange} />
+                    </div>
+
+                    <div class="formRow">
+                      <label> Supplier: </label> <input name="supplier" value={this.state.supplier} onChange={this.handleChange} />
+                    </div>
               </div>
               <div className="actions">
-                <button class='actionsButton' onClick={() => {
+                <button class='save' onClick={() => {
                 this.addEntry()
                 close();
               }}>Save</button>
