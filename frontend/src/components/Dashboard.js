@@ -227,15 +227,15 @@ class Dashboard extends Component {
         // display list of all items
         return <li key={ ''+this.state.selectedTab+' '+ item.id } className="item">
           <div className="edit">
-            <button className="btn btn-secondary mr-2"
+            <button class="actionsButton" className="btn btn-secondary mr-2"
               onClick={() => this.handleEdit(item)}
             >
-              Edit
+              EDIT
             </button>
-            <button className="btn btn-danger"
+            <button class="actionsButton" className="btn btn-danger"
               onClick={() => this.handleDelete(item)}
             >
-              Delete
+              DELETE
             </button>
           </div>
           <div className="info">
@@ -245,7 +245,7 @@ class Dashboard extends Component {
           </div>
           <Experiment experiment = {e}></Experiment>
           <span>
-            <button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) this.deleteEntry(item.id) }}> Delete </button>
+            <button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) this.deleteEntry(item.id) }}> DELETE </button>
           </span>
         </li>
 

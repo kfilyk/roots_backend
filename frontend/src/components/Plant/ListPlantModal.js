@@ -35,7 +35,7 @@ export default class CustomModal extends Component {
                   <td>{item.supplier}</td>
                   <td>                  
                     <EditPlantModal getPlants={this.props.getPlants} plantData={item}/>
-                    <button class='actionsButton' onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) this.deleteEntry(item.id) }}> Delete </button>
+                    <button class='actionsButton' onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) this.deleteEntry(item.id) }}> DELETE </button>
                   </td>
         </tr>
       ))
