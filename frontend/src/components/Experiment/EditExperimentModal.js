@@ -81,27 +81,34 @@ export default class CustomModal extends Component {
               <button className="close" onClick={close}>
                 &times;
               </button>
-              <div className="header"> Edit Experiment </div>
-              <div className="content">
-                <br></br>
-                <label> Description: </label>
-                <input name="description" value={this.state.description} onChange={this.handleChange} />
-                <br></br>
-                <label> Start Date: </label>
-                <input type="date" name="start_date" value={this.state.start_date} onChange={this.handleChange} />
-                <br></br>
-                <label> End Date: </label>
-                <input type="date"  name="end_date" value={this.state.end_date} onChange={this.handleChange} />
-                <br></br>
-                <label> Device: </label>
-                {this.state.device}
-              </div>
-              <div className="actions">
+              <div className="modal_type"> Edit Experiment </div>
+              <div className="modal_content">
+                <div class="formRow"> 
+                    <label> Id: </label>
+                    <label>{this.state.id}</label>
+                </div>
+                  <div class="formRow"> 
+                      <label> Description: </label>
+                      <input name="description" value={this.state.description} onChange={this.handleChange} />
+                  </div>
+                  <div class="formRow"> 
+                      <label> Start Date: </label>
+                      <input type="date" name="start_date" value={this.state.start_date} onChange={this.handleChange} />
+                  </div>
+                  <div class="formRow"> 
+                      <label> End Date: </label>
+                      <input type="date"  name="end_date" value={this.state.end_date} onChange={this.handleChange} />
+                  </div>
+                  <div class="formRow"> 
+                      <label> Device: </label>
+                      <input name="device" value={this.state.device} onChange={this.handleChange} />
+                  </div>
                 <button onClick={() => {
-                this.editEntry()
-                close();
-              }}>Save</button>
+                  this.editEntry()
+                  close();
+                }}>Save</button>
               </div>
+                
             </div>
           </div>
         )}

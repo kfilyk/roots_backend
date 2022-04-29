@@ -55,12 +55,10 @@ export default class CustomModal extends Component {
                     <div class="formRow">
                       <label> Supplier: </label> <input name="supplier" value={this.state.supplier} onChange={this.handleChange} />
                     </div>
-              </div>
-              <div className="actions">
-                <button class='save' onClick={() => {
-                this.addEntry()
-                close();
-              }}>Save</button>
+                    
+                    <button class='save' onClick={() => {this.addEntry() 
+                      close();}}>Save
+                    </button>
               </div>
             </div>
           </div>

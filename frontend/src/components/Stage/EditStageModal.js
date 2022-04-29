@@ -100,13 +100,12 @@ export default class CustomModal extends Component {
                     </div>
                     <div class="formRow">
                       <label> Score: </label> <input name="score" value={this.state.score} onChange={this.handleChange} />
-                    </div>                          
-              </div>
-              <div className="actions">
-                <button class='actionsButton' onClick={() => {
-                this.editEntry()
+                    </div>      
+
+                    <button class='actionsButton' onClick={() => {
+                this.addEntry()
                 close();
-              }}>Save</button>
+              }}>Add New Stage</button>                    
               </div>
             </div>
           </div>

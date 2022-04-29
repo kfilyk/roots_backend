@@ -80,23 +80,24 @@ export default class CustomModal extends Component {
               <button className="close" onClick={close}>
                 &times;
               </button>
-              <div className="header"> Create Experiment </div>
-              <div className="content">
-                <br></br>
-                <label> Description: </label>
-                <input name="description" value={this.state.description} onChange={this.handleChange} />
-                <br></br>
-                <label> Start Date: </label>
-                <input type="date" name="start_date" value={this.state.start_date} onChange={this.handleChange} />
-                <br></br>
-                <label> End Date: </label>
-                <input type="date"  name="end_date" value={this.state.end_date} onChange={this.handleChange} />
-                <br></br>
-                <label> Device: </label>
-                <input name="device" value={this.state.device} onChange={this.handleChange} />
-
-              </div>
-              <div className="actions">
+              <div className="modal_type"> Create Experiment </div>
+              <div className="modal_content">
+                  <div class="formRow"> 
+                    <label> Description: </label>
+                    <input name="description" value={this.state.description} onChange={this.handleChange} />
+                </div>
+                <div class="formRow"> 
+                    <label> Start Date: </label>
+                    <input type="date" name="start_date" value={this.state.start_date} onChange={this.handleChange} />
+                </div>
+                <div class="formRow"> 
+                    <label> End Date: </label>
+                    <input type="date"  name="end_date" value={this.state.end_date} onChange={this.handleChange} />
+                </div>
+                <div class="formRow"> 
+                    <label> Device: </label>
+                    <input name="device" value={this.state.device} onChange={this.handleChange} />
+                </div>
                 <button onClick={() => {
                 this.addEntry()
                 close();
