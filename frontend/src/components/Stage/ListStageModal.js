@@ -42,8 +42,8 @@ export default class CustomModal extends Component {
             <td> { item.lights_on_hours } </td>
             <td> { item.score } </td>
             <td>                  
-              <EditStageModal class='actionsButton' getStages={this.props.getStages} stageData={item}/>
-              <button class='actionsButton' onClick={() => { if (window.confirm(`You are about to delete ${item.id} by ${item.author}`)) this.deleteEntry(item.id) }}> DELETE </button>
+              <EditStageModal getStages={this.props.getStages} stageData={item}/>
+              <button onClick={() => { if (window.confirm(`You are about to delete ${item.id} by ${item.author}`)) this.deleteEntry(item.id) }}> DELETE </button>
             </td>
         </tr>
       ))

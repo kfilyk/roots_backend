@@ -66,11 +66,13 @@ export default class CustomModal extends Component {
                         
                     </div>
                     <div id="experimentRight">
-                        <div>
+                        <div class='actionsContainer'>
                             <EditExperimentModal getExperiments={this.props.getExperiments} experiment={this.state.experiment}></EditExperimentModal>
-                            <button class='actionsButton' onClick={() => { if (window.confirm(`You are about to delete ${this.state.experiment.id}, ${this.state.experiment.description}`)) this.deleteEntry(this.state.experiment.id) }}> DELETE </button>
+                            <button onClick={() => { if (window.confirm(`You are about to delete ${this.state.experiment.id}, ${this.state.experiment.description}`)) this.deleteEntry(this.state.experiment.id) }}> DELETE </button>
                         </div>
-                        <PodCarousel experimentId={this.props.experiment.id}></PodCarousel>
+                        <div class="podCarouselWrapper">
+                            <PodCarousel experimentId={this.props.experiment.id}></PodCarousel>
+                        </div>
                     </div>
                 </div>
             </div>

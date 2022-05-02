@@ -71,7 +71,7 @@ export default class CustomModal extends Component {
   render() {
     return (
       <Popup
-        trigger={<button className="button" class='actionsButton'> EDIT </button>}
+        trigger={<button className="button"> EDIT </button>}
         modal
         nested
       >

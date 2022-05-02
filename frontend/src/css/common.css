@@ -118,8 +118,7 @@
   
   #experimentRight{
    display: flex;
-   align-items: center; 
-   flex-direction: row;
+   flex-direction: column;
    flex-grow: 4;
   }
 
@@ -134,4 +133,20 @@
     padding:10px;
     border-radius: 10px;
     display: flex;
+  }
+
+  .podCarouselWrapper {
+    display: flex;
+    align-items: center; 
+    flex-direction: row;
+  }
+
+  .actionsContainer {
+    display: flex;
+    justify-content: end;
+  }
+
+  .actionsContainer button {
+    margin-top: 0px;
+    margin-bottom: 15px;
   }

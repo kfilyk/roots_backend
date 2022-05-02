@@ -227,12 +227,12 @@ class Dashboard extends Component {
         // display list of all items
         return <li key={ ''+this.state.selectedTab+' '+ item.id } className="item">
           <div className="edit">
-            <button class="actionsButton" className="btn btn-secondary mr-2"
+            <button className="btn btn-secondary mr-2"
               onClick={() => this.handleEdit(item)}
             >
               EDIT
             </button>
-            <button class="actionsButton" className="btn btn-danger"
+            <button className="btn btn-danger"
               onClick={() => this.handleDelete(item)}
             >
               DELETE
