@@ -14,6 +14,8 @@ class ExperimentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Experiment
         fields = ('id', 'description', 'current_stage', 'stages', 'day', 'stage_day', 'device', 'score', 'user', 'start_date', 'end_date', 'pod1', 'pod2', 'pod3', 'pod4', 'pod5', 'pod6', 'pod7', 'pod8', 'pod9', 'pod10')
+        ## fields = '__all__'
+        read_only_fields = ['user']
 
 class StageSerializer(serializers.ModelSerializer):
     class Meta:

@@ -2,6 +2,7 @@ import React, { Component, useEffect} from "react";
 import EditExperimentModal from "./EditExperimentModal"
 import PodCarousel from "./PodCarousel"
 import ProgressCircle from "../common/ProgressCircle";
+import axios from "axios";
 
 function getColor(value){
     // hue value from 0 to 360
@@ -17,7 +18,18 @@ export default class CustomModal extends Component {
           completion_score: 0,
       };
 
+      this.deleteEntry = this.deleteEntry.bind(this);
+
     }
+
+    deleteEntry = (id) => {
+        axios
+          .delete(`/api/experiments/${id}/`)
+          .then((res) => {
+            this.props.getExperiments()
+          })
+          .catch((err) => console.log(err));
+      };
 
     calculateCompletion(sd, ed) {
         var start_date = new Date(sd).getTime()
@@ -51,11 +63,13 @@ export default class CustomModal extends Component {
                             <ProgressCircle progress={{value: this.calculateCompletion(this.state.experiment.start_date, this.state.experiment.end_date), caption: 'Completion', colour: 'blue'}}></ProgressCircle>
                             <ProgressCircle progress={{value: this.state.experiment.score, caption: 'Score', colour: 'green'}}></ProgressCircle>
                         </div>
-                        <div className='actions'>
-                        <EditExperimentModal classs='actionsButton' getExperiments={this.props.getExperiments} experiment={this.state.experiment}></EditExperimentModal>
-                        </div>
+                        
                     </div>
                     <div id="experimentRight">
+                        <div>
+                            <EditExperimentModal getExperiments={this.props.getExperiments} experiment={this.state.experiment}></EditExperimentModal>
+                            <button class='actionsButton' onClick={() => { if (window.confirm(`You are about to delete ${this.state.experiment.id}, ${this.state.experiment.description}`)) this.deleteEntry(this.state.experiment.id) }}> DELETE </button>
+                        </div>
                         <PodCarousel experimentId={this.props.experiment.id}></PodCarousel>
                     </div>
                 </div>

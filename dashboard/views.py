@@ -27,6 +27,9 @@ class ExperimentView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
     serializer_class = ExperimentSerializer
 
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
     def get_queryset(self):
         user = self.request.user
         return Experiment.objects.filter(user = user.id)
