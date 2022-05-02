@@ -1,0 +1,35 @@
+@font-face {
+    font-family: "Brandon Grotesque";
+    src:url("../fonts/Brandon-Grotesque-Font-Family/brandon-grotesque-light-58a8a4b38001d.otf");
+  }
+  
+  @font-face {
+    font-family: "Brandon Grotesque Black";
+    src:url("../fonts/Brandon-Grotesque-Font-Family/brandon-grotesque-black-58a8a3e824392.otf");
+  }
+  
+  @font-face {
+    font-family: "Windsor D";
+    src:url("../fonts/WindsorD.ttf");
+  }
+
+  body {
+    font-family: "Brandon Grotesque";
+    color: #B3896A;
+    background-color: #0E3829;
+    margin:2%;
+  }
+
+  button {
+    border: 0px;
+    background-color: #B3896A;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    margin-right: 5px;
+    margin-top: 15px;
+  }
+  
+  .save{
+    margin-top: 40%;
+  }

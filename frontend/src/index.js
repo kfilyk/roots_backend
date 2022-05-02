@@ -3,6 +3,9 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import './index.css';
+import './css/main.css';
+import './css/common.css';
+import './css/nav.css';
 
 //import 'bootstrap/dist/css/bootstrap.css';
 

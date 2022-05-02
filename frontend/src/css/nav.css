@@ -1,0 +1,90 @@
+.header {
+    font-family: "Windsor D";
+    padding: 10px;
+    display:table;
+    width:100%;
+  }
+
+/* left side */
+  .title {
+    display:table-cell; 
+    vertical-align:middle;
+  }
+  
+  /* right side */
+  
+  .user_container {
+    font-family: "Brandon Grotesque Black";
+    display: flex;
+    align-items:center;
+    flex-direction: row-reverse;
+    padding-right: 0.5em;
+  }
+  
+  .user_current {
+    float: right;
+  }
+  
+  .user_img_frame {
+    float: left;
+    vertical-align: middle; 
+    height:100%;
+  }
+  
+  .user_container > * {
+    height:30px;
+  }
+  
+  .user_img{
+    height:30px;
+  }
+  
+  #logout{
+    transition:0.5s;
+    border: none;
+    background: none;
+    border-radius: 0.75em;
+    color: #B3896A;
+    font-family: "Brandon Grotesque";
+    text-transform: uppercase;
+    text-decoration: underline;
+    font-size: 1.25em;
+    width: 80px;
+    margin-top: 0;
+    padding-bottom: 35px;
+  }
+  
+  #logout:hover span {
+    transition:0.5s;
+    display: none
+  }
+  
+  #logout:hover:before {
+    transition:0.5s;
+    content: "Logout"
+  }
+
+  .nav {
+    text-align: center;
+    display:table;
+    width: 100%;
+    table-layout: fixed;
+    box-shadow: 0 5px 6px -6px #888888;
+    padding: 0px;
+  }
+
+  .nav-link {
+    transition:0.5s;
+    font-family: "Brandon Grotesque Black";
+    display:table-cell;
+    text-align: center;
+    margin: 0px;
+    padding: 5px;
+  
+  }
+  
+  .nav-link:hover {
+    transition:0.5s;
+    box-shadow: 0 5px 6px -6px #555555;
+  }
+  
