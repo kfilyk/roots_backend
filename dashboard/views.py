@@ -50,15 +50,13 @@ class PodView(viewsets.ModelViewSet):
     filterset_fields = ['experiment']
 
     def get_queryset(self):
-        user = self.request.user
-        return Pod.objects.all()
+        return Pod.objects.all().annotate(plant_name=F('plant__name'))
 
 class PlantView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
     serializer_class = PlantSerializer
 
     def get_queryset(self):
-        user = self.request.user
         return Plant.objects.all()
 
 class CreateUserAPIView(CreateAPIView):

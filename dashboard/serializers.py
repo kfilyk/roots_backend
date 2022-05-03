@@ -26,11 +26,14 @@ class StageSerializer(serializers.ModelSerializer):
         fields = ('id', 'author', 'days', 'watering_cycles', 'nutrient_cycles', 'nutrient_type', 'blue_intensity', 'red_intensity', 'white1_intensity', 'white2_intensity', 'lights_on_hours', 'score')
 
 class PodSerializer(serializers.ModelSerializer):
+    plant_name = serializers.CharField()
+
     class Meta:
         model = Pod
-        fields = ('id', 'experiment', 'plant', 'position', 'state', 'score', 'start_date', 'end_date')
+        fields = ('id', 'experiment', 'plant', 'plant_name', 'position', 'state', 'score', 'start_date', 'end_date')
 
 class PlantSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Plant
         fields = ('id', 'name', 'supplier', 'score')
