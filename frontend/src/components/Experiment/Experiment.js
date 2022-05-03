@@ -56,7 +56,8 @@ export default class CustomModal extends Component {
                 <div id="experiment" >
                     <div id="experimentLeft">
                         <div>Exp: { this.state.experiment.description }</div>
-                        <div>Device: { this.state.experiment.device }</div>
+                        <div>Device ID: { this.state.experiment.device }</div>
+                        <div>Device Name: { this.state.experiment.device_name }</div>
                         <div>Date: {this.state.experiment.start_date.substring(5,10)} {"->"} { this.state.experiment.end_date.substring(5,10)}, {this.state.experiment.start_date.substring(0,4)}</div>
                         <div>Score: { this.state.experiment.score } </div>
                         <div class="flex-wrapper">

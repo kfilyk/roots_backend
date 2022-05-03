@@ -12,6 +12,7 @@ from django.contrib.auth import get_user_model
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.permissions import IsAuthenticated 
+from django.db.models import F
 
 # https://www.digitalocean.com/community/tutorials/build-a-to-do-application-using-django-and-react
 
@@ -32,7 +33,7 @@ class ExperimentView(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        return Experiment.objects.filter(user = user.id)
+        return Experiment.objects.filter(user = user.id).annotate(device_name=F('device__name'))
 
 class StageView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
