@@ -2,7 +2,8 @@ from dashboard.models import Device, Experiment, Stage, Plant, Pod
 from rest_framework import viewsets
 from .serializers import DeviceSerializer, ExperimentSerializer, CreateUserSerializer, UserSerializer, StageSerializer, PlantSerializer, PodSerializer
 #from .models import Device
-from django_filters.rest_framework import DjangoFilterBackend
+from django_filters import rest_framework as filters
+from rest_framework.filters import OrderingFilter
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from rest_framework.generics import CreateAPIView
@@ -13,6 +14,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.permissions import IsAuthenticated 
 from django.db.models import F
+from rest_framework.decorators import action
 
 # https://www.digitalocean.com/community/tutorials/build-a-to-do-application-using-django-and-react
 
@@ -46,7 +48,7 @@ class StageView(viewsets.ModelViewSet):
 class PodView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
     serializer_class = PodSerializer
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [filters.DjangoFilterBackend,]
     filterset_fields = ['experiment']
 
     def get_queryset(self):
@@ -55,6 +57,8 @@ class PodView(viewsets.ModelViewSet):
 class PlantView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
     serializer_class = PlantSerializer
+    filter_backends = (OrderingFilter,)
+    ordering_fields = ['name']
 
     def get_queryset(self):
         return Plant.objects.all()
