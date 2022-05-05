@@ -3,6 +3,7 @@ import EditExperimentModal from "./EditExperimentModal"
 import PodCarousel from "./PodCarousel"
 import ProgressCircle from "../common/ProgressCircle";
 import axios from "axios";
+import "./experiment.css"
 
 function getColor(value){
     // hue value from 0 to 360
@@ -50,7 +51,8 @@ export default class CustomModal extends Component {
       }
 
     render() {
-
+        let start_date_string = this.state.experiment.start_date.substring(0,10) ?? ""
+        let end_date_string = this.state.experiment.start_date.substring(0,10) ?? ""
         return (
             <div className="experiment_containter">
                 <div id="experiment" >
@@ -58,10 +60,10 @@ export default class CustomModal extends Component {
                         <div>Exp: { this.state.experiment.description }</div>
                         <div>Device ID: { this.state.experiment.device }</div>
                         <div>Device Name: { this.state.experiment.device_name }</div>
-                        <div>Date: {this.state.experiment.start_date.substring(5,10)} {"->"} { this.state.experiment.end_date.substring(5,10)}, {this.state.experiment.start_date.substring(0,4)}</div>
+                        <div>Date: {start_date_string} {"->"} {end_date_string}</div>
                         <div>Score: { this.state.experiment.score } </div>
                         <div class="flex-wrapper">
-                            <ProgressCircle progress={{value: this.calculateCompletion(this.state.experiment.start_date, this.state.experiment.end_date), caption: 'Completion', colour: 'blue'}}></ProgressCircle>
+                            <ProgressCircle progress={{value: this.calculateCompletion(this.state.experiment.start_date, this.state.experiment.end_date) ?? 0, caption: 'Completion', colour: 'blue'} }></ProgressCircle>
                             <ProgressCircle progress={{value: this.state.experiment.score, caption: 'Score', colour: 'green'}}></ProgressCircle>
                         </div>
                         

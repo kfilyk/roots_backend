@@ -244,9 +244,6 @@ class Dashboard extends Component {
             <div>Mac: { item.mac_address }</div>
           </div>
           <Experiment experiment = {e}></Experiment>
-          <span>
-            <button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) this.deleteEntry(item.id) }}> DELETE </button>
-          </span>
         </li>
 
       });

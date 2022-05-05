@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Popup from "reactjs-popup";
 import axios from "axios";
+import "./experiment.css"
 
 export default class CustomModal extends Component {
   constructor(props) {

@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import ProgressCircle from '../common/ProgressCircle'
+import "./experiment.css"
   
 export default class CustomModal extends Component {
     constructor(props) {
