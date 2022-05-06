@@ -49,7 +49,7 @@ export default class CustomModal extends Component {
           <th>ID</th>
           <th>Name</th>
           <th>Supplier</th>
-          <th>Actions</th>
+          <th></th>
         </tr>
         {this.renderItems()}
       </table>

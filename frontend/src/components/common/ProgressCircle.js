@@ -19,16 +19,16 @@ export default class CustomModal extends Component {
                     <svg viewBox="0 0 36 36" class={'circular-chart '+ this.state.colour}>
                     <path class="circle-bg"
                         d="M18 2.0845
-                        a 15.9155 15.9155 0 0 1 0 31.831
-                        a 15.9155 15.9155 0 0 1 0 -31.831"
+                        a 16 16 0 0 1 0 32
+                        a 16 16 0 0 1 0 -32"
                     />
                     <path class="circle"
                         strokeDasharray={this.state.value + ' 100'}
                         d="M18 2.0845
-                        a 15.9155 15.9155 0 0 1 0 31.831
-                        a 15.9155 15.9155 0 0 1 0 -31.831"
+                        a 16 16 0 0 1 0 32
+                        a 16 16 0 0 1 0 -32"
                     />
-                    <text x="18" y="20.35" class="percentage"> {this.state.value}%</text>
+                    <text x="18" y="21" class="percentage"> {this.state.value}%</text>
                     </svg>
                     <div>{this.state.caption}</div>
                 </div>

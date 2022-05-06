@@ -11,12 +11,6 @@ ul {
 .item {
   display: table;
   width:100%;
-  padding:10px;
-  box-shadow: 0 5px 6px -6px #555555;
-}
-.edit {
-  padding:10px;
-  display: table-cell;
 }
 
 .info {
@@ -28,17 +22,41 @@ ul {
   font-weight: bolder;
 }
 
+table {
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
 th {
   font-size: 1.2em;
   font-weight: bolder;
-  background-color: #E7DDDC
+  padding:20px;
+}
+
+tr {
+  border-bottom: 1px solid;
 }
 
 td {
   text-align:center;
+  padding:10px;
 }
 
-table tr:nth-child(odd) td{
-  background-color: #F8F3F2;
+button {
+  font-family: "Brandon Grotesque Black";
+  margin:5px;
+  border: 2px #B3896A solid;
+  background-color: #ffffff;
+  color: #B3896A;;
+  padding: 6px 12px;
+  border-radius: 20px;
+  margin-right: 5px;
+}
+
+button:hover {
+  transition: 0.25s;
+  background-color: #B3896A;
+  color: #FFFFFF;;
+
 }
 

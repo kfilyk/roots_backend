@@ -4,7 +4,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import './index.css';
 import './css/main.css';
-import './css/common.css';
+import './css/progress_circle.css';
 import './css/nav.css';
 
 //import 'bootstrap/dist/css/bootstrap.css';

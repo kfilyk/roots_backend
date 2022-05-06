@@ -2,12 +2,12 @@
 
 import React, { Component, } from "react";
 import { Navigate } from "react-router-dom";
-import ListPlantModal from './Plant/ListPlantModal';
+import PlantList from './Plant/PlantList';
 import AddPlantModal from './Plant/AddPlantModal';
-import ListExperimentModal from './Experiment/ListExperimentModal';
+import ExperimentList from './Experiment/ExperimentList';
 import AddExperimentModal from './Experiment/AddExperimentModal';
 import Experiment from './Experiment/Experiment';
-import ListStageModal from './Stage/ListStageModal';
+import StageList from './Stage/StageList';
 import AddStageModal from './Stage/AddStageModal';
 import axios from "axios";
 import user from './user_brown.png';
@@ -226,19 +226,14 @@ class Dashboard extends Component {
   
         // display list of all items
         return <li key={ ''+this.state.selectedTab+' '+ item.id } className="item">
-          <div className="edit">
-            <button className="btn btn-secondary mr-2"
-              onClick={() => this.handleEdit(item)}
-            >
+
+          <div className="info">
+            <button className="btn btn-secondary mr-2" onClick={() => this.handleEdit(item)}>
               EDIT
             </button>
-            <button className="btn btn-danger"
-              onClick={() => this.handleDelete(item)}
-            >
+            <button className="btn btn-danger" onClick={() => this.handleDelete(item)}>
               DELETE
             </button>
-          </div>
-          <div className="info">
             <div className="device_name">{ item.name }</div>
             <div>Registered: { item.registration_date }</div>
             <div>Mac: { item.mac_address }</div>
@@ -251,7 +246,7 @@ class Dashboard extends Component {
     } else if (this.state.selectedTab === "experiment") {
       return(
         <>
-          <ListExperimentModal getExperiments={this.getExperiments} experimentList={this.state.experimentList}/>
+          <ExperimentList getExperiments={this.getExperiments} experimentList={this.state.experimentList}/>
           <AddExperimentModal getExperiments={this.getExperiments}></AddExperimentModal>
         </>
       );
@@ -259,14 +254,14 @@ class Dashboard extends Component {
     } else if (this.state.selectedTab === "stage") {
       return(
         <>
-          <ListStageModal getStages={this.getStages} stageList={this.state.stageList}/>
+          <StageList getStages={this.getStages} stageList={this.state.stageList}/>
           <AddStageModal getStages={this.getStages}></AddStageModal> 
         </>
       );
     } else if (this.state.selectedTab === "plant") {
       return(
         <>
-          <ListPlantModal getPlants={this.getPlants} plantList={this.state.plantList}/>
+          <PlantList getPlants={this.getPlants} plantList={this.state.plantList}/>
           <AddPlantModal getPlants={this.getPlants}></AddPlantModal> 
         </>
       );

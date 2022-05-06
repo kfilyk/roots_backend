@@ -15,7 +15,7 @@ export default class CustomModal extends Component {
     constructor(props) {
       super(props);
       this.state = {
-          experiment: this.props.experiment,
+          experiment: this.props.experiment,          
           completion_score: 0,
       };
 
