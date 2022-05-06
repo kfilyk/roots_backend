@@ -43,20 +43,28 @@ td {
 }
 
 button {
-  font-family: "Brandon Grotesque Black";
-  margin:5px;
-  border: 2px #B3896A solid;
+  font-family: "Brandon Grotesque";
+  margin: 5px;
+
+  border: 1px #B3896A solid;
   background-color: #ffffff;
   color: #B3896A;;
   padding: 6px 12px;
   border-radius: 20px;
-  margin-right: 5px;
 }
 
 button:hover {
   transition: 0.25s;
   background-color: #B3896A;
   color: #FFFFFF;;
-
 }
 
+.actionsContainer {
+  display: flex;
+  justify-content: right;
+}
+
+.actionsContainer button {
+  margin-top: 0px;
+  margin-bottom: 15px;
+}

@@ -1,7 +1,7 @@
 @font-face {
   font-family: "Brandon Grotesque Black";
   font-weight: bold;
-  src:url("../fonts/Brandon-Grotesque-Font-Family/brandon-grotesque-light-58a8a4b38001d.otf");
+  src:url("../../fonts/Brandon-Grotesque-Font-Family/brandon-grotesque-light-58a8a4b38001d.otf");
 }
 
 /* ==========================================================================================
@@ -59,10 +59,17 @@
   stroke: #3c9ee5;
 }
 
+.caption {
+  fill: #666;
+  font-family: "Brandon Grotesque Black";
+  font-size: 0.4em;
+  text-anchor: middle;
+}
+
 .percentage {
   fill: #666;
   font-family: "Brandon Grotesque Black";
-  font-size: 0.5em;
+  font-size: 0.4em;
   text-anchor: middle;
 }
 

@@ -228,14 +228,16 @@ class Dashboard extends Component {
         return <li key={ ''+this.state.selectedTab+' '+ item.id } className="item">
 
           <div className="info">
-            <button className="btn btn-secondary mr-2" onClick={() => this.handleEdit(item)}>
-              EDIT
-            </button>
-            <button className="btn btn-danger" onClick={() => this.handleDelete(item)}>
-              DELETE
-            </button>
+            <div class='actionsContainer'>
+              <button className="btn btn-secondary mr-2" onClick={() => this.handleEdit(item)}>
+                EDIT
+              </button>
+              <button className="btn btn-danger" onClick={() => this.handleDelete(item)}>
+                DELETE
+              </button>
+            </div>
             <div className="device_name">{ item.name }</div>
-            <div>Registered: { item.registration_date }</div>
+            <div>Registered: { item.registration_date.substring(0, 10) }</div>
             <div>Mac: { item.mac_address }</div>
           </div>
           <Experiment experiment = {e}></Experiment>

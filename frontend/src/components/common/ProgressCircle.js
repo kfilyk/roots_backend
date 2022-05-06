@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-  
+import "./progress_circle.css";
+
 //https://codepen.io/sergiopedercini/pen/jmKdbj
 
 export default class CustomModal extends Component {
@@ -28,9 +29,10 @@ export default class CustomModal extends Component {
                         a 16 16 0 0 1 0 32
                         a 16 16 0 0 1 0 -32"
                     />
-                    <text x="18" y="21" class="percentage"> {this.state.value}%</text>
+                    <text x="18" y="18" class="caption"> {this.state.caption}</text>
+                    <text x="18" y="24" class="percentage"> {this.state.value + "%"}</text>
                     </svg>
-                    <div>{this.state.caption}</div>
+                    {/*<div>{}</div>*/}
                 </div>
         )
     }
