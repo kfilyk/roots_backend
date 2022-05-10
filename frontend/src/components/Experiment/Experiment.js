@@ -51,15 +51,15 @@ export default class CustomModal extends Component {
       }
 
     render() {
-        let start_date_string = this.state.experiment.start_date.substring(0,10) ?? ""
-        let end_date_string = this.state.experiment.start_date.substring(0,10) ?? ""
+        let start_date_string = this.state.experiment.start_date ?? ""
+        let end_date_string = this.state.experiment.start_date ?? ""
         return (
             <div className="experiment_containter">
                 <div id="experiment" >
                     <div id="experimentLeft">
                         <div>Exp: { this.state.experiment.description }</div>
                         <div>Device ID: { this.state.experiment.device }</div>
-                        <div>Device Name: { this.state.experiment.device_name }</div>
+                        <div>Device Name: { this.state.experiment.device }</div>
                         <div>Date: {start_date_string} {"->"} {end_date_string}</div>
                         <div>Score: { this.state.experiment.score } </div>
                         <div class="flex-wrapper">

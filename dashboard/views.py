@@ -61,7 +61,7 @@ class PlantView(viewsets.ModelViewSet):
     ordering_fields = ['name']
 
     def get_queryset(self):
-        return Plant.objects.all()
+        return Plant.objects.all().order_by('name')
 
 class CreateUserAPIView(CreateAPIView):
     serializer_class = CreateUserSerializer

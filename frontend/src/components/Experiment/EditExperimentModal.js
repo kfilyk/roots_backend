@@ -10,8 +10,8 @@ export default class CustomModal extends Component {
     this.state = {
       id: this.props.experiment.id,
       description: this.props.experiment.description,
-      start_date: this.props.experiment.start_date.substring(0,10) ?? "",
-      end_date: this.props.experiment.end_date.substring(0,10) ?? "",
+      start_date: this.props.experiment.start_date ?? "",
+      end_date: this.props.experiment.end_date ?? "",
       score: this.props.experiment.score,
       device: this.props.experiment.device,
       pod1:this.props.experiment.pod1,
