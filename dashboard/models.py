@@ -67,32 +67,60 @@ class Experiment(models.Model):
         db_table = 'experiment'
 
 # many readings per experiment - is written by a user to the db in reference to an experiment
-class Reading(models.Model):
-    id = models.AutoField(db_column='r_id', primary_key=True)  
-    experiment = models.ForeignKey("Experiment", models.DO_NOTHING, db_column='r_experiment_id', blank=True, null=True)  # delete experiment readings if experiment is deleted
-    water_level = models.IntegerField(db_column='r_water_level', blank=True, null=True) 
-    reading_date = models.DateTimeField(db_column='r_reading_date', auto_now_add=True)
-    electrical_conductance = models.IntegerField(db_column='r_electrical_conductance', blank=True, null=True) 
-    reservoir_tds = models.IntegerField(db_column='r_reservoir_tds', blank=True, null=True) 
-    reservoir_ph = models.IntegerField(db_column='r_reservoir_ph', blank=True, null=True)  
-    recipe_stage = models.IntegerField(db_column='r_recipe_stage', blank=True, null=True) # 
-    temperature = models.DecimalField(db_column='r_temperature', max_digits=2, decimal_places=2, blank=True, null=True) 
-    humidity = models.DecimalField(db_column='r_humidity', max_digits=2, decimal_places=2, blank=True, null=True)
-    photo_link = models.CharField(db_column='r_photo_link', max_length=100, blank=True, null=True)
-    pod1_score = models.DecimalField(db_column='r_pod1_score', max_digits=2, decimal_places=2, blank=True, null=True)
-    pod2_score = models.DecimalField(db_column='r_pod2_score', max_digits=2, decimal_places=2, blank=True, null=True)
-    pod3_score = models.DecimalField(db_column='r_pod3_score', max_digits=2, decimal_places=2, blank=True, null=True)
-    pod4_score = models.DecimalField(db_column='r_pod4_score', max_digits=2, decimal_places=2, blank=True, null=True)
-    pod5_score = models.DecimalField(db_column='r_pod5_score', max_digits=2, decimal_places=2, blank=True, null=True)
-    pod6_score = models.DecimalField(db_column='r_pod6_score', max_digits=2, decimal_places=2, blank=True, null=True)
-    pod7_score = models.DecimalField(db_column='r_pod7_score', max_digits=2, decimal_places=2, blank=True, null=True)
-    pod8_score = models.DecimalField(db_column='r_pod8_score', max_digits=2, decimal_places=2, blank=True, null=True)
-    pod9_score = models.DecimalField(db_column='r_pod9_score', max_digits=2, decimal_places=2, blank=True, null=True)
-    pod10_score = models.DecimalField(db_column='r_pod10_score', max_digits=2, decimal_places=2, blank=True, null=True)
+class ExperimentReading(models.Model):
+    id = models.AutoField(db_column='er_id', primary_key=True)  
+    experiment = models.ForeignKey("Experiment", models.DO_NOTHING, db_column='er_experiment_id', blank=True, null=True)  # delete experiment readings if experiment is deleted
+    water_level = models.IntegerField(db_column='er_water_level', blank=True, null=True) 
+    reading_date = models.DateTimeField(db_column='er_reading_date', auto_now_add=True)
+    electrical_conductance = models.IntegerField(db_column='er_electrical_conductance', blank=True, null=True) 
+    reservoir_tds = models.IntegerField(db_column='er_reservoir_tds', blank=True, null=True) 
+    reservoir_ph = models.IntegerField(db_column='er_reservoir_ph', blank=True, null=True)  
+    recipe_stage = models.IntegerField(db_column='er_recipe_stage', blank=True, null=True) # 
+    temperature = models.DecimalField(db_column='er_temperature', max_digits=2, decimal_places=2, blank=True, null=True) 
+    humidity = models.DecimalField(db_column='er_humidity', max_digits=2, decimal_places=2, blank=True, null=True)
+    photo_link = models.CharField(db_column='er_photo_link', max_length=100, blank=True, null=True)
+    '''
+    pod1_score = models.DecimalField(db_column='er_pod1_score', max_digits=2, decimal_places=2, blank=True, null=True)
+    pod2_score = models.DecimalField(db_column='er_pod2_score', max_digits=2, decimal_places=2, blank=True, null=True)
+    pod3_score = models.DecimalField(db_column='er_pod3_score', max_digits=2, decimal_places=2, blank=True, null=True)
+    pod4_score = models.DecimalField(db_column='er_pod4_score', max_digits=2, decimal_places=2, blank=True, null=True)
+    pod5_score = models.DecimalField(db_column='er_pod5_score', max_digits=2, decimal_places=2, blank=True, null=True)
+    pod6_score = models.DecimalField(db_column='er_pod6_score', max_digits=2, decimal_places=2, blank=True, null=True)
+    pod7_score = models.DecimalField(db_column='er_pod7_score', max_digits=2, decimal_places=2, blank=True, null=True)
+    pod8_score = models.DecimalField(db_column='er_pod8_score', max_digits=2, decimal_places=2, blank=True, null=True)
+    pod9_score = models.DecimalField(db_column='er_pod9_score', max_digits=2, decimal_places=2, blank=True, null=True)
+    pod10_score = models.DecimalField(db_column='er_pod10_score', max_digits=2, decimal_places=2, blank=True, null=True)
+    '''
 
     class Meta:
         managed = True
-        db_table = 'reading'
+        db_table = 'experiment_reading'
+
+# many readings per experiment - is written by a user to the db in reference to an experiment
+class PodReading(models.Model):
+    id = models.AutoField(db_column='pr_id', primary_key=True)  
+    experiment = models.ForeignKey("Experiment", models.DO_NOTHING, db_column='pr_experiment_id', blank=True, null=True)  # delete experiment readings if experiment is deleted
+    experiment_reading = models.ForeignKey("ExperimentReading", models.DO_NOTHING, db_column='pr_experiment_reading_id', blank=True, null=True)  # delete experiment readings if experiment is deleted
+    plant_height = models.DecimalField(db_column='pr_plant_height', max_digits=5, decimal_places=2, blank=True, null=True)
+    node_count = models.IntegerField(db_column='pr_node_count', blank=True, null=True) 
+    internode_distance = models.DecimalField(db_column='pr_pod_reading', max_digits=5, decimal_places=2, blank=True, null=True) 
+    leaf_count = models.IntegerField(db_column='pr_leaf_count', blank=True, null=True) 
+    seeds_germinated = models.IntegerField(db_column='pr_seeds_germinated', blank=True, null=True) 
+    pest_coverage = models.IntegerField(db_column='pr_pest_coverage', default=False) # integer between 0 and 100
+    algae_coverage =  models.IntegerField(db_column='pr_algae_coverage', default=False)  
+    blight_coverage = models.IntegerField(db_column='pr_blight_coverage', default=False)  
+    harvest_weight = 
+    harvest_number = 
+    harvest_quality = 
+    flower_weight = 
+    flower_number = 
+    flower_quality = 
+    
+    comment = models.CharField(db_column='pr_comment', max_length=255, blank=True, null=True)
+
+    class Meta:
+        managed = True
+        db_table = 'pod_reading'
 
 
 class Plant(models.Model): # types: basil, 
@@ -109,6 +137,7 @@ class Pod(models.Model):
     id = models.AutoField(db_column='po_id', primary_key=True)  
     experiment = models.ForeignKey("Experiment", models.DO_NOTHING, db_column='po_experiment_id')  # pods created automatically when an experiment is created
     plant = models.ForeignKey(Plant, models.DO_NOTHING, db_column='po_plant_id', blank=True, null=True)  # type of plant for this pod 
+    seeds_planted = models.IntegerField(db_column = 'po_seeds_planted', blank=True, null=True)
     position = models.IntegerField(db_column = 'po_position', blank=True, null=True) # position of pod in byte
     state = models.IntegerField(db_column = 'po_state', default = 0) #planted = 0, sprouted = 1, true leaves = 3, harvested = 4, died early = 5
     score = models.DecimalField(db_column='po_score', max_digits=2, decimal_places=2, blank=True, null=True) # Averaged score of Experiment Readings for a specific pod
