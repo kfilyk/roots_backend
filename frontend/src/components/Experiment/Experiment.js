@@ -17,20 +17,34 @@ export default class CustomModal extends Component {
       this.state = {
           experiment: this.props.experiment,          
           completion_score: 0,
+          podList: []
       };
 
       this.deleteEntry = this.deleteEntry.bind(this);
+      this.getPodScore = this.getPodScore.bind(this);
+    }
 
+    componentDidMount(){
+        this.getPodScore(this.state.experiment.id)
     }
 
     deleteEntry = (id) => {
         axios
-          .delete(`/api/experiments/${id}/`)
-          .then((res) => {
-            this.props.getExperiments()
-          })
-          .catch((err) => console.log(err));
+            .delete(`/api/experiments/${id}/`)
+            .then((res) => {
+                this.props.getExperiments()
+            })
+            .catch((err) => console.log(err));
       };
+
+    getPodScore(id) {
+        axios
+            .get(`/api/pods/?experiment=${id}`)
+            .then((res) => {
+                this.setState({ podList: res.data })
+            })
+            .catch((err) => console.log(err));
+    }
 
     calculateCompletion(sd, ed) {
         var start_date = new Date(sd).getTime()
@@ -74,7 +88,7 @@ export default class CustomModal extends Component {
                             <button onClick={() => { if (window.confirm(`You are about to delete ${this.state.experiment.id}, ${this.state.experiment.description}`)) this.deleteEntry(this.state.experiment.id) }}> DELETE </button>
                         </div>
                         <div class="podCarouselWrapper">
-                            <PodCarousel experimentId={this.props.experiment.id}></PodCarousel>
+                            <PodCarousel podList={this.state.podList}></PodCarousel>
                         </div>
                     </div>
                 </div>

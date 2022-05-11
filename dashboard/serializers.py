@@ -12,11 +12,11 @@ class DeviceSerializer(serializers.ModelSerializer):
         fields = ('id', 'model', 'name', 'user', 'token', 'registration_date', 'last_update', 'is_online', 'mac_address', 'experiment', 'fill_res_flag') # columns of the database table we are turning into a json object
 
 class ExperimentSerializer(serializers.ModelSerializer):
-    device_id = serializers.CharField()
+    device_name = serializers.CharField(allow_blank=True, allow_null=True, required=False)
 
     class Meta:
         model = Experiment
-        fields = ('id', 'description', 'current_stage', 'stages', 'day', 'stage_day', 'device', 'device_id', 'score', 'user', 'start_date', 'end_date', 'pod1', 'pod2', 'pod3', 'pod4', 'pod5', 'pod6', 'pod7', 'pod8', 'pod9', 'pod10')
+        fields = ('id', 'description', 'current_stage', 'stages', 'day', 'stage_day', 'device', 'device_name', 'score', 'user', 'start_date', 'end_date', 'pod1', 'pod2', 'pod3', 'pod4', 'pod5', 'pod6', 'pod7', 'pod8', 'pod9', 'pod10')
         ## fields = '__all__'
         read_only_fields = ['user']
 
@@ -26,7 +26,7 @@ class StageSerializer(serializers.ModelSerializer):
         fields = ('id', 'author', 'days', 'watering_cycles', 'nutrient_cycles', 'nutrient_type', 'blue_intensity', 'red_intensity', 'white1_intensity', 'white2_intensity', 'lights_on_hours', 'score')
 
 class PodSerializer(serializers.ModelSerializer):
-    plant_name = serializers.CharField()
+    plant_name = serializers.CharField(allow_blank=True, allow_null=True, required=False)
 
     class Meta:
         model = Pod
