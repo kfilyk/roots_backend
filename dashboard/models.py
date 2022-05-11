@@ -109,14 +109,13 @@ class PodReading(models.Model):
     pest_coverage = models.IntegerField(db_column='pr_pest_coverage', default=False) # integer between 0 and 100
     algae_coverage =  models.IntegerField(db_column='pr_algae_coverage', default=False)  
     blight_coverage = models.IntegerField(db_column='pr_blight_coverage', default=False)  
-    '''
-    harvest_weight = 
-    harvest_number = 
-    harvest_quality = 
-    flower_weight = 
-    flower_number = 
-    flower_quality = 
-    '''
+    harvest_weight = models.DecimalField(db_column='pr_harvest_weight', max_digits=5, decimal_places=2, blank=True, null=True)
+    harvest_number = models.IntegerField(db_column='pr_harvest_number', default=False)  
+    harvest_quality = models.IntegerField(db_column='pr_harvest_quality', default=False)  
+    flower_weight = models.DecimalField(db_column='pr_flower_weight', max_digits=5, decimal_places=2, blank=True, null=True)
+    flower_number = models.IntegerField(db_column='pr_flower_number', default=False)  
+    flower_quality = models.IntegerField(db_column='pr_flower_quality', default=False)  
+    
     comment = models.CharField(db_column='pr_comment', max_length=255, blank=True, null=True)
 
     class Meta:

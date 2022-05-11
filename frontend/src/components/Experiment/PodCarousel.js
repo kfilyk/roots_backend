@@ -7,21 +7,12 @@ export default class CustomModal extends Component {
     constructor(props) {
       super(props);
       this.state = {
-          podList: []
+          podList: this.props.podList,
       };
     }
 
-    componentDidMount(){
-      this.getPodScore(this.props.experimentId)
-    }
-
-    getPodScore(id) {
-        axios
-            .get(`/api/pods/?experiment=${id}`)
-            .then((res) => {
-                this.setState({ podList: res.data })
-            })
-            .catch((err) => console.log(err));
+    componentWillReceiveProps(nextProps) {
+      this.setState({ podList: nextProps.podList })
     }
 
     renderItems = () => {

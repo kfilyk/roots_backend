@@ -27,11 +27,10 @@ export default class CustomModal extends Component {
   };
 
   render() {
-    let items_list = this.state.experimentList;
-    return items_list.map((item) => {
-      return <li key={ ''+this.state.selectedTab+' '+ item.id } className="item">
+    return (
+      this.state.experimentList.map((item) => (
         <Experiment getExperiments={this.props.getExperiments} experiment={item}></Experiment>
-      </li>
-    });
+      )
+    ));
   }
 }

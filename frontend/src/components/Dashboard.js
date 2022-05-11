@@ -248,8 +248,8 @@ class Dashboard extends Component {
     } else if (this.state.selectedTab === "experiment") {
       return(
         <>
-          <ExperimentList getExperiments={this.getExperiments} experimentList={this.state.experimentList}/>
-          <AddExperimentModal getExperiments={this.getExperiments}></AddExperimentModal>
+          <ExperimentList getExperiments={this.getExperiments} experimentList={this.state.experimentList} />
+          <AddExperimentModal getExperiments={this.getExperiments} plantList={this.state.plantList}></AddExperimentModal>
         </>
       );
 

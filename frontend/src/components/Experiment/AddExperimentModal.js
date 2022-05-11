@@ -11,7 +11,7 @@ export default class CustomModal extends Component {
       start_date: null,
       end_date: null,
       score: null,
-      device_id: null,
+      device: null,
       pod1: null,
       pod2: null,
       pod3: null,
@@ -26,9 +26,11 @@ export default class CustomModal extends Component {
       day: null,
       stage_day: null,
       stages: null,
-      current_stage: null
+      current_stage: null,
+      plantList: this.props.plantList
     };
     this.addEntry = this.addEntry.bind(this);
+    this.addPods = this.addPods.bind(this);
     this.handleChange = this.handleChange.bind(this);
     
   }
@@ -41,17 +43,7 @@ export default class CustomModal extends Component {
           start_date: this.state.start_date,
           end_date: this.state.end_date,
           score: this.state.score,
-          device_id: this.state.device_id,
-          pod1: this.state.pod1,
-          pod2: this.state.pod2,
-          pod3: this.state.pod3,
-          pod4: this.state.pod4,
-          pod5: this.state.pod5,
-          pod6: this.state.pod6,
-          pod7: this.state.pod7,
-          pod8: this.state.pod8,
-          pod9: this.state.pod9,
-          pod10: this.state.pod10,
+          device_id: this.state.device,
           user:  this.state.user,
           day: this.state.day,
           stage_day: this.state.stage_day,
@@ -59,10 +51,102 @@ export default class CustomModal extends Component {
           current_stage: this.state.current_stage
         })
       .then((res) => {
+        this.addPods(res.data.id)
+      })
+      .catch((err) => console.log(err));
+
+  };
+
+  addPods(exp_id){
+    var podIds = []
+
+    axios
+    .post(`/api/pods/`, 
+      { 
+        experiment: exp_id,
+        position: 1,
+        plant: this.state.pod1,
+        start_date: this.state.start_date,
+        end_date: this.state.end_date,
+      })
+    .then((res) => {
+      podIds[1] = res.data.id
+    })
+    .catch((err) => console.log(err));
+
+    axios
+    .post(`/api/pods/`, 
+      { 
+        experiment: exp_id,
+        position: 2,
+        plant: this.state.pod2,
+        start_date: this.state.start_date,
+        end_date: this.state.end_date,
+      })
+      .then((res) => {
+        podIds[2] = res.data.id
+      })
+    .catch((err) => console.log(err));
+
+    axios
+    .post(`/api/pods/`, 
+      { 
+        experiment: exp_id,
+        position: 3,
+        plant: this.state.pod3,
+        start_date: this.state.start_date,
+        end_date: this.state.end_date,
+      })
+      .then((res) => {
+        podIds[3] = res.data.id
+      })
+    .catch((err) => console.log(err));
+
+    axios
+    .post(`/api/pods/`, 
+      { 
+        experiment: exp_id,
+        position: 4,
+        plant: this.state.pod4,
+        start_date: this.state.start_date,
+        end_date: this.state.end_date,
+      })
+      .then((res) => {
+        podIds[4] = res.data.id
+      })
+    .catch((err) => console.log(err));
+
+    axios
+    .post(`/api/pods/`, 
+      { 
+        experiment: exp_id,
+        position: 5,
+        plant: this.state.pod5,
+        start_date: this.state.start_date,
+        end_date: this.state.end_date,
+      })
+      .then((res) => {
+        podIds[5] = res.data.id
+      })
+    .catch((err) => console.log(err));
+
+      console.log("HHH ", podIds)
+
+    axios
+      .patch(`/api/experiments/${exp_id}/`, 
+        {
+          experiment: exp_id,
+          pod1: podIds[1],
+          pod2: podIds[2],
+          pod3: podIds[3],
+          pod4: podIds[4],
+          pod5: podIds[5]
+        })
+      .then((res) => {
         this.props.getExperiments()
       })
       .catch((err) => console.log(err));
-  };
+  }
 
   handleChange (e) {
     this.setState({[e.target.name]: e.target.value})
@@ -106,6 +190,36 @@ export default class CustomModal extends Component {
                 <div class="formRow"> 
                     <label> Stage Day: </label>
                     <input name="stage_day" value={this.state.stage_day} onChange={this.handleChange} />
+                </div>
+                <div class="formRow"> 
+                    <label> Pod 1: </label>
+                    <select name="pod1" value={this.state.pod1} onChange={this.handleChange}>
+                        { this.state.plantList.map((item) => <option key={item.id} value={item.id}>{item.name}</option>) }
+                    </select>
+                </div>
+                <div class="formRow"> 
+                    <label> Pod 2: </label>
+                    <select name="pod2" value={this.state.pod2} onChange={this.handleChange}>
+                        { this.state.plantList.map((item) => <option key={item.id} value={item.id}>{item.name}</option>) }
+                    </select>
+                </div>
+                <div class="formRow"> 
+                    <label> Pod 3: </label>
+                    <select name="pod3" value={this.state.pod3} onChange={this.handleChange}>
+                        { this.state.plantList.map((item) => <option key={item.id} value={item.id}>{item.name}</option>) }
+                    </select>
+                </div>
+                <div class="formRow"> 
+                    <label> Pod 4: </label>
+                    <select name="pod4" value={this.state.pod4} onChange={this.handleChange}>
+                        { this.state.plantList.map((item) => <option key={item.id} value={item.id}>{item.name}</option>) }
+                    </select>
+                </div>
+                <div class="formRow"> 
+                    <label> Pod 5: </label>
+                    <select name="pod5" value={this.state.pod5} onChange={this.handleChange}>
+                        { this.state.plantList.map((item) => <option key={item.id} value={item.id}>{item.name}</option>) }
+                    </select>
                 </div>
                 <button onClick={() => {
                 this.addEntry()
