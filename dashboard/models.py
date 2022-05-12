@@ -109,30 +109,30 @@ class ExperimentReading(models.Model):
 class PodReading(models.Model):
     id = models.AutoField(db_column='pr_id', primary_key=True)  
     domes = models.BooleanField(default= 0, null=True)
-    pod_phase
+    #pod_phase
     experiment = models.ForeignKey("Experiment", models.DO_NOTHING, db_column='pr_experiment_id', blank=True, null=True)  # delete experiment readings if experiment is deleted
     experiment_reading = models.ForeignKey("ExperimentReading", models.DO_NOTHING, db_column='pr_experiment_reading_id', blank=True, null=True)  # delete experiment readings if experiment is deleted
     plant_height = models.DecimalField(db_column='pr_plant_height', max_digits=5, decimal_places=2, blank=True, null=True)
-    media_to_bgp # height to baby leaves
-    min_height
-    max_height
+    #media_to_bgp # height to baby leaves
+    #min_height
+    #max_height
     node_count = models.IntegerField(db_column='pr_node_count', blank=True, null=True) 
     internode_distance = models.DecimalField(db_column='pr_pod_reading', max_digits=5, decimal_places=2, blank=True, null=True) 
     leaf_count = models.IntegerField(db_column='pr_leaf_count', blank=True, null=True) 
-    leaf_area_avg 
+    #leaf_area_avg 
     seeds_germinated = models.IntegerField(db_column='pr_seeds_germinated', blank=True, null=True) 
     pest_coverage = models.IntegerField(db_column='pr_pest_coverage', default=False) 
     algae_coverage =  models.IntegerField(db_column='pr_algae_coverage', default=False)  
     blight_coverage = models.IntegerField(db_column='pr_blight_coverage', default=False)  
-    bud_count
-    flower_count
-    fruit_ripe_count
-    fruit_unripe_count
+    #bud_count
+    #flower_count
+    #fruit_ripe_count
+    #fruit_unripe_count
     harvest_count = models.IntegerField(db_column='pr_harvest_number', default=False)  
     harvest_weight = models.DecimalField(db_column='pr_harvest_weight', max_digits=5, decimal_places=2, blank=True, null=True)
     harvest_quality = models.IntegerField(db_column='pr_harvest_quality', default=False)  
     comment = models.CharField(db_column='pr_comment', max_length=255, blank=True, null=True)
-    score = # intermediary manual
+    #score = # intermediary manual
 
     class Meta:
         managed = True
