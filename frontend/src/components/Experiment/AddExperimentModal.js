@@ -12,17 +12,16 @@ export default class CustomModal extends Component {
       end_date: null,
       score: null,
       device: null,
-      pod1: null,
-      pod2: null,
-      pod3: null,
-      pod4: null,
-      pod5: null,
+      pod1: 1,
+      pod2: 1,
+      pod3: 1,
+      pod4: 1,
+      pod5: 1,
       pod6: null,
       pod7: null,
       pod8: null,
       pod9: null,
       pod10: null,
-      user: null,
       day: null,
       stage_day: null,
       stages: null,
@@ -30,7 +29,6 @@ export default class CustomModal extends Component {
       plantList: this.props.plantList
     };
     this.addEntry = this.addEntry.bind(this);
-    this.addPods = this.addPods.bind(this);
     this.handleChange = this.handleChange.bind(this);
     
   }
@@ -43,110 +41,23 @@ export default class CustomModal extends Component {
           start_date: this.state.start_date,
           end_date: this.state.end_date,
           score: this.state.score,
-          device_id: this.state.device,
-          user:  this.state.user,
+          device: this.state.device,
           day: this.state.day,
           stage_day: this.state.stage_day,
           stages: this.state.stages,
-          current_stage: this.state.current_stage
-        })
-      .then((res) => {
-        this.addPods(res.data.id)
-      })
-      .catch((err) => console.log(err));
-
-  };
-
-  addPods(exp_id){
-    var podIds = []
-
-    axios
-    .post(`/api/pods/`, 
-      { 
-        experiment: exp_id,
-        position: 1,
-        plant: this.state.pod1,
-        start_date: this.state.start_date,
-        end_date: this.state.end_date,
-      })
-    .then((res) => {
-      podIds[1] = res.data.id
-    })
-    .catch((err) => console.log(err));
-
-    axios
-    .post(`/api/pods/`, 
-      { 
-        experiment: exp_id,
-        position: 2,
-        plant: this.state.pod2,
-        start_date: this.state.start_date,
-        end_date: this.state.end_date,
-      })
-      .then((res) => {
-        podIds[2] = res.data.id
-      })
-    .catch((err) => console.log(err));
-
-    axios
-    .post(`/api/pods/`, 
-      { 
-        experiment: exp_id,
-        position: 3,
-        plant: this.state.pod3,
-        start_date: this.state.start_date,
-        end_date: this.state.end_date,
-      })
-      .then((res) => {
-        podIds[3] = res.data.id
-      })
-    .catch((err) => console.log(err));
-
-    axios
-    .post(`/api/pods/`, 
-      { 
-        experiment: exp_id,
-        position: 4,
-        plant: this.state.pod4,
-        start_date: this.state.start_date,
-        end_date: this.state.end_date,
-      })
-      .then((res) => {
-        podIds[4] = res.data.id
-      })
-    .catch((err) => console.log(err));
-
-    axios
-    .post(`/api/pods/`, 
-      { 
-        experiment: exp_id,
-        position: 5,
-        plant: this.state.pod5,
-        start_date: this.state.start_date,
-        end_date: this.state.end_date,
-      })
-      .then((res) => {
-        podIds[5] = res.data.id
-      })
-    .catch((err) => console.log(err));
-
-      console.log("HHH ", podIds)
-
-    axios
-      .patch(`/api/experiments/${exp_id}/`, 
-        {
-          experiment: exp_id,
-          pod1: podIds[1],
-          pod2: podIds[2],
-          pod3: podIds[3],
-          pod4: podIds[4],
-          pod5: podIds[5]
+          current_stage: this.state.current_stage,
+          plant1: this.state.pod1,
+          plant2: this.state.pod2,
+          plant3: this.state.pod3,
+          plant4: this.state.pod4,
+          plant5: this.state.pod5,
         })
       .then((res) => {
         this.props.getExperiments()
       })
       .catch((err) => console.log(err));
-  }
+
+  };
 
   handleChange (e) {
     this.setState({[e.target.name]: e.target.value})
