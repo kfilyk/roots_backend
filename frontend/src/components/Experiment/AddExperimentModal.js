@@ -13,9 +13,9 @@ export default class CustomModal extends Component {
       score: null,
       device: null,
       day: null,
-      stage_day: null,
-      stages: null,
-      current_stage: null,
+      phase_day: null,
+      phases: null,
+      current_phase: null,
       plantList: this.props.plantList,
       plant_pods: {}
     };
@@ -34,9 +34,9 @@ export default class CustomModal extends Component {
           score: this.state.score,
           device: this.state.device,
           day: this.state.day,
-          stage_day: this.state.stage_day,
-          stages: this.state.stages,
-          current_stage: this.state.current_stage,
+          phase_day: this.state.phase_day,
+          phases: this.state.phases,
+          current_phase: this.state.current_phase,
           plant_pods: this.state.plant_pods
         })
       .then((res) => {
@@ -93,8 +93,8 @@ export default class CustomModal extends Component {
                     <input name="day" value={this.state.day} onChange={this.handleChange} />
                 </div>
                 <div className="formRow"> 
-                    <label> Stage Day: </label>
-                    <input name="stage_day" value={this.state.stage_day} onChange={this.handleChange} />
+                    <label> Phase Day: </label>
+                    <input name="phase_day" value={this.state.phase_day} onChange={this.handleChange} />
                 </div>
                 <div className="formRow"> 
                   {

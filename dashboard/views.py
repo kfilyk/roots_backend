@@ -1,6 +1,6 @@
-from dashboard.models import Device, Experiment, Stage, Plant, Pod
+from dashboard.models import Device, Experiment, Phase, Plant, Pod
 from rest_framework import viewsets
-from .serializers import DeviceSerializer, ExperimentSerializer, CreateUserSerializer, UserSerializer, StageSerializer, PlantSerializer, PodSerializer
+from .serializers import DeviceSerializer, ExperimentSerializer, CreateUserSerializer, UserSerializer, PhaseSerializer, PlantSerializer, PodSerializer
 #from .models import Device
 from django_filters import rest_framework as filters
 from rest_framework.filters import OrderingFilter
@@ -37,13 +37,13 @@ class ExperimentView(viewsets.ModelViewSet):
         user = self.request.user
         return Experiment.objects.filter(user = user.id).annotate(device_name=F('device__name'))
 
-class StageView(viewsets.ModelViewSet):
+class PhaseView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
-    serializer_class = StageSerializer
+    serializer_class = PhaseSerializer
 
     def get_queryset(self):
         user = self.request.user
-        return Stage.objects.all()
+        return Phase.objects.all()
 
 class PodView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 

@@ -42,27 +42,16 @@ class Device(models.Model):
 class Experiment(models.Model):
     id = models.AutoField(db_column='e_id', primary_key=True)  
     description = models.CharField(db_column='e_description', max_length=255, blank=True, null=True)
-    current_stage = models.ForeignKey("Stage", models.DO_NOTHING, related_name='+', db_column='e_current_stage',blank=True, null=True) # 
-    stages = models.CharField(db_column='e_stages', max_length=255, blank=True, null=True) # this is a list in the format = [stage_id_1, stage_id_2, stage_id_3 ... stage_id_n]
+    current_phase = models.ForeignKey("Phase", models.DO_NOTHING, related_name='+', db_column='e_current_phase',blank=True, null=True) # 
+    phases = models.CharField(db_column='e_phases', max_length=255, blank=True, null=True) # this is a list in the format = [stage_id_1, stage_id_2, stage_id_3 ... stage_id_n]
     day = models.IntegerField(db_column='e_day', default = 0) 
-    stage_day = models.IntegerField(db_column='e_stage_day', default = 0) 
+    phase_day = models.IntegerField(db_column='e_phase_day', default = 0) 
     device = models.ForeignKey("Device", models.DO_NOTHING, related_name='+', db_column='e_device_id', blank=True, null=True)  
     # this score not filled until end of experiment
     score = models.DecimalField(db_column='e_score', max_digits=2, decimal_places=2, blank=True, null=True) # score should be the averaged score of all pod Experiment Readings
     user = models.ForeignKey(settings.AUTH_USER_MODEL, db_column='e_user_id', on_delete=models.CASCADE, blank=True, null=True)  
     start_date = models.DateTimeField(db_column='e_start_date', blank=True, null=True)  
     end_date = models.DateTimeField(db_column='e_end_date', blank=True, null=True)  
-
-    pod1 = models.ForeignKey("Pod", models.DO_NOTHING, related_name='+', db_column='e_pod1', blank=True, null=True)
-    pod2 = models.ForeignKey("Pod", models.DO_NOTHING, related_name='+', db_column='e_pod2', blank=True, null=True)
-    pod3 = models.ForeignKey("Pod", models.DO_NOTHING, related_name='+', db_column='e_pod3', blank=True, null=True)
-    pod4 = models.ForeignKey("Pod", models.DO_NOTHING, related_name='+', db_column='e_pod4', blank=True, null=True)
-    pod5 = models.ForeignKey("Pod", models.DO_NOTHING, related_name='+', db_column='e_pod5', blank=True, null=True)
-    pod6 = models.ForeignKey("Pod", models.DO_NOTHING, related_name='+', db_column='e_pod6', blank=True, null=True)
-    pod7 = models.ForeignKey("Pod", models.DO_NOTHING, related_name='+', db_column='e_pod7', blank=True, null=True)
-    pod8 = models.ForeignKey("Pod", models.DO_NOTHING, related_name='+', db_column='e_pod8', blank=True, null=True)
-    pod9 = models.ForeignKey("Pod", models.DO_NOTHING, related_name='+', db_column='e_pod9', blank=True, null=True)
-    pod10 = models.ForeignKey("Pod", models.DO_NOTHING, related_name='+', db_column='e_pod10', blank=True, null=True)
 
     class Meta:
         managed = True
@@ -77,30 +66,16 @@ class ExperimentReading(models.Model):
     electrical_conductance = models.IntegerField(db_column='er_electrical_conductance', blank=True, null=True) 
     reservoir_tds = models.IntegerField(db_column='er_reservoir_tds', blank=True, null=True) 
     reservoir_ph = models.IntegerField(db_column='er_reservoir_ph', blank=True, null=True)  
-    recipe_stage = models.IntegerField(db_column='er_recipe_stage', blank=True, null=True) # 
+    experiment_phase = models.IntegerField(db_column='er_experiment_phase', blank=True, null=True) 
     temperature = models.DecimalField(db_column='er_temperature', max_digits=2, decimal_places=2, blank=True, null=True) 
     humidity = models.DecimalField(db_column='er_humidity', max_digits=2, decimal_places=2, blank=True, null=True)
     photo_link = models.CharField(db_column='er_photo_link', max_length=100, blank=True, null=True)
-    '''
-    pod1_score = models.DecimalField(db_column='er_pod1_score', max_digits=2, decimal_places=2, blank=True, null=True)
-    pod2_score = models.DecimalField(db_column='er_pod2_score', max_digits=2, decimal_places=2, blank=True, null=True)
-    pod3_score = models.DecimalField(db_column='er_pod3_score', max_digits=2, decimal_places=2, blank=True, null=True)
-    pod4_score = models.DecimalField(db_column='er_pod4_score', max_digits=2, decimal_places=2, blank=True, null=True)
-    pod5_score = models.DecimalField(db_column='er_pod5_score', max_digits=2, decimal_places=2, blank=True, null=True)
-    pod6_score = models.DecimalField(db_column='er_pod6_score', max_digits=2, decimal_places=2, blank=True, null=True)
-    pod7_score = models.DecimalField(db_column='er_pod7_score', max_digits=2, decimal_places=2, blank=True, null=True)
-    pod8_score = models.DecimalField(db_column='er_pod8_score', max_digits=2, decimal_places=2, blank=True, null=True)
-    pod9_score = models.DecimalField(db_column='er_pod9_score', max_digits=2, decimal_places=2, blank=True, null=True)
-    pod10_score = models.DecimalField(db_column='er_pod10_score', max_digits=2, decimal_places=2, blank=True, null=True)
-    '''
 
     class Meta:
         managed = True
         db_table = 'experiment_reading'
 
-
-
-# manual intervention object: prune, water, nutrient, dome, trellis, raising light,  <- pod stage (germination, sprouted, harvest,  etc) needs to be recorded
+# manual intervention object: prune, water, nutrient, dome, trellis, raising light,  <- pod phase (germination, sprouted, harvest,  etc) needs to be recorded
 # lighting in intensity (0 -> 1) range (for now); later PPFD
 
 # pest_coverage, algae_coverage,blight_coverage default set to results of previous reading. Quantize to 4 , no numeric inputs, just happy faces
@@ -109,50 +84,44 @@ class ExperimentReading(models.Model):
 class PodReading(models.Model):
     id = models.AutoField(db_column='pr_id', primary_key=True)  
     domes = models.BooleanField(default= 0, null=True)
-    #pod_phase
     experiment = models.ForeignKey("Experiment", models.DO_NOTHING, db_column='pr_experiment_id', blank=True, null=True)  # delete experiment readings if experiment is deleted
     experiment_reading = models.ForeignKey("ExperimentReading", models.DO_NOTHING, db_column='pr_experiment_reading_id', blank=True, null=True)  # delete experiment readings if experiment is deleted
-    plant_height = models.DecimalField(db_column='pr_plant_height', max_digits=5, decimal_places=2, blank=True, null=True)
-    #media_to_bgp # height to baby leaves
-    #min_height
-    #max_height
+
     node_count = models.IntegerField(db_column='pr_node_count', blank=True, null=True) 
     internode_distance = models.DecimalField(db_column='pr_pod_reading', max_digits=5, decimal_places=2, blank=True, null=True) 
     leaf_count = models.IntegerField(db_column='pr_leaf_count', blank=True, null=True) 
-    #leaf_area_avg 
     seeds_germinated = models.IntegerField(db_column='pr_seeds_germinated', blank=True, null=True) 
+    pod_phase = models.CharField(db_column='pr_pod_phase', max_length=45, blank=True, null=True)
+    media_to_bgp = models.DecimalField(db_column='pr_media_to_bgp', max_digits=5, decimal_places=2, blank=True, null=True)
+    min_height = models.DecimalField(db_column='pr_min_height', max_digits=5, decimal_places=2, blank=True, null=True)
+    max_height = models.DecimalField(db_column='pr_max_height', max_digits=5, decimal_places=2, blank=True, null=True)
+    leaf_area_avg = models.DecimalField(db_column='pr_leaf_area_avg', max_digits=5, decimal_places=2, blank=True, null=True)
+
     pest_coverage = models.IntegerField(db_column='pr_pest_coverage', default=False) 
     algae_coverage =  models.IntegerField(db_column='pr_algae_coverage', default=False)  
     blight_coverage = models.IntegerField(db_column='pr_blight_coverage', default=False)  
-    #bud_count
-    #flower_count
-    #fruit_ripe_count
-    #fruit_unripe_count
+
+    bud_count = models.IntegerField(db_column='pr_bud_count', blank=True, null=True)
+    flower_count = models.IntegerField(db_column='pr_flower_count', blank=True, null=True)
+    flower_quality = models.IntegerField(db_column='pr_flower_quality', default=False)  
+    fruit_unripe_count = models.IntegerField(db_column='pr_fruit_unripe_count', blank=True, null=True)
+    fruit_ripe_count = models.IntegerField(db_column='pr_fruit_ripe_count', blank=True, null=True)
     harvest_count = models.IntegerField(db_column='pr_harvest_number', default=False)  
     harvest_weight = models.DecimalField(db_column='pr_harvest_weight', max_digits=5, decimal_places=2, blank=True, null=True)
     harvest_quality = models.IntegerField(db_column='pr_harvest_quality', default=False)  
+
     comment = models.CharField(db_column='pr_comment', max_length=255, blank=True, null=True)
-    #score = # intermediary manual
+    score = models.DecimalField(db_column='pr_score', max_digits=5, decimal_places=2, blank=True, null=True)
 
     class Meta:
         managed = True
         db_table = 'pod_reading'
 
 
-class Plant(models.Model): # types: basil, 
-    id = models.AutoField(db_column='pl_id', primary_key=True)  
-    name = models.CharField(db_column='pl_name', max_length=45)  
-    supplier = models.CharField(db_column = 'pl_supplier', max_length=45, blank=True, null=True)
-    score = models.DecimalField(db_column='pl_score', max_digits=2, decimal_places=2, blank=True, null=True)
-
-    class Meta:
-        managed = True
-        db_table = 'plant'
-
 class Pod(models.Model):
     id = models.AutoField(db_column='po_id', primary_key=True)  
     experiment = models.ForeignKey("Experiment", models.DO_NOTHING, db_column='po_experiment_id')  # pods created automatically when an experiment is created
-    plant = models.ForeignKey(Plant, models.DO_NOTHING, db_column='po_plant_id', blank=True, null=True)  # type of plant for this pod 
+    plant = models.ForeignKey("Plant", models.DO_NOTHING, db_column='po_plant_id', blank=True, null=True)  # type of plant for this pod 
     seeds_planted = models.IntegerField(db_column = 'po_seeds_planted', blank=True, null=True)
     position = models.IntegerField(db_column = 'po_position', blank=True, null=True) # position of pod in byte
     state = models.IntegerField(db_column = 'po_state', default = 0) #planted = 0, sprouted = 1, true leaves = 3, harvested = 4, died early = 5
@@ -164,21 +133,37 @@ class Pod(models.Model):
         managed = True
         db_table = 'pod'
 
-# change this to phase!
-class Stage(models.Model): # generic periodic stage setting to be used by a recipe 
-    id = models.CharField(db_column='s_id', primary_key=True, max_length=45) # name of stage - not necessarily a nubmer
-    author = models.CharField(db_column='s_author', max_length=45) 
-    days = models.IntegerField(db_column = 's_days')
-    watering_cycles = models.IntegerField(db_column = 's_watering_cycles') # number of times per day watered
-    nutrient_cycles =  models.IntegerField(db_column = 's_nutrient_cycles') # number of times per day applied nutrients 
-    nutrient_type = models.CharField(db_column='s_nutrient_type', max_length=45, blank=True, null=True)   
-    # probably will need to specify nutrient application days
-    blue_intensity = models.IntegerField(db_column = 's_blue_intensity')
-    red_intensity = models.IntegerField(db_column = 's_red_intensity')
-    white1_intensity = models.IntegerField(db_column = 's_white1_intensity')
-    white2_intensity = models.IntegerField(db_column = 's_white2_intensity')
-    lights_on_hours = models.IntegerField(db_column = 's_lights_on_hours') # denotes hours left on per day
+
+class Phase(models.Model): # generic periodic phase setting to be used by a recipe 
+    id = models.CharField(db_column='ph_id', primary_key=True, max_length=45) # name of phase - not necessarily a nubmer
+    author = models.CharField(db_column='ph_author', max_length=45) 
+    days = models.IntegerField(db_column = 'ph_days')
+    watering_cycles = models.IntegerField(db_column = 'ph_watering_cycles') # number of times per day watered
+    nutrient_cycles =  models.IntegerField(db_column = 'ph_nutrient_cycles') # number of times per day applied nutrients 
+    nutrient_type = models.CharField(db_column='ph_nutrient_type', max_length=45, blank=True, null=True)   
+    blue_intensity = models.IntegerField(db_column = 'ph_blue_intensity')
+    red_intensity = models.IntegerField(db_column = 'ph_red_intensity')
+    white1_intensity = models.IntegerField(db_column = 'ph_white1_intensity')
+    white2_intensity = models.IntegerField(db_column = 'ph_white2_intensity')
+    lights_on_hours = models.IntegerField(db_column = 'ph_lights_on_hours') # denotes hours left on per day
 
     class Meta:
         managed = True
-        db_table = 'stage'
+        db_table = 'phase'
+
+class Plant(models.Model): # types: basil, 
+    id = models.AutoField(db_column='pl_id', primary_key=True)  
+    name = models.CharField(db_column='pl_name', max_length=45)  
+    supplier = models.CharField(db_column = 'pl_supplier', max_length=45, blank=True, null=True)
+    score = models.DecimalField(db_column='pl_score', max_digits=2, decimal_places=2, blank=True, null=True)
+
+    class Meta:
+        managed = True
+        db_table = 'plant'
+
+class NutrientRecipe(models.Model): 
+    id = models.CharField(db_column='nr_id', primary_key=True, max_length=45) 
+    json_data = models.JSONField(db_column='nr_data')
+    class Meta:
+        managed = True
+        db_table = 'nutrient_recipe'

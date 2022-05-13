@@ -1,7 +1,7 @@
 from unittest.util import _MAX_LENGTH
 from wsgiref import validate
 from rest_framework import serializers
-from .models import Device, Experiment, Stage, Plant, Pod
+from .models import Device, Experiment, Phase, Plant, Pod
 from django.contrib.auth import get_user_model
 
 # https://www.digitalocean.com/community/tutorials/build-a-to-do-application-using-django-and-react
@@ -10,7 +10,7 @@ from django.contrib.auth import get_user_model
 class DeviceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Device
-        fields = ('id', 'model', 'name', 'user', 'token', 'registration_date', 'last_update', 'is_online', 'mac_address', 'experiment', 'fill_res_flag') # columns of the database table we are turning into a json object
+        fields = '__all__'
 
 class ExperimentSerializer(serializers.ModelSerializer):
     device_name = serializers.CharField(allow_blank=True, allow_null=True, required=False)
@@ -64,10 +64,10 @@ class ExperimentSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['user']
 
-class StageSerializer(serializers.ModelSerializer):
+class PhaseSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Stage
-        fields = ('id', 'author', 'days', 'watering_cycles', 'nutrient_cycles', 'nutrient_type', 'blue_intensity', 'red_intensity', 'white1_intensity', 'white2_intensity', 'lights_on_hours', 'score')
+        model = Phase
+        fields = '__all__'
 
 class PodSerializer(serializers.ModelSerializer):
     plant_name = serializers.CharField(allow_blank=True, allow_null=True, required=False)
@@ -78,13 +78,13 @@ class PodSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Pod
-        fields = ('id', 'experiment', 'plant', 'plant_name', 'position', 'state', 'score', 'start_date', 'end_date')
+        fields = '__all__'
 
 class PlantSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Plant
-        fields = ('id', 'name', 'supplier', 'score')
+        fields = '__all__'
 
 class CreateUserSerializer(serializers.ModelSerializer):
     username = serializers.CharField()

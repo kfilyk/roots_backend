@@ -6,37 +6,30 @@ export default class CustomModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      id: '',
-      author: '',
-      days: 1,
-      watering_cycles: 1,
-      nutrient_cycles: 1,
-      nutrient_type: 1,
-      blue_intensity: 1,
-      red_intensity: 1,
-      white1_intensity: 1,
-      white2_intensity: 1,
-      lights_on_hours: 1,
-      score: 0.1
-      
+      id: this.props.phaseData.id,
+      author: this.props.phaseData.author,
+      days: this.props.phaseData.days,
+      watering_cycles: this.props.phaseData.watering_cycles,
+      nutrient_cycles: this.props.phaseData.nutrient_cycles,
+      nutrient_type: this.props.phaseData.nutrient_type,
+      blue_intensity: this.props.phaseData.blue_intensity,
+      red_intensity: this.props.phaseData.red_intensity,
+      white1_intensity: this.props.phaseData.white1_intensity,
+      white2_intensity: this.props.phaseData.white2_intensity,
+      lights_on_hours: this.props.phaseData.lights_on_hours,
+      score: this.props.phaseData.score
     };
 
-    this.addEntry = this.addEntry.bind(this);
+    this.editEntry = this.editEntry.bind(this);
     this.handleChange = this.handleChange.bind(this);
 
 
   }
 
-  addEntry(e) {
-    if (window.localStorage.getItem("token")) {
-      // if a token is found, set the authorization and attempt to vlaidate it against the server
-      axios.defaults.headers.common.Authorization = `Token ${window.localStorage.getItem("token")}`;
-
-
+  editEntry(e) {
     axios
-      .post(`/api/stages/`, 
+      .patch(`/api/phases/${this.props.phaseData.id}/`, 
         { 
-          id: this.state.id,
           author: this.state.author,
           days: this.state.days,
           watering_cycles: this.state.watering_cycles,
@@ -50,10 +43,9 @@ export default class CustomModal extends Component {
           score: this.state.score
         })
       .then((res) => {
-        this.props.getStages()
+        this.props.getPhases()
       })
       .catch((err) => console.log(err));
-    }
   };
 
   handleChange (e) {
@@ -62,19 +54,22 @@ export default class CustomModal extends Component {
 
   render() {
     return (
-      <Popup trigger={<button className="button"> + </button>} modal nested>
+      <Popup trigger={<button className="button"> EDIT </button>} modal nested>
         {(close) => (
           <div className="modal">
             <div className="modal_body">
               <button className="close" onClick={close}>
                 &times;
               </button>
-              <div className="modal_type"> Create New Stage </div>
+              <div className="modal_type"> Edit Phase </div>
               <div className="modal_content">
+                    <div className="formRow">
+                      <label> Id: </label> {this.state.id}
+                    </div>
                     <div className="formRow">
                       <label> Author: </label> <input name="author" value={this.state.author} onChange={this.handleChange} />
                     </div>
-                    <div className="formRow">
+                    <div classNameass="formRow">
                       <label> Days: </label> <input name="days" value={this.state.days} onChange={this.handleChange} />
                     </div>
                     <div className="formRow">
@@ -105,13 +100,13 @@ export default class CustomModal extends Component {
                     </div>
                     <div className="formRow">
                       <label> Score: </label> <input name="score" value={this.state.score} onChange={this.handleChange} />
-                    </div>
-                  <button onClick={() => {
-                    this.addEntry()
-                    close();
-                  }}>Add New Stage</button>             
+                    </div>      
+
+                    <button onClick={() => {
+                this.addEntry()
+                close();
+              }}>Add New Phase</button>                    
               </div>
-                
             </div>
           </div>
         )}

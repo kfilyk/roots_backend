@@ -1,1 +1,3 @@
+*.pyc
+newenv
 __pycache__

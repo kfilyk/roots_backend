@@ -14,21 +14,11 @@ export default class CustomModal extends Component {
       end_date: this.props.experiment.end_date ?? "",
       score: this.props.experiment.score,
       device: this.props.experiment.device,
-      pod1:this.props.experiment.pod1,
-      pod2:this.props.experiment.pod2,
-      pod3:this.props.experiment.pod3,
-      pod4:this.props.experiment.pod4,
-      pod5:this.props.experiment.pod5,
-      pod6:this.props.experiment.pod6,
-      pod7:this.props.experiment.pod7,
-      pod8:this.props.experiment.pod8,
-      pod9:this.props.experiment.pod9,
-      pod10:this.props.experiment.pod10,
       user: this.props.experiment.user,
       day:this.props.experiment.day,
-      stage_day:this.props.experiment.stage_day,
-      stages:this.props.experiment.stages,
-      current_stage: this.props.experiment.current_stage
+      phase_day:this.props.experiment.phase_day,
+      phases:this.props.experiment.phases,
+      current_phase: this.props.experiment.current_phase
     };
     this.editEntry = this.editEntry.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -43,21 +33,11 @@ export default class CustomModal extends Component {
           end_date: this.state.end_date,
           score: this.state.score,
           device: this.state.device_id,
-          pod1: this.state.pod1,
-          pod2: this.state.pod2,
-          pod3: this.state.pod3,
-          pod4: this.state.pod4,
-          pod5: this.state.pod5,
-          pod6: this.state.pod6,
-          pod7: this.state.pod7,
-          pod8: this.state.pod8,
-          pod9: this.state.pod9,
-          pod10: this.state.pod10,
           user: this.state.user,
           day: this.state.day,
-          stage_day: this.state.stage_day,
-          stages: this.state.stages,
-          current_stage: this.state.current_stage
+          phase_day: this.state.phase_day,
+          phases: this.state.phases,
+          current_phase: this.state.current_phase
         })
       .then((res) => {
         this.props.getExperiments()

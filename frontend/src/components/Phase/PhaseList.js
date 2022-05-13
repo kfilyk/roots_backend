@@ -1,32 +1,32 @@
 import React, { Component } from "react";
-import EditStageModal from "./EditStageModal";
+import EditPhaseModal from "./EditPhaseModal";
 import axios from "axios";
 
 export default class CustomModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        stageList: this.props.stageList
+        phaseList: this.props.phaseList
     };
     this.deleteEntry = this.deleteEntry.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({ stageList: nextProps.stageList })
+    this.setState({ phaseList: nextProps.phaseList })
 }
 
   deleteEntry = (id) => {
     axios
-      .delete(`/api/stages/${id}/`)
+      .delete(`/api/phases/${id}/`)
       .then((res) => {
-        this.props.getStages()
+        this.props.getPhases()
       })
       .catch((err) => console.log(err));
   };
 
   renderItems = () => {
     return (
-      this.state.stageList.map((item) => (
+      this.state.phaseList.map((item) => (
         // display list of all items
         <tr key={ item.id }>
             <td> { item.id } </td>
@@ -42,7 +42,7 @@ export default class CustomModal extends Component {
             <td> { item.lights_on_hours } </td>
             <td> { item.score } </td>
             <td>                  
-              <EditStageModal getStages={this.props.getStages} stageData={item}/>
+              <EditPhaseModal getPhases={this.props.getPhases} phaseData={item}/>
               <button onClick={() => { if (window.confirm(`You are about to delete ${item.id} by ${item.author}`)) this.deleteEntry(item.id) }}> DELETE </button>
             </td>
         </tr>

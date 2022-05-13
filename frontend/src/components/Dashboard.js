@@ -7,8 +7,8 @@ import AddPlantModal from './Plant/AddPlantModal';
 import ExperimentList from './Experiment/ExperimentList';
 import AddExperimentModal from './Experiment/AddExperimentModal';
 import Experiment from './Experiment/Experiment';
-import StageList from './Stage/StageList';
-import AddStageModal from './Stage/AddStageModal';
+import PhaseList from './Phase/PhaseList';
+import AddPhaseModal from './Phase/AddPhaseModal';
 import axios from "axios";
 import user from './user_brown.png';
 
@@ -22,7 +22,7 @@ class Dashboard extends Component {
       selectedTab: "device",
       deviceList: [],
       experimentList: [],
-      stageList: [],
+      phaseList: [],
       plantList: [],
 
       modal: false,
@@ -32,7 +32,7 @@ class Dashboard extends Component {
         is_online: false,
       },
     };
-    this.getStages = this.getStages.bind(this)
+    this.getPhases = this.getPhases.bind(this)
     this.getPlants = this.getPlants.bind(this)
     this.getExperiments = this.getExperiments.bind(this)
   }
@@ -57,7 +57,7 @@ class Dashboard extends Component {
           this.setState({ user: res.data.username })
           this.getExperiments();
           this.getDevices();
-          this.getStages();
+          this.getPhases();
           this.getPlants();
 
           console.log("IS TOKEN: ", window.localStorage.getItem("token"))
@@ -89,10 +89,10 @@ class Dashboard extends Component {
       .catch((err) => console.log(err));
   };
 
-  getStages = () => {
+  getPhases = () => {
     axios
-      .get("/api/stages/")
-      .then((res) => this.setState({ stageList: res.data }))
+      .get("/api/phases/")
+      .then((res) => this.setState({ phaseList: res.data }))
       .catch((err) => console.log(err));
   };
 
@@ -124,16 +124,16 @@ class Dashboard extends Component {
       axios
         .post("/api/experiments/", item)
         .then((res) => this.getExperiments());      
-    } else if(this.state.selectedTab ==='stage') {
+    } else if(this.state.selectedTab ==='phase') {
       if (item.id) {
         axios
-          .put(`/api/stages/${item.id}/`, item)
-          .then((res) => this.getStages());
+          .put(`/api/phases/${item.id}/`, item)
+          .then((res) => this.getPhases());
         return;
       }
       axios
-        .post("/api/stages/", item)
-        .then((res) => this.getStages());         
+        .post("/api/phases/", item)
+        .then((res) => this.getPhases());         
     } else if(this.state.selectedTab ==='plant') {
       if (item.id) {
         axios
@@ -157,9 +157,9 @@ class Dashboard extends Component {
       axios
       .delete(`/api/experiments/${item.id}/`)
       .then((res) => this.getDevices());
-    } else if(this.state.selectedTab ==='stage') {
+    } else if(this.state.selectedTab ==='phase') {
       axios
-      .delete(`/api/stages/${item.id}/`, item)
+      .delete(`/api/phases/${item.id}/`, item)
       .then((res) => this.getExperiments());      
     } else if(this.state.selectedTab ==='plant') {
       axios
@@ -202,8 +202,8 @@ class Dashboard extends Component {
         <span className={this.state.selectedTab === "experiment" ? "nav-link active" : "nav-link"} onClick={() => this.setState({ selectedTab: "experiment" })}>
           EXPERIMENTS
         </span>
-        <span className={this.state.selectedTab === "stage" ? "nav-link active" : "nav-link"} onClick={() => this.setState({ selectedTab: "stage" })}>
-          STAGES
+        <span className={this.state.selectedTab === "phase" ? "nav-link active" : "nav-link"} onClick={() => this.setState({ selectedTab: "phase" })}>
+          PHASES
         </span>
         <span className={this.state.selectedTab === "plant" ? "nav-link active" : "nav-link"} onClick={() => this.setState({ selectedTab: "plant" })}>
           PLANTS
@@ -253,11 +253,11 @@ class Dashboard extends Component {
         </>
       );
 
-    } else if (this.state.selectedTab === "stage") {
+    } else if (this.state.selectedTab === "phase") {
       return(
         <>
-          <StageList getStages={this.getStages} stageList={this.state.stageList}/>
-          <AddStageModal getStages={this.getStages}></AddStageModal> 
+          <PhaseList getStages={this.getStages} phaseList={this.state.phaseList}/>
+          <AddPhaseModal getStages={this.getStages}></AddPhaseModal> 
         </>
       );
     } else if (this.state.selectedTab === "plant") {
