@@ -115,8 +115,18 @@ class PodReading(models.Model):
     flower_weight = models.DecimalField(db_column='pr_flower_weight', max_digits=5, decimal_places=2, blank=True, null=True)
     flower_number = models.IntegerField(db_column='pr_flower_number', default=False)  
     flower_quality = models.IntegerField(db_column='pr_flower_quality', default=False)  
-    
     comment = models.CharField(db_column='pr_comment', max_length=255, blank=True, null=True)
+    pod_phase = models.CharField(db_column='pr_pod_phase', max_length=45)
+    media_to_bgp = models.DecimalField(db_column='pr_media_to_bgp', max_digits=5, decimal_places=2, blank=True, null=True)
+    min_height = models.DecimalField(db_column='pr_min_height', max_digits=5, decimal_places=2, blank=True, null=True)
+    max_height = models.DecimalField(db_column='pr_max_height', max_digits=5, decimal_places=2, blank=True, null=True)
+    leaf_area_avg = models.DecimalField(db_column='pr_leaf_area_avg', max_digits=5, decimal_places=2, blank=True, null=True)
+    bud_count = models.IntegerField(db_column='pr_bud_count', blank=True, null=True)
+    flower_count = models.IntegerField(db_column='pr_flower_count', blank=True, null=True)
+    fruit_ripe_count = models.IntegerField(db_column='pr_fruit_ripe_count', blank=True, null=True)
+    fruit_unripe_count = models.IntegerField(db_column='pr_fruit_unripe_count', blank=True, null=True)
+    score = models.DecimalField(db_column='pr_min_height', max_digits=5, decimal_places=2, blank=True, null=True)
+
 
     class Meta:
         managed = True
@@ -166,3 +176,11 @@ class Stage(models.Model): # generic periodic stage setting to be used by a reci
     class Meta:
         managed = True
         db_table = 'stage'
+
+
+class NutrientRecipe(models.Model): # generic periodic stage setting to be used by a recipe 
+    id = models.CharField(db_column='nr_id', primary_key=True, max_length=45) # name of stage - not necessarily a nubmer
+    json_data = models.JSONField(db_column='nr_data')
+    class Meta:
+        managed = True
+        db_table = 'nutrient_recipe'
