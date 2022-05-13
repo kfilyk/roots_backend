@@ -116,7 +116,7 @@ class PodReading(models.Model):
     flower_number = models.IntegerField(db_column='pr_flower_number', default=False)  
     flower_quality = models.IntegerField(db_column='pr_flower_quality', default=False)  
     comment = models.CharField(db_column='pr_comment', max_length=255, blank=True, null=True)
-    pod_phase = models.CharField(db_column='pr_pod_phase', max_length=45)
+    pod_phase = models.CharField(db_column='pr_pod_phase', max_length=45, blank=True, null=True)
     media_to_bgp = models.DecimalField(db_column='pr_media_to_bgp', max_digits=5, decimal_places=2, blank=True, null=True)
     min_height = models.DecimalField(db_column='pr_min_height', max_digits=5, decimal_places=2, blank=True, null=True)
     max_height = models.DecimalField(db_column='pr_max_height', max_digits=5, decimal_places=2, blank=True, null=True)
@@ -125,7 +125,7 @@ class PodReading(models.Model):
     flower_count = models.IntegerField(db_column='pr_flower_count', blank=True, null=True)
     fruit_ripe_count = models.IntegerField(db_column='pr_fruit_ripe_count', blank=True, null=True)
     fruit_unripe_count = models.IntegerField(db_column='pr_fruit_unripe_count', blank=True, null=True)
-    score = models.DecimalField(db_column='pr_min_height', max_digits=5, decimal_places=2, blank=True, null=True)
+    score = models.DecimalField(db_column='pr_score', max_digits=5, decimal_places=2, blank=True, null=True)
 
 
     class Meta:
