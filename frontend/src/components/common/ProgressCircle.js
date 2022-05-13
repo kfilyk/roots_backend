@@ -16,21 +16,21 @@ export default class CustomModal extends Component {
     render() {
         return (
             //https://codepen.io/sergiopedercini/pen/jmKdbj
-                <div class="single-chart">
-                    <svg viewBox="0 0 36 36" class={'circular-chart '+ this.state.colour}>
-                    <path class="circle-bg"
+                <div className="single-chart">
+                    <svg viewBox="0 0 36 36" className={'circular-chart '+ this.state.colour}>
+                    <path className="circle-bg"
                         d="M18 2.0845
                         a 16 16 0 0 1 0 32
                         a 16 16 0 0 1 0 -32"
                     />
-                    <path class="circle"
+                    <path className="circle"
                         strokeDasharray={this.state.value + ' 100'}
                         d="M18 2.0845
                         a 16 16 0 0 1 0 32
                         a 16 16 0 0 1 0 -32"
                     />
-                    <text x="18" y="18" class="caption"> {this.state.caption}</text>
-                    <text x="18" y="24" class="percentage"> {this.state.value + "%"}</text>
+                    <text x="18" y="18" className="caption"> {this.state.caption}</text>
+                    <text x="18" y="24" className="percentage"> {this.state.value + "%"}</text>
                     </svg>
                     {/*<div>{}</div>*/}
                 </div>

@@ -14,11 +14,13 @@ class DeviceSerializer(serializers.ModelSerializer):
 
 class ExperimentSerializer(serializers.ModelSerializer):
     device_name = serializers.CharField(allow_blank=True, allow_null=True, required=False)
+    '''
     plant1 = serializers.IntegerField(allow_null=True)
     plant2 = serializers.IntegerField(allow_null=True)
     plant3 = serializers.IntegerField(allow_null=True)
     plant4 = serializers.IntegerField(allow_null=True)
     plant5 = serializers.IntegerField(allow_null=True)
+    '''
 
     def create(self, validated_data):
 
@@ -29,12 +31,17 @@ class ExperimentSerializer(serializers.ModelSerializer):
             description = validated_data['description'],
             user = validated_data['user']
         )
+        for pos in validated_data.plant_pods: 
+            plant = validated_data.plant_pods[pos]
+            Pod.objects.create(plant=Plant.objects.get(pk=plant), start_date=validated_data['start_date'], end_date=validated_data['end_date'], experiment=Experiment.objects.get(pk=experiment_obj.pk, position=pos))
 
+        '''
         p1 = validated_data.pop('plant1')
         p2 = validated_data.pop('plant2')
         p3 = validated_data.pop('plant3')
         p4 = validated_data.pop('plant4')
         p5 = validated_data.pop('plant5')
+        
 
         pod1 = Pod.objects.create(plant=Plant.objects.get(pk=p1), start_date=validated_data['start_date'], end_date=validated_data['end_date'], experiment=Experiment.objects.get(pk=experiment_obj.pk))
         pod2 = Pod.objects.create(plant=Plant.objects.get(pk=p2), start_date=validated_data['start_date'], end_date=validated_data['end_date'], experiment=Experiment.objects.get(pk=experiment_obj.pk))
@@ -48,7 +55,7 @@ class ExperimentSerializer(serializers.ModelSerializer):
         experiment_obj.pod4=pod4
         experiment_obj.pod5=pod5
         experiment_obj.save()
-
+        '''
         return experiment_obj
 
     class Meta:

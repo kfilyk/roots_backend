@@ -85,23 +85,23 @@ export default class CustomModal extends Component {
               </button>
               <div className="modal_type"> Edit Experiment </div>
               <div className="modal_content">
-                <div class="formRow"> 
+                <div className="formRow"> 
                     <label> Id: </label>
                     <label>{this.state.id}</label>
                 </div>
-                  <div class="formRow"> 
+                  <div className="formRow"> 
                       <label> Description: </label>
                       <input name="description" value={this.state.description} onChange={this.handleChange} />
                   </div>
-                  <div class="formRow"> 
+                  <div className="formRow"> 
                       <label> Start Date: </label>
                       <input type="date" name="start_date" value={this.state.start_date} onChange={this.handleChange} />
                   </div>
-                  <div class="formRow"> 
+                  <div className="formRow"> 
                       <label> End Date: </label>
                       <input type="date"  name="end_date" value={this.state.end_date} onChange={this.handleChange} />
                   </div>
-                  <div class="formRow"> 
+                  <div className="formRow"> 
                       <label> Device: </label>
                       <input name="device" value={this.state.device} onChange={this.handleChange} />
                   </div>

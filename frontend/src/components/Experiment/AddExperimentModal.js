@@ -12,21 +12,12 @@ export default class CustomModal extends Component {
       end_date: null,
       score: null,
       device: null,
-      pod1: 1,
-      pod2: 1,
-      pod3: 1,
-      pod4: 1,
-      pod5: 1,
-      pod6: null,
-      pod7: null,
-      pod8: null,
-      pod9: null,
-      pod10: null,
       day: null,
       stage_day: null,
       stages: null,
       current_stage: null,
-      plantList: this.props.plantList
+      plantList: this.props.plantList,
+      plant_pods: {}
     };
     this.addEntry = this.addEntry.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -46,11 +37,7 @@ export default class CustomModal extends Component {
           stage_day: this.state.stage_day,
           stages: this.state.stages,
           current_stage: this.state.current_stage,
-          plant1: this.state.pod1,
-          plant2: this.state.pod2,
-          plant3: this.state.pod3,
-          plant4: this.state.pod4,
-          plant5: this.state.pod5,
+          plant_pods: this.state.plant_pods
         })
       .then((res) => {
         this.props.getExperiments()
@@ -60,7 +47,14 @@ export default class CustomModal extends Component {
   };
 
   handleChange (e) {
-    this.setState({[e.target.name]: e.target.value})
+    if(e.target.name.includes("plant_pod")) { 
+      let position = e.target.name.substring(10);
+      let plant_pods_copy = { ...this.state.plant_pods }; //create a new copy and change the value of bar
+      plant_pods_copy[position] = e.target.value;
+      this.setState({plant_pods: plant_pods_copy});
+    } else {
+      this.setState({[e.target.name]: e.target.value});
+    }
   }
 
   render() {
@@ -78,60 +72,52 @@ export default class CustomModal extends Component {
               </button>
               <div className="modal_type"> Create Experiment </div>
               <div className="modal_content">
-                  <div class="formRow"> 
+                  <div className="formRow"> 
                     <label> Description: </label>
                     <input name="description" value={this.state.description} onChange={this.handleChange} />
                 </div>
-                <div class="formRow"> 
+                <div className="formRow"> 
                     <label> Start Date: </label>
                     <input type="date" name="start_date" value={this.state.start_date} onChange={this.handleChange} />
                 </div>
-                <div class="formRow"> 
+                <div className="formRow"> 
                     <label> End Date: </label>
                     <input type="date"  name="end_date" value={this.state.end_date} onChange={this.handleChange} />
                 </div>
-                <div class="formRow"> 
+                <div className="formRow"> 
                     <label> Device: </label>
                     <input name="device" value={this.state.device} onChange={this.handleChange} />
                 </div>
-                <div class="formRow"> 
+                <div className="formRow"> 
                     <label> Day: </label>
                     <input name="day" value={this.state.day} onChange={this.handleChange} />
                 </div>
-                <div class="formRow"> 
+                <div className="formRow"> 
                     <label> Stage Day: </label>
                     <input name="stage_day" value={this.state.stage_day} onChange={this.handleChange} />
                 </div>
-                <div class="formRow"> 
-                    <label> Pod 1: </label>
-                    <select name="pod1" value={this.state.pod1} onChange={this.handleChange}>
-                        { this.state.plantList.map((item) => <option key={item.id} value={item.id}>{item.name}</option>) }
-                    </select>
+                <div className="formRow"> 
+                  {
+                    (() => {
+                      let plant_pod_selection = []
+
+                      for (let i = 1; i <= 5; i++) {     
+                        plant_pod_selection.push(
+                          <select name={"plant_pod_"+i} onChange={this.handleChange}> 
+                            {/* plantList: list of all possible plants in the database that could be included as a pod option. return position, item id */ }
+                            <option value=''></option>
+                            { this.state.plantList.map((item) => <option value={item.id}>{item.name} </option>) }  
+                          </select>
+
+                        );
+                      }
+                      return plant_pod_selection;
+                
+                    })()
+                  }
+
                 </div>
-                <div class="formRow"> 
-                    <label> Pod 2: </label>
-                    <select name="pod2" value={this.state.pod2} onChange={this.handleChange}>
-                        { this.state.plantList.map((item) => <option key={item.id} value={item.id}>{item.name}</option>) }
-                    </select>
-                </div>
-                <div class="formRow"> 
-                    <label> Pod 3: </label>
-                    <select name="pod3" value={this.state.pod3} onChange={this.handleChange}>
-                        { this.state.plantList.map((item) => <option key={item.id} value={item.id}>{item.name}</option>) }
-                    </select>
-                </div>
-                <div class="formRow"> 
-                    <label> Pod 4: </label>
-                    <select name="pod4" value={this.state.pod4} onChange={this.handleChange}>
-                        { this.state.plantList.map((item) => <option key={item.id} value={item.id}>{item.name}</option>) }
-                    </select>
-                </div>
-                <div class="formRow"> 
-                    <label> Pod 5: </label>
-                    <select name="pod5" value={this.state.pod5} onChange={this.handleChange}>
-                        { this.state.plantList.map((item) => <option key={item.id} value={item.id}>{item.name}</option>) }
-                    </select>
-                </div>
+
                 <button onClick={() => {
                 this.addEntry()
                 close();

@@ -76,18 +76,18 @@ export default class CustomModal extends Component {
                         <div>Device Name: { this.state.experiment.device }</div>
                         <div>Date: {start_date_string} {"->"} {end_date_string}</div>
                         <div>Score: { this.state.experiment.score } </div>
-                        <div class="flex-wrapper">
+                        <div className="flex-wrapper">
                             <ProgressCircle progress={{value: this.calculateCompletion(this.state.experiment.start_date, this.state.experiment.end_date) ?? 0, caption: 'Completion', colour: 'blue'} }></ProgressCircle>
                             <ProgressCircle progress={{value: this.state.experiment.score, caption: 'Score', colour: 'green'}}></ProgressCircle>
                         </div>
                         
                     </div>
                     <div id="experimentRight">
-                        <div class='actionsContainer'>
+                        <div className='actionsContainer'>
                             <EditExperimentModal getExperiments={this.props.getExperiments} experiment={this.state.experiment}></EditExperimentModal>
                             <button onClick={() => { if (window.confirm(`You are about to delete ${this.state.experiment.id}, ${this.state.experiment.description}`)) this.deleteEntry(this.state.experiment.id) }}> DELETE </button>
                         </div>
-                        <div class="podCarouselWrapper">
+                        <div className="podCarouselWrapper">
                             <PodCarousel podList={this.state.podList}></PodCarousel>
                         </div>
                     </div>

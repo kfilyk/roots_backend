@@ -63,42 +63,42 @@ export default class CustomModal extends Component {
               </button>
               <div className="modal_type"> Edit Stage </div>
               <div className="modal_content">
-                    <div class="formRow">
+                    <div className="formRow">
                       <label> Id: </label> {this.state.id}
                     </div>
-                    <div class="formRow">
+                    <div className="formRow">
                       <label> Author: </label> <input name="author" value={this.state.author} onChange={this.handleChange} />
                     </div>
-                    <div class="formRow">
+                    <div classNameass="formRow">
                       <label> Days: </label> <input name="days" value={this.state.days} onChange={this.handleChange} />
                     </div>
-                    <div class="formRow">
+                    <div className="formRow">
                       <label> Watering Cycles: </label> <input name="watering_cycles" value={this.state.watering_cycles} onChange={this.handleChange} />
                     </div>
-                    <div class="formRow">
+                    <div className="formRow">
                       <label> Nutrient Cycles: </label> <input name="nutrient_cycles" value={this.state.nutrient_cycles} onChange={this.handleChange} />
                     </div>
-                    <div class="formRow">
+                    <div className="formRow">
                       <label> Nutrient Type: </label> <input name="nutrient_type" value={this.state.nutrient_type} onChange={this.handleChange} />
                     </div>
 
 
-                    <div class="formRow">
+                    <div className="formRow">
                       <label> Blue Intensity: </label> <input name="blue_intensity" value={this.state.blue_intensity} onChange={this.handleChange} />
                     </div>
-                    <div class="formRow">
+                    <div className="formRow">
                       <label> Red Intensity: </label> <input name="red_intensity" value={this.state.red_intensity} onChange={this.handleChange} />
                     </div>
-                    <div class="formRow">
+                    <div className="formRow">
                       <label> White1 Intensity: </label> <input name="white1_intensity" value={this.state.white1_intensity} onChange={this.handleChange} />
                     </div>
-                    <div class="formRow">
+                    <div className="formRow">
                       <label> White2 Intensity: </label> <input name="white2_intensity" value={this.state.white2_intensity} onChange={this.handleChange} />
                     </div>
-                    <div class="formRow">
+                    <div className="formRow">
                       <label> Lights on hours: </label> <input name="lights_on_hours" value={this.state.lights_on_hours} onChange={this.handleChange} />
                     </div>
-                    <div class="formRow">
+                    <div className="formRow">
                       <label> Score: </label> <input name="score" value={this.state.score} onChange={this.handleChange} />
                     </div>      
 
