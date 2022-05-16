@@ -1,5 +1,5 @@
 import React, { Component, useEffect} from "react";
-import EditExperimentModal from "./EditExperimentModal"
+import ExperimentModal from "./ExperimentModal"
 import PodCarousel from "./PodCarousel"
 import ProgressCircle from "../common/ProgressCircle";
 import axios from "axios";
@@ -14,18 +14,19 @@ function getColor(value){
 export default class CustomModal extends Component {
     constructor(props) {
       super(props);
+      this.props = props; // this seems to fix props.undefined errors!
       this.state = {
-          experiment: this.props.experiment,          
+          plantList: this.props.plantList,
+          experiment: this.props.experiment,       
           completion_score: 0,
-          podList: []
+          podList: [] 
       };
-
       this.deleteEntry = this.deleteEntry.bind(this);
-      this.getPodScore = this.getPodScore.bind(this);
+      this.getPodList = this.getPodList.bind(this);
     }
 
-    componentDidMount(){
-        this.getPodScore(this.state.experiment.id)
+    componentDidMount() {
+        this.getPodList(this.props.experiment.id)
     }
 
     deleteEntry = (id) => {
@@ -37,11 +38,12 @@ export default class CustomModal extends Component {
             .catch((err) => console.log(err));
       };
 
-    getPodScore(id) {
+    getPodList(id) {
         axios
             .get(`/api/pods/?experiment=${id}`)
             .then((res) => {
                 this.setState({ podList: res.data })
+                console.log("POD LIST: ", this.state.podList)
             })
             .catch((err) => console.log(err));
     }
@@ -60,10 +62,6 @@ export default class CustomModal extends Component {
         }
      }
 
-    componentWillReceiveProps(nextProps) {
-        this.setState({ experimentList: nextProps.experimentList })
-      }
-
     render() {
         let start_date_string = this.state.experiment.start_date ?? ""
         let end_date_string = this.state.experiment.start_date ?? ""
@@ -76,15 +74,17 @@ export default class CustomModal extends Component {
                         <div>Device Name: { this.state.experiment.device }</div>
                         <div>Date: {start_date_string} {"->"} {end_date_string}</div>
                         <div>Score: { this.state.experiment.score } </div>
+                        {/*
                         <div className="flex-wrapper">
                             <ProgressCircle progress={{value: this.calculateCompletion(this.state.experiment.start_date, this.state.experiment.end_date) ?? 0, caption: 'Completion', colour: 'blue'} }></ProgressCircle>
                             <ProgressCircle progress={{value: this.state.experiment.score, caption: 'Score', colour: 'green'}}></ProgressCircle>
                         </div>
+                        */}
                         
                     </div>
                     <div id="experimentRight">
                         <div className='actionsContainer'>
-                            <EditExperimentModal getExperiments={this.props.getExperiments} experiment={this.state.experiment}></EditExperimentModal>
+                            <ExperimentModal getExperiments={this.props.getExperiments} plantList={this.props.plantList} experiment={this.props.experiment} add_or_edit = {"edit"}></ExperimentModal>
                             <button onClick={() => { if (window.confirm(`You are about to delete ${this.state.experiment.id}, ${this.state.experiment.description}`)) this.deleteEntry(this.state.experiment.id) }}> DELETE </button>
                         </div>
                         <div className="podCarouselWrapper">

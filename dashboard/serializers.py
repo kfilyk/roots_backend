@@ -10,17 +10,11 @@ from django.contrib.auth import get_user_model
 class DeviceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Device
+        #fields = ('id', 'model', 'name', 'user', 'token', 'registration_date', 'last_update', 'is_online', 'mac_address', 'experiment', 'fill_res_flag') # columns of the database table we are turning into a json object
         fields = '__all__'
 
 class ExperimentSerializer(serializers.ModelSerializer):
     device_name = serializers.CharField(allow_blank=True, allow_null=True, required=False)
-    '''
-    plant1 = serializers.IntegerField(allow_null=True)
-    plant2 = serializers.IntegerField(allow_null=True)
-    plant3 = serializers.IntegerField(allow_null=True)
-    plant4 = serializers.IntegerField(allow_null=True)
-    plant5 = serializers.IntegerField(allow_null=True)
-    '''
 
     def create(self, validated_data):
 
@@ -35,32 +29,10 @@ class ExperimentSerializer(serializers.ModelSerializer):
             plant = validated_data.plant_pods[pos]
             Pod.objects.create(plant=Plant.objects.get(pk=plant), start_date=validated_data['start_date'], end_date=validated_data['end_date'], experiment=Experiment.objects.get(pk=experiment_obj.pk, position=pos))
 
-        '''
-        p1 = validated_data.pop('plant1')
-        p2 = validated_data.pop('plant2')
-        p3 = validated_data.pop('plant3')
-        p4 = validated_data.pop('plant4')
-        p5 = validated_data.pop('plant5')
-        
-
-        pod1 = Pod.objects.create(plant=Plant.objects.get(pk=p1), start_date=validated_data['start_date'], end_date=validated_data['end_date'], experiment=Experiment.objects.get(pk=experiment_obj.pk))
-        pod2 = Pod.objects.create(plant=Plant.objects.get(pk=p2), start_date=validated_data['start_date'], end_date=validated_data['end_date'], experiment=Experiment.objects.get(pk=experiment_obj.pk))
-        pod3 = Pod.objects.create(plant=Plant.objects.get(pk=p3), start_date=validated_data['start_date'], end_date=validated_data['end_date'], experiment=Experiment.objects.get(pk=experiment_obj.pk))
-        pod4 = Pod.objects.create(plant=Plant.objects.get(pk=p4), start_date=validated_data['start_date'], end_date=validated_data['end_date'], experiment=Experiment.objects.get(pk=experiment_obj.pk))
-        pod5 = Pod.objects.create(plant=Plant.objects.get(pk=p5), start_date=validated_data['start_date'], end_date=validated_data['end_date'], experiment=Experiment.objects.get(pk=experiment_obj.pk))
-
-        experiment_obj.pod1=pod1
-        experiment_obj.pod2=pod2
-        experiment_obj.pod3=pod3
-        experiment_obj.pod4=pod4
-        experiment_obj.pod5=pod5
-        experiment_obj.save()
-        '''
         return experiment_obj
 
     class Meta:
         model = Experiment
-        # fields = ('id', 'description', 'current_stage', 'stages', 'day', 'stage_day', 'device', 'device_name', 'score', 'user', 'start_date', 'end_date', 'pod1', 'pod2', 'pod3', 'pod4', 'pod5', 'pod6', 'pod7', 'pod8', 'pod9', 'pod10')
         fields = '__all__'
         read_only_fields = ['user']
 

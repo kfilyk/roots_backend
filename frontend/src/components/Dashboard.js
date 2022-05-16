@@ -5,7 +5,7 @@ import { Navigate } from "react-router-dom";
 import PlantList from './Plant/PlantList';
 import AddPlantModal from './Plant/AddPlantModal';
 import ExperimentList from './Experiment/ExperimentList';
-import AddExperimentModal from './Experiment/AddExperimentModal';
+import ExperimentModal from './Experiment/ExperimentModal';
 import Experiment from './Experiment/Experiment';
 import PhaseList from './Phase/PhaseList';
 import AddPhaseModal from './Phase/AddPhaseModal';
@@ -32,6 +32,7 @@ class Dashboard extends Component {
         is_online: false,
       },
     };
+    this.getDevices = this.getDevices.bind(this)
     this.getPhases = this.getPhases.bind(this)
     this.getPlants = this.getPlants.bind(this)
     this.getExperiments = this.getExperiments.bind(this)
@@ -219,11 +220,10 @@ class Dashboard extends Component {
     if (this.state.selectedTab === "device"){
       items_list = this.state.deviceList;
       experiment_list = this.state.experimentList;
-
+      
       return items_list.map((item) => {
-        
+
         const e = experiment_list.filter(experiment => experiment.id === item.experiment)[0] ?? {} // could also use ||
-  
         // display list of all items
         return <li key={ ''+this.state.selectedTab+' '+ item.id } className="item">
 
@@ -240,7 +240,7 @@ class Dashboard extends Component {
             <div>Registered: { item.registration_date.substring(0, 10) }</div>
             <div>Mac: { item.mac_address }</div>
           </div>
-          <Experiment experiment = {e}></Experiment>
+          <Experiment getExperiments={this.props.getExperiments} plantList = {this.props.plantList ?? []} experiment = {e} ></Experiment>
         </li>
 
       });
@@ -248,16 +248,16 @@ class Dashboard extends Component {
     } else if (this.state.selectedTab === "experiment") {
       return(
         <>
-          <ExperimentList getExperiments={this.getExperiments} experimentList={this.state.experimentList} />
-          <AddExperimentModal getExperiments={this.getExperiments} plantList={this.state.plantList}></AddExperimentModal>
+          <ExperimentList getExperiments={this.getExperiments} plantList={this.state.plantList} experimentList={this.state.experimentList} />
+          <ExperimentModal getExperiments={this.getExperiments} plantList={this.state.plantList} experiment={{id: null, description:null, current_phase:null, phases:null, day:null, phase_day:null, device: null, score:null, user:null, start_date:null, end_date:null}} add_or_edit={"add"} ></ExperimentModal>
         </>
       );
 
     } else if (this.state.selectedTab === "phase") {
       return(
         <>
-          <PhaseList getStages={this.getStages} phaseList={this.state.phaseList}/>
-          <AddPhaseModal getStages={this.getStages}></AddPhaseModal> 
+          <PhaseList getPhases={this.getPhases} phaseList={this.state.phaseList}/>
+          <AddPhaseModal getPhases={this.getPhases}></AddPhaseModal> 
         </>
       );
     } else if (this.state.selectedTab === "plant") {

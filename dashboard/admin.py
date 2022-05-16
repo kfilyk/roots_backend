@@ -8,7 +8,7 @@ class ExperimentAdmin(admin.ModelAdmin):
     list_display = ('id', 'description', 'current_phase', 'phases', 'day', 'phase_day', 'device', 'score', 'user', 'start_date', 'end_date')
 
 class PodAdmin(admin.ModelAdmin):
-    list_display = ('id', 'experiment', 'plant_id', 'position', 'state', 'score', 'start_date', 'end_date')
+    list_display = ('id', 'experiment', 'plant_id', 'position', 'phase', 'score', 'start_date', 'end_date')
 # Register your models here.
 
 admin.site.register(Device, DeviceAdmin)

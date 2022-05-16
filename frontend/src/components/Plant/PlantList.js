@@ -29,15 +29,17 @@ export default class CustomModal extends Component {
     return (
       this.state.plantList.map((item) => (
         // display list of all items
-        <tr key={ item.id } className="list-group-item d-flex justify-content-between align-items-center" >
-                  <td>{ item.id }</td>
-                  <td>{item.name}</td>
-                  <td>{item.supplier}</td>
-                  <td>                  
-                    <EditPlantModal getPlants={this.props.getPlants} plantData={item}/>
-                    <button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) this.deleteEntry(item.id) }}> DELETE </button>
-                  </td>
-        </tr>
+        <tbody>
+          <tr key={ item.id } className="list-group-item d-flex justify-content-between align-items-center" >
+                    <td>{ item.id }</td>
+                    <td>{item.name}</td>
+                    <td>{item.supplier}</td>
+                    <td>                  
+                      <EditPlantModal getPlants={this.props.getPlants} plantData={item}/>
+                      <button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) this.deleteEntry(item.id) }}> DELETE </button>
+                    </td>
+          </tr>
+        </tbody>
       ))
     );
   }
@@ -45,12 +47,14 @@ export default class CustomModal extends Component {
   render() {
     return (
       <table width="100%">
-        <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Supplier</th>
-          <th></th>
-        </tr>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Supplier</th>
+            <th></th>
+          </tr>
+        </thead>
         {this.renderItems()}
       </table>
     )

@@ -4,24 +4,35 @@ import axios from "axios";
 import "./experiment.css"
 
 export default class CustomModal extends Component {
+
   constructor(props) {
+    let today_date = new Date();
+    let year = today_date.getUTCFullYear();
+    let month = today_date.getUTCMonth() + 1;
+    month = month > 9 ? month : '0'+month;
+    let day = today_date.getUTCDate();
+     
     super(props);
+    this.props = props;
     this.state = {
-      description: null,
-      start_date: null,
-      end_date: null,
-      score: null,
-      device: null,
-      day: null,
-      phase_day: null,
-      phases: null,
-      current_phase: null,
       plantList: this.props.plantList,
-      plant_pods: {}
+      id: this.props.experiment.id ?? null,
+      description: this.props.experiment.description ?? null,
+      start_date: this.props.experiment.start_date ?? year+"-"+month+"-"+day,
+      end_date: this.props.experiment.end_date ?? null,
+      score: this.props.experiment.score ?? null,
+      device: this.props.experiment.device ?? null,
+      day:this.props.experiment.day ?? 0,
+      phase_day:this.props.experiment.phase_day ?? 0,
+      phases:this.props.experiment.phases ?? null,
+      current_phase: this.props.experiment.current_phase ?? 0, // 
+      plant_pods: this.props.plant_pods ?? {}
     };
+    console.log(this.state.start_date)
+
+    this.editEntry = this.editEntry.bind(this);
     this.addEntry = this.addEntry.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    
   }
 
   addEntry(e) {
@@ -43,7 +54,27 @@ export default class CustomModal extends Component {
         this.props.getExperiments()
       })
       .catch((err) => console.log(err));
+  };
 
+  editEntry(e) {
+    axios
+      .patch(`/api/experiments/${this.state.id}/`, 
+        {
+          description: this.state.description,
+          start_date: this.state.start_date,
+          end_date: this.state.end_date,
+          score: this.state.score,
+          device: this.state.device_id,
+          day: this.state.day,
+          phase_day: this.state.phase_day,
+          phases: this.state.phases,
+          current_phase: this.state.current_phase,
+          plant_pods: this.state.plant_pods
+        })
+      .then((res) => {
+        this.props.getExperiments()
+      })
+      .catch((err) => console.log(err));
   };
 
   handleChange (e) {
@@ -55,22 +86,28 @@ export default class CustomModal extends Component {
     } else {
       this.setState({[e.target.name]: e.target.value});
     }
+    console.log(this.state.start_date)
+
   }
 
   render() {
     return (
       <Popup
-        trigger={<button className="button"> + </button>}
+        trigger={<button className="button"> 
+          { this.props.add_or_edit === "add" ? "+" : "EDIT" }
+        </button>}
         modal
         nested
       >
         {(close) => (
           <div className="modal">
             <div className="modal_body">
-              <button className="close" onClick={close}>
-                &times;
-              </button>
-              <div className="modal_type"> Create Experiment </div>
+              <div className="modal_header">
+                <button className="close" onClick={close}>
+                    &times;
+                  </button>
+                  <div className="modal_type"> Experiment </div>
+              </div>
               <div className="modal_content">
                   <div className="formRow"> 
                     <label> Description: </label>
@@ -118,10 +155,18 @@ export default class CustomModal extends Component {
 
                 </div>
 
-                <button onClick={() => {
-                this.addEntry()
-                close();
-              }}>Save</button>
+                <button onClick= {
+                  () => {
+                    if(this.props.add_or_edit === "add") {
+                      this.addEntry();
+                    } else {
+                      this.editEntry();
+                    }
+                    close();
+                  }
+                }>
+                  Save
+                </button>
               </div>
             </div>
           </div>

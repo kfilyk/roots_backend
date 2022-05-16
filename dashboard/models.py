@@ -42,8 +42,8 @@ class Device(models.Model):
 class Experiment(models.Model):
     id = models.AutoField(db_column='e_id', primary_key=True)  
     description = models.CharField(db_column='e_description', max_length=255, blank=True, null=True)
-    current_phase = models.ForeignKey("Phase", models.DO_NOTHING, related_name='+', db_column='e_current_phase',blank=True, null=True) # 
-    phases = models.CharField(db_column='e_phases', max_length=255, blank=True, null=True) # this is a list in the format = [stage_id_1, stage_id_2, stage_id_3 ... stage_id_n]
+    current_phase = models.ForeignKey("Phase", models.DO_NOTHING, related_name='+', db_column='e_current_phase',blank=True, null=True) # germination, seedling, vegetative growth, flowering, fruiting, other1, terminated, complete
+    phases = models.CharField(db_column='e_phases', max_length=255, blank=True, null=True) 
     day = models.IntegerField(db_column='e_day', default = 0) 
     phase_day = models.IntegerField(db_column='e_phase_day', default = 0) 
     device = models.ForeignKey("Device", models.DO_NOTHING, related_name='+', db_column='e_device_id', blank=True, null=True)  
@@ -124,7 +124,7 @@ class Pod(models.Model):
     plant = models.ForeignKey("Plant", models.DO_NOTHING, db_column='po_plant_id', blank=True, null=True)  # type of plant for this pod 
     seeds_planted = models.IntegerField(db_column = 'po_seeds_planted', blank=True, null=True)
     position = models.IntegerField(db_column = 'po_position', blank=True, null=True) # position of pod in byte
-    state = models.IntegerField(db_column = 'po_state', default = 0) #planted = 0, sprouted = 1, true leaves = 3, harvested = 4, died early = 5
+    phase = models.IntegerField(db_column = 'po_phase', default = 0) #planted = 0, sprouted = 1, true leaves = 3, harvested = 4, died early = 5
     score = models.DecimalField(db_column='po_score', max_digits=2, decimal_places=2, blank=True, null=True) # Averaged score of Experiment Readings for a specific pod
     start_date = models.DateTimeField(db_column='po_start_date', blank=True, null=True) # start date is 
     end_date = models.DateTimeField(db_column='po_end_date', blank=True, null=True)  
@@ -135,9 +135,11 @@ class Pod(models.Model):
 
 
 class Phase(models.Model): # generic periodic phase setting to be used by a recipe 
-    id = models.CharField(db_column='ph_id', primary_key=True, max_length=45) # name of phase - not necessarily a nubmer
-    author = models.CharField(db_column='ph_author', max_length=45) 
+    id = models.AutoField(db_column='ph_id', primary_key=True)  
+    name = models.CharField(db_column='ph_name', max_length=45) # name of phase - not necessarily a nubmer
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, db_column='ph_author', on_delete=models.CASCADE, blank=True, null=True)  
     days = models.IntegerField(db_column = 'ph_days')
+    type = models.CharField(db_column='ph_type', max_length=45) # germination / seedling / veggie growth/ harvest / etc
     watering_cycles = models.IntegerField(db_column = 'ph_watering_cycles') # number of times per day watered
     nutrient_cycles =  models.IntegerField(db_column = 'ph_nutrient_cycles') # number of times per day applied nutrients 
     nutrient_type = models.CharField(db_column='ph_nutrient_type', max_length=45, blank=True, null=True)   
@@ -146,7 +148,7 @@ class Phase(models.Model): # generic periodic phase setting to be used by a reci
     white1_intensity = models.IntegerField(db_column = 'ph_white1_intensity')
     white2_intensity = models.IntegerField(db_column = 'ph_white2_intensity')
     lights_on_hours = models.IntegerField(db_column = 'ph_lights_on_hours') # denotes hours left on per day
-
+    score = models.DecimalField(db_column='ph_score', max_digits=2, decimal_places=2, blank=True, null=True)
     class Meta:
         managed = True
         db_table = 'phase'

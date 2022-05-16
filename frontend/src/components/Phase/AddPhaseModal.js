@@ -17,8 +17,6 @@ export default class CustomModal extends Component {
       white1_intensity: 1,
       white2_intensity: 1,
       lights_on_hours: 1,
-      score: 0.1
-      
     };
 
     this.addEntry = this.addEntry.bind(this);
@@ -47,7 +45,6 @@ export default class CustomModal extends Component {
           white1_intensity: this.state.white1_intensity,
           white2_intensity: this.state.white2_intensity,
           lights_on_hours: this.state.lights_on_hours,
-          score: this.state.score
         })
       .then((res) => {
         this.props.getPhases()
@@ -71,6 +68,9 @@ export default class CustomModal extends Component {
               </button>
               <div className="modal_type"> Create New Phase </div>
               <div className="modal_content">
+                    <div className="formRow">
+                      <label> ID: </label> <input name="id" value={this.state.id} onChange={this.handleChange} />
+                    </div>
                     <div className="formRow">
                       <label> Author: </label> <input name="author" value={this.state.author} onChange={this.handleChange} />
                     </div>
@@ -103,9 +103,7 @@ export default class CustomModal extends Component {
                     <div className="formRow">
                       <label> Lights on hours: </label> <input name="lights_on_hours" value={this.state.lights_on_hours} onChange={this.handleChange} />
                     </div>
-                    <div className="formRow">
-                      <label> Score: </label> <input name="score" value={this.state.score} onChange={this.handleChange} />
-                    </div>
+
                   <button onClick={() => {
                     this.addEntry()
                     close();
