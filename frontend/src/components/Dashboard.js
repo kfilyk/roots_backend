@@ -240,7 +240,7 @@ class Dashboard extends Component {
             <div>Registered: { item.registration_date.substring(0, 10) }</div>
             <div>Mac: { item.mac_address }</div>
           </div>
-          <Experiment getExperiments={this.props.getExperiments} plantList = {this.props.plantList ?? []} experiment = {e} ></Experiment>
+          <Experiment getExperiments={this.props.getExperiments} plantList = {this.state.plantList} experiment = {e} ></Experiment>
         </li>
 
       });

@@ -39,6 +39,7 @@ export default class CustomModal extends Component {
     axios
       .post(`/api/experiments/`, 
         { 
+
           description: this.state.description,
           start_date: this.state.start_date,
           end_date: this.state.end_date,
@@ -61,12 +62,9 @@ export default class CustomModal extends Component {
       .patch(`/api/experiments/${this.state.id}/`, 
         {
           description: this.state.description,
-          start_date: this.state.start_date,
           end_date: this.state.end_date,
           score: this.state.score,
-          device: this.state.device_id,
-          day: this.state.day,
-          phase_day: this.state.phase_day,
+          device: this.state.device_id, /* only allow changing to empty device with no active experiment  */
           phases: this.state.phases,
           current_phase: this.state.current_phase,
           plant_pods: this.state.plant_pods
@@ -109,41 +107,49 @@ export default class CustomModal extends Component {
                   <div className="modal_type"> Experiment </div>
               </div>
               <div className="modal_content">
-                  <div className="formRow"> 
+                  <div className="form_row"> 
                     <label> Description: </label>
                     <input name="description" value={this.state.description} onChange={this.handleChange} />
                 </div>
-                <div className="formRow"> 
-                    <label> Start Date: </label>
-                    <input type="date" name="start_date" value={this.state.start_date} onChange={this.handleChange} />
-                </div>
-                <div className="formRow"> 
-                    <label> End Date: </label>
-                    <input type="date"  name="end_date" value={this.state.end_date} onChange={this.handleChange} />
-                </div>
-                <div className="formRow"> 
+                { this.props.add_or_edit === "add" ? 
+                  <div className="form_row"> 
+                      <label> Start Date: </label>
+                      <input type="date" name="start_date" value={this.state.start_date} onChange={this.handleChange} />
+                  </div>
+                  : ""
+                }
+                <div className="form_row"> 
                     <label> Device: </label>
                     <input name="device" value={this.state.device} onChange={this.handleChange} />
                 </div>
-                <div className="formRow"> 
-                    <label> Day: </label>
-                    <input name="day" value={this.state.day} onChange={this.handleChange} />
-                </div>
-                <div className="formRow"> 
-                    <label> Phase Day: </label>
-                    <input name="phase_day" value={this.state.phase_day} onChange={this.handleChange} />
-                </div>
-                <div className="formRow"> 
+                { this.props.add_or_edit === "add" ? 
+                  <div className="form_row"> 
+                      <label> Day: </label>
+                      <input name="day" value={this.state.day} onChange={this.handleChange} />
+                  </div>
+                  : ""
+                }
+                { this.props.add_or_edit === "add" ? 
+
+                  <div className="form_row"> 
+                      <label> Phase Day: </label>
+                      <input name="phase_day" value={this.state.phase_day} onChange={this.handleChange} />
+                  </div>
+                  : ""
+                }
+                <div className="form_row"> 
                   {
                     (() => {
                       let plant_pod_selection = []
-
-                      for (let i = 1; i <= 5; i++) {     
+                      console.log("PLANT LIST: ", this.state.plantList) 
+                      for (let i = 1; i <= 5; i++) {    
                         plant_pod_selection.push(
-                          <select name={"plant_pod_"+i} onChange={this.handleChange}> 
+                          <select className="plant_pod" name={"plant_pod_"+i} onChange={this.handleChange}> 
+                            
                             {/* plantList: list of all possible plants in the database that could be included as a pod option. return position, item id */ }
                             <option value=''></option>
                             { this.state.plantList.map((item) => <option value={item.id}>{item.name} </option>) }  
+
                           </select>
 
                         );

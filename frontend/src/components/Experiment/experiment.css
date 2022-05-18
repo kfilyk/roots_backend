@@ -77,16 +77,31 @@
     flex-direction: column;
   }
   
-  .formRow{
+  .form_row{
     display: flex;
+    margin: 5px;
     margin-bottom: 5%;
+    justify-content: center;
   }
-  
-  .formRow :first-child {
+
+
+  /* control width of form descriptors */ 
+  .form_row :first-child {
     width: 40%;
   }
+
+
+  select {
+    margin:10px;
+    height:30px !important;
+    width:30px !important;
+    border: none;
+    background: rgb(224, 224, 224);
+    border-radius: 50%
+  }
   
-  .formRow > * {
+  
+  .form_row > * {
     flex: 0 0 auto;
   }
   

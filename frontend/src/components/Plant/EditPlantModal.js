@@ -45,15 +45,15 @@ export default class CustomModal extends Component {
               </button>
               <div className="modal_type"> Edit Plant </div>
               <div className="modal_content">
-                <div className="formRow">
+                <div className="form_row">
                   <label> Id: </label> <label>{this.state.id}</label>
                 </div>
 
-                <div className="formRow">
+                <div className="form_row">
                   <label> Name: </label> <input name="name" value={this.state.name} onChange={this.handleChange} />
                 </div>
 
-                <div className="formRow">
+                <div className="form_row">
                   <label> Supplier: </label> <input name="supplier" value={this.state.supplier} onChange={this.handleChange} />
                 </div>
 

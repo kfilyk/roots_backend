@@ -17,7 +17,8 @@
     font-family: "Brandon Grotesque Black";
     display: flex;
     align-items:center;
-    flex-direction: row-reverse;
+    float:right;
+    /*flex-direction: row-reverse;*/
     padding-right: 0.5em;
     padding:10px;
 
@@ -42,15 +43,13 @@
     color: #B3896A;
     font-family: "Brandon Grotesque";
     text-transform: uppercase;
-    text-decoration: underline;
     font-size: 1.25em;
-    width: 80px;
     margin: 0;
   }
   
   #logout:hover span {
     transition:0.5s;
-    display: none
+    display: none;
   }
   
   #logout:hover:before {
