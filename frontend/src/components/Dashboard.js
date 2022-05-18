@@ -2,7 +2,6 @@
 
 import React, { Component, } from "react";
 import { Navigate } from "react-router-dom";
-import AddPlantModal from './Plant/AddPlantModal';
 import ExperimentList from './Experiment/ExperimentList';
 import ExperimentModal from './Experiment/ExperimentModal';
 import Experiment from './Experiment/Experiment';
@@ -136,16 +135,7 @@ class Dashboard extends Component {
         .post("/api/phases/", item)
         .then((res) => this.getPhases());         
     } else if(this.state.selectedTab ==='plant') {
-      <PlantList></PlantList>
-      // if (item.id) {
-      //   axios
-      //     .put(`/api/plants/${item.id}/`, item)
-      //     .then((res) => this.getPlants());
-      //   return;
-      // }
-      // axios
-      //   .post("/api/plants/", item)
-      //   .then((res) => this.getPlants());         
+      <PlantList></PlantList>      
     }
   };
 
@@ -263,10 +253,7 @@ class Dashboard extends Component {
       );
     } else if (this.state.selectedTab === "plant") {
       return(
-        <>
-          <PlantList getPlants={this.getPlants} plantList={this.state.plantList}/>
-          <AddPlantModal getPlants={this.getPlants}></AddPlantModal> 
-        </>
+        <PlantList></PlantList>
       );
     }}
 
