@@ -139,7 +139,7 @@ class Phase(models.Model): # generic periodic phase setting to be used by a reci
     name = models.CharField(db_column='ph_name', max_length=45) # name of phase - not necessarily a nubmer
     author = models.ForeignKey(settings.AUTH_USER_MODEL, db_column='ph_author', on_delete=models.CASCADE, blank=True, null=True)  
     days = models.IntegerField(db_column = 'ph_days')
-    type = models.CharField(db_column='ph_type', max_length=45) # germination / seedling / veggie growth/ harvest / etc
+    type = models.CharField(db_column='ph_type', max_length=45) # germination / seedling / veggie growth/ harvest /... / other
     watering_cycles = models.IntegerField(db_column = 'ph_watering_cycles') # number of times per day watered
     nutrient_cycles =  models.IntegerField(db_column = 'ph_nutrient_cycles') # number of times per day applied nutrients 
     nutrient_type = models.CharField(db_column='ph_nutrient_type', max_length=45, blank=True, null=True)   

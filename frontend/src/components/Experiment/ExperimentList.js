@@ -26,7 +26,9 @@ export default class CustomModal extends Component {
     console.log("EXPERIMENT LIST: ", this.props.experimentList);
     return (
       this.props.experimentList.map((item) => {
-        return (<Experiment device_list = { this.state.device_list } getExperiments={this.props.getExperiments} experiment={item} plantList={this.props.plantList}/>)
+        return <li key={ ''+this.state.selectedTab+' '+ item.id } className="item">
+                <Experiment device_list = { this.state.device_list } getExperiments={this.props.getExperiments} experiment={item} plantList={this.props.plantList} on_device_page = {false}/>
+                </li>
       })
     );
   }

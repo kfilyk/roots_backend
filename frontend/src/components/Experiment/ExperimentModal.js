@@ -90,7 +90,7 @@ export default class CustomModal extends Component {
   render() {
     return (
       <Popup
-        trigger={<button className="button"> 
+        trigger={<button> 
           { this.props.add_or_edit === "add" ? "+" : "EDIT" }
         </button>}
         modal

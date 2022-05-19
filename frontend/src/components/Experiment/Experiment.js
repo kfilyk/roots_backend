@@ -1,9 +1,9 @@
 import React, { Component, useEffect} from "react";
 import ExperimentModal from "./ExperimentModal"
 import PodCarousel from "./PodCarousel"
-import ProgressCircle from "../common/ProgressCircle";
 import axios from "axios";
 import "./experiment.css"
+import vertical_menu_icon from "../../img/vertical_menu_icon.png"
 
 function getColor(value){
     // hue value from 0 to 360
@@ -16,12 +16,12 @@ export default class CustomModal extends Component {
       super(props);
       this.props = props; // this seems to fix props.undefined errors!
       this.state = {
-          plantList: this.props.plantList,
-          experiment: this.props.experiment,    
-          device: this.props.d,
-          completion_score: 0,
-          podList: [],
-          device_list: this.props.device_list ?? {}
+        plantList: this.props.plantList,
+        experiment: this.props.experiment,    
+        device: this.props.d,
+        completion_score: 0,
+        podList: [],
+        device_list: this.props.device_list ?? {},
       };
       this.deleteEntry = this.deleteEntry.bind(this);
       this.getPodList = this.getPodList.bind(this);
@@ -67,37 +67,33 @@ export default class CustomModal extends Component {
         let start_date_string = this.state.experiment.start_date ?? ""
         let end_date_string = this.state.experiment.start_date ?? ""
         const device = this.state.device_list.filter(device => device.id === this.state.experiment.device)[0] ?? {} // could also use ||
-        let device_id = device.id ?? ""
         let device_name = device.name ?? ""
-
         return (
-            <div className="experiment_containter">
-                <div id="experiment" >
-                    <div id="experimentLeft">
-                        <div>Exp: { this.state.experiment.description }</div>
-                        <div>Device ID: { device_id }</div>
-                        <div>Device Name: { device_name }</div>
-                        <div>Date: {start_date_string} {"->"} {end_date_string}</div>
+            <>
+
+                <div className="object_container">
+                    <div className="object_description">
+                        <div>{ this.state.experiment.description }</div>
+                        { !this.props.on_device_page ? 
+                            <>
+                                <div>Device Name: { device_name }</div>
+                                <div>Date: {start_date_string} {"->"} {end_date_string}</div>
+                            </>
+                            : <></>
+                        }
+
                         <div>Score: { this.state.experiment.score } </div>
-                        {/*
-                        <div className="flex-wrapper">
-                            <ProgressCircle progress={{value: this.calculateCompletion(this.state.experiment.start_date, this.state.experiment.end_date) ?? 0, caption: 'Completion', colour: 'blue'} }></ProgressCircle>
-                            <ProgressCircle progress={{value: this.state.experiment.score, caption: 'Score', colour: 'green'}}></ProgressCircle>
-                        </div>
-                        */}
-                        
                     </div>
-                    <div id="experimentRight">
-                        <div className='actionsContainer'>
-                            <ExperimentModal device_list = {this.props.device_list} getExperiments={this.props.getExperiments} plantList={this.props.plantList} experiment={this.props.experiment} add_or_edit = {"edit"} pod_list={this.state.podList}></ExperimentModal>
-                            <button onClick={() => { if (window.confirm(`You are about to delete ${this.state.experiment.id}, ${this.state.experiment.description}`)) this.deleteEntry(this.state.experiment.id) }}> DELETE </button>
-                        </div>
-                        <div className="podCarouselWrapper">
+                    <div className="pod_carousel_wrapper">
                             <PodCarousel podList={this.state.podList}></PodCarousel>
-                        </div>
+                    </div>
+                    <div className='object_actions'>
+                        <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
+                        <li><ExperimentModal device_list = {this.props.device_list} getExperiments={this.props.getExperiments} hideModal = {this.hideModal} plantList={this.props.plantList} experiment={this.props.experiment} add_or_edit = {"edit"} pod_list={this.state.podList}></ExperimentModal></li>
+                        <li><button onClick= {() =>  { if (window.confirm(`You are about to delete ${this.state.experiment.id}, ${this.state.experiment.description}`)) this.deleteEntry(this.state.experiment.id) }}> DELETE</button></li>
                     </div>
                 </div>
-            </div>
+            </>
         )
     }
 }

@@ -8,8 +8,12 @@ import Experiment from './Experiment/Experiment';
 import PhaseList from './Phase/PhaseList';
 import AddPhaseModal from './Phase/AddPhaseModal';
 import axios from "axios";
-import user from './user_brown.png';
+import user_brown_icon from '../img/user_brown_icon.png';
+import vertical_menu_icon from "../img/vertical_menu_icon.png"
+
 import Plant from "./Plant/Plant";
+import './dashboard.css';
+
 
 
 class Dashboard extends Component {
@@ -23,8 +27,6 @@ class Dashboard extends Component {
       experimentList: [],
       phaseList: [],
       plantList: [],
-
-      modal: false,
       activeItem: {
         name: "",
         experiment: "",
@@ -170,7 +172,6 @@ class Dashboard extends Component {
     this.setState({ activeItem: item });
   };
 
-
   logout() {
     // This request will only succeed if the Authorization header
     // contains the API token
@@ -214,24 +215,29 @@ class Dashboard extends Component {
       
       return items_list.map((item) => {
 
-        const e = experiment_list.filter(experiment => experiment.id === item.experiment)[0] ?? {} // could also use ||
+        let e_list = experiment_list.filter(experiment => experiment.id === item.experiment) ?? {} // could also use ||
+        let e = e_list.length === 1 ? e_list[0] : null;
+
         // display list of all items
         return <li key={ ''+this.state.selectedTab+' '+ item.id } className="item">
 
-          <div className="info">
-            <div className='actionsContainer'>
-              <button className="btn btn-secondary mr-2" onClick={() => this.handleEdit(item)}>
-                EDIT
-              </button>
-              <button className="btn btn-danger" onClick={() => this.handleDelete(item)}>
-                DELETE
-              </button>
+          <div className="object_container">
+            <div className="object_description">
+              <div className="device_name">{ item.name }</div>
+              <div>Registered: { item.registration_date.substring(0, 10) }</div>
+              <div>Mac: { item.mac_address }</div>
             </div>
-            <div className="device_name">{ item.name }</div>
-            <div>Registered: { item.registration_date.substring(0, 10) }</div>
-            <div>Mac: { item.mac_address }</div>
+            <div className='object_actions'>
+              <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
+              <li><button onClick={ "" }>EDIT</button></li>
+              <li><button onClick={ "" }>DELETE</button></li>
+            </div>
           </div>
-          <Experiment device_list = {this.state.device_list} getExperiments={this.props.getExperiments} plantList = {this.state.plantList} experiment = {e} ></Experiment>
+          
+          { e !== null ? 
+            <Experiment device_list = {this.state.device_list} getExperiments={this.props.getExperiments} plantList = {this.state.plantList} experiment = {e} on_device_page = {true}></Experiment>
+            : <ExperimentModal device_list = {this.state.device_list} getExperiments={this.getExperiments} plantList={this.state.plantList} experiment={{id: null, description:null, current_phase:null, phases:null, day:null, phase_day:null, device: null, score:null, user:null, start_date:null, end_date:null}} add_or_edit={"add"}></ExperimentModal>
+          }
         </li>
 
       });
@@ -271,7 +277,7 @@ class Dashboard extends Component {
                 <span>{ this.state.user }</span>
               </button>
               <div className="user_img_frame">
-                <img className="user_img" src={user} alt="NO IMG!"/>
+                <img className="user_img" src={user_brown_icon} alt="NO IMG!"/>
               </div>
             </div>
           </div>

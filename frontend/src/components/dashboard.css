@@ -1,0 +1,127 @@
+.dashboard {
+  padding: 10px;
+  background-color: #FFFFFF;
+}
+
+ul {
+  margin:0px;
+  padding:0px;
+}
+
+.item {
+  display: flex;
+  flex-direction: row;
+}
+
+table {
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+th {
+  font-size: 1.2em;
+  font-weight: bolder;
+  padding:20px;
+}
+
+tr {
+  border-bottom: 1px solid;
+}
+
+td {
+  text-align:center;
+  padding:10px;
+}
+
+button {
+  font-family: "Brandon Grotesque";
+  margin: 10px;
+  border: 1px #B3896A solid;
+  background-color: #ffffff;
+  color: #B3896A;;
+  padding: 6px 12px;
+  border-radius: 20px;
+}
+
+button:hover {
+  transition: 0.25s;
+  background-color: #B3896A;
+  color: #FFFFFF;;
+}
+
+/* ==========================================================================================
+DEVICE
+============================================================================================ */
+
+.device_name {
+  font-weight: bolder;
+}
+
+/* ==========================================================================================
+OBJECT CONTAINERS (DEVICE, EXPERIMENT, ETC
+============================================================================================ */
+
+.object_container {
+  display: flex;
+  position: relative;
+  box-shadow: 0px 5px 20px -10px #555555;
+  padding:10px;
+  margin:10px;
+  border-radius: 10px;
+  flex: 1;
+}
+
+.object_description {
+  display: flex;
+  flex-direction: column;
+  vertical-align: top;
+  flex: 1;
+}
+
+/* HIDDEN start state */
+.object_actions  {
+  background: none;
+  list-style-type: none;
+  position:absolute;
+  right:0px;
+  top:0px;
+  border:none;
+  transition: .5s transform linear;
+}
+
+.object_actions img {
+  margin:5px;
+  padding:2px;
+  width:5px;
+}
+.object_actions button {
+  display: none;
+}
+
+.object_actions:hover {
+  display: table;
+  transition: .5s transform linear;
+}
+
+.object_actions:hover button {
+  display: block;
+}
+
+.object_actions:hover img {
+  display: none;
+}
+
+.object_actions button {
+  background-color: #ffffff;
+  border: none;
+  border-bottom: 1px solid #B3896A;
+  color: #B3896A;
+  border-radius: 0px;
+  margin:0px;
+  width:100%;
+}
+
+.object_actions button:hover {
+  transition: 0.5;
+  color: #323232;
+}
