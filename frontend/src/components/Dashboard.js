@@ -20,7 +20,7 @@ class Dashboard extends Component {
       user: '',
       isLoggedIn: true,
       selectedTab: "device",
-      deviceList: [],
+      device_list: [],
       experimentList: [],
       phaseList: [],
       plantList: [],
@@ -78,7 +78,7 @@ class Dashboard extends Component {
       .get("/api/devices/")
       .then((res) => {
         console.log("DEVICE RESPONSE: ", res)
-        this.setState({ deviceList: res.data })
+        this.setState({ device_list: res.data })
       })
       .catch((err) => console.log(err));
   };
@@ -218,7 +218,7 @@ class Dashboard extends Component {
     let items_list = [];
     let experiment_list = [];
     if (this.state.selectedTab === "device"){
-      items_list = this.state.deviceList;
+      items_list = this.state.device_list;
       experiment_list = this.state.experimentList;
       
       return items_list.map((item) => {
@@ -240,7 +240,7 @@ class Dashboard extends Component {
             <div>Registered: { item.registration_date.substring(0, 10) }</div>
             <div>Mac: { item.mac_address }</div>
           </div>
-          <Experiment getExperiments={this.props.getExperiments} plantList = {this.state.plantList} experiment = {e} ></Experiment>
+          <Experiment device_list = {this.state.device_list} getExperiments={this.props.getExperiments} plantList = {this.state.plantList} experiment = {e} ></Experiment>
         </li>
 
       });
@@ -248,8 +248,8 @@ class Dashboard extends Component {
     } else if (this.state.selectedTab === "experiment") {
       return(
         <>
-          <ExperimentList getExperiments={this.getExperiments} plantList={this.state.plantList} experimentList={this.state.experimentList} />
-          <ExperimentModal getExperiments={this.getExperiments} plantList={this.state.plantList} experiment={{id: null, description:null, current_phase:null, phases:null, day:null, phase_day:null, device: null, score:null, user:null, start_date:null, end_date:null}} add_or_edit={"add"} ></ExperimentModal>
+          <ExperimentList device_list = {this.state.device_list} getExperiments={this.getExperiments} plantList={this.state.plantList} experimentList={this.state.experimentList} />
+          <ExperimentModal device_list = {this.state.device_list} getExperiments={this.getExperiments} plantList={this.state.plantList} experiment={{id: null, description:null, current_phase:null, phases:null, day:null, phase_day:null, device: null, score:null, user:null, start_date:null, end_date:null}} add_or_edit={"add"}></ExperimentModal>
         </>
       );
 

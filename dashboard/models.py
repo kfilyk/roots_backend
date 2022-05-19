@@ -34,6 +34,7 @@ class Device(models.Model):
     mac_address = models.CharField(db_column='d_mac_address', max_length=45, blank=True, null=True)  
     experiment = models.ForeignKey("Experiment", models.DO_NOTHING, related_name='+', db_column='d_experiment_id', blank=True, null=True)  
     fill_res_flag = models.BooleanField(db_column='d_fill_res_flag', default=False) 
+    num_pods = models.IntegerField(db_column='d_num_pods', default = 5) 
 
     class Meta:
         managed = True
@@ -132,7 +133,6 @@ class Pod(models.Model):
     class Meta:
         managed = True
         db_table = 'pod'
-
 
 class Phase(models.Model): # generic periodic phase setting to be used by a recipe 
     id = models.AutoField(db_column='ph_id', primary_key=True)  

@@ -17,16 +17,18 @@ export default class CustomModal extends Component {
       this.props = props; // this seems to fix props.undefined errors!
       this.state = {
           plantList: this.props.plantList,
-          experiment: this.props.experiment,       
+          experiment: this.props.experiment,    
+          device: this.props.d,
           completion_score: 0,
-          podList: [] 
+          podList: [],
+          device_list: this.props.device_list ?? {}
       };
       this.deleteEntry = this.deleteEntry.bind(this);
       this.getPodList = this.getPodList.bind(this);
     }
 
     componentDidMount() {
-        this.getPodList(this.props.experiment.id)
+        this.getPodList(this.props.experiment.id);
     }
 
     deleteEntry = (id) => {
@@ -43,7 +45,6 @@ export default class CustomModal extends Component {
             .get(`/api/pods/?experiment=${id}`)
             .then((res) => {
                 this.setState({ podList: res.data })
-                console.log("POD LIST: ", this.state.podList)
             })
             .catch((err) => console.log(err));
     }
@@ -65,13 +66,17 @@ export default class CustomModal extends Component {
     render() {
         let start_date_string = this.state.experiment.start_date ?? ""
         let end_date_string = this.state.experiment.start_date ?? ""
+        const device = this.state.device_list.filter(device => device.id === this.state.experiment.device)[0] ?? {} // could also use ||
+        let device_id = device.id ?? ""
+        let device_name = device.name ?? ""
+
         return (
             <div className="experiment_containter">
                 <div id="experiment" >
                     <div id="experimentLeft">
                         <div>Exp: { this.state.experiment.description }</div>
-                        <div>Device ID: { this.state.experiment.device }</div>
-                        <div>Device Name: { this.state.experiment.device }</div>
+                        <div>Device ID: { device_id }</div>
+                        <div>Device Name: { device_name }</div>
                         <div>Date: {start_date_string} {"->"} {end_date_string}</div>
                         <div>Score: { this.state.experiment.score } </div>
                         {/*
@@ -84,7 +89,7 @@ export default class CustomModal extends Component {
                     </div>
                     <div id="experimentRight">
                         <div className='actionsContainer'>
-                            <ExperimentModal getExperiments={this.props.getExperiments} plantList={this.props.plantList} experiment={this.props.experiment} add_or_edit = {"edit"}></ExperimentModal>
+                            <ExperimentModal device_list = {this.props.device_list} getExperiments={this.props.getExperiments} plantList={this.props.plantList} experiment={this.props.experiment} add_or_edit = {"edit"} pod_list={this.state.podList}></ExperimentModal>
                             <button onClick={() => { if (window.confirm(`You are about to delete ${this.state.experiment.id}, ${this.state.experiment.description}`)) this.deleteEntry(this.state.experiment.id) }}> DELETE </button>
                         </div>
                         <div className="podCarouselWrapper">
