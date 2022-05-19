@@ -9,7 +9,7 @@ import PhaseList from './Phase/PhaseList';
 import AddPhaseModal from './Phase/AddPhaseModal';
 import axios from "axios";
 import user from './user_brown.png';
-import PlantList from "./Plant/PlantList";
+import Plant from "./Plant/Plant";
 
 
 class Dashboard extends Component {
@@ -135,7 +135,7 @@ class Dashboard extends Component {
         .post("/api/phases/", item)
         .then((res) => this.getPhases());         
     } else if(this.state.selectedTab ==='plant') {
-      <PlantList></PlantList>      
+      <Plant></Plant>      
     }
   };
 
@@ -253,7 +253,7 @@ class Dashboard extends Component {
       );
     } else if (this.state.selectedTab === "plant") {
       return(
-        <PlantList></PlantList>
+        <Plant></Plant>
       );
     }}
 

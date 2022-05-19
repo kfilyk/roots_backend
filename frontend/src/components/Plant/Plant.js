@@ -4,6 +4,7 @@ import Popup from "reactjs-popup";
 
 const PlantList = () => {
   const [plantList, setPlantList] = useState([]);
+  const [showEditPlant, setShowEditPlant] = useState(false)
   const [addPlant, setAddPlant] = useState(
     {
       name: 's',
@@ -31,7 +32,7 @@ const PlantList = () => {
   }, []);
 
   async function deleteEntry(id) {
-    axios.delete(`/api/plants/${id}/`)
+    await axios.delete(`/api/plants/${id}/`)
         .then((res) => {
           console.log("DELETE")
           fetchData()
@@ -39,7 +40,7 @@ const PlantList = () => {
   }
 
   async function addEntry(e) {
-    axios
+    await axios
       .post(`/api/plants/`, 
         { 
             name: addPlant.name,
@@ -52,6 +53,25 @@ const PlantList = () => {
       .catch((err) => console.log(err));
   };
 
+  async function editEntry(e) {
+    await axios
+        .patch(`/api/plants/${editPlant.id}/`, 
+        { 
+            id: editPlant.id,
+            name: editPlant.name,
+            supplier: editPlant.supplier
+        })
+        .then((res) => {
+          fetchData()
+        })
+        .catch((err) => console.log(err));
+  };
+
+  function openEditPlant(plant){
+    setEditPlant(plant)
+    setShowEditPlant(true)
+  }
+
   return (
     <div>
       <tbody>
@@ -60,7 +80,8 @@ const PlantList = () => {
             <td>{ item.id }</td>
             <td>{item.name}</td>
             <td>{item.supplier}</td>
-            <td>                  
+            <td>
+            <button onClick={() => openEditPlant(item)}>EDIT</button>
               <button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) deleteEntry(item.id) }}> DELETE </button>
             </td>
           </tr>
@@ -97,6 +118,38 @@ const PlantList = () => {
           </div>
         )}
       </Popup>
+
+      <Popup open={showEditPlant} onClose={() => setShowEditPlant(false)} modal nested>
+            {(close) => (
+            <div className="modal">
+                <div className="modal_body">
+                <button className="close" onClick={close}>
+                    &times;
+                </button>
+                <div className="modal_type"> Edit Plant </div>
+                <div className="modal_content">
+                    <div className="form_row">
+                    <label> Id: </label> <label>{editPlant.id}</label>
+                    </div>
+
+                    <div className="form_row">
+                    <label> Name: </label> <input name="name" value={editPlant.name} onChange={(e) => setEditPlant({...editPlant, name: e.target.value})} />
+                    </div>
+
+                    <div className="form_row">
+                    <label> Supplier: </label> <input name="supplier" value={editPlant.supplier} onChange={(e) => setEditPlant({...editPlant, supplier: e.target.value})} />
+                    </div>
+
+                    <button className='save' onClick={() => {
+                    editEntry()
+                    close();
+                }}>Save</button>
+                    </div>
+
+                </div>
+            </div>
+            )}
+        </Popup>
     </div>
   );
 }

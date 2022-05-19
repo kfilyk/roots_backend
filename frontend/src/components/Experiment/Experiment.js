@@ -3,7 +3,6 @@ import ExperimentModal from "./ExperimentModal"
 import PodCarousel from "./PodCarousel"
 import ProgressCircle from "../common/ProgressCircle";
 import axios from "axios";
-import PlantList from "../Plant/PlantList";
 import "./experiment.css"
 
 function getColor(value){
