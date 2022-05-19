@@ -85,7 +85,15 @@ const PlantList = () => {
 
   return (
     <div>
-      <tbody>
+      <table width="100%">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Supplier</th>
+            <th></th>
+          </tr>
+        </thead>
         {plantList.map(item => (
           <tr key={ item.id } className="list-group-item d-flex justify-content-between align-items-center" >
             <td>{ item.id }</td>
@@ -97,8 +105,8 @@ const PlantList = () => {
             </td>
           </tr>
         ))}
-      </tbody>  
-      <button onClick={() => openModal(null)}>ADD</button>
+      </table>  
+      <button onClick={() => openModal(null)}>+</button>
       <Popup open={modal.show} onClose={() => setModal({...modal, show: false})} modal nested>
             {(close) => (
             <div className="modal">

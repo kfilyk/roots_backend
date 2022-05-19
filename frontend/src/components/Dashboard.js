@@ -5,8 +5,7 @@ import { Navigate } from "react-router-dom";
 import ExperimentList from './Experiment/ExperimentList';
 import ExperimentModal from './Experiment/ExperimentModal';
 import Experiment from './Experiment/Experiment';
-import PhaseList from './Phase/PhaseList';
-import AddPhaseModal from './Phase/AddPhaseModal';
+import Phase from './Phase/Phase';
 import axios from "axios";
 import user from './user_brown.png';
 import Plant from "./Plant/Plant";
@@ -32,8 +31,6 @@ class Dashboard extends Component {
       },
     };
     this.getDevices = this.getDevices.bind(this)
-    this.getPhases = this.getPhases.bind(this)
-    this.getPlants = this.getPlants.bind(this)
     this.getExperiments = this.getExperiments.bind(this)
   }
   // runs before rendering mounted on client side
@@ -57,8 +54,6 @@ class Dashboard extends Component {
           this.setState({ user: res.data.username })
           this.getExperiments();
           this.getDevices();
-          this.getPhases();
-          this.getPlants();
 
           console.log("IS TOKEN: ", window.localStorage.getItem("token"))
 
@@ -89,20 +84,6 @@ class Dashboard extends Component {
       .catch((err) => console.log(err));
   };
 
-  getPhases = () => {
-    axios
-      .get("/api/phases/")
-      .then((res) => this.setState({ phaseList: res.data }))
-      .catch((err) => console.log(err));
-  };
-
-  getPlants = () => {
-    axios
-      .get("/api/plants/")
-      .then((res) => this.setState({ plantList: res.data }))
-      .catch((err) => console.log(err));
-  };
-
   handleSubmit = (item) => {
     if (this.state.selectedTab === 'device') {
       if (item.id) {
@@ -124,18 +105,6 @@ class Dashboard extends Component {
       axios
         .post("/api/experiments/", item)
         .then((res) => this.getExperiments());      
-    } else if(this.state.selectedTab ==='phase') {
-      if (item.id) {
-        axios
-          .put(`/api/phases/${item.id}/`, item)
-          .then((res) => this.getPhases());
-        return;
-      }
-      axios
-        .post("/api/phases/", item)
-        .then((res) => this.getPhases());         
-    } else if(this.state.selectedTab ==='plant') {
-      <Plant></Plant>      
     }
   };
 
@@ -149,15 +118,7 @@ class Dashboard extends Component {
       axios
       .delete(`/api/experiments/${item.id}/`)
       .then((res) => this.getDevices());
-    } else if(this.state.selectedTab ==='phase') {
-      axios
-      .delete(`/api/phases/${item.id}/`, item)
-      .then((res) => this.getExperiments());      
-    } else if(this.state.selectedTab ==='plant') {
-      axios
-      .delete(`/api/plants/${item.id}/`, item)
-      .then((res) => this.getPlants());      
-    }
+    } 
   };
 
   createItem = () => {
@@ -246,10 +207,7 @@ class Dashboard extends Component {
 
     } else if (this.state.selectedTab === "phase") {
       return(
-        <>
-          <PhaseList getPhases={this.getPhases} phaseList={this.state.phaseList}/>
-          <AddPhaseModal getPhases={this.getPhases}></AddPhaseModal> 
-        </>
+        <Phase></Phase>
       );
     } else if (this.state.selectedTab === "plant") {
       return(
