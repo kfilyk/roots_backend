@@ -4,7 +4,10 @@ import Popup from "reactjs-popup";
 
 const PlantList = () => {
   const [plantList, setPlantList] = useState([]);
-  const [showEditPlant, setShowEditPlant] = useState(false)
+  const [modal, setModal] = useState({
+    show: false,
+    add: false
+  })
   const [addPlant, setAddPlant] = useState(
     {
       name: 's',
@@ -32,116 +35,110 @@ const PlantList = () => {
   }, []);
 
   async function deleteEntry(id) {
-    await axios.delete(`/api/plants/${id}/`)
-        .then((res) => {
-          console.log("DELETE")
-          fetchData()
-        });
+    await axios.delete(`/api/plants/${id}/`);
+    setPlantList(plantList.filter(plant => plant.id != id))
   }
 
   async function addEntry(e) {
-    await axios
+    const result = await axios
       .post(`/api/plants/`, 
         { 
             name: addPlant.name,
             supplier: addPlant.supplier
-        })
-      .then((res) => {
-        console.log("ADD: ", addPlant)
-        fetchData()
-      })
-      .catch((err) => console.log(err));
+        });
+    setPlantList(plantList => [...plantList, result.data])
   };
 
   async function editEntry(e) {
-    await axios
+    const result = await axios
         .patch(`/api/plants/${editPlant.id}/`, 
         { 
             id: editPlant.id,
             name: editPlant.name,
             supplier: editPlant.supplier
-        })
-        .then((res) => {
-          fetchData()
-        })
-        .catch((err) => console.log(err));
+        }).catch((err) => console.log(err));
+    const index = plantList.findIndex(plant => plant.id === editPlant.id);
+    const updatedItem = result.data
+    setPlantList([
+      ...plantList.slice(0, index),
+      updatedItem,
+      ...plantList.slice(index + 1)
+    ])
   };
 
-  function openEditPlant(plant){
-    setEditPlant(plant)
-    setShowEditPlant(true)
+  function openModal(plant){
+    if (plant === null ){
+      setModal({add: true, show: true})
+    } else {
+      setEditPlant(plant)
+      setModal({add: false, show: true})
+    }
+  }
+  
+  function submitModal(){
+    if(modal.add){
+      addEntry()
+    } else {
+      editEntry()
+    }
   }
 
   return (
     <div>
-      <tbody>
+      <table width="100%">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Supplier</th>
+            <th></th>
+          </tr>
+        </thead>
         {plantList.map(item => (
           <tr key={ item.id } className="list-group-item d-flex justify-content-between align-items-center" >
             <td>{ item.id }</td>
             <td>{item.name}</td>
             <td>{item.supplier}</td>
             <td>
-            <button onClick={() => openEditPlant(item)}>EDIT</button>
+            <button onClick={() => openModal(item)}>EDIT</button>
               <button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) deleteEntry(item.id) }}> DELETE </button>
             </td>
           </tr>
         ))}
-      </tbody>  
-      <Popup
-        trigger={<button className="button"> + </button>}
-        modal
-        nested
-      >
-        {(close) => (
-          <div className="modal">
-            <div className="modal_body">
-              <button className="close" onClick={close}>
-                &times;
-              </button>
-              <div className="modal_type"> Add New Plant </div>
-              <div className="modal_content">
-
-                    <div className="form_row">
-                      <label> Name: </label> <input name="addPlant.name" value={addPlant.name} onChange={(e) => setAddPlant({...addPlant, name: e.target.value})} />
-                    </div>
-
-                    <div className="form_row">
-                      <label> Supplier: </label> <input name="addPlant.supplier" value={addPlant.supplier} onChange={(e) => setAddPlant({...addPlant, supplier: e.target.value})} />
-                    </div>
-                    
-                    <button className='save' onClick={() => {
-                      addEntry()
-                      close();}}>Save
-                    </button>
-              </div>
-            </div>
-          </div>
-        )}
-      </Popup>
-
-      <Popup open={showEditPlant} onClose={() => setShowEditPlant(false)} modal nested>
+      </table>  
+      <button onClick={() => openModal(null)}>+</button>
+      <Popup open={modal.show} onClose={() => setModal({...modal, show: false})} modal nested>
             {(close) => (
             <div className="modal">
                 <div className="modal_body">
                 <button className="close" onClick={close}>
                     &times;
                 </button>
-                <div className="modal_type"> Edit Plant </div>
+                <div className="modal_type"> { modal.add == true ? "Add Plant" : "Edit Plant" } </div>
                 <div className="modal_content">
+                    { modal.add == true 
+                      ? ""
+                      : <div className="form_row"> <label> Id: </label> <label>{editPlant.id}</label> </div>
+                    }
+
                     <div className="form_row">
-                    <label> Id: </label> <label>{editPlant.id}</label>
+                    <label> Name: </label> 
+                    { modal.add == true 
+                      ? <input name="name" value={addPlant.name} onChange={(e) => setAddPlant({...addPlant, name: e.target.value})} />
+                      : <input name="name" value={editPlant.name} onChange={(e) => setEditPlant({...editPlant, name: e.target.value})} />
+                    }
                     </div>
 
                     <div className="form_row">
-                    <label> Name: </label> <input name="name" value={editPlant.name} onChange={(e) => setEditPlant({...editPlant, name: e.target.value})} />
-                    </div>
-
-                    <div className="form_row">
-                    <label> Supplier: </label> <input name="supplier" value={editPlant.supplier} onChange={(e) => setEditPlant({...editPlant, supplier: e.target.value})} />
+                    <label> Supplier: </label>
+                    { modal.add == true 
+                      ? <input name="supplier" value={addPlant.supplier} onChange={(e) => setAddPlant({...addPlant, supplier: e.target.value})} />
+                      : <input name="supplier" value={editPlant.supplier} onChange={(e) => setEditPlant({...editPlant, supplier: e.target.value})} />
+                    }
                     </div>
 
                     <button className='save' onClick={() => {
-                    editEntry()
+                    submitModal()
                     close();
                 }}>Save</button>
                     </div>
