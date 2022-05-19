@@ -2,8 +2,6 @@
 
 import React, { Component, } from "react";
 import { Navigate } from "react-router-dom";
-import PlantList from './Plant/PlantList';
-import AddPlantModal from './Plant/AddPlantModal';
 import ExperimentList from './Experiment/ExperimentList';
 import ExperimentModal from './Experiment/ExperimentModal';
 import Experiment from './Experiment/Experiment';
@@ -11,6 +9,7 @@ import PhaseList from './Phase/PhaseList';
 import AddPhaseModal from './Phase/AddPhaseModal';
 import axios from "axios";
 import user from './user_brown.png';
+import Plant from "./Plant/Plant";
 
 
 class Dashboard extends Component {
@@ -136,15 +135,7 @@ class Dashboard extends Component {
         .post("/api/phases/", item)
         .then((res) => this.getPhases());         
     } else if(this.state.selectedTab ==='plant') {
-      if (item.id) {
-        axios
-          .put(`/api/plants/${item.id}/`, item)
-          .then((res) => this.getPlants());
-        return;
-      }
-      axios
-        .post("/api/plants/", item)
-        .then((res) => this.getPlants());         
+      <Plant></Plant>      
     }
   };
 
@@ -262,10 +253,7 @@ class Dashboard extends Component {
       );
     } else if (this.state.selectedTab === "plant") {
       return(
-        <>
-          <PlantList getPlants={this.getPlants} plantList={this.state.plantList}/>
-          <AddPlantModal getPlants={this.getPlants}></AddPlantModal> 
-        </>
+        <Plant></Plant>
       );
     }}
 
