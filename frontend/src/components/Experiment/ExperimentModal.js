@@ -43,7 +43,7 @@ export default class CustomModal extends Component {
     //as soon as form instantiation, specify 
     if(this.state.device !== null) {
       this.setState({num_pods: this.state.device_list.filter(device => device.id === this.state.device)[0].num_pods});
-    } else if (this.state.pod_list !== {}) {
+    } else {
       this.setState({num_pods: this.state.pod_list.length}); 
     }
   }
@@ -175,16 +175,16 @@ export default class CustomModal extends Component {
                       (() => {
                         console.log(this.state.is_ready)
                         // if show this selector if a device has been selected
-                        if(( this.state.is_ready === 2)) {
+                        if(( this.state.is_ready === 2) && this.state.device !== null) {
                         
                           let pod_list_selection = []
-                          
+                          /*
                           console.log("POD_LIST: ", pod_list)
                           console.log("PLANT_LIST: ", plant_list)
                           console.log("FLAG: ", pod_list[0]['position'])
                           console.log("FLAG: ", pod_list[0]['plant_name'])
-                          {/*}
-                          for(let i = 0; i < this.state.num_pods; i++) {
+                          */
+                          for(let i = 0; i < this.state.num_pods; i++) { // 0, 5, 10 whatever
                             // use select[name] in handleChange to indicate the pod thats being affected
                             console.log(this.state.num_pods);
                             let position = this.state.pod_list[i]['position'] ?? null;
@@ -198,7 +198,7 @@ export default class CustomModal extends Component {
 
                               </select>
                             );
-                          } */}
+                          }
                           console.log("POD LIST SELECTION: ", pod_list_selection);
                           return pod_list_selection;
                         } 
