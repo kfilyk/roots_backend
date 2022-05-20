@@ -61,9 +61,11 @@ POPUP MODAL
 
 
 /* control width of form descriptors */ 
+/*
 .form_row :first-child {
   width: 40%;
 }
+*/
 
 input {
   border: none;
@@ -85,6 +87,7 @@ select .pod {
   border: none;
   background: rgb(224, 224, 224);
   border-radius: 50%;
+  color:#B3896A;
 }
 
 .form_row > * {

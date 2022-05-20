@@ -169,28 +169,25 @@ export default class CustomModal extends Component {
                       if(this.state.device !== null) {
                       
                         let pod_list_selection = [] // {{position:1, plant_id: 5}, {position:4, plant_id: 2}}
+                        
+                        console.log("POD_LIST: ", this.state.pod_list)
+                        console.log("PLANT_LIST: ", this.state.plant_list)
                         /*
-                        console.log("POD_LIST: ", pod_list)
-                        console.log("PLANT_LIST: ", plant_list)
                         console.log("FLAG: ", pod_list[0]['position'])
                         console.log("FLAG: ", pod_list[0]['plant_name'])
                         */
                         for(let i = 0; i < this.state.num_pods; i++) { // 0, 5, 10 whatever
                           // use select[name] in handleChange to indicate the pod thats being affected
-                          console.log(this.state.num_pods);
-                          let plant_name = null;
-                          let plant_id = null;
+                          let plant = null;
                           if(this.state.pod_list.length > 0) {
-                            
-                            plant_name = this.state.pod_list[i]['plant_name'];
-                            plant_id = this.state.pod_list[i]['plant'];
+                            plant = this.state.pod_list[i]['plant'];
                           } 
 
                           pod_list_selection.push(
-                            <select className="pod" name={"pod_"+(i+1)} value={{value: plant_name, label: plant_id}} onChange={this.handleChange}> 
+                            <select className="pod" name={"pod_"+(i+1)} defaultValue={plant} onChange={this.handleChange}> 
                               
                               <option value={null}></option>
-                              { this.state.plant_list.map((item) => <option key={item.id} value={item.id}>{item.name} </option>) }
+                              { this.state.plant_list.map((item) => <option key={item.id} value={item.id}>{item.name}</option>) }
 
                             </select>
                           );
