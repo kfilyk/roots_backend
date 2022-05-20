@@ -18,7 +18,6 @@ export default class CustomModal extends Component {
       plant_list: [],
       pod_list: [],
       num_pods: 0,
-      is_ready: 0, // waits for two components specifically: plant_list and pod_list: therefore, is_ready== 2 when the state is fully loaded
       device_list: this.props.device_list ?? [],
       id: this.props.experiment.id ?? null,
       description: this.props.experiment.description ?? null,
@@ -105,8 +104,6 @@ export default class CustomModal extends Component {
     axios
       .get("/api/plants/")
       .then((res) => this.setState({ plant_list: res.data }))
-      .then(this.setState((prevState) => ({is_ready: prevState.is_ready + 1})))  
-
       .catch((err) => console.log(err));
     console.log("GOT PLANT LIST")
 
@@ -118,115 +115,111 @@ export default class CustomModal extends Component {
         .then((res) => {
             this.setState({ pod_list: res.data })
         })
-        .then(this.setState((prevState) => ({is_ready: prevState.is_ready + 1})))  
         .catch((err) => console.log(err));
       console.log("GOT POD LIST")
   }
 
   render() {
-    let pod_list = this.state.pod_list ?? []
-    let plant_list = this.state.plant_list ?? []
-    if (this.state.is_ready === 2) {
-      return (
+    return (
+      <Popup
+        trigger={<button> 
+          { this.props.add_or_edit === "add" ? "+" : "EDIT" }
+        </button>}
+        modal
+        nested
+      >
         
-        <Popup
-          trigger={<button> 
-            { this.props.add_or_edit === "add" ? "+" : "EDIT" }
-          </button>}
-          modal
-          nested
-        >
-          
-          {(close) => (
-            <div className="modal" onClick={close}>
-              <div className="modal_body" onClick={e => e.stopPropagation()}>
-                <div className="modal_content">
+        {(close) => (
+          <div className="modal" onClick={close}>
+            <div className="modal_body" onClick={e => e.stopPropagation()}>
+              <div className="modal_content">
+                <div className="form_row"> 
+                  <input name="description" value={this.state.description} onChange={this.handleChange} />
+                </div>
+                { this.props.add_or_edit === "add" ? 
                   <div className="form_row"> 
-                    <input name="description" value={this.state.description} onChange={this.handleChange} />
+                      <label> Start Date: </label>
+                      <input type="date" name="start_date" value={this.state.start_date} onChange={this.handleChange} />
                   </div>
-                  { this.props.add_or_edit === "add" ? 
-                    <div className="form_row"> 
-                        <label> Start Date: </label>
-                        <input type="date" name="start_date" value={this.state.start_date} onChange={this.handleChange} />
-                    </div>
-                    : ""
-                  }
+                  : ""
+                }
 
-                  <div className="form_row"> 
-                      <label> Device: </label>
-                      {
-                        (() => {
-                          // allow moving experiment to a different device if the device has the same capacity of pods or greater
-                          let device_list_selection = [];
-                          device_list_selection.push(
-                            <select className="device" name="device" onChange={this.handleChange} >
-                              
-                              { this.state.device_list.map((item) => (item.num_pods >= this.state.num_pods) && ((item.id === this.state.id) || (item.experiment == null)) ? <option value={item.id}>{item.name} </option> : <></>) }
-                            </select>
-                          );
-                          return device_list_selection;
-                        })()
-                      }
-
-                  </div>
-
-                  <div className="form_row"> 
+                <div className="form_row"> 
+                    <label> Device: </label>
                     {
                       (() => {
-                        console.log(this.state.is_ready)
-                        // if show this selector if a device has been selected
-                        if(( this.state.is_ready === 2) && this.state.device !== null) {
-                        
-                          let pod_list_selection = []
-                          /*
-                          console.log("POD_LIST: ", pod_list)
-                          console.log("PLANT_LIST: ", plant_list)
-                          console.log("FLAG: ", pod_list[0]['position'])
-                          console.log("FLAG: ", pod_list[0]['plant_name'])
-                          */
-                          for(let i = 0; i < this.state.num_pods; i++) { // 0, 5, 10 whatever
-                            // use select[name] in handleChange to indicate the pod thats being affected
-                            console.log(this.state.num_pods);
-                            let position = this.state.pod_list[i]['position'] ?? null;
-                            let label = this.state.pod_list[i]['plant_name'] ?? null;
-
-                            pod_list_selection.push(
-                              <select className="pod" name={"pod_"+(i+1)} value={{value: position, label: label}} onChange={this.handleChange}> 
-                                
-                                <option value={null}></option>
-                                { this.state.plant_list.map((item) => <option value={item.id}>{item.name} </option>) }
-
-                              </select>
-                            );
-                          }
-                          console.log("POD LIST SELECTION: ", pod_list_selection);
-                          return pod_list_selection;
-                        } 
-                  
+                        // allow moving experiment to a different device if the device has the same capacity of pods or greater
+                        let device_list_selection = [];
+                        device_list_selection.push(
+                          <select className="device" name="device" onChange={this.handleChange} >
+                            
+                            { this.state.device_list.map((item) => (item.num_pods >= this.state.num_pods) && ((item.id === this.state.id) || (item.experiment == null)) ? <option value={item.id}>{item.name} </option> : <></>) }
+                          </select>
+                        );
+                        return device_list_selection;
                       })()
                     }
 
-                  </div>
-
-                  <button onClick= {
-                    () => {
-                      if(this.props.add_or_edit === "add") {
-                        this.addEntry();
-                      } else {
-                        this.editEntry();
-                      }
-                      close();
-                    }
-                  }>
-                    Save
-                  </button>
                 </div>
+
+                <div className="form_row"> 
+                  {
+                    (() => {
+                      // only should if a device has been specified: need num_pods of device and pod_list from the device
+                      if(this.state.device !== null) {
+                      
+                        let pod_list_selection = []
+                        /*
+                        console.log("POD_LIST: ", pod_list)
+                        console.log("PLANT_LIST: ", plant_list)
+                        console.log("FLAG: ", pod_list[0]['position'])
+                        console.log("FLAG: ", pod_list[0]['plant_name'])
+                        */
+                        for(let i = 0; i < this.state.num_pods; i++) { // 0, 5, 10 whatever
+                          // use select[name] in handleChange to indicate the pod thats being affected
+                          console.log(this.state.num_pods);
+                          let position = null;
+                          let label = null;
+                          if(this.state.pod_list.length > 0) {
+                            position = this.state.pod_list[i]['position'];
+                            label = this.state.pod_list[i]['plant_name'];
+                          } 
+
+                          pod_list_selection.push(
+                            <select className="pod" name={"pod_"+(i+1)} value={{value: position, label: label}} onChange={this.handleChange}> 
+                              
+                              <option value={null}></option>
+                              { this.state.plant_list.map((item) => <option value={item.id}>{item.name} </option>) }
+
+                            </select>
+                          );
+                        }
+                        console.log("POD LIST SELECTION: ", pod_list_selection);
+                        return pod_list_selection;
+                      } 
+                
+                    })()
+                  }
+
+                </div>
+
+                <button onClick= {
+                  () => {
+                    if(this.props.add_or_edit === "add") {
+                      this.addEntry();
+                    } else {
+                      this.editEntry();
+                    }
+                    close();
+                  }
+                }>
+                  Save
+                </button>
               </div>
             </div>
-          )}
-        </Popup>
-      );
-    } 
-    return <></> // loading
+          </div>
+        )}
+      </Popup>
+    );
   }
 }
