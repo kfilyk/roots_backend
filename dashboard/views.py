@@ -52,7 +52,7 @@ class PodView(viewsets.ModelViewSet):
     filterset_fields = ['experiment']
 
     def get_queryset(self):
-        return Pod.objects.all().annotate(plant_name=F('plant__name'))
+        return Pod.objects.all().annotate(plant_name=F('plant__name')) # return joined plant.name
 
 class PlantView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
