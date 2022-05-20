@@ -7,17 +7,17 @@ export default class CustomModal extends Component {
     constructor(props) {
       super(props);
       this.state = {
-          podList: this.props.podList,
+          pod_list: this.props.pod_list,
       };
     }
 
     componentWillReceiveProps(nextProps) {
-      this.setState({ podList: nextProps.podList })
+      this.setState({ pod_list: nextProps.pod_list })
     }
 
     renderItems = () => {
         return (
-          this.state.podList.map((item) => (
+          this.state.pod_list.map((item) => (
             <ProgressCircle progress={{value: item.score, caption: item.plant_name, colour: 'green'}}></ProgressCircle>
           ))
         );

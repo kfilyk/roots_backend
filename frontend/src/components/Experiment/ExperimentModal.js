@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component,  } from "react";
 import Popup from "reactjs-popup";
 import axios from "axios";
 import "./experiment.css"
@@ -15,7 +15,10 @@ export default class CustomModal extends Component {
     super(props);
     this.props = props;
     this.state = {
-      plantList: this.props.plantList,
+      plant_list: [],
+      pod_list: [],
+      num_pods: 0,
+      device_list: this.props.device_list ?? [],
       id: this.props.experiment.id ?? null,
       description: this.props.experiment.description ?? null,
       start_date: this.props.experiment.start_date ?? year+"-"+month+"-"+day,
@@ -25,14 +28,23 @@ export default class CustomModal extends Component {
       day:this.props.experiment.day ?? 0,
       phase_day:this.props.experiment.phase_day ?? 0,
       phases:this.props.experiment.phases ?? null,
-      current_phase: this.props.experiment.current_phase ?? 0, // 
-      pod_list: this.props.pod_list ?? {},
-      device_list: this.props.device_list ?? {}
+      current_phase: this.props.experiment.current_phase ?? 0, 
     };
 
     this.editEntry = this.editEntry.bind(this);
     this.addEntry = this.addEntry.bind(this);
     this.handleChange = this.handleChange.bind(this);
+  }
+
+  componentDidMount() {
+    this.getPlants();
+    this.getPodList(this.state.id);
+    //as soon as form instantiation, specify 
+    if(this.state.device !== null) {
+      this.setState({num_pods: this.state.device_list.filter(device => device.id === this.state.device)[0].num_pods});
+    } else if (this.state.pod_list !== {}) {
+      this.setState({num_pods: this.state.pod_list.length}); 
+    } 
   }
 
   addEntry(e) {
@@ -75,6 +87,7 @@ export default class CustomModal extends Component {
   };
 
   handleChange (e) {
+    //handle pod manipulation
     if(e.target.name.includes("pod")) { 
       let position = e.target.name.substring(5);
       let pod_list_copy = { ...this.state.pod_list }; //create a new copy and change the value of bar
@@ -87,8 +100,26 @@ export default class CustomModal extends Component {
 
   }
 
+  getPlants = () => {
+    axios
+      .get("/api/plants/")
+      .then((res) => this.setState({ plant_list: res.data }))
+      .catch((err) => console.log(err));
+  };
+
+  getPodList(id) {
+    axios
+        .get(`/api/pods/?experiment=${id}`)
+        .then((res) => {
+            this.setState({ pod_list: res.data })
+        })
+        .catch((err) => console.log(err));
+}
+
   render() {
+
     return (
+      
       <Popup
         trigger={<button> 
           { this.props.add_or_edit === "add" ? "+" : "EDIT" }
@@ -96,18 +127,12 @@ export default class CustomModal extends Component {
         modal
         nested
       >
+        
         {(close) => (
-          <div className="modal">
-            <div className="modal_body">
-              <div className="modal_header">
-                <button className="close" onClick={close}>
-                    &times;
-                  </button>
-                  <div className="modal_type"> Experiment </div>
-              </div>
+          <div className="modal" onClick={close}>
+            <div className="modal_body" onClick={e => e.stopPropagation()}>
               <div className="modal_content">
                 <div className="form_row"> 
-                  <label> Description: </label>
                   <input name="description" value={this.state.description} onChange={this.handleChange} />
                 </div>
                 { this.props.add_or_edit === "add" ? 
@@ -122,10 +147,12 @@ export default class CustomModal extends Component {
                     <label> Device: </label>
                     {
                       (() => {
+                        // allow moving experiment to a different device if the device has the same capacity of pods or greater
                         let device_list_selection = [];
                         device_list_selection.push(
                           <select className="device" name="device" onChange={this.handleChange} >
-                            { this.state.device_list.map((item) => (item.id !== this.state.id) && (item.experiment == null) ? <option value={item.id}>{item.name} </option> : <></>) }
+                            
+                            { this.state.device_list.map((item) => (item.num_pods >= this.state.num_pods) && ((item.id === this.state.id) || (item.experiment == null)) ? <option value={item.id}>{item.name} </option> : <></>) }
                           </select>
                         );
                         return device_list_selection;
@@ -137,41 +164,32 @@ export default class CustomModal extends Component {
                 <div className="form_row"> 
                   {
                     (() => {
-                      if(this.state.device !== null) {
-
-                        let d = this.state.device_list.filter(device => device.id === this.state.device)[0]; // could also use ||
-                        let num_pods = d.num_pods;
-
+                      // if show this selector if a device has been selected
+                      if( this.props.add_or_edit === "edit" || (this.state.device !== null)) {
+                        
                         let pod_list_selection = []
-                        console.log("PLANT LIST: ", this.state.plantList) 
-                        console.log("POD LIST: ", this.state.pod_list);
+                        console.log("POD_LIST: ", this.state.pod_list)
+                        console.log("PLANT_LIST: ", this.state.plant_list)
+                        //console.log("FLAG: ", this.state.pod_list[0]['position'])
+                        //console.log("FLAG: ", this.state.pod_list[0]['plant_name'])
+                        {/*
+                        for(let i = 0; i < this.state.num_pods; i++) {
+                          // use select[name] in handleChange to indicate the pod thats being affected
+                          console.log(this.state.num_pods);
+                          let position = this.state.pod_list[i]['position'] ?? null;
+                          let label = this.state.pod_list[i]['plant_name'] ?? null;
 
-                        for(let i = 0; i < num_pods; i++) {
-                          if (this.state.pod_list !== {})  {
-                            /* plantList: list of all possible plants in the database that could be included as a pod option. return position, item id */
-                            /*
-                            pod_list_selection.push(
-                              <select className="pod" name={"pod_"+i} value={{value:this.state.pod_list[i-1]['position'], label: this.state.pod_list[i-1]['plant_name']}} onChange={this.handleChange}> 
-                                
-                                <option name={"pod_"+i} value=''></option>
-                                { this.state.plantList.map((item) => <option value={item.id}>{item.name} </option>) }  
+                          pod_list_selection.push(
+                            <select className="pod" name={"pod_"+(i+1)} value={{value: position, label: label}} onChange={this.handleChange}> 
+                              
+                              <option value={null}></option>
+                              { this.state.plant_list.map((item) => <option value={item.id}>{item.name} </option>) }
 
-                              </select>
-                            );
-                            */
-
-                          } else {
-                            pod_list_selection.push(
-                              <select className="pod" name={"pod_"+(i+1)} onChange={this.handleChange}> 
-                                
-                                {/* plantList: list of all possible plants in the database that could be included as a pod option. return position, item id */ }
-                                <option name={"pod_"+(i+1)} value=''></option>
-                                { this.state.plantList.map((item) => <option value={item.id}>{item.name} </option>) }  
-
-                              </select>
-                            );
-                          }
+                            </select>
+                          );
                         }
+                      */}
+                        console.log("POD LIST SELECTION: ", pod_list_selection);
                         return pod_list_selection;
                       } 
                 

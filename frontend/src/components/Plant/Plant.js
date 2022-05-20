@@ -3,7 +3,7 @@ import axios from 'axios';
 import Popup from "reactjs-popup";
 
 const PlantList = () => {
-  const [plantList, setPlantList] = useState([]);
+  const [plant_list, setPlantList] = useState([]);
   const [modal, setModal] = useState({
     show: false,
     add: false
@@ -36,7 +36,7 @@ const PlantList = () => {
 
   async function deleteEntry(id) {
     await axios.delete(`/api/plants/${id}/`);
-    setPlantList(plantList.filter(plant => plant.id != id))
+    setPlantList(plant_list.filter(plant => plant.id != id))
   }
 
   async function addEntry(e) {
@@ -46,7 +46,7 @@ const PlantList = () => {
             name: addPlant.name,
             supplier: addPlant.supplier
         });
-    setPlantList(plantList => [...plantList, result.data])
+    setPlantList(plant_list => [...plant_list, result.data])
   };
 
   async function editEntry(e) {
@@ -57,12 +57,12 @@ const PlantList = () => {
             name: editPlant.name,
             supplier: editPlant.supplier
         }).catch((err) => console.log(err));
-    const index = plantList.findIndex(plant => plant.id === editPlant.id);
+    const index = plant_list.findIndex(plant => plant.id === editPlant.id);
     const updatedItem = result.data
     setPlantList([
-      ...plantList.slice(0, index),
+      ...plant_list.slice(0, index),
       updatedItem,
-      ...plantList.slice(index + 1)
+      ...plant_list.slice(index + 1)
     ])
   };
 
@@ -94,7 +94,7 @@ const PlantList = () => {
             <th></th>
           </tr>
         </thead>
-        {plantList.map(item => (
+        {plant_list.map(item => (
           <tr key={ item.id } className="list-group-item d-flex justify-content-between align-items-center" >
             <td>{ item.id }</td>
             <td>{item.name}</td>

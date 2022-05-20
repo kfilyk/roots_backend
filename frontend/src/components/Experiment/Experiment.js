@@ -16,12 +16,11 @@ export default class CustomModal extends Component {
       super(props);
       this.props = props; // this seems to fix props.undefined errors!
       this.state = {
-        plantList: this.props.plantList,
         experiment: this.props.experiment,    
         device: this.props.d,
         completion_score: 0,
-        podList: [],
-        device_list: this.props.device_list ?? {},
+        pod_list: [],
+        device_list: this.props.device_list ?? [],
       };
       this.deleteEntry = this.deleteEntry.bind(this);
       this.getPodList = this.getPodList.bind(this);
@@ -44,7 +43,7 @@ export default class CustomModal extends Component {
         axios
             .get(`/api/pods/?experiment=${id}`)
             .then((res) => {
-                this.setState({ podList: res.data })
+                this.setState({ pod_list: res.data })
             })
             .catch((err) => console.log(err));
     }
@@ -85,11 +84,11 @@ export default class CustomModal extends Component {
                         <div>Score: { this.state.experiment.score } </div>
                     </div>
                     <div className="pod_carousel_wrapper">
-                            <PodCarousel podList={this.state.podList}></PodCarousel>
+                            <PodCarousel pod_list={this.state.pod_list}></PodCarousel>
                     </div>
                     <div className='object_actions'>
                         <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
-                        <li><ExperimentModal device_list = {this.props.device_list} getExperiments={this.props.getExperiments} hideModal = {this.hideModal} plantList={this.props.plantList} experiment={this.props.experiment} add_or_edit = {"edit"} pod_list={this.state.podList}></ExperimentModal></li>
+                        <li><ExperimentModal device_list = {this.props.device_list} getExperiments={this.props.getExperiments} hideModal = {this.hideModal} experiment={this.props.experiment} add_or_edit = {"edit"}></ExperimentModal></li>
                         <li><button onClick= {() =>  { if (window.confirm(`You are about to delete ${this.state.experiment.id}, ${this.state.experiment.description}`)) this.deleteEntry(this.state.experiment.id) }}> DELETE</button></li>
                     </div>
                 </div>

@@ -44,6 +44,7 @@ POPUP MODAL
   margin: 15% auto; /* 15% from the top and centered */
   padding: 20px;
   width: 30%;
+  z-index: 2;
 }
 
 .modal_content{
@@ -83,9 +84,8 @@ select .pod {
   width:30px !important;
   border: none;
   background: rgb(224, 224, 224);
-  border-radius: 50%
+  border-radius: 50%;
 }
-
 
 .form_row > * {
   flex: 0 0 auto;
