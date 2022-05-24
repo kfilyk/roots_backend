@@ -10,7 +10,7 @@ class LoginOrCreateForm extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      isLoggedIn: false,
+      is_logged_in: false,
       username: '',
       password: '',
       firstName: '',
@@ -33,7 +33,7 @@ class LoginOrCreateForm extends Component {
           if (res.status === 200) {
             console.log("RESPONSE 1: ", res)
             //window.location.href = window.location.toString() + "/home";
-            this.setState({ isLoggedIn: true})
+            this.setState({ is_logged_in: true})
           }
         })
         .catch(res => console.log(res));
@@ -103,7 +103,7 @@ class LoginOrCreateForm extends Component {
         localStorage.setItem('token', token)
         console.log("TOKEN: " + localStorage.getItem("token"));
         axios.defaults.headers.common.Authorization = token;
-        this.setState({ isLoggedIn:true })
+        this.setState({ is_logged_in:true })
       })
       .catch(error => console.log(error));
   }
@@ -123,7 +123,7 @@ class LoginOrCreateForm extends Component {
   }
  
   render() {
-    if(this.state.isLoggedIn){
+    if(this.state.is_logged_in){
       return <Navigate to = {{ pathname: "/dashboard" }} />;
     }
 

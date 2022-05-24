@@ -20,10 +20,10 @@ class Dashboard extends Component {
     super(props);
     this.state = {
       user: '',
-      isLoggedIn: true,
-      selectedTab: "device",
+      is_logged_in: true,
+      selected_tab: "device",
       device_list: [],
-      experimentList: [],
+      experiment_list: [],
       phaseList: [],
       plant_list: [],
       activeItem: {
@@ -39,7 +39,7 @@ class Dashboard extends Component {
   componentDidMount() {
     // if no token found, redirect to login
     if (!window.localStorage.getItem("token")) {
-      this.setState({ isLoggedIn: false})
+      this.setState({ is_logged_in: false})
       this.logout()
     }
 
@@ -62,7 +62,7 @@ class Dashboard extends Component {
         })
       .catch(res => {
         console.log(res)
-        this.setState({ isLoggedIn: false})
+        this.setState({ is_logged_in: false})
         this.logout()
         console.log("AUTO LOGGED OUT!")
       });
@@ -82,12 +82,12 @@ class Dashboard extends Component {
   getExperiments = () => {
     axios
       .get("/api/experiments/")
-      .then((res) => this.setState({ experimentList: res.data }))
+      .then((res) => this.setState({ experiment_list: res.data }))
       .catch((err) => console.log(err));
   };
 
   handleSubmit = (item) => {
-    if (this.state.selectedTab === 'device') {
+    if (this.state.selected_tab === 'device') {
       if (item.id) {
         axios
           .put(`/api/devices/${item.id}/`, item)
@@ -97,7 +97,7 @@ class Dashboard extends Component {
       axios
         .post("/api/devices/", item)
         .then((res) => this.getDevices());
-    } else if(this.state.selectedTab ==='experiment') {
+    } else if(this.state.selected_tab ==='experiment') {
       if (item.id) {
         axios
           .put(`/api/experiments/${item.id}/`, item)
@@ -112,11 +112,11 @@ class Dashboard extends Component {
 
   handleDelete = (item) => {
     //console.log(item.type)
-    if (this.state.selectedTab === 'device') {
+    if (this.state.selected_tab === 'device') {
       axios
       .delete(`/api/devices/${item.id}/`)
       .then((res) => this.getDevices());
-    } else if(this.state.selectedTab ==='experiment') {
+    } else if(this.state.selected_tab ==='experiment') {
       axios
       .delete(`/api/experiments/${item.id}/`)
       .then((res) => this.getDevices());
@@ -125,7 +125,6 @@ class Dashboard extends Component {
 
   createItem = () => {
     const item = { name: "", experiment: "", is_online: false };
-
     this.setState({ activeItem: item });
   };
 
@@ -144,22 +143,22 @@ class Dashboard extends Component {
         localStorage.removeItem('token');
       })
       .catch(error =>  console.log(error))  
-      this.setState({isLoggedIn: false})
+      this.setState({is_logged_in: false})
   }
 
   renderTabList = () => {
     return (
       <div className="nav">
-        <span className={this.state.selectedTab === "device" ? "nav-link active" : "nav-link"} onClick={() => this.setState({ selectedTab: "device" })}>
+        <span className={this.state.selected_tab === "device" ? "nav-link active" : "nav-link"} onClick={() => this.setState({ selected_tab: "device" })}>
           DEVICES
         </span>
-        <span className={this.state.selectedTab === "experiment" ? "nav-link active" : "nav-link"} onClick={() => this.setState({ selectedTab: "experiment" })}>
+        <span className={this.state.selected_tab === "experiment" ? "nav-link active" : "nav-link"} onClick={() => this.setState({ selected_tab: "experiment" })}>
           EXPERIMENTS
         </span>
-        <span className={this.state.selectedTab === "phase" ? "nav-link active" : "nav-link"} onClick={() => this.setState({ selectedTab: "phase" })}>
+        <span className={this.state.selected_tab === "phase" ? "nav-link active" : "nav-link"} onClick={() => this.setState({ selected_tab: "phase" })}>
           PHASES
         </span>
-        <span className={this.state.selectedTab === "plant" ? "nav-link active" : "nav-link"} onClick={() => this.setState({ selectedTab: "plant" })}>
+        <span className={this.state.selected_tab === "plant" ? "nav-link active" : "nav-link"} onClick={() => this.setState({ selected_tab: "plant" })}>
           PLANTS
         </span>
       </div>
@@ -170,9 +169,9 @@ class Dashboard extends Component {
 
     let items_list = [];
     let experiment_list = [];
-    if (this.state.selectedTab === "device"){
+    if (this.state.selected_tab === "device"){
       items_list = this.state.device_list;
-      experiment_list = this.state.experimentList;
+      experiment_list = this.state.experiment_list;
       
       return items_list.map((item) => {
 
@@ -180,7 +179,7 @@ class Dashboard extends Component {
         let e = e_list.length === 1 ? e_list[0] : null;
 
         // display list of all items
-        return <li key={ ''+this.state.selectedTab+' '+ item.id } className="item">
+        return <div key={ ''+this.state.selected_tab+' '+ item.id } className="item">
 
           <div className="object_container">
             <div className="object_description">
@@ -190,39 +189,39 @@ class Dashboard extends Component {
             </div>
             <div className='object_actions'>
               <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
-              <li><button onClick={ "" }>EDIT</button></li>
-              <li><button onClick={ "" }>DELETE</button></li>
+              <li key="edit"><button onClick={() => {}}>EDIT</button></li>
+              <li key="delete"><button onClick={() => {}}>DELETE</button></li>
             </div>
           </div>
           
-          { e !== null ? 
-            <Experiment device_list = {this.state.device_list} getExperiments={this.props.getExperiments} experiment = {e} on_device_page = {true}></Experiment>
-            : <ExperimentModal device_list = {this.state.device_list} getExperiments={this.getExperiments} experiment={{id: null, description:null, current_phase:null, phases:null, day:null, phase_day:null, device: null, score:null, user:null, start_date:null, end_date:null}} add_or_edit={"add"}></ExperimentModal>
+          { e !== null ?  // if no experiment for a device, show "+" button indicating addition of experiment
+            <Experiment device_list = {this.state.device_list} getExperiments={this.getExperiments} getDevices={this.getDevices} experiment = {e} on_device_page = {true}></Experiment>
+            : <ExperimentModal device_list = {this.state.device_list} getExperiments={this.getExperiments} getDevices={this.getDevices} experiment={{id: null, name:null, current_phase:null, day:null, phase_day:null, device: null, score:null, user:null, start_date:null, end_date:null}} add_or_edit={"add"}></ExperimentModal>
           }
-        </li>
+        </div>
 
       });
 
-    } else if (this.state.selectedTab === "experiment") {
+    } else if (this.state.selected_tab === "experiment") {
       return(
         <>
-          <ExperimentList device_list = {this.state.device_list} getExperiments={this.getExperiments} experimentList={this.state.experimentList} />
-          <ExperimentModal device_list = {this.state.device_list} getExperiments={this.getExperiments} experiment={{id: null, description:null, current_phase:null, phases:null, day:null, phase_day:null, device: null, score:null, user:null, start_date:null, end_date:null}} add_or_edit={"add"}></ExperimentModal>
+          <ExperimentList device_list = {this.state.device_list} getExperiments={this.getExperiments} getDevices={this.getDevices} experiment_list={this.state.experiment_list} />
+          <ExperimentModal device_list = {this.state.device_list} getExperiments={this.getExperiments} getDevices={this.getDevices} experiment={{id: null, name:null, current_phase:null, day:null, phase_day:null, device: null, score:null, user:null, start_date:null, end_date:null}} add_or_edit={"add"}></ExperimentModal>
         </>
       );
 
-    } else if (this.state.selectedTab === "phase") {
+    } else if (this.state.selected_tab === "phase") {
       return(
         <Phase></Phase>
       );
-    } else if (this.state.selectedTab === "plant") {
+    } else if (this.state.selected_tab === "plant") {
       return(
         <Plant></Plant>
       );
     }}
 
   render() {
-      if (!this.state.isLoggedIn) {
+      if (!this.state.is_logged_in) {
         return <Navigate to = {{ pathname: "/" }} />;
       }
 
@@ -249,8 +248,7 @@ class Dashboard extends Component {
                   <ul className="list-group list-group-flush border-top-0">
                     {this.renderItems()}
                   </ul>
-                  {/*<button className="btn btn-primary" onClick={this.createItem} > Add {this.state.selectedTab} </button> */}
-
+                  {/*<button className="btn btn-primary" onClick={this.createItem} > Add {this.state.selected_tab} </button> */}
                 </div>
               </div>
             </div>

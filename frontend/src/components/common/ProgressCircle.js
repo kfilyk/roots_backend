@@ -29,10 +29,17 @@ export default class CustomModal extends Component {
                         a 16 16 0 0 1 0 32
                         a 16 16 0 0 1 0 -32"
                     />
-                    <text x="18" y="18" className="caption"> {this.state.caption}</text>
-                    <text x="18" y="24" className="percentage"> {this.state.value + "%"}</text>
+                    { this.state.value === 0 ?
+                        <text x="18" y="20" className="caption"> {this.state.caption}</text>
+                    : 
+                    <>
+                        <text x="18" y="18" className="caption"> {this.state.caption}</text>
+                        <text x="18" y="24" className="percentage"> {this.state.value + "%"}</text>
+                    </> 
+
+                    }
+
                     </svg>
-                    {/*<div>{}</div>*/}
                 </div>
         )
     }

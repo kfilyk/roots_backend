@@ -93,3 +93,13 @@ select .pod {
 .form_row > * {
   flex: 0 0 auto;
 }
+
+.device_selection {
+  padding:5px;
+  border: 1px solid #B3896A;
+  border-radius: 10px;
+}
+
+.name {
+  font-weight: bolder;
+}

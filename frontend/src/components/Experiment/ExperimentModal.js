@@ -17,17 +17,19 @@ export default class CustomModal extends Component {
     this.state = {
       plant_list: [],
       pod_list: [],
+      pod_selection: {}, // new pod list plants
       num_pods: 0,
+      today: year+"-"+month+"-"+day,
       device_list: this.props.device_list ?? [],
       id: this.props.experiment.id ?? null,
-      description: this.props.experiment.description ?? null,
+      name: this.props.experiment.name ?? null,
       start_date: this.props.experiment.start_date ?? year+"-"+month+"-"+day,
       end_date: this.props.experiment.end_date ?? null,
       score: this.props.experiment.score ?? null,
       device: this.props.experiment.device ?? null,
+      new_device: null,
       day:this.props.experiment.day ?? 0,
       phase_day:this.props.experiment.phase_day ?? 0,
-      phases:this.props.experiment.phases ?? null,
       current_phase: this.props.experiment.current_phase ?? 0, 
     };
 
@@ -38,7 +40,7 @@ export default class CustomModal extends Component {
 
   componentDidMount() {
     this.getPlants();
-    this.getPodList(this.state.id);
+    this.getPods(this.state.id);
     //as soon as form instantiation, specify 
     if(this.state.device !== null) {
       this.setState({num_pods: this.state.device_list.filter(device => device.id === this.state.device)[0].num_pods});
@@ -51,53 +53,122 @@ export default class CustomModal extends Component {
     axios
       .post(`/api/experiments/`, 
         { 
-          description: this.state.description,
+          name: this.state.name,
           start_date: this.state.start_date,
-          end_date: this.state.end_date,
-          score: this.state.score,
           device: this.state.device,
           day: this.state.day,
           phase_day: this.state.phase_day,
-          phases: this.state.phases,
           current_phase: this.state.current_phase,
           pod_list: this.state.pod_list
         })
+      .catch((err) => console.log(err));
+
+        // if the device is swapped, tell new one it is being assigned
+    axios
+      .patch(`/api/devices/${this.state.new_device}/`, { experiment: this.state.id, })
       .then((res) => {
         this.props.getExperiments()
+        this.props.getDevices()
+
       })
       .catch((err) => console.log(err));
+    
+    this.setState({device: this.state.new_device})
+    this.setState({new_device: null})
+  
   };
 
   editEntry(e) {
-    axios
-      .patch(`/api/experiments/${this.state.id}/`, 
-        {
-          description: this.state.description,
-          end_date: this.state.end_date,
-          score: this.state.score,
-          device: this.state.device_id, /* only allow changing to empty device with no active experiment  */
-          phases: this.state.phases,
-          current_phase: this.state.current_phase,
-          pod_list: this.state.pod_list
+    console.log("EDITED EXPERIMENT")
+
+    // patch device first (if new device name supplied)
+    if(this.state.new_device) {
+      axios.all([
+
+        axios.patch(`/api/devices/${this.state.new_device }/`, { experiment: this.state.id, }), // pass in the id of the experiment
+        axios.patch(`/api/devices/${this.state.device}/`, { experiment: null, }), // then tell old one it is being unassigned
+
+        ])
+        .then((res) => {
+          this.setState({device: this.state.new_device})
+          this.setState({new_device: null})
+          this.props.getDevices()
         })
+        .catch((err) => console.log(err));
+    }
+
+    axios.patch(`/api/experiments/${this.state.id}/`, {
+        name: this.state.name,
+        device: ( this.state.new_device ? this.state.new_device : this.state.device ) 
+      })
       .then((res) => {
+        this.setState({device: this.state.new_device})
+        this.setState({new_device: null})
         this.props.getExperiments()
       })
       .catch((err) => console.log(err));
+    
+    // then patch pods: when a pod is replaced, set an end date: indicates premature termination. 
+    // iterate through (new pod selections x existing pods). key == position in byte, value == plant_id
+    console.log("POD SELECTION: ", this.state.pod_selection)
+    console.log("PODLIST: ", this.state.pod_list)
+    for (const [key, value] of Object.entries(this.state.pod_selection)) {
+      console.log("KEY :", key)
+      console.log("VAL :", value)
+
+      // pod 0: [{position: 1, ...}]
+      for(let p = 0; p < this.state.pod_list.length; p++) {
+        // found a pod to be replaced
+        console.log(this.state.pod_list[p].position)
+        if(this.state.pod_list[p].position === parseInt(key)) {
+          console.log("editing ")
+          axios
+            .patch(`/api/pods/${this.state.pod_list[p].id}/`, { end_date: this.state.today }) // end date set to today
+            .catch((err) => console.log(err));
+          
+          // if a new pod was specified for replacement:
+          if(value != null) { 
+            axios
+            .post(`/api/pods/`, { start_date: this.state.today, position: parseInt(key), plant: parseInt(value), experiment: this.state.id }) // end date set to today
+            .then((res) => {
+              this.getPods()
+            })
+            .catch((err) => console.log(err));
+          }
+
+        }
+        
+        continue
+      }
+
+
+    }
   };
 
   handleChange (e) {
-    //handle pod manipulation
+    //handle pod selection manipulation
     if(e.target.name.includes("pod")) { 
-      let position = e.target.name.substring(5);
-      let pod_list_copy = { ...this.state.pod_list }; //create a new copy and change the value of bar
-      pod_list_copy[position] = e.target.value;
-      this.setState({pod_list: pod_list_copy});
+
+      // we need to keep a dictionary of all the pods we plant to update. 
+      // We use a dictionary because indices can be rewritten at the same location 
+      let position = e.target.name.substring(4); 
+      let pod_selection_temp = this.state.pod_selection
+      pod_selection_temp[position] = e.target.value
+      this.setState({pod_selection: pod_selection_temp });
+      //console.log(pod_selection_temp)
+      
+    } else if (e.target.name.includes("device")) { // if setting a new device, two step process so we can tell the old one its off duty
+      console.log("FLAG: ", e.target.value)
+      if(e.target.value === "") {
+        this.setState({"num_pods": 0})
+        this.setState({"new_device": null});
+      } else {
+        this.setState({"num_pods": this.state.device_list.filter(device => device.id === parseInt(e.target.value))[0].num_pods})
+        this.setState({"new_device": e.target.value});
+      }
     } else {
       this.setState({[e.target.name]: e.target.value});
     }
-    console.log(this.state.start_date)
-
   }
 
   getPlants = () => {
@@ -105,18 +176,21 @@ export default class CustomModal extends Component {
       .get("/api/plants/")
       .then((res) => this.setState({ plant_list: res.data }))
       .catch((err) => console.log(err));
-    console.log("GOT PLANT LIST")
 
   };
 
-  getPodList(id) {
-    axios
-        .get(`/api/pods/?experiment=${id}`)
-        .then((res) => {
-            this.setState({ pod_list: res.data })
-        })
-        .catch((err) => console.log(err));
-      console.log("GOT POD LIST")
+  getPods(id) {
+    if(this.state.id != null) {
+      axios
+          .get(`/api/pods/?experiment=${id}`)
+          .then((res) => {
+            let temp_pod_list = res.data.filter(pod => pod.end_date === null)
+            this.setState({ pod_list: temp_pod_list})
+          })
+          .catch((err) => console.log(err));
+
+      
+    }
   }
 
   render() {
@@ -134,7 +208,7 @@ export default class CustomModal extends Component {
             <div className="modal_body" onClick={e => e.stopPropagation()}>
               <div className="modal_content">
                 <div className="form_row"> 
-                  <input name="description" value={this.state.description} onChange={this.handleChange} />
+                  <input className="name" name="name" value={this.state.name} placeholder = {"Experiment Name"} onChange={this.handleChange} />
                 </div>
                 { this.props.add_or_edit === "add" ? 
                   <div className="form_row"> 
@@ -145,15 +219,14 @@ export default class CustomModal extends Component {
                 }
 
                 <div className="form_row"> 
-                    <label> Device: </label>
                     {
                       (() => {
                         // allow moving experiment to a different device if the device has the same capacity of pods or greater
                         let device_list_selection = [];
                         device_list_selection.push(
-                          <select className="device" name="device" onChange={this.handleChange} >
-                            
-                            { this.state.device_list.map((item) => (item.num_pods >= this.state.num_pods) && ((item.id === this.state.id) || (item.experiment == null)) ? <option value={item.id}>{item.name} </option> : <></>) }
+                          <select className="device_selection" defaultValue= {this.state.device} name="device" onChange={this.handleChange}>
+                            <option key={"no_device_available"} value={null}></option>
+                            { this.state.device_list.map((item) => (item.num_pods >= this.state.num_pods) && ((item.experiment === this.state.id) || (item.experiment === null)) ? <option key={item.id} value={item.id}>{item.name} </option> : <></>) }
                           </select>
                         );
                         return device_list_selection;
@@ -166,34 +239,30 @@ export default class CustomModal extends Component {
                   {
                     (() => {
                       // only should if a device has been specified: need num_pods of device and pod_list from the device
-                      if(this.state.device !== null) {
+                      if(this.state.device !== null || this.state.new_device !== null) {
                       
-                        let pod_list_selection = [] // {{position:1, plant_id: 5}, {position:4, plant_id: 2}}
-                        
-                        console.log("POD_LIST: ", this.state.pod_list)
-                        console.log("PLANT_LIST: ", this.state.plant_list)
-                        /*
-                        console.log("FLAG: ", pod_list[0]['position'])
-                        console.log("FLAG: ", pod_list[0]['plant_name'])
-                        */
-                        for(let i = 0; i < this.state.num_pods; i++) { // 0, 5, 10 whatever
-                          // use select[name] in handleChange to indicate the pod thats being affected
-                          let plant = null;
-                          if(this.state.pod_list.length > 0) {
-                            plant = this.state.pod_list[i]['plant'];
-                          } 
+                        let pod_list_container = [] 
 
-                          pod_list_selection.push(
+                        for(let i = 0; i < this.state.num_pods; i++) { // 0, 5, 10 whatever
+
+                          let curr_pod = this.state.pod_list.filter(pod => pod.position === (i+1))[0] ?? null
+                          let plant = null;      
+
+                          if (curr_pod !== null){
+                            plant = curr_pod['plant']
+                          }
+
+                          pod_list_container.push(
                             <select className="pod" name={"pod_"+(i+1)} defaultValue={plant} onChange={this.handleChange}> 
                               
                               <option value={null}></option>
+                              
                               { this.state.plant_list.map((item) => <option key={item.id} value={item.id}>{item.name}</option>) }
 
                             </select>
                           );
                         }
-                        console.log("POD LIST SELECTION: ", pod_list_selection);
-                        return pod_list_selection;
+                        return pod_list_container;
                       } 
                 
                     })()

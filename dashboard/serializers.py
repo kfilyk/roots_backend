@@ -19,16 +19,21 @@ class ExperimentSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
 
         experiment_obj = Experiment.objects.create(
+            name = validated_data['name'],
             start_date=validated_data['start_date'],
-            end_date = validated_data['end_date'],
             device = validated_data['device'],
-            description = validated_data['description'],
-            user = validated_data['user']
-        )
-        for pos in validated_data.plant_pods: 
-            plant = validated_data.plant_pods[pos]
-            Pod.objects.create(plant=Plant.objects.get(pk=plant), start_date=validated_data['start_date'], end_date=validated_data['end_date'], experiment=Experiment.objects.get(pk=experiment_obj.pk, position=pos))
+            user = validated_data['user'],
+            day = validated_data['day'],
+            phase_day = validated_data['phase_day'],
+            current_phase = validated_data['current_phase'],
 
+        )
+        for pod in validated_data['pod_list']: 
+            print("POD:", pod)
+            '''
+            plant = validated_data['plant_pods'][pod]['plant']
+            Pod.objects.create(plant=Plant.objects.get(pk=plant), start_date=validated_data['start_date'], experiment=Experiment.objects.get(pk=experiment_obj.pk, position=pos))
+            '''
         return experiment_obj
 
     class Meta:

@@ -23,11 +23,11 @@ export default class CustomModal extends Component {
         device_list: this.props.device_list ?? [],
       };
       this.deleteEntry = this.deleteEntry.bind(this);
-      this.getPodList = this.getPodList.bind(this);
+      this.getPods = this.getPods.bind(this);
     }
 
     componentDidMount() {
-        this.getPodList(this.props.experiment.id);
+        this.getPods(this.props.experiment.id);
     }
 
     deleteEntry = (id) => {
@@ -39,11 +39,13 @@ export default class CustomModal extends Component {
             .catch((err) => console.log(err));
       };
 
-    getPodList(id) {
+    getPods(id) {
         axios
             .get(`/api/pods/?experiment=${id}`)
             .then((res) => {
-                this.setState({ pod_list: res.data })
+                let active_pods = res.data.filter(pod => pod.end_date === null)
+                console.log("ACTIVE PODS: ", active_pods)
+                this.setState({ pod_list: active_pods})
             })
             .catch((err) => console.log(err));
     }
@@ -67,12 +69,13 @@ export default class CustomModal extends Component {
         let end_date_string = this.state.experiment.start_date ?? ""
         const device = this.state.device_list.filter(device => device.id === this.state.experiment.device)[0] ?? {} // could also use ||
         let device_name = device.name ?? ""
+
+        
         return (
             <>
-
                 <div className="object_container">
                     <div className="object_description">
-                        <div>{ this.state.experiment.description }</div>
+                        <div>{ this.state.experiment.name }</div>
                         { !this.props.on_device_page ? 
                             <>
                                 <div>Device Name: { device_name }</div>
@@ -84,12 +87,17 @@ export default class CustomModal extends Component {
                         <div>Score: { this.state.experiment.score } </div>
                     </div>
                     <div className="pod_carousel_wrapper">
-                            <PodCarousel pod_list={this.state.pod_list}></PodCarousel>
+                            {
+                                (this.state.pod_list.length > 0) ?                             
+                                <PodCarousel pod_list={this.state.pod_list} num_pods = {device.num_pods} ></PodCarousel>
+                                :
+                                <></>
+                            }
                     </div>
                     <div className='object_actions'>
                         <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
-                        <li><ExperimentModal device_list = {this.props.device_list} getExperiments={this.props.getExperiments} hideModal = {this.hideModal} experiment={this.props.experiment} add_or_edit = {"edit"}></ExperimentModal></li>
-                        <li><button onClick= {() =>  { if (window.confirm(`You are about to delete ${this.state.experiment.id}, ${this.state.experiment.description}`)) this.deleteEntry(this.state.experiment.id) }}> DELETE</button></li>
+                        <li key="edit"><ExperimentModal device_list = {this.props.device_list} getExperiments={this.props.getExperiments} getDevices={this.props.getDevices} experiment={this.props.experiment} add_or_edit = {"edit"}></ExperimentModal></li>
+                        <li key="delete"><button onClick= {() =>  { if (window.confirm(`You are about to delete ${this.state.experiment.id}, ${this.state.experiment.name}`)) this.deleteEntry(this.state.experiment.id) }}> DELETE</button></li>
                     </div>
                 </div>
             </>

@@ -42,9 +42,8 @@ class Device(models.Model):
 
 class Experiment(models.Model):
     id = models.AutoField(db_column='e_id', primary_key=True)  
-    description = models.CharField(db_column='e_description', max_length=255, blank=True, null=True)
+    name = models.CharField(db_column='e_name', max_length=255, blank=True, null=True)
     current_phase = models.ForeignKey("Phase", models.DO_NOTHING, related_name='+', db_column='e_current_phase',blank=True, null=True) # germination, seedling, vegetative growth, flowering, fruiting, other1, terminated, complete
-    phases = models.CharField(db_column='e_phases', max_length=255, blank=True, null=True) 
     day = models.IntegerField(db_column='e_day', default = 0) 
     phase_day = models.IntegerField(db_column='e_phase_day', default = 0) 
     device = models.ForeignKey("Device", models.DO_NOTHING, related_name='+', db_column='e_device_id', blank=True, null=True)  
@@ -152,6 +151,13 @@ class Phase(models.Model): # generic periodic phase setting to be used by a reci
     class Meta:
         managed = True
         db_table = 'phase'
+
+'''
+class Recipe(models.Model):
+    experiment = models.ForeignKey("Experiment", models.DO_NOTHING, db_column='r_experiment_id', primary_key=True)  # pods created automatically when an experiment is created
+    phase = models.ForeignKey("Phase", models.DO_NOTHING, db_column='r_phase_id', primary_key=True)
+    order = models.IntegerField(db_column = 'r_order', primary_key=True) # because recipe phases arent editable once a recipe starts, dont worry about cascading order changes (for now)
+'''
 
 class Plant(models.Model): # types: basil, 
     id = models.AutoField(db_column='pl_id', primary_key=True)  
