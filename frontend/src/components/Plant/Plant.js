@@ -83,6 +83,39 @@ const PlantList = () => {
     }
   }
 
+  function renderAddModal(){
+    return (
+      <>
+        <div className="form_row">
+          <label> Name: </label> 
+          <input name="name" value={addPlant.name} onChange={(e) => setAddPlant({...addPlant, name: e.target.value})} />
+        </div>
+
+        <div className="form_row">
+        <label> Supplier: </label>
+          <input name="supplier" value={addPlant.supplier} onChange={(e) => setAddPlant({...addPlant, supplier: e.target.value})} />
+        </div>
+      </>
+    )
+  }
+
+
+function renderEditModal(){
+  return (
+    <>
+      <div className="form_row">
+        <label> Name: </label> 
+        <input name="name" value={editPlant.name} onChange={(e) => setEditPlant({...editPlant, name: e.target.value})} />
+      </div>
+
+      <div className="form_row">
+      <label> Supplier: </label>
+        <input name="supplier" value={editPlant.supplier} onChange={(e) => setEditPlant({...editPlant, supplier: e.target.value})} />
+      </div>
+    </>
+  )
+}
+
   return (
     <div>
       <table width="100%">
@@ -116,27 +149,11 @@ const PlantList = () => {
                 </button>
                 <div className="modal_type"> { modal.add == true ? "Add Plant" : "Edit Plant" } </div>
                 <div className="modal_content">
-                    { modal.add == true 
-                      ? ""
-                      : <div className="form_row"> <label> Id: </label> <label>{editPlant.id}</label> </div>
-                    }
-
-                    <div className="form_row">
-                    <label> Name: </label> 
-                    { modal.add == true 
-                      ? <input name="name" value={addPlant.name} onChange={(e) => setAddPlant({...addPlant, name: e.target.value})} />
-                      : <input name="name" value={editPlant.name} onChange={(e) => setEditPlant({...editPlant, name: e.target.value})} />
-                    }
-                    </div>
-
-                    <div className="form_row">
-                    <label> Supplier: </label>
-                    { modal.add == true 
-                      ? <input name="supplier" value={addPlant.supplier} onChange={(e) => setAddPlant({...addPlant, supplier: e.target.value})} />
-                      : <input name="supplier" value={editPlant.supplier} onChange={(e) => setEditPlant({...editPlant, supplier: e.target.value})} />
-                    }
-                    </div>
-
+                    
+                      { modal.add === true 
+                        ? renderAddModal()
+                        : renderEditModal()
+                      }
                     <button className='save' onClick={() => {
                     submitModal()
                     close();

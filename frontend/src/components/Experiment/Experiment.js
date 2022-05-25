@@ -145,7 +145,6 @@ const ExperimentList = () => {
                       { modal.add === true 
                         ? renderAddModal()
                         : renderEditModal()
-
                       }
 
                       <button className='save' onClick={() => {
