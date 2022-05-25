@@ -11,6 +11,7 @@ class LoginOrCreateForm extends Component {
     super(props)
     this.state = {
       is_logged_in: false,
+      login_error: false,
       username: '',
       password: '',
       firstName: '',
@@ -56,19 +57,29 @@ class LoginOrCreateForm extends Component {
     this.setState({ lastName: text });
   }
 
+  renderLoginError() {
+    if (this.state.login_error) {
+      return (
+        <View >
+          <Text>{"login credentials invalid."}</Text>
+        </View>
+      );
+    }
+  }
+
   renderCreateForm() {
     const { fieldStyle, textInputStyle } = style;
     if (this.props.create) {
       return (
           <View style={fieldStyle}>
             <TextInput
-              placeholder="First name"
+              placeholder="first name"
               autoCorrect={false}
               onChangeText={this.onFirstNameChange.bind(this)}
               style={textInputStyle}
             />
             <TextInput
-              placeholder="Last name"
+              placeholder="last name"
               autoCorrect={false}
               onChangeText={this.onLastNameChange.bind(this)}
               style={textInputStyle}
@@ -86,6 +97,12 @@ class LoginOrCreateForm extends Component {
     );
   }
 
+  handleKeyPress = (event) => {
+    if(event.key === 'Enter'){
+      this.login()
+    }
+  }
+
   login() {
     const endpoint = this.props.create ? 'register' : 'login';
     const payload = { username: this.state.username, password: this.state.password } 
@@ -94,6 +111,7 @@ class LoginOrCreateForm extends Component {
       payload.first_name = this.state.firstName;
       payload.last_name = this.state.lastName;
     }
+    console.log("PAYLOAD: ", payload)
     axios
       .post(`/auth/${endpoint}/`, payload)
 
@@ -105,7 +123,10 @@ class LoginOrCreateForm extends Component {
         axios.defaults.headers.common.Authorization = token;
         this.setState({ is_logged_in:true })
       })
-      .catch(error => console.log(error));
+      .catch(error => {
+        this.setState({"login_error": true})
+        console.log("Error Logging In: ", error)
+      });
   }
  
   renderCreateLink() {
@@ -144,6 +165,7 @@ class LoginOrCreateForm extends Component {
               autoCorrect={false}
               autoCapitalize="none"
               onChangeText={this.onUsernameChange.bind(this)}
+              onKeyPress={this.handleKeyPress}
               style={textInputStyle}
             />
           </View>
@@ -154,9 +176,11 @@ class LoginOrCreateForm extends Component {
               autoCorrect={false}
               placeholder="password"
               onChangeText={this.onPasswordChange.bind(this)}
+              onKeyPress={this.handleKeyPress}
               style={textInputStyle}
             />
           </View>
+          {this.renderLoginError()}
           {this.renderCreateForm()}
         </View>
         <View style={buttonContainerStyle}>

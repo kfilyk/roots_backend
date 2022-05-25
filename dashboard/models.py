@@ -151,12 +151,12 @@ class Phase(models.Model): # generic periodic phase setting to be used by a reci
         managed = True
         db_table = 'phase'
 
-'''
+# multiple rows in the recipe tab make up a single recipe. Multiple references to a single phase can be used, also to experiment
 class Recipe(models.Model):
-    experiment = models.ForeignKey("Experiment", models.DO_NOTHING, db_column='r_experiment_id', primary_key=True)  # pods created automatically when an experiment is created
-    phase = models.ForeignKey("Phase", models.DO_NOTHING, db_column='r_phase_id', primary_key=True)
-    order = models.IntegerField(db_column = 'r_order', primary_key=True) # because recipe phases arent editable once a recipe starts, dont worry about cascading order changes (for now)
-'''
+    id = models.AutoField(db_column='r_id', primary_key=True)  
+    experiment = models.ForeignKey("Experiment", models.DO_NOTHING, db_column='r_experiment_id')  # pods created automatically when an experiment is created
+    phase = models.ForeignKey("Phase", models.DO_NOTHING, db_column='r_phase_id')
+    precidence = models.IntegerField(db_column = 'r_precidence') # because recipe phases arent editable once a recipe starts, dont worry about cascading order changes (for now)
 
 class Plant(models.Model): # types: basil, 
     id = models.AutoField(db_column='pl_id', primary_key=True)  

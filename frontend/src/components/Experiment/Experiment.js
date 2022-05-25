@@ -96,7 +96,7 @@ export default class CustomModal extends Component {
                     </div>
                     <div className='object_actions'>
                         <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
-                        <li key="edit"><ExperimentModal device_list = {this.props.device_list} getExperiments={this.props.getExperiments} getDevices={this.props.getDevices} experiment={this.props.experiment} add_or_edit = {"edit"}></ExperimentModal></li>
+                        <li key="edit"><ExperimentModal device_list = {this.props.device_list} getExperiments={this.props.getExperiments} experiment={this.props.experiment} add_or_edit = {"edit"}></ExperimentModal></li>
                         <li key="delete"><button onClick= {() =>  { if (window.confirm(`You are about to delete ${this.state.experiment.id}, ${this.state.experiment.name}`)) this.deleteEntry(this.state.experiment.id) }}> DELETE</button></li>
                     </div>
                 </div>
