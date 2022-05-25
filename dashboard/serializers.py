@@ -14,26 +14,16 @@ class DeviceSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ExperimentSerializer(serializers.ModelSerializer):
-    device_name = serializers.CharField(allow_blank=True, allow_null=True, required=False)
 
     def create(self, validated_data):
-
         experiment_obj = Experiment.objects.create(
             name = validated_data['name'],
             start_date=validated_data['start_date'],
             device = validated_data['device'],
             user = validated_data['user'],
-            day = validated_data['day'],
-            phase_day = validated_data['phase_day'],
-            current_phase = validated_data['current_phase'],
-
+            day = 0,
+            phase_day = 0,
         )
-        for pod in validated_data['pod_list']: 
-            print("POD:", pod)
-            '''
-            plant = validated_data['plant_pods'][pod]['plant']
-            Pod.objects.create(plant=Plant.objects.get(pk=plant), start_date=validated_data['start_date'], experiment=Experiment.objects.get(pk=experiment_obj.pk, position=pos))
-            '''
         return experiment_obj
 
     class Meta:
@@ -50,7 +40,7 @@ class PodSerializer(serializers.ModelSerializer):
     plant_name = serializers.CharField(allow_blank=True, allow_null=True, required=False)
     
     def create(self, validated_data):
-        print(**validated_data)
+        #print(**validated_data)
         return Pod.objects.create(**validated_data)
 
     class Meta:

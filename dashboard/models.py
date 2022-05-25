@@ -32,7 +32,6 @@ class Device(models.Model):
     last_update = models.DateTimeField(db_column='d_last_update', blank=True, null=True)  
     is_online = models.BooleanField(db_column='d_is_online', default=False)  
     mac_address = models.CharField(db_column='d_mac_address', max_length=45, blank=True, null=True)  
-    experiment = models.ForeignKey("Experiment", models.DO_NOTHING, related_name='+', db_column='d_experiment_id', blank=True, null=True)  
     fill_res_flag = models.BooleanField(db_column='d_fill_res_flag', default=False) 
     num_pods = models.IntegerField(db_column='d_num_pods', default = 5) 
 
@@ -121,7 +120,7 @@ class PodReading(models.Model):
 class Pod(models.Model):
     id = models.AutoField(db_column='po_id', primary_key=True)  
     experiment = models.ForeignKey("Experiment", models.DO_NOTHING, db_column='po_experiment_id')  # pods created automatically when an experiment is created
-    plant = models.ForeignKey("Plant", models.DO_NOTHING, db_column='po_plant_id', blank=True, null=True)  # type of plant for this pod 
+    plant = models.ForeignKey("Plant", models.DO_NOTHING, db_column='po_plant_id')  # type of plant for this pod 
     seeds_planted = models.IntegerField(db_column = 'po_seeds_planted', blank=True, null=True)
     position = models.IntegerField(db_column = 'po_position', blank=True, null=True) # position of pod in byte
     phase = models.IntegerField(db_column = 'po_phase', default = 0) #planted = 0, sprouted = 1, true leaves = 3, harvested = 4, died early = 5

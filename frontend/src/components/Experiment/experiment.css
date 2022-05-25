@@ -59,14 +59,6 @@ POPUP MODAL
   /* justify-content: center; */
 }
 
-
-/* control width of form descriptors */ 
-/*
-.form_row :first-child {
-  width: 40%;
-}
-*/
-
 input {
   border: none;
   border-bottom: 1px solid;
@@ -90,16 +82,24 @@ select .pod {
   color:#B3896A;
 }
 
-.form_row > * {
-  flex: 0 0 auto;
-}
-
 .device_selection {
   padding:5px;
   border: 1px solid #B3896A;
   border-radius: 10px;
 }
 
-.name {
-  font-weight: bolder;
+.name_selection {
+  color: #B3896A;
+  font-weight: bold;
+}
+
+.name_selection::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: #b3886a80;
+  opacity: 1; /* Firefox */
+}
+
+
+.start_date_selection {
+  color: #B3896A;
+  margin-left: auto;
 }

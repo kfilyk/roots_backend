@@ -35,7 +35,7 @@ class ExperimentView(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        return Experiment.objects.filter(user = user.id).annotate(device_name=F('device__name'))
+        return Experiment.objects.filter(user = user.id).annotate(device_name=F('device__name')) # returns joined device name
 
 class PhaseView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
