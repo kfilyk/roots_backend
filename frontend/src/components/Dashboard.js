@@ -2,7 +2,7 @@
 
 import React, { Component, } from "react";
 import { Navigate } from "react-router-dom";
-import ExperimentList from './Experiment/ExperimentList';
+import ExperimentList from './Experiment/Experiment';
 import ExperimentModal from './Experiment/ExperimentModal';
 import Experiment from './Experiment/Experiment';
 import Phase from './Phase/Phase';
@@ -205,8 +205,7 @@ class Dashboard extends Component {
     } else if (this.state.selected_tab === "experiment") {
       return(
         <>
-          <ExperimentList device_list = {this.state.device_list} getExperiments={this.getExperiments} experiment_list={this.state.experiment_list} />
-          <ExperimentModal device_list = {this.state.device_list} getExperiments={this.getExperiments} experiment={{id: null, name:null, current_phase:null, day:null, phase_day:null, device: null, score:null, user:null, start_date:null, end_date:null}} add_or_edit={"add"}></ExperimentModal>
+          <Experiment/>
         </>
       );
 

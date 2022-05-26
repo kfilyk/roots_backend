@@ -1,107 +1,167 @@
-import React, { Component, useEffect} from "react";
-import ExperimentModal from "./ExperimentModal"
-import PodCarousel from "./PodCarousel"
-import axios from "axios";
-import "./experiment.css"
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import Popup from "reactjs-popup";
+import PodCarouselTwo from "./PodCarouselTwo"
 import vertical_menu_icon from "../../img/vertical_menu_icon.png"
 
-function getColor(value){
-    // hue value from 0 to 360
-    var hue=(value*120).toString(10); 
-    return ["hsl(",hue,", 50%, 50%)"].join("");
-}
-  
-export default class CustomModal extends Component {
-    constructor(props) {
-      super(props);
-      this.props = props; // this seems to fix props.undefined errors!
-      this.state = {
-        experiment: this.props.experiment,    
-        device: this.props.d,
-        completion_score: 0,
-        pod_list: [],
-        device_list: this.props.device_list ?? [],
-      };
-      this.deleteEntry = this.deleteEntry.bind(this);
-      this.getPods = this.getPods.bind(this);
+const ExperimentList = () => {
+  const [experiment_list, setExperimentList] = useState([]);
+  const [plant_list, setPlantList] = useState([]);
+  const [modal, setModal] = useState({
+    show: false,
+    add: false
+  })
+  const [editExperiment, setEditExperiment] = useState({
+    id: -1,
+    name: 'unknown',
+    // start_date: new Date(),
+    // device: -1, 
+    // day: -1,
+    // phase_day: -1,
+    // current_phase: -1
+  })
+
+  async function fetchData() {
+    const result = await axios(
+      '/api/experiments/',
+    );
+    setExperimentList(result.data)
+  } 
+
+  useEffect(() => {
+    fetchData();
+  }, [experiment_list]);
+
+  async function fetchPlants() {
+    const result = await axios(
+      '/api/plants/',
+    );
+    setPlantList(result.data)
+  } 
+
+  useEffect(() => {
+    fetchPlants();
+  }, []);
+
+
+  async function deleteEntry(id) {
+    await axios.delete(`/api/experiment/${id}/`);
+    setExperimentList(experiment_list.filter(experiment => experiment.id != id))
+  }
+
+  function openModal(experiment){
+    if (experiment === null ){
+      setModal({add: true, show: true})
+    } else {
+      setEditExperiment(experiment)
+      setModal({add: false, show: true})
     }
+  }
 
-    componentDidMount() {
-        this.getPods(this.props.experiment.id);
+  function submitModal(){
+    if(modal.add){
+      // addEntry()
+      console.log("submitModal function not done... ")
+    } else {
+      editEntry()
     }
+  }
 
-    deleteEntry = (id) => {
-        axios
-            .delete(`/api/experiments/${id}/`)
-            .then((res) => {
-                this.props.getExperiments()
-            })
-            .catch((err) => console.log(err));
-      };
+  async function editEntry(e) {
+    const result = await axios
+        .patch(`/api/experiments/${editExperiment.id}/`, 
+        { 
+            id: editExperiment.id,
+            name: editExperiment.name
+        }).catch((err) => console.log(err));
+    const index = experiment_list.findIndex(experiment => experiment.id === editExperiment.id);
+    const updatedItem = result.data
+    setPlantList([
+      ...experiment_list.slice(0, index),
+      updatedItem,
+      ...experiment_list.slice(index + 1)
+    ])
+  };
 
-    getPods(id) {
-        axios
-            .get(`/api/pods/?experiment=${id}`)
-            .then((res) => {
-                let active_pods = res.data.filter(pod => pod.end_date === null)
-                console.log("ACTIVE PODS: ", active_pods)
-                this.setState({ pod_list: active_pods})
-            })
-            .catch((err) => console.log(err));
-    }
+  function renderAddModal(){
+      return (
+        <div>
+          THIS IS NOT DONE.
+        </div>
+      )
+  }
 
-    calculateCompletion(sd, ed) {
-        var start_date = new Date(sd).getTime()
-        var end_date = new Date(ed).getTime()
-        var today = new Date().getTime()
-        if (today >= end_date) {
-            return 1
-        } else if (today < start_date) {
-            return 0
-        } else {
-            var percent = (end_date - today)/(end_date - start_date)
-            return percent.toFixed(2)
-        }
-     }
 
-    render() {
-        let start_date_string = this.state.experiment.start_date ?? ""
-        let end_date_string = this.state.experiment.start_date ?? ""
-        const device = this.state.device_list.filter(device => device.id === this.state.experiment.device)[0] ?? {} // could also use ||
-        let device_name = device.name ?? ""
+  function renderEditModal(){
+    return (
+      <div className="form_row">
+        <label> Name: </label> 
+            <input name="name" value={editExperiment.name} onChange={(e) => setEditExperiment({...editExperiment, name: e.target.value})} />
+      </div>
+    )
+  }
 
-        
-        return (
-            <>
-                <div className="object_container">
+
+  return (
+    <div>
+        <div>
+            {experiment_list.map(item => (
+              <div key={item.id} className="item">
+                  <div className="object_container">
                     <div className="object_description">
-                        <div>{ this.state.experiment.name }</div>
-                        { !this.props.on_device_page ? 
-                            <>
-                                <div>Device Name: { device_name }</div>
-                                <div>Date: {start_date_string} {"->"} {end_date_string}</div>
-                            </>
-                            : <></>
-                        }
-
-                        <div>Score: { this.state.experiment.score } </div>
+                        <div>{ item.name }</div>
+                        <div>Device Name: { item.device }</div>
+                        <div>Date: {item.start_date} {"->"} {item.end_date}</div>
+                        <div>Score: { item.score } </div>
                     </div>
-                    <div className="pod_carousel_wrapper">
-                            {
-                                (this.state.pod_list.length > 0) ?                             
-                                <PodCarousel pod_list={this.state.pod_list} num_pods = {device.num_pods} ></PodCarousel>
-                                :
-                                <></>
-                            }
+                    <div className="pod_carousel_wrapper">                          
+                        <PodCarouselTwo experimentID={item.id} deviceId={item.device}></PodCarouselTwo>
                     </div>
                     <div className='object_actions'>
                         <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
-                        <li key="edit"><ExperimentModal device_list = {this.props.device_list} getExperiments={this.props.getExperiments} experiment={this.props.experiment} add_or_edit = {"edit"}></ExperimentModal></li>
-                        <li key="delete"><button onClick= {() =>  { if (window.confirm(`You are about to delete ${this.state.experiment.id}, ${this.state.experiment.name}`)) this.deleteEntry(this.state.experiment.id) }}> DELETE</button></li>
+                        <li key="edit"><button onClick={() => openModal(item)}>EDIT</button></li>
+                        <li key="delete"><button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) deleteEntry(item.id) }}> DELETE </button></li>
                     </div>
-                </div>
-            </>
-        )
-    }
+                  </div>
+              </div>
+            ))}
+        </div>
+      <div>
+      <button onClick={() => openModal(null)}>+</button>
+      <Popup open={modal.show} onClose={() => setModal({...modal, show: false})} modal nested>
+        {(close) => (
+              <div className="modal">
+                  <div className="modal_body">
+                  <button className="close" onClick={close}>
+                      &times;
+                  </button>
+                  <div className="modal_type"> { modal.add == true ? "Add Experiment" : "Edit Experiment" } </div>
+                  <div className="modal_content">
+                      { modal.add == true 
+                        ? ""
+                        : <div className="form_row"> <label> Id: </label> <label>{editExperiment.id}</label> </div>
+                      }
+
+                      { modal.add === true 
+                        ? renderAddModal()
+                        : renderEditModal()
+                      }
+
+                      <button className='save' onClick={() => {
+                      submitModal()
+                      close();
+                  }}>Save</button>
+                      </div>
+
+                  </div>
+              </div>
+              )}
+      </Popup>
+      </div>
+    </div>
+
+  );
 }
-  
+
+
+export default ExperimentList;

@@ -127,6 +127,152 @@ const Phase = () => {
     }
   }
 
+  function renderAddModal(){
+    return (
+      <>
+        <div className="form_row"> <label> Id: </label> <label>{addPhase.id}</label> </div>
+        
+        <div className="form_row">
+          <label> Author</label> 
+          <input value={addPhase.author} onChange={(e) => setAddPhase({...addPhase, author: e.target.value})} />
+        </div>
+  
+        <div className="form_row">
+          <label> Days</label> 
+          <input value={addPhase.days} onChange={(e) => setAddPhase({...addPhase, days: e.target.value})} />
+        </div>
+  
+        <div className="form_row">
+          <label> Watering Cycles</label> 
+          <input value={addPhase.watering_cycles} onChange={(e) => setAddPhase({...addPhase, watering_cycles: e.target.value})} />
+        </div>
+  
+        <div className="form_row">
+          <label> Nutrient Cycles</label> 
+          <input value={addPhase.nutrient_cycles} onChange={(e) => setAddPhase({...addPhase, nutrient_cycles: e.target.value})} />
+        </div>
+  
+        <div className="form_row">
+          <label> Nutrient Type</label> 
+          <input value={addPhase.nutrient_type} onChange={(e) => setAddPhase({...addPhase, nutrient_type: e.target.value})} />
+        </div>
+  
+        <div className="form_row">
+          <label> Blue Intensity</label> 
+          <input value={addPhase.blue_intensity} onChange={(e) => setAddPhase({...addPhase, blue_intensity: e.target.value})} />
+        </div>
+  
+        <div className="form_row">
+          <label> Red Intensity</label> 
+          <input value={addPhase.red_intensity} onChange={(e) => setAddPhase({...addPhase, red_intensity: e.target.value})} />
+        </div>                    
+  
+        <div className="form_row">
+          <label> White1 Intensity</label> 
+          <input value={addPhase.white1_intensity} onChange={(e) => setAddPhase({...addPhase, white1_intensity: e.target.value})} />
+        </div>   
+  
+        <div className="form_row">
+          <label> White2 Intensity</label> 
+          <input value={addPhase.white2_intensity} onChange={(e) => setAddPhase({...addPhase, white2_intensity: e.target.value})} />
+        </div>   
+  
+        <div className="form_row">
+          <label> Lights On Hours</label> 
+          <input value={addPhase.lights_on_hours} onChange={(e) => setAddPhase({...addPhase, lights_on_hours: e.target.value})} />
+        </div>
+  
+        <div className="form_row">
+          <label> Score</label> 
+          <input value={addPhase.score} onChange={(e) => setAddPhase({...addPhase, score: e.target.value})} />
+        </div>
+  
+        <div className="form_row">
+          <label> Type</label> 
+          <input value={addPhase.type} onChange={(e) => setAddPhase({...addPhase, type: e.target.value})} />
+        </div>
+  
+        <div className="form_row">
+          <label> Name</label> 
+          <input value={addPhase.name} onChange={(e) => setAddPhase({...addPhase, name: e.target.value})} />
+        </div>
+      </>
+    )}
+
+
+function renderEditModal(){
+  return (
+    <>
+      <div className="form_row"> <label> Id: </label> <label>{editPhase.id}</label> </div>
+      
+      <div className="form_row">
+        <label> Author</label> 
+        <input value={editPhase.author} onChange={(e) => setEditPhase({...editPhase, author: e.target.value})} />
+      </div>
+
+      <div className="form_row">
+        <label> Days</label> 
+        <input value={editPhase.days} onChange={(e) => setEditPhase({...editPhase, days: e.target.value})} />
+      </div>
+
+      <div className="form_row">
+        <label> Watering Cycles</label> 
+        <input value={editPhase.watering_cycles} onChange={(e) => setEditPhase({...editPhase, watering_cycles: e.target.value})} />
+      </div>
+
+      <div className="form_row">
+        <label> Nutrient Cycles</label> 
+        <input value={editPhase.nutrient_cycles} onChange={(e) => setEditPhase({...editPhase, nutrient_cycles: e.target.value})} />
+      </div>
+
+      <div className="form_row">
+        <label> Nutrient Type</label> 
+        <input value={editPhase.nutrient_type} onChange={(e) => setEditPhase({...editPhase, nutrient_type: e.target.value})} />
+      </div>
+
+      <div className="form_row">
+        <label> Blue Intensity</label> 
+        <input value={editPhase.blue_intensity} onChange={(e) => setEditPhase({...editPhase, blue_intensity: e.target.value})} />
+      </div>
+
+      <div className="form_row">
+        <label> Red Intensity</label> 
+        <input value={editPhase.red_intensity} onChange={(e) => setEditPhase({...editPhase, red_intensity: e.target.value})} />
+      </div>                    
+
+      <div className="form_row">
+        <label> White1 Intensity</label> 
+        <input value={editPhase.white1_intensity} onChange={(e) => setEditPhase({...editPhase, white1_intensity: e.target.value})} />
+      </div>   
+
+      <div className="form_row">
+        <label> White2 Intensity</label> 
+        <input value={editPhase.white2_intensity} onChange={(e) => setEditPhase({...editPhase, white2_intensity: e.target.value})} />
+      </div>   
+
+      <div className="form_row">
+        <label> Lights On Hours</label> 
+        <input value={editPhase.lights_on_hours} onChange={(e) => setEditPhase({...editPhase, lights_on_hours: e.target.value})} />
+      </div>
+
+      <div className="form_row">
+        <label> Score</label> 
+        <input value={editPhase.score} onChange={(e) => setEditPhase({...editPhase, score: e.target.value})} />
+      </div>
+
+      <div className="form_row">
+        <label> Type</label> 
+        <input value={editPhase.type} onChange={(e) => setEditPhase({...editPhase, type: e.target.value})} />
+      </div>
+
+      <div className="form_row">
+        <label> Name</label> 
+        <input value={editPhase.name} onChange={(e) => setEditPhase({...editPhase, name: e.target.value})} />
+      </div>
+    </>
+  )
+}
+
   return (
     <div>
         <table width="100%">
@@ -182,115 +328,10 @@ const Phase = () => {
                 </button>
                 <div className="modal_type"> { modal.add == true ? "Add Phase" : "Edit Phase" } </div>
                 <div className="modal_content">
-                    { modal.add == true 
-                      ? ""
-                      : <div className="form_row"> <label> Id: </label> <label>{editPhase.id}</label> </div>
-                    }
-
-                    <div className="form_row">
-                    <label> Author: </label> 
-                    { modal.add == true 
-                      ? <input value={addPhase.author} onChange={(e) => setAddPhase({...addPhase, author: e.target.value})} />
-                      : <input value={editPhase.author} onChange={(e) => setEditPhase({...editPhase, author: e.target.value})} />
-                    }
-                    </div>
-
-                    <div className="form_row">
-                    <label> Days: </label> 
-                    { modal.add == true 
-                      ? <input value={addPhase.days} onChange={(e) => setAddPhase({...addPhase, days: e.target.value})} />
-                      : <input value={editPhase.days} onChange={(e) => setEditPhase({...editPhase, days: e.target.value})} />
-                    }
-                    </div>
-
-                    <div className="form_row">
-                    <label> Watering Cycles: </label> 
-                    { modal.add == true 
-                      ? <input value={addPhase.watering_cycles} onChange={(e) => setAddPhase({...addPhase, watering_cycles: e.target.value})} />
-                      : <input value={editPhase.watering_cycles} onChange={(e) => setEditPhase({...editPhase, watering_cycles: e.target.value})} />
-                    }
-                    </div>
-
-                    <div className="form_row">
-                    <label> Nutrient Cycles: </label> 
-                    { modal.add == true 
-                      ? <input value={addPhase.nutrient_cycles} onChange={(e) => setAddPhase({...addPhase, nutrient_cycles: e.target.value})} />
-                      : <input value={editPhase.nutrient_cycles} onChange={(e) => setEditPhase({...editPhase, nutrient_cycles: e.target.value})} />
-                    }
-                    </div>
-
-                    <div className="form_row">
-                    <label> Nutrient Type: </label> 
-                    { modal.add == true 
-                      ? <input value={addPhase.nutrient_type} onChange={(e) => setAddPhase({...addPhase, nutrient_type: e.target.value})} />
-                      : <input value={editPhase.nutrient_type} onChange={(e) => setEditPhase({...editPhase, nutrient_type: e.target.value})} />
-                    }
-                    </div>
-
-                    <div className="form_row">
-                    <label> Blue Intensity: </label> 
-                    { modal.add == true 
-                      ? <input value={addPhase.blue_intensity} onChange={(e) => setAddPhase({...addPhase, blue_intensity: e.target.value})} />
-                      : <input value={editPhase.blue_intensity} onChange={(e) => setEditPhase({...editPhase, blue_intensity: e.target.value})} />
-                    }
-                    </div>
-
-                    <div className="form_row">
-                    <label> Red Intensity: </label> 
-                    { modal.add == true 
-                      ? <input value={addPhase.red_intensity} onChange={(e) => setAddPhase({...addPhase, red_intensity: e.target.value})} />
-                      : <input value={editPhase.red_intensity} onChange={(e) => setEditPhase({...editPhase, red_intensity: e.target.value})} />
-                    }
-                    </div>                    
-
-                    <div className="form_row">
-                    <label> White1 Intensity: </label> 
-                    { modal.add == true 
-                      ? <input value={addPhase.white1_intensity} onChange={(e) => setAddPhase({...addPhase, white1_intensity: e.target.value})} />
-                      : <input value={editPhase.white1_intensity} onChange={(e) => setEditPhase({...editPhase, white1_intensity: e.target.value})} />
-                    }
-                    </div>   
-
-                    <div className="form_row">
-                    <label> White2 Intensity: </label> 
-                    { modal.add == true 
-                      ? <input value={addPhase.white2_intensity} onChange={(e) => setAddPhase({...addPhase, white2_intensity: e.target.value})} />
-                      : <input value={editPhase.white2_intensity} onChange={(e) => setEditPhase({...editPhase, white2_intensity: e.target.value})} />
-                    }
-                    </div>   
-
-                    <div className="form_row">
-                    <label> Lights On Hours: </label> 
-                    { modal.add == true 
-                      ? <input value={addPhase.lights_on_hours} onChange={(e) => setAddPhase({...addPhase, lights_on_hours: e.target.value})} />
-                      : <input value={editPhase.lights_on_hours} onChange={(e) => setEditPhase({...editPhase, lights_on_hours: e.target.value})} />
-                    }
-                    </div>
-
-                    <div className="form_row">
-                    <label> Score: </label> 
-                    { modal.add == true 
-                      ? <input value={addPhase.score} onChange={(e) => setAddPhase({...addPhase, score: e.target.value})} />
-                      : <input value={editPhase.score} onChange={(e) => setEditPhase({...editPhase, score: e.target.value})} />
-                    }
-                    </div>
-
-                    <div className="form_row">
-                    <label> Type: </label> 
-                    { modal.add == true 
-                      ? <input value={addPhase.type} onChange={(e) => setAddPhase({...addPhase, type: e.target.value})} />
-                      : <input value={editPhase.type} onChange={(e) => setEditPhase({...editPhase, type: e.target.value})} />
-                    }
-                    </div>
-
-                    <div className="form_row">
-                    <label> Name: </label> 
-                    { modal.add == true 
-                      ? <input value={addPhase.name} onChange={(e) => setAddPhase({...addPhase, name: e.target.value})} />
-                      : <input value={editPhase.name} onChange={(e) => setEditPhase({...editPhase, name: e.target.value})} />
-                    }
-                    </div>
-
+                      { modal.add === true 
+                        ? renderAddModal()
+                        : renderEditModal()
+                      }
                     <button className='save' onClick={() => {
                     submitModal()
                     close();
