@@ -35,15 +35,16 @@ class ExperimentView(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        return Experiment.objects.filter(user = user.id).annotate(device_name=F('device__name')) # returns joined device name
+        return Experiment.objects.filter(user = user.id).annotate(device_name=F('device__name')) # joins name value from device table to returned results
 
 class PhaseView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
     serializer_class = PhaseSerializer
+    filter_backends = [filters.DjangoFilterBackend,]
+
 
     def get_queryset(self):
-        user = self.request.user
-        return Phase.objects.all()
+        return Phase.objects.all().annotate(user_name=F('user__username'))
 
 class PodView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 

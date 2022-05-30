@@ -11,15 +11,15 @@ const PlantList = () => {
   })
   const [addPlant, setAddPlant] = useState(
     {
-      name: null,
-      supplier: null
+      name: 's',
+      supplier: 'a'
     }
   );
   const [editPlant, setEditPlant] = useState(
     {
       id: -1,
-      name: null,
-      supplier: null
+      name: 's',
+      supplier: 'a'
     }
   )
 
@@ -88,11 +88,13 @@ const PlantList = () => {
     return (
       <>
         <div className="form_row">
-          <input name="name" value={addPlant.name}  placeholder={"Name"} onChange={(e) => setAddPlant({...addPlant, name: e.target.value})} />
+          <label> Name: </label> 
+          <input name="name" value={addPlant.name} onChange={(e) => setAddPlant({...addPlant, name: e.target.value})} />
         </div>
 
         <div className="form_row">
-          <input name="supplier" value={addPlant.supplier} placeholder={"Supplier"} onChange={(e) => setAddPlant({...addPlant, supplier: e.target.value})} />
+        <label> Supplier: </label>
+          <input name="supplier" value={addPlant.supplier} onChange={(e) => setAddPlant({...addPlant, supplier: e.target.value})} />
         </div>
       </>
     )
@@ -103,11 +105,13 @@ function renderEditModal(){
   return (
     <>
       <div className="form_row">
-        <input name="name" value={editPlant.name} placeholder={"Name"} onChange={(e) => setEditPlant({...editPlant, name: e.target.value})} />
+        <label> Name: </label> 
+        <input name="name" value={editPlant.name} onChange={(e) => setEditPlant({...editPlant, name: e.target.value})} />
       </div>
 
       <div className="form_row">
-        <input name="supplier" value={editPlant.supplier} placeholder={"Supplier"} onChange={(e) => setEditPlant({...editPlant, supplier: e.target.value})} />
+      <label> Supplier: </label>
+        <input name="supplier" value={editPlant.supplier} onChange={(e) => setEditPlant({...editPlant, supplier: e.target.value})} />
       </div>
     </>
   )
@@ -134,8 +138,11 @@ function renderEditModal(){
       <button onClick={() => openModal(null)}>+</button>
       <Popup open={modal.show} onClose={() => setModal({...modal, show: false})} modal nested>
             {(close) => (
-            <div className="modal" onClick={close}>
-              <div className="modal_body"  onClick={e => e.stopPropagation()}>
+            <div className="modal">
+                <div className="modal_body">
+                <button className="close" onClick={close}>
+                    &times;
+                </button>
                 <div className="modal_type"> { modal.add === true ? "Add Plant" : "Edit Plant" } </div>
                 <div className="modal_content">
                     

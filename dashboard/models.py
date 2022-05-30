@@ -51,6 +51,7 @@ class Experiment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, db_column='e_user_id', on_delete=models.CASCADE, blank=True, null=True)  
     start_date = models.DateTimeField(db_column='e_start_date', blank=True, null=True)  
     end_date = models.DateTimeField(db_column='e_end_date', blank=True, null=True)  
+    recipe_json = models.CharField(db_column='e_recipe_json', max_length=4096, blank=True, null=True)# store the recipe json used to control the experiment
 
     class Meta:
         managed = True
@@ -132,19 +133,18 @@ class Pod(models.Model):
         managed = True
         db_table = 'pod'
 
+# phases can be used by many recipes/experiments
 class Phase(models.Model): # generic periodic phase setting to be used by a recipe 
     id = models.AutoField(db_column='ph_id', primary_key=True)  
     name = models.CharField(db_column='ph_name', max_length=45) # name of phase - not necessarily a nubmer
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, db_column='ph_author', on_delete=models.CASCADE, blank=True, null=True)  
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, db_column='ph_user', on_delete=models.CASCADE, blank=True, null=True) # denotes creator
     days = models.IntegerField(db_column = 'ph_days')
     type = models.CharField(db_column='ph_type', max_length=45) # germination / seedling / veggie growth/ harvest /... / other
-    watering_cycles = models.IntegerField(db_column = 'ph_watering_cycles') # number of times per day watered
-    nutrient_cycles =  models.IntegerField(db_column = 'ph_nutrient_cycles') # number of times per day applied nutrients 
-    nutrient_type = models.CharField(db_column='ph_nutrient_type', max_length=45, blank=True, null=True)   
+    waterings_per_day = models.IntegerField(db_column = 'ph_waterings_per_day') # number of times per day watered
+    watering_duration = models.IntegerField(db_column = 'ph_watering_duration')
     blue_intensity = models.IntegerField(db_column = 'ph_blue_intensity')
     red_intensity = models.IntegerField(db_column = 'ph_red_intensity')
-    white1_intensity = models.IntegerField(db_column = 'ph_white1_intensity')
-    white2_intensity = models.IntegerField(db_column = 'ph_white2_intensity')
+    white_intensity = models.IntegerField(db_column = 'ph_white_intensity')
     lights_on_hours = models.IntegerField(db_column = 'ph_lights_on_hours') # denotes hours left on per day
     score = models.DecimalField(db_column='ph_score', max_digits=2, decimal_places=2, blank=True, null=True)
     class Meta:

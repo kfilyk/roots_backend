@@ -46,7 +46,7 @@ const ExperimentList = () => {
 
   async function deleteEntry(id) {
     await axios.delete(`/api/experiment/${id}/`);
-    setExperimentList(experiment_list.filter(experiment => experiment.id != id))
+    setExperimentList(experiment_list.filter(experiment => experiment.id !== id))
   }
 
   function openModal(experiment){
@@ -101,63 +101,60 @@ const ExperimentList = () => {
     )
   }
 
-
   return (
     <div>
+        {experiment_list.map(item => (
+            <div key={item.id} className="item">
+                <div className="object_container">
+                <div className="object_description">
+                    <div className="object_name">{ item.name }</div>
+                    <div>Device Name: { item.device }</div>
+                    <div>Date: {item.start_date} {"->"} {item.end_date}</div>
+                    <div>Score: { item.score } </div>
+                </div>
+                <div className="object_content">                          
+                    <PodCarouselTwo experimentID={item.id} deviceId={item.device}></PodCarouselTwo>
+                </div>
+                <div className='object_actions'>
+                    <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
+                    <li key="edit"><button onClick={() => openModal(item)}>EDIT</button></li>
+                    <li key="delete"><button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) deleteEntry(item.id) }}> DELETE </button></li>
+                </div>
+                </div>
+            </div>
+        ))}
         <div>
-            {experiment_list.map(item => (
-              <div key={item.id} className="item">
-                  <div className="object_container">
-                    <div className="object_description">
-                        <div>{ item.name }</div>
-                        <div>Device Name: { item.device }</div>
-                        <div>Date: {item.start_date} {"->"} {item.end_date}</div>
-                        <div>Score: { item.score } </div>
+            <button onClick={() => openModal(null)}>+</button>
+            <Popup open={modal.show} onClose={() => setModal({...modal, show: false})} modal nested>
+            {(close) => (
+                    <div className="modal">
+                        <div className="modal_body">
+                        <button className="close" onClick={close}>
+                            &times;
+                        </button>
+                        <div className="modal_type"> { modal.add === true ? "Add Experiment" : "Edit Experiment" } </div>
+                        <div className="modal_content">
+                            { modal.add === true 
+                            ? ""
+                            : <div className="form_row"> <label> Id: </label> <label>{editExperiment.id}</label> </div>
+                            }
+
+                            { modal.add === true 
+                            ? renderAddModal()
+                            : renderEditModal()
+                            }
+
+                            <button className='save' onClick={() => {
+                            submitModal()
+                            close();
+                        }}>Save</button>
+                            </div>
+
+                        </div>
                     </div>
-                    <div className="pod_carousel_wrapper">                          
-                        <PodCarouselTwo experimentID={item.id} deviceId={item.device}></PodCarouselTwo>
-                    </div>
-                    <div className='object_actions'>
-                        <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
-                        <li key="edit"><button onClick={() => openModal(item)}>EDIT</button></li>
-                        <li key="delete"><button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) deleteEntry(item.id) }}> DELETE </button></li>
-                    </div>
-                  </div>
-              </div>
-            ))}
+                    )}
+            </Popup>
         </div>
-      <div>
-      <button onClick={() => openModal(null)}>+</button>
-      <Popup open={modal.show} onClose={() => setModal({...modal, show: false})} modal nested>
-        {(close) => (
-              <div className="modal">
-                  <div className="modal_body">
-                  <button className="close" onClick={close}>
-                      &times;
-                  </button>
-                  <div className="modal_type"> { modal.add == true ? "Add Experiment" : "Edit Experiment" } </div>
-                  <div className="modal_content">
-                      { modal.add == true 
-                        ? ""
-                        : <div className="form_row"> <label> Id: </label> <label>{editExperiment.id}</label> </div>
-                      }
-
-                      { modal.add === true 
-                        ? renderAddModal()
-                        : renderEditModal()
-                      }
-
-                      <button className='save' onClick={() => {
-                      submitModal()
-                      close();
-                  }}>Save</button>
-                      </div>
-
-                  </div>
-              </div>
-              )}
-      </Popup>
-      </div>
     </div>
 
   );

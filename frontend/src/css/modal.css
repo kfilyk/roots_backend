@@ -45,6 +45,7 @@ POPUP MODAL
   display: flex;
   margin: 5px;
   margin-bottom: 5%;
+  position:relative;
   /* justify-content: center; */
 }
 
@@ -90,4 +91,72 @@ select .pod {
 .start_date_selection {
   color: #B3896A;
   margin-left: auto;
+}
+
+.slider {
+  -webkit-appearance: none;
+  appearance: none;
+  border: none;
+  border-radius: 50px;
+  background-color: #eeeeee;
+  cursor: pointer;
+}
+
+#red_intensity_slider::-webkit-slider-thumb {
+  background-image: url('../img/red_light_icon.png');
+  background-size: contain;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+#blue_intensity_slider::-webkit-slider-thumb {
+  background-image: url('../img/blue_light_icon.png');
+  background-size: contain;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+#white_intensity_slider::-webkit-slider-thumb {
+  background-image: url('../img/white_light_icon.png');
+  background-size: contain;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 10px;
+  background-color: var(--SliderColor);
+  overflow: visible;
+  cursor: pointer;
+  z-index: 10;
+
+
+}
+.slider::-moz-range-thumb { 
+  -moz-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 10px;
+  background-color: var(--SliderColor);
+  overflow: visible;
+  cursor: pointer;
+  z-index: 10;
+
+}
+
+.intensity_text_overlay  {
+  position:absolute;
+  margin-left: auto;
+  margin-right: auto;
+  left:0;
+  right:0;
+  text-align: center;
+  font-family: "Brandon Grotesque Black";
+  color:black;
+  opacity:50%;
+  pointer-events: none;
+  z-index: 1;
 }

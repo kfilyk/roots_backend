@@ -2,9 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-//import './index.css';
 import './css/main.css';
-//import './css/progress_circle.css';
+import './css/modal.css';
 import './css/nav.css';
 
 //import 'bootstrap/dist/css/bootstrap.css';

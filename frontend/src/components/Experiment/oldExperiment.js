@@ -2,7 +2,7 @@ import React, { Component, useEffect} from "react";
 import ExperimentModal from "./ExperimentModal"
 import PodCarousel from "./PodCarousel"
 import axios from "axios";
-import "./experiment.css"
+//import "./experiment.css"
 import vertical_menu_icon from "../../img/vertical_menu_icon.png"
 
 function getColor(value){
@@ -86,7 +86,7 @@ export default class CustomModal extends Component {
 
                         <div>Score: { this.state.experiment.score } </div>
                     </div>
-                    <div className="pod_carousel_wrapper">
+                    <div className="object_content">
                             {
                                 (this.state.pod_list.length > 0) ?                             
                                 <PodCarousel pod_list={this.state.pod_list} num_pods = {device.num_pods} ></PodCarousel>

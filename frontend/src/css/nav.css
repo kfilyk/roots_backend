@@ -62,12 +62,13 @@
     display:table;
     width: 100%;
     table-layout: fixed;
-    box-shadow: 0 5px 6px -6px #888888;
+    /*box-shadow: 0 5px 6px -6px #888888;*/
     padding: 0px;
+    padding-bottom: 10px;
   }
 
   .nav-link {
-    transition:0.5s;
+    /*transition:0.5s;*/
     font-family: "Brandon Grotesque Black";
     display:table-cell;
     text-align: center;
@@ -75,9 +76,15 @@
     padding: 5px;
   
   }
+
+  .active {
+    text-decoration: underline 3px;
+  }
   
   .nav-link:hover {
-    transition:0.5s;
-    box-shadow: 0 5px 6px -6px #555555;
+    /*transition:0.5s;*/
+    text-decoration: underline 3px;
+    /*box-shadow: 0 5px 6px -6px #555555;*/
   }
+
   

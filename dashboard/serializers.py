@@ -32,9 +32,28 @@ class ExperimentSerializer(serializers.ModelSerializer):
         read_only_fields = ['user']
 
 class PhaseSerializer(serializers.ModelSerializer):
+    user_name = serializers.CharField(allow_blank=True, allow_null=True, required=False)
+
+    def create(self, validated_data):
+        phase_obj = Phase.objects.create(
+            name = validated_data['name'],
+            type=validated_data['type'],
+            days = validated_data['days'],
+            user = self.context['request'].user,
+            waterings_per_day= validated_data['waterings_per_day'],
+            watering_duration= validated_data['watering_duration'],
+            blue_intensity = validated_data['blue_intensity'],
+            red_intensity = validated_data['red_intensity'],
+            white_intensity = validated_data['white_intensity'],
+            lights_on_hours = validated_data['lights_on_hours']
+        )
+        return phase_obj
+
     class Meta:
         model = Phase
         fields = '__all__'
+        read_only_fields = ['user']
+
 
 class PodSerializer(serializers.ModelSerializer):
     plant_name = serializers.CharField(allow_blank=True, allow_null=True, required=False)

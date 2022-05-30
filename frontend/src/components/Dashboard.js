@@ -6,6 +6,7 @@ import ExperimentList from './Experiment/Experiment';
 import ExperimentModal from './Experiment/ExperimentModal';
 import Experiment from './Experiment/Experiment';
 import Phase from './Phase/Phase';
+import Recipe from './Recipe/Recipe';
 import axios from "axios";
 import user_brown_icon from '../img/user_brown_icon.png';
 import vertical_menu_icon from "../img/vertical_menu_icon.png"
@@ -146,7 +147,7 @@ class Dashboard extends Component {
       this.setState({is_logged_in: false})
   }
 
-  renderTabList = () => {
+  renderNav = () => {
     return (
       <div className="nav">
         <span className={this.state.selected_tab === "device" ? "nav-link active" : "nav-link"} onClick={() => this.setState({ selected_tab: "device" })}>
@@ -154,6 +155,9 @@ class Dashboard extends Component {
         </span>
         <span className={this.state.selected_tab === "experiment" ? "nav-link active" : "nav-link"} onClick={() => this.setState({ selected_tab: "experiment" })}>
           EXPERIMENTS
+        </span>
+        <span className={this.state.selected_tab === "recipe" ? "nav-link active" : "nav-link"} onClick={() => this.setState({ selected_tab: "recipe" })}>
+          RECIPES
         </span>
         <span className={this.state.selected_tab === "phase" ? "nav-link active" : "nav-link"} onClick={() => this.setState({ selected_tab: "phase" })}>
           PHASES
@@ -170,6 +174,7 @@ class Dashboard extends Component {
     let items_list = [];
     let experiment_list = [];
     if (this.state.selected_tab === "device"){
+
       items_list = this.state.device_list;
       experiment_list = this.state.experiment_list;
       
@@ -177,13 +182,14 @@ class Dashboard extends Component {
 
         let e_list = experiment_list.filter(experiment => experiment.device === item.id) ?? {} // could also use ||
         let e = e_list.length === 1 ? e_list[0] : null;
-
+        console.log("DEVICE: ", item.name)
+        console.log("EXPERIMENT: ", e)
         // display list of all items
         return <div key={ ''+this.state.selected_tab+' '+ item.id } className="item">
 
           <div className="object_container">
             <div className="object_description">
-              <div className="device_name">{ item.name }</div>
+              <div className="object_name">{ item.name }</div>
               <div>Registered: { item.registration_date.substring(0, 10) }</div>
               <div>Mac: { item.mac_address }</div>
             </div>
@@ -204,11 +210,12 @@ class Dashboard extends Component {
 
     } else if (this.state.selected_tab === "experiment") {
       return(
-        <>
-          <Experiment/>
-        </>
+        <Experiment/>
       );
-
+    } else if (this.state.selected_tab === "recipe") {
+      return(
+        <Recipe></Recipe>
+      );
     } else if (this.state.selected_tab === "phase") {
       return(
         <Phase></Phase>
@@ -239,18 +246,11 @@ class Dashboard extends Component {
           </div>
 
           <div className="dashboard">
-
-            <div className="row">
-              <div className="col-md-6 col-sm-10 mx-auto p-0">
-                <div className="card p-3">
-                  {this.renderTabList()}
-                  <ul className="list-group list-group-flush border-top-0">
-                    {this.renderItems()}
-                  </ul>
-                  {/*<button className="btn btn-primary" onClick={this.createItem} > Add {this.state.selected_tab} </button> */}
-                </div>
-              </div>
-            </div>
+            {this.renderNav()}
+            <ul className="list-group list-group-flush border-top-0">
+              {this.renderItems()}
+            </ul>
+            {/*<button className="btn btn-primary" onClick={this.createItem} > Add {this.state.selected_tab} </button> */}
           </div>
         </main>
 

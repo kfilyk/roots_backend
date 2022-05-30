@@ -1,24 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Popup from "reactjs-popup";
+import vertical_menu_icon from "../../img/vertical_menu_icon_white.png"
+import white_light_icon from "../../img/white_light_icon.png"
+import blue_light_icon from "../../img/blue_light_icon.png"
+import red_light_icon from "../../img/red_light_icon.png"
+import water_icon from "../../img/water_icon.png"
+import './phase.css'
 
 const Phase = () => {
   const [phaseList, setPhaseList] = useState([]);
+  const [selected_phase, setPhaseNav] = useState("all");
+  console.log("PHASE:", selected_phase)
   const [modal, setModal] = useState({
     show: false,
     add: false
   })
   const [addPhase, setAddPhase] = useState(
     {
-        author: null,
+        user: null,
+        user_name: null,
         days: null,
-        watering_cycles: null,
-        nutrient_cycles: null,
-        nutrient_type: null,
-        blue_intensity: null,
-        red_intensity: null,
-        white1_intensity: null,
-        white2_intensity: null,
+        waterings_per_day: null,
+        watering_duration: null,
+        blue_intensity: 100,
+        red_intensity: 100,
+        white_intensity: 100,
         lights_on_hours: null,
         score: null,
         type: null,
@@ -28,15 +35,14 @@ const Phase = () => {
   const [editPhase, setEditPhase] = useState(
     {
       id: -1,
-      author: null,
+      user: null,
+      user_name: null,
       days: null,
-      watering_cycles: null,
-      nutrient_cycles: null,
-      nutrient_type: null,
+      waterings_per_day: null,
+      watering_duration: null,
       blue_intensity: null,
       red_intensity: null,
-      white1_intensity: null,
-      white2_intensity: null,
+      white_intensity: null,
       lights_on_hours: null,
       score: null,
       type: null,
@@ -65,19 +71,15 @@ const Phase = () => {
     const result = await axios
       .post(`/api/phases/`, 
         { 
-            author: addPhase.author,
+            name: addPhase.name,
+            type: addPhase.type,
             days: addPhase.days,
-            watering_cycles: addPhase.watering_cycles,
-            nutrient_cycles: addPhase.nutrient_cycles,
-            nutrient_type: addPhase.nutrient_type,
+            waterings_per_day: addPhase.waterings_per_day,
+            watering_duration: addPhase.watering_duration,
             blue_intensity: addPhase.blue_intensity,
             red_intensity: addPhase.red_intensity,
-            white1_intensity: addPhase.white1_intensity,
-            white2_intensity: addPhase.white2_intensity,
-            lights_on_hours: addPhase.lights_on_hours,
-            score: addPhase.score,
-            type: addPhase.type,
-            name: addPhase.name
+            white_intensity: addPhase.white_intensity,
+            lights_on_hours: addPhase.lights_on_hours
         });
     setPhaseList(phaseList => [...phaseList, result.data])
   };
@@ -86,20 +88,15 @@ const Phase = () => {
     const result = await axios
         .patch(`/api/phases/${editPhase.id}/`, 
         { 
-            id: editPhase.id,
-            author: editPhase.author,
+            name: editPhase.name,
+            type: editPhase.type,
             days: editPhase.days,
-            watering_cycles: editPhase.watering_cycles,
-            nutrient_cycles: editPhase.nutrient_cycles,
-            nutrient_type: editPhase.nutrient_type,
+            waterings_per_day: editPhase.waterings_per_day,
+            watering_duration: editPhase.watering_duration,
             blue_intensity: editPhase.blue_intensity,
             red_intensity: editPhase.red_intensity,
-            white1_intensity: editPhase.white1_intensity,
-            white2_intensity: editPhase.white2_intensity,
-            lights_on_hours: editPhase.lights_on_hours,
-            score: editPhase.score,
-            type: editPhase.type,
-            name: editPhase.name
+            white_intensity: editPhase.white_intensity,
+            lights_on_hours: editPhase.lights_on_hours
         }).catch((err) => console.log(err));
     const index = phaseList.findIndex(phase => phase.id === editPhase.id);
     const updatedItem = result.data
@@ -130,203 +127,199 @@ const Phase = () => {
   function renderAddModal(){
     return (
       <>
-        <div className="form_row"> <label> Id: </label> <label>{addPhase.id}</label> </div>
-        
         <div className="form_row">
-          <label> Author</label> 
-          <input value={addPhase.author} onChange={(e) => setAddPhase({...addPhase, author: e.target.value})} />
+          <input value={addPhase.name} placeholder={"Name"} onChange={(e) => setAddPhase({...addPhase, name: e.target.value})} />
         </div>
-  
         <div className="form_row">
-          <label> Days</label> 
-          <input value={addPhase.days} onChange={(e) => setAddPhase({...addPhase, days: e.target.value})} />
+          <select value={addPhase.type} onChange={(e) => setAddPhase({...addPhase, type: e.target.value})} >
+            <option value="germination">Germination</option>
+            <option value="seedling">Seedling</option>
+            <option value="vegetative">Vegetative Growth</option>
+            <option value="flowering">Flowering</option>
+            <option value="harvest">Harvest</option>
+            <option value="other">Other</option>
+          </select>
         </div>
-  
         <div className="form_row">
-          <label> Watering Cycles</label> 
-          <input value={addPhase.watering_cycles} onChange={(e) => setAddPhase({...addPhase, watering_cycles: e.target.value})} />
+          <input value={addPhase.days} placeholder={"Days"} onChange={(e) => setAddPhase({...addPhase, days: e.target.value})} />
         </div>
-  
         <div className="form_row">
-          <label> Nutrient Cycles</label> 
-          <input value={addPhase.nutrient_cycles} onChange={(e) => setAddPhase({...addPhase, nutrient_cycles: e.target.value})} />
+          <input value={addPhase.waterings_per_day} placeholder={"Watering Cycles"} onChange={(e) => setAddPhase({...addPhase, waterings_per_day: e.target.value})} />
         </div>
-  
         <div className="form_row">
-          <label> Nutrient Type</label> 
-          <input value={addPhase.nutrient_type} onChange={(e) => setAddPhase({...addPhase, nutrient_type: e.target.value})} />
+          <input value={addPhase.watering_duration} placeholder={"Watering Duration"} onChange={(e) => setAddPhase({...addPhase, watering_duration: e.target.value})} />
         </div>
-  
         <div className="form_row">
-          <label> Blue Intensity</label> 
-          <input value={addPhase.blue_intensity} onChange={(e) => setAddPhase({...addPhase, blue_intensity: e.target.value})} />
+          <input value={addPhase.blue_intensity} id="blue_intensity_slider" className="slider" type="range" min={0} max={100} onChange={(e) => setAddPhase({...addPhase, blue_intensity: e.target.value})}/>
+          <div className='intensity_text_overlay'>{addPhase.blue_intensity}</div>
         </div>
-  
         <div className="form_row">
-          <label> Red Intensity</label> 
-          <input value={addPhase.red_intensity} onChange={(e) => setAddPhase({...addPhase, red_intensity: e.target.value})} />
+          <input value={addPhase.red_intensity} id="red_intensity_slider" className="slider" type="range" min={0} max={100} onChange={(e) => setAddPhase({...addPhase, red_intensity: e.target.value})} />
+          <div className='intensity_text_overlay'>{addPhase.red_intensity}</div>
         </div>                    
-  
         <div className="form_row">
-          <label> White1 Intensity</label> 
-          <input value={addPhase.white1_intensity} onChange={(e) => setAddPhase({...addPhase, white1_intensity: e.target.value})} />
+          <input value={addPhase.white_intensity}  id="white_intensity_slider" className="slider" type="range" min={0} max={100} onChange={(e) => setAddPhase({...addPhase, white_intensity: e.target.value})} />
+          <div className='intensity_text_overlay'>{addPhase.white_intensity}</div>
         </div>   
-  
         <div className="form_row">
-          <label> White2 Intensity</label> 
-          <input value={addPhase.white2_intensity} onChange={(e) => setAddPhase({...addPhase, white2_intensity: e.target.value})} />
-        </div>   
-  
-        <div className="form_row">
-          <label> Lights On Hours</label> 
-          <input value={addPhase.lights_on_hours} onChange={(e) => setAddPhase({...addPhase, lights_on_hours: e.target.value})} />
-        </div>
-  
-        <div className="form_row">
-          <label> Score</label> 
-          <input value={addPhase.score} onChange={(e) => setAddPhase({...addPhase, score: e.target.value})} />
-        </div>
-  
-        <div className="form_row">
-          <label> Type</label> 
-          <input value={addPhase.type} onChange={(e) => setAddPhase({...addPhase, type: e.target.value})} />
-        </div>
-  
-        <div className="form_row">
-          <label> Name</label> 
-          <input value={addPhase.name} onChange={(e) => setAddPhase({...addPhase, name: e.target.value})} />
+          <input value={addPhase.lights_on_hours} placeholder={"Lights On Hours"} onChange={(e) => setAddPhase({...addPhase, lights_on_hours: e.target.value})} />
         </div>
       </>
-    )}
+    )
+  }
 
 
-function renderEditModal(){
-  return (
-    <>
-      <div className="form_row"> <label> Id: </label> <label>{editPhase.id}</label> </div>
-      
-      <div className="form_row">
-        <label> Author</label> 
-        <input value={editPhase.author} onChange={(e) => setEditPhase({...editPhase, author: e.target.value})} />
+  function renderEditModal(){
+    return (
+      <>        
+        <div className="form_row">
+          <input value={editPhase.name} placeholder={"Name"} onChange={(e) => setEditPhase({...editPhase, name: e.target.value})} />
+        </div>
+        <div className="form_row">
+          <select value={editPhase.type} onChange={(e) => setAddPhase({...editPhase, type: e.target.value})} >
+            <option value="germination">Germination</option>
+            <option value="seedling">Seedling</option>
+            <option value="vegetative">Vegetative Growth</option>
+            <option value="flowering">Flowering</option>
+            <option value="harvest">Harvest</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div className="form_row">
+          <input value={editPhase.days} placeholder={"Days"}  onChange={(e) => setEditPhase({...editPhase, days: e.target.value})} />
+        </div>
+        <div className="form_row">
+          <input value={editPhase.waterings_per_day} placeholder={"Watering Cycles"} onChange={(e) => setEditPhase({...editPhase, waterings_per_day: e.target.value})} />
+        </div>
+        <div className="form_row">
+          <input value={editPhase.watering_duration} placeholder={"Watering Duration"} onChange={(e) => setEditPhase({...editPhase, watering_duration: e.target.value})} />
+        </div>
+        <div className="form_row">
+          <input value={editPhase.blue_intensity} id="blue_intensity_slider" className="slider" type="range" min={0} max={100} onChange={(e) => setEditPhase({...editPhase, blue_intensity: e.target.value})} />
+          <div className='intensity_text_overlay'>{editPhase.blue_intensity}</div>
+        </div>
+        <div className="form_row">
+          <input value={editPhase.red_intensity} id="red_intensity_slider" className="slider" type="range" min={0} max={100} onChange={(e) => setEditPhase({...editPhase, red_intensity: e.target.value})} />
+          <div className='intensity_text_overlay'>{editPhase.red_intensity}</div>
+
+        </div>                    
+        <div className="form_row">
+          <input value={editPhase.white_intensity} id="white_intensity_slider" className="slider" type="range" min={0} max={100} onChange={(e) => setEditPhase({...editPhase, white_intensity: e.target.value})} />
+          <div className='intensity_text_overlay'>{editPhase.white_intensity}</div>
+
+        </div>   
+        <div className="form_row">
+          <input value={editPhase.lights_on_hours} placeholder={"Lights On Hours"} onChange={(e) => setEditPhase({...editPhase, lights_on_hours: e.target.value})} />
+        </div>
+
+      </>
+    )
+  }
+
+  function PhaseStyle(type)  {
+    let colour = '';
+    let font_colour = '';
+    if(type === "germination" ) {
+      colour = `#B1C985`
+      font_colour = `#FFFFFF`
+    } else if(type === "seedling" ) {
+      colour = `#7AA96A`
+      font_colour = `#FFFFFF`
+    } else if(type === "vegetative") {
+      colour = `#2A7351`
+      font_colour = `#FFFFFF`
+    } else if(type === "flowering") {
+      colour = `#DEB1B1`
+      font_colour = `#FFFFFF`
+    } else if(type === "harvest") {
+      colour = `#D14C4C`
+      font_colour = `#FFFFFF`
+    } else { // other type
+      colour = `#6FC1B6`
+      font_colour = `#FFFFFF`
+    }
+    let style = {
+      backgroundColor: colour,
+      color: font_colour
+    };
+    return style;
+  };
+
+  function renderNav() {
+    return (
+      <div className="nav" style={{fontSize: "12px"}}>
+        <span className={selected_phase === "all" ? "nav-link active" : "nav-link"} onClick={() => setPhaseNav("all")}>
+          ALL
+        </span>
+        <span className={selected_phase === "germination" ? "nav-link active" : "nav-link"} onClick={() => setPhaseNav("germination")}>
+          GERMINATION
+        </span>
+        <span className={selected_phase === "seedling" ? "nav-link active" : "nav-link"} onClick={() => setPhaseNav("seedling")}>
+          SEEDLING
+        </span>
+        <span className={selected_phase === "vegetative" ? "nav-link active" : "nav-link"} onClick={() => setPhaseNav("vegetative")}>
+          VEGETATIVE GROWTH
+        </span>
+        <span className={selected_phase === "flowering" ? "nav-link active" : "nav-link"} onClick={() => setPhaseNav("flowering")}>
+          FLOWERING
+        </span>
+        <span className={selected_phase === "harvest" ? "nav-link active" : "nav-link"} onClick={() => setPhaseNav("harvest")}>
+          HARVEST
+        </span>
+        <span className={selected_phase === "other" ? "nav-link active" : "nav-link"} onClick={() => setPhaseNav("other")}>
+          OTHER
+        </span>
       </div>
-
-      <div className="form_row">
-        <label> Days</label> 
-        <input value={editPhase.days} onChange={(e) => setEditPhase({...editPhase, days: e.target.value})} />
-      </div>
-
-      <div className="form_row">
-        <label> Watering Cycles</label> 
-        <input value={editPhase.watering_cycles} onChange={(e) => setEditPhase({...editPhase, watering_cycles: e.target.value})} />
-      </div>
-
-      <div className="form_row">
-        <label> Nutrient Cycles</label> 
-        <input value={editPhase.nutrient_cycles} onChange={(e) => setEditPhase({...editPhase, nutrient_cycles: e.target.value})} />
-      </div>
-
-      <div className="form_row">
-        <label> Nutrient Type</label> 
-        <input value={editPhase.nutrient_type} onChange={(e) => setEditPhase({...editPhase, nutrient_type: e.target.value})} />
-      </div>
-
-      <div className="form_row">
-        <label> Blue Intensity</label> 
-        <input value={editPhase.blue_intensity} onChange={(e) => setEditPhase({...editPhase, blue_intensity: e.target.value})} />
-      </div>
-
-      <div className="form_row">
-        <label> Red Intensity</label> 
-        <input value={editPhase.red_intensity} onChange={(e) => setEditPhase({...editPhase, red_intensity: e.target.value})} />
-      </div>                    
-
-      <div className="form_row">
-        <label> White1 Intensity</label> 
-        <input value={editPhase.white1_intensity} onChange={(e) => setEditPhase({...editPhase, white1_intensity: e.target.value})} />
-      </div>   
-
-      <div className="form_row">
-        <label> White2 Intensity</label> 
-        <input value={editPhase.white2_intensity} onChange={(e) => setEditPhase({...editPhase, white2_intensity: e.target.value})} />
-      </div>   
-
-      <div className="form_row">
-        <label> Lights On Hours</label> 
-        <input value={editPhase.lights_on_hours} onChange={(e) => setEditPhase({...editPhase, lights_on_hours: e.target.value})} />
-      </div>
-
-      <div className="form_row">
-        <label> Score</label> 
-        <input value={editPhase.score} onChange={(e) => setEditPhase({...editPhase, score: e.target.value})} />
-      </div>
-
-      <div className="form_row">
-        <label> Type</label> 
-        <input value={editPhase.type} onChange={(e) => setEditPhase({...editPhase, type: e.target.value})} />
-      </div>
-
-      <div className="form_row">
-        <label> Name</label> 
-        <input value={editPhase.name} onChange={(e) => setEditPhase({...editPhase, name: e.target.value})} />
-      </div>
-    </>
-  )
-}
+    );
+  };
 
   return (
     <div>
-        <table width="100%">
-        <thead>
-        <tr>
-            <th> ID </th>
-            <th> Author </th>
-            <th> Days </th>
-            <th> Watering Cycles </th>
-            <th> Nutr. Cycles </th>
-            <th> Nutr. Type </th>
-            <th> Blue Intn. </th>
-            <th> Red Intn. </th>
-            <th> White1 Intn. </th>
-            <th> White2 Intn. </th>
-            <th> Lights On (hrs) </th>
-            <th> Score </th>
-            <th> Type </th>
-            <th> Name </th>
-            <th>  </th>
-        </tr>
-        {phaseList.map(item => (
-          <tr key={ item.id } className="list-group-item d-flex justify-content-between align-items-center" >
-              <td> { item.id } </td>
-              <td> { item.author } </td>
-              <td> { item.days } </td>
-              <td> { item.watering_cycles } </td>
-              <td> { item.nutrient_cycles } </td>
-              <td> { item.nutrient_type } </td>
-              <td> { item.blue_intensity } </td>
-              <td> { item.red_intensity } </td>
-              <td> { item.white1_intensity } </td>
-              <td> { item.white2_intensity } </td>
-              <td> { item.lights_on_hours } </td>
-              <td> { item.score } </td>
-              <td> { item.type } </td>
-              <td> { item.name } </td>
-            <td>
-            <button onClick={() => openModal(item)}>EDIT</button>
+      {renderNav()}
+      {phaseList.filter(phase => (phase.type === selected_phase) || selected_phase === "all").map(item => (
+        <div key={ item.id } className="item" >
+          <div className="object_container" >
+            <div className="object_description" style={PhaseStyle(item.type)}>
+              <div className="phase_type object_name"> { item.type.toUpperCase() } | { item.name } </div>
+              <div>Author: { item.user_name } </div>
+              <div> { item.days } Days</div>
+              {/*<div> { item.score } </div>*/}
+            </div>
+            <div className="object_content"> 
+              <div className="phase_content">
+                <div className="watering">
+                  {(() => {
+                    let waterings = [];
+                    for(let i = 0; i < item.waterings_per_day; i++) {
+                      waterings.push(<img src={water_icon} alt="Water" style={{width:'30px', padding:'5px' }}/>)
+                    }
+                    return waterings;
+                  })()}
+                / per day, {item.watering_duration} minute(s) each
+                </div>
+                <div className="lighting">
+                  <div> <img src={blue_light_icon} alt="Blue Light" style={{width:'30px', padding:'5px', paddingBottom:'0px'}}></img> <div className="light_intensity" >{item.blue_intensity}</div> </div>
+                  <div> <img src={red_light_icon} alt="Red Light" style={{width:'30px', padding:'5px', paddingBottom:'0px'}}></img> <div className="light_intensity">{item.red_intensity}</div> </div>
+                  <div> <img src={white_light_icon} alt="White Light" style={{width:'30px', padding:'5px', paddingBottom:'0px'}}></img> <div className="light_intensity">{item.white_intensity}</div> </div>
+                  , { item.lights_on_hours } hours per day
+                </div>
+              </div>
+            </div>
+            <div className="object_actions">
+              <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
+              <button onClick={() => openModal(item)}>EDIT</button>
               <button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) deleteEntry(item.id) }}> DELETE </button>
-            </td>
-          </tr>
-        ))}
-        </thead>
-      </table>  
+            </div>
+          </div>
+        </div>
+      ))}
+
       <button onClick={() => openModal(null)}>+</button>
       <Popup open={modal.show} onClose={() => setModal({...modal, show: false})} modal nested>
             {(close) => (
-            <div className="modal">
-                <div className="modal_body">
-                <button className="close" onClick={close}>
-                    &times;
-                </button>
-                <div className="modal_type"> { modal.add == true ? "Add Phase" : "Edit Phase" } </div>
+            <div className="modal" onClick={close}>
+                <div className="modal_body"  onClick={e => e.stopPropagation()}>
+                <div className="modal_type"> { modal.add === true ? "Add Phase" : "Edit Phase" } </div>
                 <div className="modal_content">
                       { modal.add === true 
                         ? renderAddModal()

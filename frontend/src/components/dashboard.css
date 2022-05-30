@@ -53,19 +53,18 @@ button:hover {
 DEVICE
 ============================================================================================ */
 
-.device_name {
-  font-weight: bolder;
+.object_name {
+  font-family: "Brandon Grotesque Black";
 }
 
 /* ==========================================================================================
-OBJECT CONTAINERS (DEVICE, EXPERIMENT, ETC
+OBJECT CONTAINERS (DEVICE, EXPERIMENT, ETC)
 ============================================================================================ */
 
 .object_container {
   display: flex;
   position: relative;
   box-shadow: 0px 5px 20px -10px #555555;
-  padding:10px;
   margin:10px;
   border-radius: 10px;
   flex: 1;
@@ -74,8 +73,19 @@ OBJECT CONTAINERS (DEVICE, EXPERIMENT, ETC
 .object_description {
   display: flex;
   flex-direction: column;
-  vertical-align: top;
-  flex: 1;
+  padding:20px;
+  border-bottom-left-radius: 10px;
+  border-top-left-radius: 10px;
+  min-width: 30%;
+}
+
+.object_content {
+  display: flex;
+  align-items: right; 
+  flex-direction: row;
+  flex:1;
+  padding:10px;
+
 }
 
 /* HIDDEN start state */
