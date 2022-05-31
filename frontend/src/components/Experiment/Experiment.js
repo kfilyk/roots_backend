@@ -11,6 +11,18 @@ const ExperimentList = () => {
     show: false,
     add: false
   })
+
+  const [available_devices, set_available_devices] = useState([])
+
+  const [addExperiment, setAddExperiment] = useState({
+    name: 'unknown',
+    num_pods: -1,
+    device: -1,
+    plants: [],
+    start_date: '',
+    end_date: '', 
+  })
+
   const [editExperiment, setEditExperiment] = useState({
     id: -1,
     name: 'unknown',
@@ -37,10 +49,21 @@ const ExperimentList = () => {
       '/api/plants/',
     );
     setPlantList(result.data)
-  } 
+  }
+  
+  async function fetchAvailableDevices() {
+    const result = await axios(
+      '/api/experiments/available_devices/',
+    );
+    set_available_devices(result.data)
+  }
 
   useEffect(() => {
     fetchPlants();
+  }, []);
+
+  useEffect(() => {
+    fetchAvailableDevices();
   }, []);
 
 
@@ -61,7 +84,7 @@ const ExperimentList = () => {
   function submitModal(){
     if(modal.add){
       // addEntry()
-      console.log("submitModal function not done... ")
+      console.log(addExperiment)
     } else {
       editEntry()
     }
@@ -83,10 +106,68 @@ const ExperimentList = () => {
     ])
   };
 
+  function setDevice(e){
+    let selected_device = available_devices.find(device => device.id == e.target.value)
+    setAddExperiment({...addExperiment, device: selected_device['id'], num_pods: selected_device['num_pods'], plants:Array(5).fill(-1)})
+  }
+
+  function renderAvailableDevices(){
+    return (
+      <select className="device_selection" defaultValue= {addExperiment.device} name="device" onChange={(e) => setDevice(e)}>
+          {available_devices.map(item => (
+              <option key={item.id} value={item.id}> {item.name} </option>
+          ))}
+      </select>
+    )
+  }
+
+  function setPod(e){
+    let plant = e.target.value
+    let position = e.target.name.substring(4); 
+    console.log("OLD: ", addExperiment.plants)
+    const new_pods = [
+      ...addExperiment.plants.slice(0, position),
+      plant,
+      ...addExperiment.plants.slice(position + 1)
+    ]
+    console.log("NEW: ", new_pods)
+    setAddExperiment({...addExperiment, plants: new_pods})
+  }
+
+  function renderPodSelection(){
+    let pod_container = []
+    for(let i = 0; i < addExperiment.num_pods; i++) {
+      pod_container.push(
+        <select className="pod_selection" name={"pod_"+(i)} defaultValue={-1} onChange={(e) => setPod(e)}>
+            {plant_list.map(item => (
+                <option key={item.id} value={item.id}> {item.name} </option>
+            ))}
+        </select>
+      )
+    }
+    return pod_container
+  }
+ 
   function renderAddModal(){
       return (
         <div>
-          THIS IS NOT DONE.
+            <div className="form_row">
+              <label> Experiment Name: </label> 
+              <input name="name" value={addExperiment.name} onChange={(e) => setAddExperiment({...addExperiment, name: e.target.value})} />
+            </div>
+            <div className="form_row">
+              <label> Device: </label> 
+                {renderAvailableDevices()}
+            </div>
+            <div className="form_row">
+              <label> Start Date: </label> 
+              <input type="date" name="start_date" value={addExperiment.start_date} onChange={(e) => setAddExperiment({...addExperiment, start_date: e.target.value})} />
+            </div>
+            <div className="form_row">
+              <label> End Date: </label> 
+              <input type="date" name="end_date" value={addExperiment.end_date} onChange={(e) => setAddExperiment({...addExperiment, end_date: e.target.value})} />
+            </div>
+            {renderPodSelection()}
         </div>
       )
   }

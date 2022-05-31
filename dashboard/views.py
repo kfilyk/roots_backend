@@ -41,7 +41,8 @@ class ExperimentView(viewsets.ModelViewSet):
         exp = Experiment.objects.get(id=exp_id)
         plants = request.data['plants']
         num_pods = request.data['num_pods']
-        start_date = make_aware(datetime.strptime(request.data['start_date'], '%Y-%m-%d %H:%M:%S.%f'))
+        start_date = make_aware(datetime.strptime(request.data['start_date'], '%Y-%m-%d'))
+        # start_date = make_aware(datetime.strptime(request.data['start_date'], '%Y-%m-%d %H:%M:%S.%f'))
         # request.data['start_date']
         phase = 0
         pods = []

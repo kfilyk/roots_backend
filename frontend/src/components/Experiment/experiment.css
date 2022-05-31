@@ -18,7 +18,7 @@ POPUP MODAL
   background-color: #fefefe;
   margin: 10% auto; /* 15% from the top and centered */
   padding: 20px;
-  width: min-content;
+  width: 50%;
   z-index: 2;
 }
 
