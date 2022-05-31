@@ -15,6 +15,8 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.permissions import IsAuthenticated 
 from django.db.models import F
 from rest_framework.decorators import action
+from django.http import HttpResponse, JsonResponse
+from django.forms.models import model_to_dict
 
 # https://www.digitalocean.com/community/tutorials/build-a-to-do-application-using-django-and-react
 
@@ -33,9 +35,19 @@ class ExperimentView(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
+    @action(detail=False, methods=['GET'], name='available_devices')
+    def available_devices(self, request):
+        devices_in_use = Experiment.objects.filter(device_id__isnull=False).values('device_id')
+        query = Device.objects.exclude(id__in=devices_in_use)
+        print(query)
+        data = list(query.values('id', 'name'))
+
+        return JsonResponse(data, safe=False)
+
     def get_queryset(self):
         user = self.request.user
         return Experiment.objects.filter(user = user.id).annotate(device_name=F('device__name')) # joins name value from device table to returned results
+
 
 class PhaseView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 

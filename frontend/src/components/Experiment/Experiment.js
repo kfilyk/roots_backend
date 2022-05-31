@@ -30,7 +30,7 @@ const ExperimentList = () => {
 
   useEffect(() => {
     fetchData();
-  }, [experiment_list]);
+  }, []);
 
   async function fetchPlants() {
     const result = await axios(
