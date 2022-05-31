@@ -16,7 +16,8 @@ from rest_framework.permissions import IsAuthenticated
 from django.db.models import F
 from rest_framework.decorators import action
 from django.http import HttpResponse, JsonResponse
-from django.forms.models import model_to_dict
+from datetime import datetime
+from django.utils.timezone import make_aware
 
 # https://www.digitalocean.com/community/tutorials/build-a-to-do-application-using-django-and-react
 
@@ -34,6 +35,21 @@ class ExperimentView(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+    def create(self, request, *args, **kwargs):
+        exp_id = super().create(request, *args, **kwargs).data['id']
+        exp = Experiment.objects.get(id=exp_id)
+        plants = request.data['plants']
+        num_pods = request.data['num_pods']
+        start_date = make_aware(datetime.strptime(request.data['start_date'], '%Y-%m-%d %H:%M:%S.%f'))
+        # request.data['start_date']
+        phase = 0
+        pods = []
+        for i in range(num_pods):
+            position = i+1
+            pods.append(Pod(start_date=start_date, phase=phase, position=position, plant=Plant.objects.get(id=plants[i]), experiment=exp))
+        Pod.objects.bulk_create(pods)
+        return Response("HELLO WORLD")
 
     @action(detail=False, methods=['GET'], name='available_devices')
     def available_devices(self, request):
