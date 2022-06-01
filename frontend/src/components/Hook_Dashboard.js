@@ -17,12 +17,12 @@ const Hook_Dashboard = () => {
     user: -1
   });
 
-  useEffect(() => {
-    authenicate_user();
-  }, []);
+  useEffect(authenicate_user, []);
 
   function authenicate_user() {
     if (window.localStorage.getItem("token")) {
+
+      console.log("HELLO")
       // if a token is found, set the authorization and attempt to vlaidate it against the server
       axios.defaults.headers.common.Authorization = `Token ${window.localStorage.getItem("token")}`;
 
@@ -32,22 +32,23 @@ const Hook_Dashboard = () => {
           set_auth({...auth, user: res.data.username})
         })
         .catch(res => {
-          logout()
+          return logout()
         });
     } else {
-      console.log("CRY")
+      window.location.replace("/")
     }
-
   }
 
   function logout(){
-    axios
-    .get('/auth/logout/')
-    .then((res) => {
-      localStorage.removeItem('token');
-      return <Navigate to = {{ pathname: "/" }} />;
-    })
-    .catch(error =>  console.log(error)) 
+    if (window.localStorage.getItem("token")) {
+      axios
+      .get('/auth/logout/')
+      .then((res) => {
+        localStorage.removeItem('token');
+        window.location.replace("/")
+      })
+      .catch(error =>  console.log(error)) 
+    }
   }
 
   function renderNav() {
@@ -75,7 +76,7 @@ const Hook_Dashboard = () => {
   function renderPage() {
     switch(selected_tab) {
       case 'device':
-        return <Experiment></Experiment>
+        return <Plant></Plant>
       case 'experiment':
         return <Experiment></Experiment>
       case 'recipe':
