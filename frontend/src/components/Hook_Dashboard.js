@@ -10,6 +10,7 @@ import user_brown_icon from '../img/user_brown_icon.png';
 import vertical_menu_icon from "../img/vertical_menu_icon.png"
 import Plant from "./Plant/Plant";
 import './dashboard.css';
+import Device from './Device/Device';
 
 const Hook_Dashboard = () => {
   const [selected_tab, set_selected_tab] = useState('overview');
@@ -82,7 +83,7 @@ const Hook_Dashboard = () => {
       case 'overview':
         return <div>Hi.</div>
       case 'device':
-        return <Plant></Plant>
+        return <Device></Device>
       case 'experiment':
         return <Experiment></Experiment>
       case 'recipe':

@@ -59,6 +59,12 @@ class ExperimentView(viewsets.ModelViewSet):
         data = list(query.values('id', 'name', 'num_pods'))
         return JsonResponse(data, safe=False)
 
+    @action(detail=False, methods=['GET'], name='available_devices')
+    def loaded_devices(self, request):
+        devices_in_use = Experiment.objects.filter(device_id__isnull=False).select_related('device')
+        data = list(devices_in_use.values().annotate(device_name=F('device__name')) )
+        return JsonResponse(data, safe=False)
+
     def get_queryset(self):
         user = self.request.user
         return Experiment.objects.filter(user = user.id).annotate(device_name=F('device__name')) # joins name value from device table to returned results
