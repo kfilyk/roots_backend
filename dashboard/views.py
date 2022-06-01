@@ -42,13 +42,15 @@ class ExperimentView(viewsets.ModelViewSet):
         plants = request.data['plants']
         num_pods = request.data['num_pods']
         start_date = make_aware(datetime.strptime(request.data['start_date'], '%Y-%m-%d'))
-        # start_date = make_aware(datetime.strptime(request.data['start_date'], '%Y-%m-%d %H:%M:%S.%f'))
-        # request.data['start_date']
+        print(start_date)
         phase = 0
         pods = []
         for i in range(num_pods):
             position = i+1
-            pods.append(Pod(start_date=start_date, phase=phase, position=position, plant=Plant.objects.get(id=plants[i]), experiment=exp))
+            if plants[i] == -1:
+                pods.append(Pod(start_date=start_date, phase=phase, position=position, plant=None, experiment=exp))
+            else: 
+                pods.append(Pod(start_date=start_date, phase=phase, position=position, plant=Plant.objects.get(id=plants[i]), experiment=exp))
         Pod.objects.bulk_create(pods)
         return Response("HELLO WORLD")
 
@@ -59,7 +61,7 @@ class ExperimentView(viewsets.ModelViewSet):
         data = list(query.values('id', 'name', 'num_pods'))
         return JsonResponse(data, safe=False)
 
-    @action(detail=False, methods=['GET'], name='available_devices')
+    @action(detail=False, methods=['GET'], name='loaded_devices')
     def loaded_devices(self, request):
         devices_in_use = Experiment.objects.filter(device_id__isnull=False).select_related('device')
         data = list(devices_in_use.values().annotate(device_name=F('device__name')) )

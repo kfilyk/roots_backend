@@ -83,12 +83,26 @@ const ExperimentList = () => {
 
   function submitModal(){
     if(modal.add){
-      // addEntry()
-      console.log(addExperiment)
+      addEntry()
     } else {
       editEntry()
     }
   }
+
+  async function addEntry(e) {
+    const result = await axios
+      .post(`/api/experiments/`, 
+        { 
+          name: addExperiment.name,
+          device_id: addExperiment.device,
+          num_pods: addExperiment.num_pods,
+          plants: addExperiment.plants,
+          start_date: addExperiment.start_date,
+          end_date: addExperiment.end_date    
+        });
+    setExperimentList(experiment_list => [...experiment_list, result.data])
+
+  };
 
   async function editEntry(e) {
     const result = await axios
@@ -113,7 +127,8 @@ const ExperimentList = () => {
 
   function renderAvailableDevices(){
     return (
-      <select className="device_selection" defaultValue= {addExperiment.device} name="device" onChange={(e) => setDevice(e)}>
+      <select className="device_selection" defaultValue={addExperiment.device} name="device" onChange={(e) => setDevice(e)}>
+          <option key={-1} value={-1}> SELECT DEVICE </option>
           {available_devices.map(item => (
               <option key={item.id} value={item.id}> {item.name} </option>
           ))}
@@ -124,26 +139,24 @@ const ExperimentList = () => {
   function setPod(e){
     let plant = e.target.value
     let position = e.target.name.substring(4); 
-    console.log("OLD: ", addExperiment.plants)
-    const new_pods = [
-      ...addExperiment.plants.slice(0, position),
-      plant,
-      ...addExperiment.plants.slice(position + 1)
-    ]
-    console.log("NEW: ", new_pods)
-    setAddExperiment({...addExperiment, plants: new_pods})
+    let temp = addExperiment.plants
+    temp[position] = plant
+    setAddExperiment({...addExperiment, plants: temp})
   }
 
   function renderPodSelection(){
     let pod_container = []
-    for(let i = 0; i < addExperiment.num_pods; i++) {
-      pod_container.push(
-        <select className="pod_selection" name={"pod_"+(i)} defaultValue={-1} onChange={(e) => setPod(e)}>
-            {plant_list.map(item => (
-                <option key={item.id} value={item.id}> {item.name} </option>
-            ))}
-        </select>
-      )
+    if (addExperiment.device !== -1){
+      for(let i = 0; i < addExperiment.num_pods; i++) {
+        pod_container.push(
+          <select className="pod_selection" name={"pod_"+(i)} defaultValue={-1} onChange={(e) => setPod(e)}>
+              <option key={-1} value={-1}> Empty </option>
+              {plant_list.map(item => (
+                  <option key={item.id} value={item.id}> {item.name} </option>
+              ))}
+          </select>
+        )
+      }
     }
     return pod_container
   }
@@ -182,6 +195,12 @@ const ExperimentList = () => {
     )
   }
 
+
+  function closeModal(){
+    setModal({...modal, show: false}) 
+    setAddExperiment({...addExperiment, device: -1})
+  }
+
   return (
     <div>
         {experiment_list.map(item => (
@@ -206,7 +225,7 @@ const ExperimentList = () => {
         ))}
         <div>
             <button onClick={() => openModal(null)}>+</button>
-            <Popup open={modal.show} onClose={() => setModal({...modal, show: false})} modal nested>
+            <Popup open={modal.show} onClose={() => closeModal()} modal nested>
             {(close) => (
                     <div className="modal">
                         <div className="modal_body">
