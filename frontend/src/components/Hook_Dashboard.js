@@ -12,7 +12,7 @@ import Plant from "./Plant/Plant";
 import './dashboard.css';
 
 const Hook_Dashboard = () => {
-  const [selected_tab, set_selected_tab] = useState('device');
+  const [selected_tab, set_selected_tab] = useState('overview');
   const [auth, set_auth] = useState({
     user: -1
   });
@@ -35,6 +35,7 @@ const Hook_Dashboard = () => {
           return logout()
         });
     } else {
+      ////NO LOCAL STORAGE TOKEN?? BOOTED OUT.
       window.location.replace("/")
     }
   }
@@ -54,6 +55,9 @@ const Hook_Dashboard = () => {
   function renderNav() {
     return (
       <div className="nav">
+        <span className={selected_tab === "overview" ? "nav-link active" : "nav-link"} onClick={() => set_selected_tab("overview" )}>
+          Overview
+        </span>
         <span className={selected_tab === "device" ? "nav-link active" : "nav-link"} onClick={() => set_selected_tab("device" )}>
           DEVICES
         </span>
@@ -75,6 +79,8 @@ const Hook_Dashboard = () => {
 
   function renderPage() {
     switch(selected_tab) {
+      case 'overview':
+        return <div>Hi.</div>
       case 'device':
         return <Plant></Plant>
       case 'experiment':
@@ -109,7 +115,6 @@ const Hook_Dashboard = () => {
         <ul className="list-group list-group-flush border-top-0">
           {renderPage()}
         </ul>
-        {/*<button className="btn btn-primary" onClick={this.createItem} > Add {this.state.selected_tab} </button> */}
       </div>
     </main>
   );
