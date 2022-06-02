@@ -26,6 +26,9 @@ const ExperimentList = () => {
   const [editExperiment, setEditExperiment] = useState({
     id: -1,
     name: 'unknown',
+    plants: [],
+    start_date: '',
+    end_date: '',
     // start_date: new Date(),
     // device: -1, 
     // day: -1,
@@ -76,7 +79,7 @@ const ExperimentList = () => {
     if (experiment === null ){
       setModal({add: true, show: true})
     } else {
-      setEditExperiment(experiment)
+      setEditExperiment({...editExperiment, id: experiment.id, start_date: experiment.start_date, end_date: experiment.end_date})
       setModal({add: false, show: true})
     }
   }
@@ -109,7 +112,9 @@ const ExperimentList = () => {
         .patch(`/api/experiments/${editExperiment.id}/`, 
         { 
             id: editExperiment.id,
-            name: editExperiment.name
+            name: editExperiment.name,
+            start_date: editExperiment.start_date,
+            end_date: editExperiment.end_date
         }).catch((err) => console.log(err));
     const index = experiment_list.findIndex(experiment => experiment.id === editExperiment.id);
     const updatedItem = result.data
@@ -187,11 +192,30 @@ const ExperimentList = () => {
 
 
   function renderEditModal(){
+    console.log(editExperiment)
     return (
-      <div className="form_row">
-        <label> Name: </label> 
-            <input name="name" value={editExperiment.name} onChange={(e) => setEditExperiment({...editExperiment, name: e.target.value})} />
+      <div>
+        <div className="form_row">
+          <label> Name: </label> 
+              <input name="name" value={editExperiment.name} onChange={(e) => setEditExperiment({...editExperiment, name: e.target.value})} />
+        </div>
+        { editExperiment.start_date.substring(0, 10) > new Date().toISOString()
+          ? <div>
+              <div className="form_row">
+                  <label> Start Date: </label> 
+                  <input type="date" name="start_date" value={editExperiment.start_date.substring(0,10)} defaultValue={editExperiment.start_date.substring(0,10)} onChange={(e) => setEditExperiment({...editExperiment, start_date: e.target.value})} />
+              </div>
+              <div className="form_row">
+                <label> End Date: </label> 
+                <input type="date" name="end_date" value={editExperiment.end_date.substring(0,10)} defaultValue={editExperiment.end_date.substring(0,10)} onChange={(e) => setEditExperiment({...editExperiment, end_date: e.target.value})} />
+              </div>
+            </div> 
+          : ""
+        }
+
       </div>
+
+      
     )
   }
 

@@ -51,7 +51,6 @@ const Device = () => {
 
     function renderDevices(){
         const device_list = []
-        console.log(loaded_devices)
         if (selected_device_status == 'loaded' || selected_device_status == 'all'){   
             loaded_devices.map((item) => {
                 device_list.push(
