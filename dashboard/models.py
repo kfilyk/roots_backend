@@ -151,12 +151,20 @@ class Phase(models.Model): # generic periodic phase setting to be used by a reci
         managed = True
         db_table = 'phase'
 
-# multiple rows in the recipe tab make up a single recipe. Multiple references to a single phase can be used, also to experiment
+# multiple rows in the recipe tab make up a single recipe. Multiple references to a single phase can be used. ALSO, multiple Experiments can use the same recipe. So Experiment should have a reference to recipe
 class Recipe(models.Model):
     id = models.AutoField(db_column='r_id', primary_key=True)  
-    experiment = models.ForeignKey("Experiment", models.DO_NOTHING, db_column='r_experiment_id')  # pods created automatically when an experiment is created
-    phase = models.ForeignKey("Phase", models.DO_NOTHING, db_column='r_phase_id')
-    precidence = models.IntegerField(db_column = 'r_precidence') # because recipe phases arent editable once a recipe starts, dont worry about cascading order changes (for now)
+    name = models.CharField(db_column='r_name', max_length=45)
+    phase1 = models.ForeignKey("Phase", models.DO_NOTHING, related_name="phase1", db_column='r_phase1_id', blank=True, null=True)
+    phase2 = models.ForeignKey("Phase", models.DO_NOTHING, related_name="phase2", db_column='r_phase2_id', blank=True, null=True)
+    phase3 = models.ForeignKey("Phase", models.DO_NOTHING, related_name="phase3", db_column='r_phase3_id', blank=True, null=True)
+    phase4 = models.ForeignKey("Phase", models.DO_NOTHING, related_name="phase4", db_column='r_phase4_id', blank=True, null=True)
+    phase5 = models.ForeignKey("Phase", models.DO_NOTHING, related_name="phase5", db_column='r_phase5_id', blank=True, null=True)
+    phase6 = models.ForeignKey("Phase", models.DO_NOTHING, related_name="phase6", db_column='r_phase6_id', blank=True, null=True)
+    phase7 = models.ForeignKey("Phase", models.DO_NOTHING, related_name="phase7", db_column='r_phase7_id', blank=True, null=True)
+    phase8 = models.ForeignKey("Phase", models.DO_NOTHING, related_name="phase8", db_column='r_phase8_id', blank=True, null=True)
+    phase9 = models.ForeignKey("Phase", models.DO_NOTHING, related_name="phase9", db_column='r_phase9_id', blank=True, null=True)
+    phase10 = models.ForeignKey("Phase", models.DO_NOTHING, related_name="phase10", db_column='r_phase10_id', blank=True, null=True)
 
 class Plant(models.Model): # types: basil, 
     id = models.AutoField(db_column='pl_id', primary_key=True)  
