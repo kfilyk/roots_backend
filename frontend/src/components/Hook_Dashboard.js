@@ -19,7 +19,6 @@ const Hook_Dashboard = () => {
   function authenicate_user() {
     if (window.localStorage.getItem("token")) {
 
-      console.log("HELLO")
       // if a token is found, set the authorization and attempt to vlaidate it against the server
       axios.defaults.headers.common.Authorization = `Token ${window.localStorage.getItem("token")}`;
 

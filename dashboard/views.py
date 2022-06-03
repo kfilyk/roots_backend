@@ -1,7 +1,8 @@
 from dashboard.models import Device, Experiment, Phase, Plant, Pod
 from rest_framework import viewsets
+from django.forms.models import model_to_dict
 from .serializers import DeviceSerializer, ExperimentSerializer, CreateUserSerializer, UserSerializer, PhaseSerializer, PlantSerializer, PodSerializer
-#from .models import Device
+from django.core import serializers
 from django_filters import rest_framework as filters
 from rest_framework.filters import OrderingFilter
 from rest_framework.views import APIView
@@ -96,10 +97,8 @@ class PodView(viewsets.ModelViewSet):
         exp_id=json.loads(request.body)["id"]
         qs = Pod.objects.filter(experiment = exp_id, end_date__isnull=True).annotate(plant_name=F('plant__name'))
         pods = list(qs.values())
-        # # device_capacity = Experiment.objects.get(exp_id).values(‘device__‘)
-        # device_capacity = 5
-        # return JsonResponse({pods: pods, device_capacity: device_capacity}, safe=False)
-        return JsonResponse(pods, safe=False)
+        device_id = Experiment.objects.get(id=exp_id).device
+        return JsonResponse({"device_capacity": model_to_dict(device_id)['device_capacity'], "pods": pods}, safe=False)
             
     '''
     @action(detail=False, methods=["post"], name='populate_pod_carousel')

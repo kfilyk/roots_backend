@@ -82,7 +82,7 @@ const Device = () => {
         if (selected_device_status === 'free' || selected_device_status === 'all'){
             free_devices.map((item) => {
                 device_list.push(
-                    <div className="object_container">
+                    <div key={item.id} className="object_container">
                         <div className="object_description">
                         <div className="object_name">{ item.name }</div>
                         <div>Device ID: { item.id }</div>
