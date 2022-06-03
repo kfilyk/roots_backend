@@ -40,10 +40,10 @@ const Device = () => {
               ALL
             </span>
             <span className={selected_device_status === "loaded" ? "nav-link active" : "nav-link"} onClick={() => set_selected_device_status("loaded")}>
-              Loaded Devices
+              LOADED DEVICES
             </span>
             <span className={selected_device_status === "free" ? "nav-link active" : "nav-link"} onClick={() => set_selected_device_status("free")}>
-              Free Devices
+              FREE DEVICES
             </span>
           </div>
         );

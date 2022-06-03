@@ -9,7 +9,7 @@ import './dashboard.css';
 import Device from './Device/Device';
 
 const Hook_Dashboard = () => {
-  const [selected_tab, set_selected_tab] = useState('overview');
+  const [selected_tab, set_selected_tab] = useState('loading'); // in the future: loading state shows a spinning wheel
   const [auth, set_auth] = useState({
     user: -1
   });
@@ -27,6 +27,7 @@ const Hook_Dashboard = () => {
         .post("/auth/token/")
         .then((res) => {
           set_auth({...auth, user: res.data.username})
+          set_selected_tab("device" )
         })
         .catch(res => {
           return logout()
@@ -52,9 +53,6 @@ const Hook_Dashboard = () => {
   function renderNav() {
     return (
       <div className="nav">
-        <span className={selected_tab === "overview" ? "nav-link active" : "nav-link"} onClick={() => set_selected_tab("overview" )}>
-          Overview
-        </span>
         <span className={selected_tab === "device" ? "nav-link active" : "nav-link"} onClick={() => set_selected_tab("device" )}>
           DEVICES
         </span>
@@ -76,8 +74,6 @@ const Hook_Dashboard = () => {
 
   function renderPage() {
     switch(selected_tab) {
-      case 'overview':
-        return <div>Hi.</div>
       case 'device':
         return <Device></Device>
       case 'experiment':

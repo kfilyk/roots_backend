@@ -1,6 +1,5 @@
 import React, { Component, } from "react";
 import { Navigate } from "react-router-dom";
-import ExperimentList from './Experiment/Experiment';
 import ExperimentModal from './Experiment/ExperimentModal';
 import Experiment from './Experiment/Experiment';
 import Phase from './Phase/Phase';
