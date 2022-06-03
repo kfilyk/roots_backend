@@ -188,7 +188,7 @@ export default class CustomModal extends Component {
   };
 
   getPods(id) {
-    if(this.state.id != null) {
+    if(this.state.id !== null) {
       axios
           .get(`/api/pods/?experiment=${id}`)
           .then((res) => {

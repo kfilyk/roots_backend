@@ -54,7 +54,7 @@ const Device = () => {
         if (selected_device_status == 'loaded' || selected_device_status == 'all'){   
             loaded_devices.map((item) => {
                 device_list.push(
-                    <div className="object_container">
+                    <div key={item.id} className="object_container">
                         <div className="object_description">
                             <div className="object_name">{ item.device_name }</div>
                             {/* <div>Registered: { item.registration_date.substring(0, 10) }</div> */}

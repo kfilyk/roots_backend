@@ -37,7 +37,7 @@ const PlantList = () => {
 
   async function deleteEntry(id) {
     await axios.delete(`/api/plants/${id}/`);
-    setPlantList(plant_list.filter(plant => plant.id != id))
+    setPlantList(plant_list.filter(plant => plant.id !== id))
   }
 
   async function addEntry(e) {

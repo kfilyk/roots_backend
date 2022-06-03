@@ -1,13 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Navigate } from "react-router-dom";
-import ExperimentList from './Experiment/Experiment';
-import ExperimentModal from './Experiment/ExperimentModal';
 import Experiment from './Experiment/Experiment';
 import Phase from './Phase/Phase';
 import Recipe from './Recipe/Recipe';
 import axios from "axios";
 import user_brown_icon from '../img/user_brown_icon.png';
-import vertical_menu_icon from "../img/vertical_menu_icon.png"
 import Plant from "./Plant/Plant";
 import './dashboard.css';
 import Device from './Device/Device';

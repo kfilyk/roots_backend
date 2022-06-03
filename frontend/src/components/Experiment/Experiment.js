@@ -24,7 +24,7 @@ const ExperimentList = () => {
   })
 
   const [editExperiment, setEditExperiment] = useState({
-    id: -1,
+    id: 2,
     name: 'unknown',
     plants: [],
     start_date: '',
@@ -79,7 +79,11 @@ const ExperimentList = () => {
     if (experiment === null ){
       setModal({add: true, show: true})
     } else {
-      setEditExperiment({...editExperiment, id: experiment.id, start_date: experiment.start_date, end_date: experiment.end_date})
+      // setEditExperiment()
+      setEditExperiment({id: experiment.id, name: experiment.name, start_date: experiment.start_date.substring(0,10), end_date: experiment.end_date.substring(0,10)})
+      // setEditExperiment({id: experiment.id, name: experiment.name, plants: [], start_date: experiment.start_date.substring(0,10), end_date: experiment.end_date.substring(0,10)})
+      // setEditExperiment({id: 2, name: 'unknown', plants: [], start_date: '', end_date: '',})
+      console.log("DD: ", editExperiment)
       setModal({add: false, show: true})
     }
   }
@@ -149,10 +153,10 @@ const ExperimentList = () => {
     setAddExperiment({...addExperiment, plants: temp})
   }
 
-  function renderPodSelection(){
+  function renderPodSelection(experiment){
     let pod_container = []
-    if (addExperiment.device !== -1){
-      for(let i = 0; i < addExperiment.num_pods; i++) {
+    if (experiment.device !== -1){
+      for(let i = 0; i < experiment.num_pods; i++) {
         pod_container.push(
           <select className="pod_selection" name={"pod_"+(i)} defaultValue={-1} onChange={(e) => setPod(e)}>
               <option key={-1} value={-1}> Empty </option>
@@ -185,14 +189,15 @@ const ExperimentList = () => {
               <label> End Date: </label> 
               <input type="date" name="end_date" value={addExperiment.end_date} onChange={(e) => setAddExperiment({...addExperiment, end_date: e.target.value})} />
             </div>
-            {renderPodSelection()}
+            {renderPodSelection(addExperiment)}
         </div>
       )
   }
 
 
-  function renderEditModal(){
-    console.log(editExperiment)
+  function renderEditModal(editExperiment){
+    // console.log("DD: ", editExperiment)
+
     return (
       <div>
         <div className="form_row">
@@ -212,10 +217,11 @@ const ExperimentList = () => {
             </div> 
           : ""
         }
-
+        <div className="form_row">
+            <label> Pod Selection: </label> 
+            {renderPodSelection(editExperiment)}
+        </div>
       </div>
-
-      
     )
   }
 
@@ -265,7 +271,7 @@ const ExperimentList = () => {
 
                             { modal.add === true 
                             ? renderAddModal()
-                            : renderEditModal()
+                            : renderEditModal(editExperiment)
                             }
 
                             <button className='save' onClick={() => {
