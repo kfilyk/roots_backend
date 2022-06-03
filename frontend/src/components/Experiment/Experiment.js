@@ -16,7 +16,7 @@ const ExperimentList = () => {
 
   const [addExperiment, setAddExperiment] = useState({
     name: 'unknown',
-    num_pods: -1,
+    device_capacity: -1,
     device: -1,
     plants: [],
     start_date: '',
@@ -102,7 +102,7 @@ const ExperimentList = () => {
         { 
           name: addExperiment.name,
           device_id: addExperiment.device,
-          num_pods: addExperiment.num_pods,
+          device_capacity: addExperiment.device_capacity,
           plants: addExperiment.plants,
           start_date: addExperiment.start_date,
           end_date: addExperiment.end_date    
@@ -131,7 +131,7 @@ const ExperimentList = () => {
 
   function setDevice(e){
     let selected_device = available_devices.find(device => device.id == e.target.value)
-    setAddExperiment({...addExperiment, device: selected_device['id'], num_pods: selected_device['num_pods'], plants:Array(5).fill(-1)})
+    setAddExperiment({...addExperiment, device: selected_device['id'], device_capacity: selected_device['device_capacity'], plants:Array(5).fill(-1)})
   }
 
   function renderAvailableDevices(){
@@ -156,7 +156,7 @@ const ExperimentList = () => {
   function renderPodSelection(experiment){
     let pod_container = []
     if (experiment.device !== -1){
-      for(let i = 0; i < experiment.num_pods; i++) {
+      for(let i = 0; i < experiment.device_capacity; i++) {
         pod_container.push(
           <select className="pod_selection" name={"pod_"+(i)} defaultValue={-1} onChange={(e) => setPod(e)}>
               <option key={-1} value={-1}> Empty </option>

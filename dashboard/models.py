@@ -33,7 +33,7 @@ class Device(models.Model):
     is_online = models.BooleanField(db_column='d_is_online', default=False)  
     mac_address = models.CharField(db_column='d_mac_address', max_length=45, blank=True, null=True)  
     fill_res_flag = models.BooleanField(db_column='d_fill_res_flag', default=False) 
-    num_pods = models.IntegerField(db_column='d_num_pods', default = 5) 
+    device_capacity = models.IntegerField(db_column='d_device_capacity', default = 5) 
 
     class Meta:
         managed = True
@@ -154,7 +154,7 @@ class Phase(models.Model): # generic periodic phase setting to be used by a reci
 # multiple rows in the recipe tab make up a single recipe. Multiple references to a single phase can be used. ALSO, multiple Experiments can use the same recipe. So Experiment should have a reference to recipe
 class Recipe(models.Model):
     id = models.AutoField(db_column='r_id', primary_key=True)  
-    name = models.CharField(db_column='r_name', max_length=45, blank=True, null=True)
+    name = models.CharField(db_column='r_name', max_length=45, default="NO RECIPE NAME")
     phase1 = models.ForeignKey("Phase", models.DO_NOTHING, related_name="phase1", db_column='r_phase1_id', blank=True, null=True)
     phase2 = models.ForeignKey("Phase", models.DO_NOTHING, related_name="phase2", db_column='r_phase2_id', blank=True, null=True)
     phase3 = models.ForeignKey("Phase", models.DO_NOTHING, related_name="phase3", db_column='r_phase3_id', blank=True, null=True)
