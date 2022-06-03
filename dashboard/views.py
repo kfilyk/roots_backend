@@ -18,6 +18,7 @@ from rest_framework.decorators import action
 from django.http import HttpResponse, JsonResponse
 from datetime import datetime
 from django.utils.timezone import make_aware
+import json
 
 # https://www.digitalocean.com/community/tutorials/build-a-to-do-application-using-django-and-react
 
@@ -85,10 +86,18 @@ class PodView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
     serializer_class = PodSerializer
     filter_backends = [filters.DjangoFilterBackend,]
-    filterset_fields = ['experiment']
+    filterset_fields = ['experiment', 'end_date']
 
     def get_queryset(self):
         return Pod.objects.all().annotate(plant_name=F('plant__name')) # return joined plant.name
+
+    @action(detail=False, methods=["post"], name='pod_carousel')
+    def pod_carousel(self, request):
+        exp_id=json.loads(request.body)["id"]
+        print("TT: ", exp_id)
+        qs = Pod.objects.filter(experiment = exp_id, end_date__isnull=True)
+        data = list(qs.values())
+        return JsonResponse(data, safe=False)
 
 class PlantView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 

@@ -64,7 +64,7 @@ const Phase = () => {
 
   async function deleteEntry(id) {
     await axios.delete(`/api/phases/${id}/`);
-    setPhaseList(phaseList.filter(phase => phase.id != id))
+    setPhaseList(phaseList.filter(phase => phase.id !== id))
   }
 
   async function addEntry(e) {
