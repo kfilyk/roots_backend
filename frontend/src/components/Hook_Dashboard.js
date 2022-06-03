@@ -27,7 +27,10 @@ const Hook_Dashboard = () => {
         .post("/auth/token/")
         .then((res) => {
           set_auth({...auth, user: res.data.username})
+          console.log("FLAG: ", axios.defaults.headers.common.Authorization)
+          console.log("AUTH: ", auth)
           set_selected_tab("device" )
+
         })
         .catch(res => {
           return logout()
@@ -73,19 +76,23 @@ const Hook_Dashboard = () => {
   };
 
   function renderPage() {
-    switch(selected_tab) {
-      case 'device':
-        return <Device></Device>
-      case 'experiment':
-        return <Experiment></Experiment>
-      case 'recipe':
-        return <Recipe></Recipe>
-      case 'phase':
-        return <Phase></Phase>
-      case 'plant':
-        return <Plant></Plant>
-      default:
-        return <Experiment></Experiment>
+    if(auth.user !== -1) {
+      console.log("AUTH FLAG3 : ", auth)
+      
+      switch(selected_tab) {
+        case 'device':
+          return <Device></Device>
+        case 'experiment':
+          return <Experiment></Experiment>
+        case 'recipe':
+          return <Recipe></Recipe>
+        case 'phase':
+          return <Phase></Phase>
+        case 'plant':
+          return <Plant></Plant>
+        default:
+          return <></> // replace this with spinny wheel
+      }
     }
   }
 
