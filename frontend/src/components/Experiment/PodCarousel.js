@@ -3,11 +3,11 @@ import ProgressCircle from '../common/ProgressCircle'
 
 const PodCarousel = (props) => {
   const [pod_list, setPodList] = useState([]);
-  const [num_pods, setNumPods] = useState(-1);
+  const [device_capacity, setNumPods] = useState(-1);
 
   async function fetchData(props) {
     setPodList(props.pod_list)
-    setNumPods(props.num_pods)
+    setNumPods(props.device_capacity)
   } 
 
   useEffect(() => {
@@ -16,8 +16,8 @@ const PodCarousel = (props) => {
 
   function render(){
     let progress_circle_container = []
-    if (num_pods !== null && pod_list !== null) {
-      for(let i = 0; i < num_pods; i++) {
+    if (device_capacity !== null && pod_list !== null) {
+      for(let i = 0; i < device_capacity; i++) {
         let pod = pod_list.filter(pod => pod.position === (i+1))[0] ?? null
         if(pod !== null) {
           progress_circle_container.push(<ProgressCircle key={"pod_"+pod.position+"_"+pod.experiment+"_"+pod.plant} progress={{value: pod.score, caption: pod.plant_name, colour: 'green'}}></ProgressCircle>) 

@@ -89,7 +89,7 @@ export default class CustomModal extends Component {
                     <div className="object_content">
                             {
                                 (this.state.pod_list.length > 0) ?                             
-                                <PodCarousel pod_list={this.state.pod_list} num_pods = {device.num_pods} ></PodCarousel>
+                                <PodCarousel pod_list={this.state.pod_list} device_capacity = {device.device_capacity} ></PodCarousel>
                                 :
                                 <></>
                             }

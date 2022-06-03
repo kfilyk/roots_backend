@@ -41,12 +41,12 @@ class ExperimentView(viewsets.ModelViewSet):
         exp_id = super().create(request, *args, **kwargs).data['id']
         exp = Experiment.objects.get(id=exp_id)
         plants = request.data['plants']
-        num_pods = request.data['num_pods']
+        device_capacity = request.data['device_capacity']
         start_date = make_aware(datetime.strptime(request.data['start_date'], '%Y-%m-%d'))
         print(start_date)
         phase = 0
         pods = []
-        for i in range(num_pods):
+        for i in range(device_capacity):
             position = i+1
             if plants[i] == -1:
                 pods.append(Pod(start_date=start_date, phase=phase, position=position, plant=None, experiment=exp))
@@ -59,7 +59,7 @@ class ExperimentView(viewsets.ModelViewSet):
     def available_devices(self, request):
         devices_in_use = Experiment.objects.filter(device_id__isnull=False).values('device_id')
         query = Device.objects.exclude(id__in=devices_in_use)
-        data = list(query.values('id', 'name', 'num_pods'))
+        data = list(query.values('id', 'name', 'device_capacity'))
         return JsonResponse(data, safe=False)
 
     @action(detail=False, methods=['GET'], name='loaded_devices')
@@ -95,8 +95,10 @@ class PodView(viewsets.ModelViewSet):
     def populate_pod_carousel(self, request):
         exp_id=json.loads(request.body)["id"]
         qs = Pod.objects.filter(experiment = exp_id, end_date__isnull=True).annotate(plant_name=F('plant__name'))
-        data = list(qs.values())
-        return JsonResponse(data, safe=False)
+        pods = list(qs.values())
+        # device_capacity = Experiment.objects.get(exp_id).values('device__')
+        device_capacity = 5
+        return JsonResponse({pods: pods, device_capacity: device_capacity}, safe=False)
 
 class PlantView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 

@@ -19,7 +19,7 @@ export default class CustomModal extends Component {
       pod_list: [],
       experiment_list: [],
       pod_selection: {}, // new pod list plants
-      num_pods: 0,
+      device_capacity: 0,
       today: year+"-"+month+"-"+day,
       device_list: this.props.device_list ?? [],
       id: this.props.experiment.id ?? null,
@@ -44,9 +44,9 @@ export default class CustomModal extends Component {
     this.getExperiments(); // call getExperiments
     //as soon as form instantiation, specify 
     if(this.state.device !== null) {
-      this.setState({num_pods: this.state.device_list.filter(device => device.id === this.state.device)[0].num_pods});
+      this.setState({device_capacity: this.state.device_list.filter(device => device.id === this.state.device)[0].device_capacity});
     } else {
-      this.setState({num_pods: this.state.pod_list.length}); 
+      this.setState({device_capacity: this.state.pod_list.length}); 
     }
   }
 
@@ -168,10 +168,10 @@ export default class CustomModal extends Component {
     } else if (e.target.name.includes("device")) { // if setting a new device, two step process so we can tell the old one its off duty
       console.log("FLAG: ", e.target.value)
       if(e.target.value === "") {
-        this.setState({"num_pods": 0})
+        this.setState({"device_capacity": 0})
         this.setState({"new_device": null});
       } else {
-        this.setState({"num_pods": this.state.device_list.filter(device => device.id === parseInt(e.target.value))[0].num_pods})
+        this.setState({"device_capacity": this.state.device_list.filter(device => device.id === parseInt(e.target.value))[0].device_capacity})
         this.setState({"new_device": e.target.value});
       }
     } else {
@@ -246,7 +246,7 @@ export default class CustomModal extends Component {
                           <select className="device_selection" defaultValue= {this.state.device} name="device" onChange={this.handleChange}>
                             <option key={"no_device_available"} value={null}></option>
                             
-                            { this.state.device_list.map((item) => (item.num_pods >= this.state.num_pods) ? <option key={item.id} value={item.id}>{item.name} </option> : <></>) }
+                            { this.state.device_list.map((item) => (item.device_capacity >= this.state.device_capacity) ? <option key={item.id} value={item.id}>{item.name} </option> : <></>) }
                           </select>
                         );
                         return device_list_selection;
@@ -257,12 +257,12 @@ export default class CustomModal extends Component {
                  
                 {
                   (() => {
-                    // only should if a device has been specified: need num_pods of device and pod_list from the device
+                    // only should if a device has been specified: need device_capacity of device and pod_list from the device
                     if(this.state.device !== null || this.state.new_device !== null) {
                     
                       let pod_list_container = [] 
 
-                      for(let i = 0; i < this.state.num_pods; i++) { // 0, 5, 10 whatever
+                      for(let i = 0; i < this.state.device_capacity; i++) { // 0, 5, 10 whatever
 
                         let curr_pod = this.state.pod_list.filter(pod => pod.position === (i+1))[0] ?? null
                         let plant = null;      
