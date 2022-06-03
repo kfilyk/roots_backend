@@ -96,10 +96,21 @@ class PodView(viewsets.ModelViewSet):
         exp_id=json.loads(request.body)["id"]
         qs = Pod.objects.filter(experiment = exp_id, end_date__isnull=True).annotate(plant_name=F('plant__name'))
         pods = list(qs.values())
+        # # device_capacity = Experiment.objects.get(exp_id).values(‘device__‘)
+        # device_capacity = 5
+        # return JsonResponse({pods: pods, device_capacity: device_capacity}, safe=False)
+        return JsonResponse(pods, safe=False)
+            
+    '''
+    @action(detail=False, methods=["post"], name='populate_pod_carousel')
+    def populate_pod_carousel(self, request):
+        exp_id=json.loads(request.body)["id"]
+        qs = Pod.objects.filter(experiment = exp_id, end_date__isnull=True).annotate(plant_name=F('plant__name'))
+        pods = list(qs.values())
         # device_capacity = Experiment.objects.get(exp_id).values('device__')
         device_capacity = 5
         return JsonResponse({pods: pods, device_capacity: device_capacity}, safe=False)
-
+    '''
 class PlantView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
     serializer_class = PlantSerializer

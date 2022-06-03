@@ -17,6 +17,7 @@ const Device = () => {
     } 
     
     useEffect(() => {
+        console.log("FETCHED LOADED DEVICES")
         fetch_loaded_devices();
     }, []);
 
@@ -30,6 +31,8 @@ const Device = () => {
     } 
 
     useEffect(() => {
+        console.log("FETCHED FREE DEVICES")
+
         fetch_free_devices();
     }, []);
 
@@ -51,8 +54,9 @@ const Device = () => {
 
     function renderDevices(){
         const device_list = []
-        if (selected_device_status == 'loaded' || selected_device_status == 'all'){   
+        if (selected_device_status === 'loaded' || selected_device_status === 'all'){   
             loaded_devices.map((item) => {
+                console.log("ITEM: ", item)
                 device_list.push(
                     <div key={item.id} className="object_container">
                         <div className="object_description">
@@ -75,7 +79,7 @@ const Device = () => {
             })
         }
 
-        if (selected_device_status == 'free' || selected_device_status == 'all'){
+        if (selected_device_status === 'free' || selected_device_status === 'all'){
             free_devices.map((item) => {
                 device_list.push(
                     <div className="object_container">

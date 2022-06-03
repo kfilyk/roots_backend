@@ -7,6 +7,7 @@ const PodCarouselTwo = (props) => {
   const [device_capacity, setNumPods] = useState(-1);
 
   async function fetchData(props) {
+    console.log("EXPERIMENT ID: ", props.experimentID)
     const result = await axios.post(`/api/pods/populate_pod_carousel/`, {"id": props.experimentID});
     console.log(props.experimentID, result.data)
     setPodList(result.data)
@@ -19,7 +20,9 @@ const PodCarouselTwo = (props) => {
 
   function render(){
     let progress_circle_container = []
-    if (device_capacity !== null && pod_list !== null) {
+    console.log("POD LIST: ", pod_list)
+    console.log("DEVICE CAP: ", device_capacity)
+    if (device_capacity !== -1 && pod_list !== null) {
       for(let i = 0; i < device_capacity; i++) {
         let pod = pod_list.filter(pod => pod.position === (i+1))[0] ?? null
         console.log("POD: ", pod, device_capacity)
@@ -30,7 +33,8 @@ const PodCarouselTwo = (props) => {
         }
       }
       return <> {progress_circle_container }</> ;
-    }
+    } 
+    return <></>;
   };
 
   return (
