@@ -91,11 +91,10 @@ class PodView(viewsets.ModelViewSet):
     def get_queryset(self):
         return Pod.objects.all().annotate(plant_name=F('plant__name')) # return joined plant.name
 
-    @action(detail=False, methods=["post"], name='pod_carousel')
-    def pod_carousel(self, request):
+    @action(detail=False, methods=["post"], name='populate_pod_carousel')
+    def populate_pod_carousel(self, request):
         exp_id=json.loads(request.body)["id"]
-        print("TT: ", exp_id)
-        qs = Pod.objects.filter(experiment = exp_id, end_date__isnull=True)
+        qs = Pod.objects.filter(experiment = exp_id, end_date__isnull=True).annotate(plant_name=F('plant__name'))
         data = list(qs.values())
         return JsonResponse(data, safe=False)
 
