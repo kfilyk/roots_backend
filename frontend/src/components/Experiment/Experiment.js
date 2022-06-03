@@ -11,9 +11,24 @@ const ExperimentList = () => {
     show: false,
     add: false
   })
+
+  const [available_devices, set_available_devices] = useState([])
+
+  const [addExperiment, setAddExperiment] = useState({
+    name: 'unknown',
+    num_pods: -1,
+    device: -1,
+    plants: [],
+    start_date: '',
+    end_date: '', 
+  })
+
   const [editExperiment, setEditExperiment] = useState({
     id: -1,
     name: 'unknown',
+    plants: [],
+    start_date: '',
+    end_date: '',
     // start_date: new Date(),
     // device: -1, 
     // day: -1,
@@ -30,17 +45,28 @@ const ExperimentList = () => {
 
   useEffect(() => {
     fetchData();
-  }, [experiment_list]);
+  }, []);
 
   async function fetchPlants() {
     const result = await axios(
       '/api/plants/',
     );
     setPlantList(result.data)
-  } 
+  }
+  
+  async function fetchAvailableDevices() {
+    const result = await axios(
+      '/api/experiments/available_devices/',
+    );
+    set_available_devices(result.data)
+  }
 
   useEffect(() => {
     fetchPlants();
+  }, []);
+
+  useEffect(() => {
+    fetchAvailableDevices();
   }, []);
 
 
@@ -53,26 +79,42 @@ const ExperimentList = () => {
     if (experiment === null ){
       setModal({add: true, show: true})
     } else {
-      setEditExperiment(experiment)
+      setEditExperiment({...editExperiment, id: experiment.id, start_date: experiment.start_date, end_date: experiment.end_date})
       setModal({add: false, show: true})
     }
   }
 
   function submitModal(){
     if(modal.add){
-      // addEntry()
-      console.log("submitModal function not done... ")
+      addEntry()
     } else {
       editEntry()
     }
   }
+
+  async function addEntry(e) {
+    const result = await axios
+      .post(`/api/experiments/`, 
+        { 
+          name: addExperiment.name,
+          device_id: addExperiment.device,
+          num_pods: addExperiment.num_pods,
+          plants: addExperiment.plants,
+          start_date: addExperiment.start_date,
+          end_date: addExperiment.end_date    
+        });
+    setExperimentList(experiment_list => [...experiment_list, result.data])
+
+  };
 
   async function editEntry(e) {
     const result = await axios
         .patch(`/api/experiments/${editExperiment.id}/`, 
         { 
             id: editExperiment.id,
-            name: editExperiment.name
+            name: editExperiment.name,
+            start_date: editExperiment.start_date,
+            end_date: editExperiment.end_date
         }).catch((err) => console.log(err));
     const index = experiment_list.findIndex(experiment => experiment.id === editExperiment.id);
     const updatedItem = result.data
@@ -83,22 +125,104 @@ const ExperimentList = () => {
     ])
   };
 
+  function setDevice(e){
+    let selected_device = available_devices.find(device => device.id == e.target.value)
+    setAddExperiment({...addExperiment, device: selected_device['id'], num_pods: selected_device['num_pods'], plants:Array(5).fill(-1)})
+  }
+
+  function renderAvailableDevices(){
+    return (
+      <select className="device_selection" defaultValue={addExperiment.device} name="device" onChange={(e) => setDevice(e)}>
+          <option key={-1} value={-1}> SELECT DEVICE </option>
+          {available_devices.map(item => (
+              <option key={item.id} value={item.id}> {item.name} </option>
+          ))}
+      </select>
+    )
+  }
+
+  function setPod(e){
+    let plant = e.target.value
+    let position = e.target.name.substring(4); 
+    let temp = addExperiment.plants
+    temp[position] = plant
+    setAddExperiment({...addExperiment, plants: temp})
+  }
+
+  function renderPodSelection(){
+    let pod_container = []
+    if (addExperiment.device !== -1){
+      for(let i = 0; i < addExperiment.num_pods; i++) {
+        pod_container.push(
+          <select className="pod_selection" name={"pod_"+(i)} defaultValue={-1} onChange={(e) => setPod(e)}>
+              <option key={-1} value={-1}> Empty </option>
+              {plant_list.map(item => (
+                  <option key={item.id} value={item.id}> {item.name} </option>
+              ))}
+          </select>
+        )
+      }
+    }
+    return pod_container
+  }
+ 
   function renderAddModal(){
       return (
         <div>
-          THIS IS NOT DONE.
+            <div className="form_row">
+              <label> Experiment Name: </label> 
+              <input name="name" value={addExperiment.name} onChange={(e) => setAddExperiment({...addExperiment, name: e.target.value})} />
+            </div>
+            <div className="form_row">
+              <label> Device: </label> 
+                {renderAvailableDevices()}
+            </div>
+            <div className="form_row">
+              <label> Start Date: </label> 
+              <input type="date" name="start_date" value={addExperiment.start_date} onChange={(e) => setAddExperiment({...addExperiment, start_date: e.target.value})} />
+            </div>
+            <div className="form_row">
+              <label> End Date: </label> 
+              <input type="date" name="end_date" value={addExperiment.end_date} onChange={(e) => setAddExperiment({...addExperiment, end_date: e.target.value})} />
+            </div>
+            {renderPodSelection()}
         </div>
       )
   }
 
 
   function renderEditModal(){
+    console.log(editExperiment)
     return (
-      <div className="form_row">
-        <label> Name: </label> 
-            <input name="name" value={editExperiment.name} onChange={(e) => setEditExperiment({...editExperiment, name: e.target.value})} />
+      <div>
+        <div className="form_row">
+          <label> Name: </label> 
+              <input name="name" value={editExperiment.name} onChange={(e) => setEditExperiment({...editExperiment, name: e.target.value})} />
+        </div>
+        { editExperiment.start_date.substring(0, 10) > new Date().toISOString()
+          ? <div>
+              <div className="form_row">
+                  <label> Start Date: </label> 
+                  <input type="date" name="start_date" value={editExperiment.start_date.substring(0,10)} defaultValue={editExperiment.start_date.substring(0,10)} onChange={(e) => setEditExperiment({...editExperiment, start_date: e.target.value})} />
+              </div>
+              <div className="form_row">
+                <label> End Date: </label> 
+                <input type="date" name="end_date" value={editExperiment.end_date.substring(0,10)} defaultValue={editExperiment.end_date.substring(0,10)} onChange={(e) => setEditExperiment({...editExperiment, end_date: e.target.value})} />
+              </div>
+            </div> 
+          : ""
+        }
+
       </div>
+
+      
     )
+  }
+
+
+  function closeModal(){
+    setModal({...modal, show: false}) 
+    setAddExperiment({...addExperiment, device: -1})
   }
 
   return (
@@ -125,7 +249,7 @@ const ExperimentList = () => {
         ))}
         <div>
             <button onClick={() => openModal(null)}>+</button>
-            <Popup open={modal.show} onClose={() => setModal({...modal, show: false})} modal nested>
+            <Popup open={modal.show} onClose={() => closeModal()} modal nested>
             {(close) => (
                     <div className="modal">
                         <div className="modal_body">

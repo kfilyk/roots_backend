@@ -16,15 +16,7 @@ class DeviceSerializer(serializers.ModelSerializer):
 class ExperimentSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
-        experiment_obj = Experiment.objects.create(
-            name = validated_data['name'],
-            start_date=validated_data['start_date'],
-            device = validated_data['device'],
-            user = validated_data['user'],
-            day = 0,
-            phase_day = 0,
-        )
-        return experiment_obj
+        return Experiment.objects.create(**validated_data)
 
     class Meta:
         model = Experiment

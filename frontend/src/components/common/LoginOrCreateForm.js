@@ -111,7 +111,7 @@ class LoginOrCreateForm extends Component {
       payload.first_name = this.state.firstName;
       payload.last_name = this.state.lastName;
     }
-    console.log("PAYLOAD: ", payload)
+    // console.log("PAYLOAD: ", payload)
     axios
       .post(`/auth/${endpoint}/`, payload)
 

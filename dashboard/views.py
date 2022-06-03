@@ -15,6 +15,9 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.permissions import IsAuthenticated 
 from django.db.models import F
 from rest_framework.decorators import action
+from django.http import HttpResponse, JsonResponse
+from datetime import datetime
+from django.utils.timezone import make_aware
 
 # https://www.digitalocean.com/community/tutorials/build-a-to-do-application-using-django-and-react
 
@@ -33,9 +36,41 @@ class ExperimentView(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
+    def create(self, request, *args, **kwargs):
+        exp_id = super().create(request, *args, **kwargs).data['id']
+        exp = Experiment.objects.get(id=exp_id)
+        plants = request.data['plants']
+        num_pods = request.data['num_pods']
+        start_date = make_aware(datetime.strptime(request.data['start_date'], '%Y-%m-%d'))
+        print(start_date)
+        phase = 0
+        pods = []
+        for i in range(num_pods):
+            position = i+1
+            if plants[i] == -1:
+                pods.append(Pod(start_date=start_date, phase=phase, position=position, plant=None, experiment=exp))
+            else: 
+                pods.append(Pod(start_date=start_date, phase=phase, position=position, plant=Plant.objects.get(id=plants[i]), experiment=exp))
+        Pod.objects.bulk_create(pods)
+        return Response("HELLO WORLD")
+
+    @action(detail=False, methods=['GET'], name='available_devices')
+    def available_devices(self, request):
+        devices_in_use = Experiment.objects.filter(device_id__isnull=False).values('device_id')
+        query = Device.objects.exclude(id__in=devices_in_use)
+        data = list(query.values('id', 'name', 'num_pods'))
+        return JsonResponse(data, safe=False)
+
+    @action(detail=False, methods=['GET'], name='loaded_devices')
+    def loaded_devices(self, request):
+        devices_in_use = Experiment.objects.filter(device_id__isnull=False).select_related('device')
+        data = list(devices_in_use.values().annotate(device_name=F('device__name')) )
+        return JsonResponse(data, safe=False)
+
     def get_queryset(self):
         user = self.request.user
         return Experiment.objects.filter(user = user.id).annotate(device_name=F('device__name')) # joins name value from device table to returned results
+
 
 class PhaseView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
