@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Popup from "reactjs-popup";
-import PodCarouselTwo from "./PodCarouselTwo"
+import PodCarousel from "./PodCarousel"
 import vertical_menu_icon from "../../img/vertical_menu_icon.png"
 
 const ExperimentList = () => {
@@ -243,7 +243,7 @@ const ExperimentList = () => {
                     <div>Score: { item.score } </div>
                 </div>
                 <div className="object_content">                          
-                    <PodCarouselTwo experimentID={item.id} deviceId={item.device}></PodCarouselTwo>
+                    <PodCarousel experimentID={item.id} deviceId={item.device}></PodCarousel>
                 </div>
                 <div className='object_actions'>
                     <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>

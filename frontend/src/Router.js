@@ -3,7 +3,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from './components/Login';
 import NotFoundPage from './components/NotFoundPage';
 import Dashboard from './components/Dashboard';
-import Hook_Dashboard from './components/Hook_Dashboard';
 import axios from "axios";
 
 const RouterComponent = () => {
@@ -16,7 +15,7 @@ const RouterComponent = () => {
     <BrowserRouter>
       <Routes>
         <Route exact path={"/"} element={<Login />} />
-        <Route exact path={"/dashboard"} element={<Hook_Dashboard />} />
+        <Route exact path={"/dashboard"} element={<Dashboard />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
