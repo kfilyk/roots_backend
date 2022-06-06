@@ -17,9 +17,12 @@ const PodCarouselTwo = (props) => {
   }, []);
 
   function renderProgressCircle(pod){
+    pod.key = "exp=" +pod.experiment + "_position=" + pod.position + "_plant=" + pod.plant_id
+
     if (pod.plant_id === null){
       pod.plant_name = 'Empty'
       pod.score = 0
+      pod.key = "exp=" +pod.experiment + "_position=" + pod.position +"_plant=empty"
     }
 
     switch(true) {
@@ -40,8 +43,8 @@ const PodCarouselTwo = (props) => {
 
     return (
       //https://codepen.io/sergiopedercini/pen/jmKdbj
-      <div className="single-chart">
-          <svg viewBox="0 0 36 36" class={'circular-chart ' + pod.colour}>
+      <div key={pod.key} className="single-chart">
+          <svg viewBox="0 0 36 36" className={'circular-chart ' + pod.colour}>
           <path className="circle-bg"
               d="M18 2.0845
               a 16 16 0 0 1 0 32
@@ -75,10 +78,8 @@ const PodCarouselTwo = (props) => {
       for(let i = 0; i < device_capacity; i++) {
         let pod = pod_list.filter(pod => pod.position === (i+1))[0]
         progress_circle_container.push(renderProgressCircle(pod)) 
-        
-        
       }
-      return <> {progress_circle_container }</> ;
+      return <> {progress_circle_container}</> ;
     } 
     return <></>;
   };

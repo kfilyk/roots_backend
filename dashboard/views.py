@@ -56,6 +56,22 @@ class ExperimentView(viewsets.ModelViewSet):
         Pod.objects.bulk_create(pods)
         return Response("HELLO WORLD")
 
+    @action(detail=False, methods=['POST'], name='set_device')
+    def set_device(self, request):
+        device_id = request.data['device_id']
+        exp_id = request.data['exp_id']
+        print("TT: ", device_id, exp_id)
+        exp = Experiment.objects.get(id=exp_id)
+        exp.device_id = Device.objects.get(id=device_id)
+        exp.save()
+        return Response(status=200)
+    
+    @action(detail=False, methods=['GET'], name='available_experiments')
+    def available_experiments(self, request):
+        query = Experiment.objects.filter(device_id__isnull=True).values('device_id')
+        data = list(query.values('id', 'name'))
+        return JsonResponse(data, safe=False)
+
     @action(detail=False, methods=['GET'], name='available_devices')
     def available_devices(self, request):
         devices_in_use = Experiment.objects.filter(device_id__isnull=False).values('device_id')

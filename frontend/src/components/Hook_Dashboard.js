@@ -26,8 +26,6 @@ const Hook_Dashboard = () => {
         .post("/auth/token/")
         .then((res) => {
           set_auth({...auth, user: res.data.username})
-          console.log("FLAG: ", axios.defaults.headers.common.Authorization)
-          console.log("AUTH: ", auth)
           set_selected_tab("device" )
 
         })
