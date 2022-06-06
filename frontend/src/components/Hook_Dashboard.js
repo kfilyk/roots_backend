@@ -76,8 +76,6 @@ const Hook_Dashboard = () => {
 
   function renderPage() {
     if(auth.user !== -1) {
-      console.log("AUTH FLAG3 : ", auth)
-      
       switch(selected_tab) {
         case 'device':
           return <Device></Device>
