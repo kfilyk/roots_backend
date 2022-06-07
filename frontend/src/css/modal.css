@@ -18,7 +18,7 @@ POPUP MODAL
   background-color: #fefefe;
   margin: 10% auto; /* 15% from the top and centered */
   padding: 20px;
-  width: min-content;
+  width: 50%;
   z-index: 2;
 }
 
@@ -47,6 +47,11 @@ POPUP MODAL
   margin-bottom: 5%;
   position:relative;
   /* justify-content: center; */
+}
+
+.form_row label {
+  display: flex;
+    align-items: center;
 }
 
 input {
@@ -159,4 +164,18 @@ select .pod {
   opacity:50%;
   pointer-events: none;
   z-index: 1;
+}
+
+
+/* <span class="validity"></span> */
+input:invalid+span:after {
+  position: absolute;
+  content: '✖';
+  padding-left: 5px;
+}
+
+input:valid+span:after {
+  position: absolute;
+  content: '✓';
+  padding-left: 5px;
 }

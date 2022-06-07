@@ -3,6 +3,7 @@ import axios from "axios";
 import vertical_menu_icon from "../../img/vertical_menu_icon.png"
 import Popup from "reactjs-popup";
 import PodCarousel from "../Experiment/PodCarousel"
+import ExperimentReading from "../Experiment/ExperimentReading"
 
 const Device = () => {
     const [loaded_devices, set_loaded_devices] = useState([]);
@@ -162,6 +163,7 @@ const Device = () => {
 
     return (
         <div>
+            {/* <ExperimentReading exp_id={2}></ExperimentReading> */}
             {renderNav()}
             {renderDevices()}
             {renderModal()}

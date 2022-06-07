@@ -29,6 +29,7 @@ router.register(r'experiments', views.ExperimentView, 'dashboard')
 router.register(r'phases', views.PhaseView, 'dashboard')
 router.register(r'plants', views.PlantView, 'dashboard')
 router.register(r'pods', views.PodView, 'dashboard')
+router.register(r'experimentreadings', views.ExperimentReadingView, 'dashboard')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
