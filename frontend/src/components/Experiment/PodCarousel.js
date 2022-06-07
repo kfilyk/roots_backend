@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import ProgressCircle from '../common/ProgressCircle'
 import axios from 'axios';
+import "./pod_carousel.css";
 
-const PodCarouselTwo = (props) => {
+const PodCarousel = (props) => {
   const [pod_list, setPodList] = useState([]);
   const [device_capacity, setNumPods] = useState(-1);
 
@@ -90,4 +90,4 @@ const PodCarouselTwo = (props) => {
 }
 
 
-export default PodCarouselTwo;
+export default PodCarousel;
