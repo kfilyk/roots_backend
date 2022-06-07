@@ -1,24 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import vertical_menu_icon from "../../img/vertical_menu_icon.png"
-import PodCarouselTwo from "../Experiment/PodCarouselTwo"
+import Popup from "reactjs-popup";
+import PodCarousel from "../Experiment/PodCarousel"
 
 const Device = () => {
     const [loaded_devices, set_loaded_devices] = useState([]);
     const [free_devices, set_free_devices] = useState([]);
     const [selected_device_status, set_selected_device_status] = useState("all");
+    const [available_experiments, set_available_experiments] = useState([]);
+    const [modal, set_modal] = useState({show: false, device: -1, experiment: -1});
+    const closeModal = () => set_modal(false);
 
     async function fetch_loaded_devices() {
         const result = await axios(
           '/api/experiments/loaded_devices/',
         );
-    
         set_loaded_devices(result.data)
     } 
     
     useEffect(() => {
-        console.log("FETCHED LOADED DEVICES")
         fetch_loaded_devices();
+    }, []);
+
+    async function fetch_available_experiments() {
+        const result = await axios(
+          '/api/experiments/available_experiments/',
+        );
+        set_available_experiments(result.data)
+    } 
+
+    useEffect(() => {
+        fetch_available_experiments();
     }, []);
 
 
@@ -31,10 +44,21 @@ const Device = () => {
     } 
 
     useEffect(() => {
-        console.log("FETCHED FREE DEVICES")
-
         fetch_free_devices();
     }, []);
+
+    async function setExperiment(e) {
+        const result = await axios
+          .post(`/api/experiments/set_device/`, 
+            { 
+                exp_id: modal.experiment,
+                device_id: modal.device
+            });
+        if (result.status === 200) {
+            set_free_devices(free_devices.filter(device => device.id !== modal.device))
+            fetch_loaded_devices()
+        }
+    };
 
     function renderNav() {
         return (
@@ -56,9 +80,9 @@ const Device = () => {
         const device_list = []
         if (selected_device_status === 'loaded' || selected_device_status === 'all'){   
             loaded_devices.map((item) => {
-                console.log("ITEM: ", item)
+
                 device_list.push(
-                    <div key={item.id} className="object_container">
+                    <div key={'loaded_' + item.id} className="object_container">
                         <div className="object_description">
                             <div className="object_name">{ item.device_name }</div>
                             {/* <div>Registered: { item.registration_date.substring(0, 10) }</div> */}
@@ -67,7 +91,7 @@ const Device = () => {
                             <div>Score: { item.score } </div>
                         </div>
                         <div className="object_content">                          
-                            <PodCarouselTwo experimentID={item.id} deviceId={item.device}></PodCarouselTwo>
+                            <PodCarousel experimentID={item.id} deviceId={item.device}></PodCarousel>
                         </div>
                         <div className='object_actions'>
                         <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
@@ -82,7 +106,7 @@ const Device = () => {
         if (selected_device_status === 'free' || selected_device_status === 'all'){
             free_devices.map((item) => {
                 device_list.push(
-                    <div key={item.id} className="object_container">
+                    <div key={'free_' + item.id}  className="object_container">
                         <div className="object_description">
                         <div className="object_name">{ item.name }</div>
                         <div>Device ID: { item.id }</div>
@@ -91,8 +115,7 @@ const Device = () => {
                         </div>
                         <div className='object_actions'>
                             <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
-                            <li key="edit"><button onClick={() => {}}>EDIT</button></li>
-                            <li key="delete"><button onClick={() => {}}>DELETE</button></li>
+                            <li key="add"><button onClick={() => openModal(item.id)}>Add Experiment</button></li>
                         </div>
                     </div>
                 )
@@ -102,10 +125,46 @@ const Device = () => {
         return device_list
     }
 
+    function openModal(device){
+        set_modal({...modal, show: true, device: device})
+    }
+    
+
+    function renderModal(){
+        return (
+            <Popup open={modal.show} onClose={() => set_modal({...modal, show: false})} modal nested>
+                {(close) => (
+                <div className="modal" onClick={close}>
+                    <div className="modal_body"  onClick={e => e.stopPropagation()}>
+                    <div className="modal_type"> Device: {} </div>
+                    <div className="modal_content">
+                    <div className="form_row">
+                            <label> Experiment: </label> 
+                            <select className="" defaultValue={modal.experiment} name="experiment" onChange={(e) => set_modal({...modal, experiment: e.target.value})}>
+                                <option key={-1} value={-1}> SELECT EXPERIMENT </option>
+                                {available_experiments.map(item => (
+                                    <option key={item.id} value={item.id}> {item.name} </option>
+                                ))}
+                            </select> 
+                    </div>
+                        <button className='save' onClick={() => {
+                        setExperiment()
+                        close();
+                    }}>Save</button>
+                        </div>
+
+                    </div>
+                </div>
+                )}
+            </Popup>
+        )
+    }
+
     return (
         <div>
             {renderNav()}
             {renderDevices()}
+            {renderModal()}
         </div>
       );
 }

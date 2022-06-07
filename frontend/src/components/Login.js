@@ -1,18 +1,13 @@
-// src/components/Login.js
-
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text } from 'react-native';
-import LoginOrCreateForm from './common/LoginOrCreateForm';
+import LoginOrCreateForm from './common/LoginOrCreateForm'
 
-
-class Login extends Component {
-  render() {
+const Login = () => {
     return (
       <View style={{ flex: 1 }}>
         <LoginOrCreateForm />
       </View>
     );
-  }
 }
 
-export default Login;
+export default Login

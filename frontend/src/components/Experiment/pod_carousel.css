@@ -55,10 +55,18 @@
   stroke: #3c9ee5;
 }
 
+.circular-chart.yellow .circle {
+  stroke: #FFEA00;
+}
+
+.circular-chart.red .circle {
+  stroke: #FF5733;
+}
+
 .caption {
   fill: #666;
   font-family: "Brandon Grotesque Black";
-  font-size: 0.4em;
+  font-size: 0.3em;
   text-anchor: middle;
 }
 

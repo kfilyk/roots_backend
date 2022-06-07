@@ -1,259 +1,118 @@
-import React, { Component, } from "react";
-import { Navigate } from "react-router-dom";
-import ExperimentModal from './Experiment/ExperimentModal';
+import React, { useState, useEffect } from 'react';
 import Experiment from './Experiment/Experiment';
 import Phase from './Phase/Phase';
 import Recipe from './Recipe/Recipe';
 import axios from "axios";
 import user_brown_icon from '../img/user_brown_icon.png';
-import vertical_menu_icon from "../img/vertical_menu_icon.png"
-
 import Plant from "./Plant/Plant";
 import './dashboard.css';
+import Device from './Device/Device';
 
+const Hook_Dashboard = () => {
+  const [selected_tab, set_selected_tab] = useState('loading'); // in the future: loading state shows a spinning wheel
+  const [auth, set_auth] = useState({
+    user: -1
+  });
 
+  useEffect(authenicate_user, []);
 
-class Dashboard extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      user: '',
-      is_logged_in: true,
-      selected_tab: "device",
-      device_list: [],
-      experiment_list: [],
-      phaseList: [],
-      plant_list: [],
-      activeItem: {
-        name: "",
-        experiment: "",
-        is_online: false,
-      },
-    };
-    this.getDevices = this.getDevices.bind(this)
-    this.getExperiments = this.getExperiments.bind(this)
-  }
-  // runs before rendering mounted on client side
-  componentDidMount() {
-    // if no token found, redirect to login
-    if (!window.localStorage.getItem("token")) {
-      this.setState({ is_logged_in: false})
-      this.logout()
-    }
-
+  function authenicate_user() {
     if (window.localStorage.getItem("token")) {
+
       // if a token is found, set the authorization and attempt to vlaidate it against the server
       axios.defaults.headers.common.Authorization = `Token ${window.localStorage.getItem("token")}`;
 
       axios
         .post("/auth/token/")
-        .then(res => {
-          if (res.status === 200) {
-            console.log("STATUS 200 (SUCCESSFUL): ", res)
-          }
-          this.setState({ user: res.data.username })
-          this.getExperiments();
-          this.getDevices();
-
-          console.log("IS TOKEN: ", window.localStorage.getItem("token"))
+        .then((res) => {
+          set_auth({...auth, user: res.data.username})
+          set_selected_tab("device" )
 
         })
-      .catch(res => {
-        console.log(res)
-        this.setState({ is_logged_in: false})
-        this.logout()
-        console.log("AUTO LOGGED OUT!")
-      });
+        .catch(res => {
+          return logout()
+        });
+    } else {
+      ////NO LOCAL STORAGE TOKEN?? BOOTED OUT.
+      window.location.replace("/")
     }
-  };
-
-  getDevices = () => {
-    axios
-      .get("/api/devices/")
-      .then((res) => {
-        console.log("DEVICE RESPONSE: ", res)
-        this.setState({ device_list: res.data })
-      })
-      .catch((err) => console.log(err));
-  };
-
-  getExperiments = () => {
-    axios
-      .get("/api/experiments/")
-      .then((res) => this.setState({ experiment_list: res.data }))
-      .catch((err) => console.log(err));
-  };
-
-  handleSubmit = (item) => {
-    if (this.state.selected_tab === 'device') {
-      if (item.id) {
-        axios
-          .put(`/api/devices/${item.id}/`, item)
-          .then((res) => this.getDevices());
-        return;
-      }
-      axios
-        .post("/api/devices/", item)
-        .then((res) => this.getDevices());
-    } else if(this.state.selected_tab ==='experiment') {
-      if (item.id) {
-        axios
-          .put(`/api/experiments/${item.id}/`, item)
-          .then((res) => this.getExperiments());
-        return;
-      }
-      axios
-        .post("/api/experiments/", item)
-        .then((res) => this.getExperiments());      
-    }
-  };
-
-  handleDelete = (item) => {
-    //console.log(item.type)
-    if (this.state.selected_tab === 'device') {
-      axios
-      .delete(`/api/devices/${item.id}/`)
-      .then((res) => this.getDevices());
-    } else if(this.state.selected_tab ==='experiment') {
-      axios
-      .delete(`/api/experiments/${item.id}/`)
-      .then((res) => this.getDevices());
-    } 
-  };
-
-  createItem = () => {
-    const item = { name: "", experiment: "", is_online: false };
-    this.setState({ activeItem: item });
-  };
-
-  handleEdit = (item) => {
-    this.setState({ activeItem: item });
-  };
-
-  logout() {
-    // This request will only succeed if the Authorization header
-    // contains the API token
-    //axios.defaults.headers.common.Authorization =  `Token ${window.localStorage.getItem('token')}`
-    axios
-      .get('/auth/logout/')
-
-      .then(response => {
-        localStorage.removeItem('token');
-      })
-      .catch(error =>  console.log(error))  
-      this.setState({is_logged_in: false})
   }
 
-  renderNav = () => {
+  function logout(){
+    if (window.localStorage.getItem("token")) {
+      axios
+      .get('/auth/logout/')
+      .then((res) => {
+        localStorage.removeItem('token');
+        window.location.replace("/")
+      })
+      .catch(error =>  console.log(error)) 
+    }
+  }
+
+  function renderNav() {
     return (
       <div className="nav">
-        <span className={this.state.selected_tab === "device" ? "nav-link active" : "nav-link"} onClick={() => this.setState({ selected_tab: "device" })}>
+        <span className={selected_tab === "device" ? "nav-link active" : "nav-link"} onClick={() => set_selected_tab("device" )}>
           DEVICES
         </span>
-        <span className={this.state.selected_tab === "experiment" ? "nav-link active" : "nav-link"} onClick={() => this.setState({ selected_tab: "experiment" })}>
+        <span className={selected_tab === "experiment" ? "nav-link active" : "nav-link"} onClick={() => set_selected_tab("experiment" )}>
           EXPERIMENTS
         </span>
-        <span className={this.state.selected_tab === "recipe" ? "nav-link active" : "nav-link"} onClick={() => this.setState({ selected_tab: "recipe" })}>
+        <span className={selected_tab === "recipe" ? "nav-link active" : "nav-link"} onClick={() => set_selected_tab("recipe" )}>
           RECIPES
         </span>
-        <span className={this.state.selected_tab === "phase" ? "nav-link active" : "nav-link"} onClick={() => this.setState({ selected_tab: "phase" })}>
+        <span className={selected_tab === "phase" ? "nav-link active" : "nav-link"} onClick={() => set_selected_tab("phase" )}>
           PHASES
         </span>
-        <span className={this.state.selected_tab === "plant" ? "nav-link active" : "nav-link"} onClick={() => this.setState({ selected_tab: "plant" })}>
+        <span className={selected_tab === "plant" ? "nav-link active" : "nav-link"} onClick={() => set_selected_tab("plant" )}>
           PLANTS
         </span>
       </div>
     );
   };
 
-  renderItems = () => {
-
-    let items_list = [];
-    let experiment_list = [];
-    if (this.state.selected_tab === "device"){
-
-      items_list = this.state.device_list;
-      experiment_list = this.state.experiment_list;
-      
-      return items_list.map((item) => {
-
-        let e_list = experiment_list.filter(experiment => experiment.device === item.id) ?? {} // could also use ||
-        let e = e_list.length === 1 ? e_list[0] : null;
-        console.log("DEVICE: ", item.name)
-        console.log("EXPERIMENT: ", e)
-        // display list of all items
-        return <div key={ ''+this.state.selected_tab+' '+ item.id } className="item">
-
-          <div className="object_container">
-            <div className="object_description">
-              <div className="object_name">{ item.name }</div>
-              <div>Registered: { item.registration_date.substring(0, 10) }</div>
-              <div>Mac: { item.mac_address }</div>
-            </div>
-            <div className='object_actions'>
-              <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
-              <li key="edit"><button onClick={() => {}}>EDIT</button></li>
-              <li key="delete"><button onClick={() => {}}>DELETE</button></li>
-            </div>
-          </div>
-          
-          { e !== null ?  // if no experiment for a device, show "+" button indicating addition of experiment
-            <Experiment device_list = {this.state.device_list} getExperiments={this.getExperiments} experiment = {e} on_device_page = {true}></Experiment>
-            : <ExperimentModal device_list = {this.state.device_list} getExperiments={this.getExperiments} experiment={{id: null, name:null, current_phase:null, day:null, phase_day:null, device: null, score:null, user:null, start_date:null, end_date:null}} add_or_edit={"add"}></ExperimentModal>
-          }
-        </div>
-
-      });
-
-    } else if (this.state.selected_tab === "experiment") {
-      return(
-        <Experiment/>
-      );
-    } else if (this.state.selected_tab === "recipe") {
-      return(
-        <Recipe></Recipe>
-      );
-    } else if (this.state.selected_tab === "phase") {
-      return(
-        <Phase></Phase>
-      );
-    } else if (this.state.selected_tab === "plant") {
-      return(
-        <Plant></Plant>
-      );
-    }}
-
-  render() {
-      if (!this.state.is_logged_in) {
-        return <Navigate to = {{ pathname: "/" }} />;
+  function renderPage() {
+    if(auth.user !== -1) {
+      switch(selected_tab) {
+        case 'device':
+          return <Device></Device>
+        case 'experiment':
+          return <Experiment></Experiment>
+        case 'recipe':
+          return <Recipe></Recipe>
+        case 'phase':
+          return <Phase></Phase>
+        case 'plant':
+          return <Plant></Plant>
+        default:
+          return <></> // replace this with spinny wheel
       }
-
-      return (
-        <main className="container">
-          <div className="header">
-            <h1 className="title">AVA PLANT SCIENCE DATA PLATFORM</h1>
-            <div className="user_container">
-              <button id="logout" title="Logout" onClick={this.logout.bind(this)}>
-                <span>{ this.state.user }</span>
-              </button>
-              <div className="user_img_frame">
-                <img className="user_img" src={user_brown_icon} alt="NO IMG!"/>
-              </div>
-            </div>
-          </div>
-
-          <div className="dashboard">
-            {this.renderNav()}
-            <ul className="list-group list-group-flush border-top-0">
-              {this.renderItems()}
-            </ul>
-            {/*<button className="btn btn-primary" onClick={this.createItem} > Add {this.state.selected_tab} </button> */}
-          </div>
-        </main>
-
-      );
+    }
   }
-  
+
+  return (
+    <main className="container">
+      <div className="header">
+        <h1 className="title">AVA PLANT SCIENCE DATA PLATFORM</h1>
+        <div className="user_container">
+          <button id="logout" title="Logout" onClick={logout}>
+            <span>{ auth.user }</span>
+          </button>
+          <div className="user_img_frame">
+            <img className="user_img" src={user_brown_icon} alt="NO IMG!"/>
+          </div>
+        </div>
+      </div>
+
+      <div className="dashboard">
+        {renderNav()}
+        <ul className="list-group list-group-flush border-top-0">
+          {renderPage()}
+        </ul>
+      </div>
+    </main>
+  );
 }
 
-export default Dashboard;
+export default Hook_Dashboard;
