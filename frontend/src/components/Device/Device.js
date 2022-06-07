@@ -163,10 +163,10 @@ const Device = () => {
 
     return (
         <div>
-            {/* <ExperimentReading exp_id={2}></ExperimentReading> */}
-            {renderNav()}
+            <ExperimentReading exp_id={21}></ExperimentReading>
+            {/* {renderNav()}
             {renderDevices()}
-            {renderModal()}
+            {renderModal()} */}
         </div>
       );
 }

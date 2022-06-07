@@ -14,19 +14,38 @@ const ExperimentReading = (props) => {
         temperature: 0,
         humidity: -1,
         exp_id: -1,
-        exp_ph: -1,
-        pods: []
+        exp_phase: -1,
+        pods: [],
+        first_reading: true,
     });
 
-    // async function fetchData(){
-    //     const result = await 
-    //     // set_experiment_reading({...experiment_reading, exp_id: props.exp_id});
-    // }
+    async function fetchData(props){
+        const result = await axios
+          .post(`/api/experimentreadings/get_last_reading/`, 
+            { 
+                exp_id: experiment_reading.exp_id
+            });
+        if (result.status === 200) {
+            if (result.data.latest_reading.exp_id !== -1 ){
+                set_experiment_reading({...experiment_reading, 
+                    electrical_conductance: result.data.latest_reading.electrical_conductance,
+                    reservoir_tds: result.data.latest_reading.reservoir_tds,
+                    reservoir_ph: result.data.latest_reading.reservoir_ph,
+                    temperature: result.data.latest_reading.temperature,
+                    humidity: result.data.latest_reading.humidity,
+                    exp_id: result.data.latest_reading.experiment,
+                    exp_phase: result.data.latest_reading.experiment_phase,
+                    first_reading: false
+                })
+            }
+        }
+    }
 
 
-    // useEffect(() => {
-    //     fetchData(props)
-    // }, [props])
+    useEffect(() => {
+        set_experiment_reading({...experiment_reading, exp_id: props.exp_id})
+        fetchData(props)
+    }, [props])
 
     function submit_reading(){
         console.log("SUBMIT: ", experiment_reading)
@@ -50,7 +69,7 @@ const ExperimentReading = (props) => {
                     <div className="modal_type"> Add Experiment Reading {} </div>
                     <div className="modal_content">
                     <div className="form_row">
-                            <label> Experiment: {experiment_reading.id}</label> 
+                            <label> Experiment: {experiment_reading.exp_id}</label> 
                     </div>
                     <div className="form_row">
                             <label> Electrical Conductance:</label> 

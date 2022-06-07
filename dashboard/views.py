@@ -44,8 +44,15 @@ class ExperimentReadingView(viewsets.ModelViewSet):
     @action(detail=False, methods=['POST'], name='get_last_reading')
     def get_last_reading(self, request):
         exp_id = request.data['exp_id']
-        latest = ExperimentReading.objects.filter(experiment=exp_id).latest('reading_date')
-        return JsonResponse({"latest_reading": model_to_dict(latest)}, safe=False)
+        qs = Pod.objects.filter(experiment = exp_id, end_date__isnull=True).annotate(plant_name=F('plant__name'))
+        pods = list(qs.values())
+        try:
+            latest = ExperimentReading.objects.filter(experiment=exp_id).latest('reading_date')
+            return JsonResponse({"latest_reading": model_to_dict(latest), "pods": pods}, safe=False)
+        except ExperimentReading.DoesNotExist:
+            latest = {"exp_id": -1}
+            return JsonResponse({"latest_reading": latest, "pods": pods}, safe=False)
+        
 
 class ExperimentView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
