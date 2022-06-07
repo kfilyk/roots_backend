@@ -4,6 +4,16 @@ import Popup from "reactjs-popup";
 import PodCarouselTwo from "./PodCarouselTwo"
 import vertical_menu_icon from "../../img/vertical_menu_icon.png"
 
+
+let today_date = new Date();
+let year = today_date.getUTCFullYear();
+let month = today_date.getUTCMonth() + 1;
+month = month > 9 ? month : '0'+month;
+let day = today_date.getUTCDate();
+day = day > 9 ? day : '0'+day;
+
+
+
 const ExperimentList = () => {
   const [experiment_list, setExperimentList] = useState([]);
   const [plant_list, setPlantList] = useState([]);
@@ -15,20 +25,20 @@ const ExperimentList = () => {
   const [available_devices, set_available_devices] = useState([])
 
   const [addExperiment, setAddExperiment] = useState({
-    name: 'unknown',
+    name: null,
     device_capacity: -1,
     device: -1,
     plants: [],
-    start_date: '',
-    end_date: '', 
+    start_date: year+"-"+month+"-"+day,
+    end_date: null, 
   })
 
   const [editExperiment, setEditExperiment] = useState({
     id: 2,
-    name: 'unknown',
+    name: null,
     plants: [],
-    start_date: '',
-    end_date: '',
+    start_date: year+"-"+month+"-"+day,
+    end_date: null,
     // start_date: new Date(),
     // device: -1, 
     // day: -1,
@@ -101,7 +111,7 @@ const ExperimentList = () => {
       .post(`/api/experiments/`, 
         { 
           name: addExperiment.name,
-          device_id: addExperiment.device,
+          device: addExperiment.device,
           device_capacity: addExperiment.device_capacity,
           plants: addExperiment.plants,
           start_date: addExperiment.start_date,
@@ -171,27 +181,21 @@ const ExperimentList = () => {
   }
  
   function renderAddModal(){
-      return (
-        <div>
-            <div className="form_row">
-              <label> Experiment Name: </label> 
-              <input name="name" value={addExperiment.name} onChange={(e) => setAddExperiment({...addExperiment, name: e.target.value})} />
-            </div>
-            <div className="form_row">
-              <label> Device: </label> 
-                {renderAvailableDevices()}
-            </div>
-            <div className="form_row">
-              <label> Start Date: </label> 
-              <input type="date" name="start_date" value={addExperiment.start_date} onChange={(e) => setAddExperiment({...addExperiment, start_date: e.target.value})} />
-            </div>
-            <div className="form_row">
-              <label> End Date: </label> 
-              <input type="date" name="end_date" value={addExperiment.end_date} onChange={(e) => setAddExperiment({...addExperiment, end_date: e.target.value})} />
-            </div>
-            {renderPodSelection(addExperiment)}
-        </div>
-      )
+    console.log(addExperiment.start_date)
+    return (
+      <div>
+          <div className="form_row">
+            <input name="name" value={addExperiment.name} placeholder = {"Experiment Name"} onChange={(e) => setAddExperiment({...addExperiment, name: e.target.value})} />
+          </div>
+          <div className="form_row">
+            {renderAvailableDevices()}
+          </div>
+          <div className="form_row">
+            <input className="date_selection" type="date" name="start_date" value={addExperiment.start_date} onChange={(e) => setAddExperiment({...addExperiment, start_date: e.target.value})} />
+          </div>
+          <div className="form_row">{renderPodSelection(addExperiment)}</div>
+      </div>
+    )
   }
 
 
@@ -257,31 +261,27 @@ const ExperimentList = () => {
             <button onClick={() => openModal(null)}>+</button>
             <Popup open={modal.show} onClose={() => closeModal()} modal nested>
             {(close) => (
-                    <div className="modal">
-                        <div className="modal_body">
-                        <button className="close" onClick={close}>
-                            &times;
-                        </button>
-                        <div className="modal_type"> { modal.add === true ? "Add Experiment" : "Edit Experiment" } </div>
-                        <div className="modal_content">
-                            { modal.add === true 
-                            ? ""
-                            : <div className="form_row"> <label> Id: </label> <label>{editExperiment.id}</label> </div>
-                            }
+                    <div className="modal" onClick={close}>
+                        <div className="modal_body" onClick={e => e.stopPropagation()}>
+                          <div className="modal_type"> { modal.add === true ? "Add Experiment" : "Edit Experiment" } </div>
+                          <div className="modal_content">
+                              { modal.add === true 
+                              ? ""
+                              : <div className="form_row"> <label> Id: </label> <label>{editExperiment.id}</label> </div>
+                              }
 
-                            { modal.add === true 
-                            ? renderAddModal()
-                            : renderEditModal(editExperiment)
-                            }
+                              { modal.add === true 
+                              ? renderAddModal()
+                              : renderEditModal(editExperiment)
+                              }
 
-                            <button className='save' onClick={() => {
-                            submitModal()
-                            close();
-                        }}>Save</button>
-                            </div>
-
-                        </div>
-                    </div>
+                              <button className='save' onClick={() => {
+                                submitModal();
+                                close();
+                              }}>Save</button>
+                              </div>
+                          </div>
+                      </div>
                     )}
             </Popup>
         </div>
