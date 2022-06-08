@@ -65,7 +65,7 @@ class ExperimentView(viewsets.ModelViewSet):
         exp_id = super().create(request, *args, **kwargs).data['id']
         exp = Experiment.objects.get(id=exp_id)
         plants = request.data['plants']
-        device_capacity = request.data['device_capacity']
+        device_capacity = Device.objects.get(id=request.data['device']).device_capacity
         start_date = make_aware(datetime.strptime(request.data['start_date'], '%Y-%m-%d'))
         print(start_date)
         phase = 0
@@ -135,9 +135,10 @@ class PodView(viewsets.ModelViewSet):
         exp_id=json.loads(request.body)["id"]
         qs = Pod.objects.filter(experiment = exp_id, end_date__isnull=True).annotate(plant_name=F('plant__name'))
         pods = list(qs.values())
-        device_id = Experiment.objects.get(id=exp_id).device
-        return JsonResponse({"device_capacity": model_to_dict(device_id)['device_capacity'], "pods": pods}, safe=False)
-            
+        device_capacity = Experiment.objects.get(id=exp_id).device.device_capacity
+        print("PODS: ", pods)
+        print("DEVICE: ", device_capacity)
+        return JsonResponse({"device_capacity": device_capacity, "pods": pods}, safe=False)            
     '''
     @action(detail=False, methods=["post"], name='populate_pod_carousel')
     def populate_pod_carousel(self, request):
