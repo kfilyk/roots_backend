@@ -112,13 +112,13 @@ const ExperimentList = () => {
         { 
           name: addExperiment.name,
           device: addExperiment.device,
-          device_capacity: addExperiment.device_capacity,
           plants: addExperiment.plants,
           start_date: addExperiment.start_date,
-          end_date: addExperiment.end_date    
-        });
-    setExperimentList(experiment_list => [...experiment_list, result.data])
-
+        })
+      .catch((err) => console.log(err));
+      console.log("RESULT 2:", result)
+      setExperimentList(experiment_list => [...experiment_list, result.data]);
+    
   };
 
   async function editEntry(e) {

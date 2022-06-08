@@ -69,12 +69,11 @@ class ExperimentView(viewsets.ModelViewSet):
         start_date = make_aware(datetime.strptime(request.data['start_date'], '%Y-%m-%d'))
         print(start_date)
         phase = 0
+
         pods = []
         for i in range(device_capacity):
             position = i+1
-            if plants[i] == -1:
-                pods.append(Pod(start_date=start_date, phase=phase, position=position, plant=None, experiment=exp))
-            else: 
+            if plants[i] != -1:
                 pods.append(Pod(start_date=start_date, phase=phase, position=position, plant=Plant.objects.get(id=plants[i]), experiment=exp))
         Pod.objects.bulk_create(pods)
         return Response("HELLO WORLD")
