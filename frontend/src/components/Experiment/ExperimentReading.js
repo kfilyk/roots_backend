@@ -20,34 +20,56 @@ const ExperimentReading = (props) => {
         first_reading: true,
     });
 
-    // const [pod_readings, set_pod_readings] = useState([]);
-    const [pod_readings, set_pod_readings] = useState([{
-        node_count: null,
-        pod_reading: null,
-        leaf_count: null,
-        seeds_germinated: null,
-        pest_coverage: null,
-        algae_coverage: null,
-        blight_coverage: null,
-        harvest_weight: null,
-        harvest_number: null,
-        harvest_quality: null,
-        flower_quality: null,
-        comment: null,
-        exp_id: null,
-        exp_reading_id: null,
-        bud_count: null,
-        flower_count: null,
-        fruit_ripe_count: null,
-        fruit_unripe_count: null,
-        leaf_area_avg: null,
-        max_height: null,
-        media_to_bgp: null,
-        min_height: null,
-        pod_phase: null,
-        score: null,
-        domes: null,
-    }]);
+    const [pod_readings, set_pod_readings] = useState([]);
+    const [selected_pod, set_selected_pod] = useState();
+
+    function find_value_selected_pod(field){
+       let pod = pod_readings.filter(pod => pod.id === selected_pod)[0] ?? null
+        if(pod === null){
+            return ""
+        } else {
+            return pod[field]
+        }
+    }
+
+    function set_value_selected_pod(e){
+        let field = e.target.name
+        let value = e.target.value
+        console.log("ANSWERS: ", pod_readings)
+        let index = pod_readings.findIndex(pod => pod.id === selected_pod) ?? null
+            //EDITING A POD READING
+         if(index !== -1){
+            let updated_pod = pod_readings[index]
+            updated_pod[field] = parseInt(value)
+            set_pod_readings([
+              ...pod_readings.slice(0, index),
+              updated_pod,
+              ...pod_readings.slice(index + 1)
+            ])
+         } else {
+            let reading = {id: selected_pod, [field]: parseInt(value)}
+            set_pod_readings([...pod_readings, reading])
+         }
+     }
+
+
+
+
+    function renderPodReading(){
+        if (selected_pod !== null){
+            return (
+                <div>
+                    <div className='form_row'>
+                        <label>Selected Pod: {selected_pod}</label>
+                    </div>
+                    <div className="form_row">
+                        <label> Node Count: </label> 
+                        <input type="number" value={find_value_selected_pod('node_count')} name={"node_count"} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                </div>
+            )
+        }
+    }
 
     async function fetchData(props){
         const result = await axios
@@ -84,17 +106,7 @@ const ExperimentReading = (props) => {
     }, [props])
 
     function submit_reading(){
-        console.log("SUBMIT: ", experiment_reading)
-    }
-
-    function renderPodReading(){
-        return (
-            <div>
-                <div className="form_row">
-                    <label> Experiment: </label> 
-                </div>
-            </div>
-        )
+        console.log("SUBMIT: ", pod_readings, experiment_reading)
     }
 
     function renderPodSelection(){
@@ -105,11 +117,11 @@ const ExperimentReading = (props) => {
                 // console.log("DD: ", curr_pod)
                 if(curr_pod !== null){
                     pod_container.push(
-                        <button className="pod_selection" onClick={() => console.log(curr_pod)}>{curr_pod.plant_name}</button> 
+                        <button key={i} className="pod_selection" onClick={() => set_selected_pod(curr_pod.id)}>{curr_pod.plant_name}</button> 
                     )
                 } else {
                     pod_container.push(
-                        <button disabled className="pod_selection">EMPTY</button> 
+                        <button key={i} disabled className="pod_selection">EMPTY</button> 
                     )
                 }
             }
