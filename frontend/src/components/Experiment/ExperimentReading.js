@@ -128,6 +128,12 @@ const ExperimentReading = (props) => {
         console.log("SUBMIT: ", pod_readings, experiment_reading)
     }
 
+    function change_selected_pod(e, pod_id){
+        Array.from(document.querySelectorAll('.pod_selection')).forEach((el) => el.classList.remove('pod_selection_active'));
+        e.currentTarget.classList.toggle('pod_selection_active');
+        set_selected_pod(pod_id)
+    }
+
     function renderPodSelection(){
         let pod_container = []
         if (experiment_reading.pods !== []){
@@ -136,7 +142,7 @@ const ExperimentReading = (props) => {
                 // console.log("DD: ", curr_pod)
                 if(curr_pod !== null){
                     pod_container.push(
-                        <button key={i} className="pod_selection" onClick={() => set_selected_pod(curr_pod.id)}>{curr_pod.plant_name}</button> 
+                        <button key={i} className="pod_selection" onClick={(e) => change_selected_pod(e, curr_pod.id)}>{curr_pod.plant_name}</button> 
                     )
                 } else {
                     pod_container.push(
