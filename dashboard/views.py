@@ -1,7 +1,7 @@
-from dashboard.models import Device, Experiment, Phase, Plant, Pod
+from dashboard.models import Device, Experiment, Phase, Plant, Pod, ExperimentReading
 from rest_framework import viewsets
 from django.forms.models import model_to_dict
-from .serializers import DeviceSerializer, ExperimentSerializer, CreateUserSerializer, UserSerializer, PhaseSerializer, PlantSerializer, PodSerializer
+from .serializers import DeviceSerializer, ExperimentSerializer, CreateUserSerializer, UserSerializer, PhaseSerializer, PlantSerializer, PodSerializer, ExperimentReadingSerializer
 from django.core import serializers
 from django_filters import rest_framework as filters
 from rest_framework.filters import OrderingFilter
@@ -30,6 +30,29 @@ class DeviceView(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         return Device.objects.filter(user = user.id)
+
+class ExperimentReadingView(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated,) 
+    serializer_class = ExperimentReadingSerializer
+    filter_backends = [filters.DjangoFilterBackend,]
+    filterset_fields = ['experiment']
+
+    def get_queryset(self):
+        user = self.request.user
+        return ExperimentReading.objects.all()
+    
+    @action(detail=False, methods=['POST'], name='get_last_reading')
+    def get_last_reading(self, request):
+        exp_id = request.data['exp_id']
+        qs = Pod.objects.filter(experiment = exp_id, end_date__isnull=True).annotate(plant_name=F('plant__name'))
+        pods = list(qs.values())
+        try:
+            latest = ExperimentReading.objects.filter(experiment=exp_id).latest('reading_date')
+            return JsonResponse({"latest_reading": model_to_dict(latest), "pods": pods}, safe=False)
+        except ExperimentReading.DoesNotExist:
+            latest = {"exp_id": -1}
+            return JsonResponse({"latest_reading": latest, "pods": pods}, safe=False)
+        
 
 class ExperimentView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
@@ -60,7 +83,6 @@ class ExperimentView(viewsets.ModelViewSet):
     def set_device(self, request):
         device_id = request.data['device_id']
         exp_id = request.data['exp_id']
-        print("TT: ", device_id, exp_id)
         exp = Experiment.objects.get(id=exp_id)
         exp.device_id = Device.objects.get(id=device_id)
         exp.save()
