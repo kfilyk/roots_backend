@@ -195,7 +195,7 @@ const Phase = () => {
           <input value={editPhase.watering_duration} placeholder={"Watering Duration"} onChange={(e) => setEditPhase({...editPhase, watering_duration: e.target.value})} />
         </div>
         <div className="form_row">
-          <input value={editPhase.blue_intensity} id="blue_intensity_slider" className="slider" type="range" min={0} max={100} onChange={(e) => setEditPhase({...editPhase, blue_intensity: e.target.value})} />
+          <input value={editPhase.blue_intensity} id="blue_intensity_slider" className="slider" type="range" min={0} max={100} onChange={(e) => setEditPhase({...editPhase, blue_intensity: e.target.value})} ></input>
           <div className='intensity_text_overlay'>{editPhase.blue_intensity}</div>
         </div>
         <div className="form_row">
