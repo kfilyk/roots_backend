@@ -35,21 +35,40 @@ const ExperimentReading = (props) => {
     function set_value_selected_pod(e){
         let field = e.target.name
         let value = e.target.value
-        console.log("ANSWERS: ", pod_readings)
+        // console.log("AAA: ", field, value)
+        // console.log("ANSWERS: ", pod_readings)
         let index = pod_readings.findIndex(pod => pod.id === selected_pod) ?? null
             //EDITING A POD READING
          if(index !== -1){
             let updated_pod = pod_readings[index]
-            updated_pod[field] = parseInt(value)
-            set_pod_readings([
-              ...pod_readings.slice(0, index),
-              updated_pod,
-              ...pod_readings.slice(index + 1)
-            ])
+            //Updating old value to new value
+            if(value !== ""){
+                updated_pod[field] = parseInt(value)
+                set_pod_readings([
+                  ...pod_readings.slice(0, index),
+                  updated_pod,
+                  ...pod_readings.slice(index + 1)
+                ])
+            } else {
+                //Deleting field from pod reading if value is ""
+                delete updated_pod[field]
+                //If deleting this field means there are no other fields to record, delete this singular pod reading
+                if((Object.keys(updated_pod).length) === 1){
+                    set_pod_readings(pod_readings.filter(reading => reading.id !== selected_pod))
+                } else {
+                    set_pod_readings([
+                        ...pod_readings.slice(0, index),
+                        updated_pod,
+                        ...pod_readings.slice(index + 1)
+                    ])
+                }
+            }
          } else {
-            let reading = {id: selected_pod, [field]: parseInt(value)}
+            value = parseInt(value)
+            let reading = {id: selected_pod, [field]: value}
             set_pod_readings([...pod_readings, reading])
          }
+         console.log("SS: ", pod_readings)
      }
 
 
@@ -64,7 +83,7 @@ const ExperimentReading = (props) => {
                     </div>
                     <div className="form_row">
                         <label> Node Count: </label> 
-                        <input type="number" value={find_value_selected_pod('node_count')} name={"node_count"} onChange={(e) => {set_value_selected_pod(e)}} />
+                        <input type="number" value={find_value_selected_pod('node_count') || ""} name={"node_count"} onChange={(e) => {set_value_selected_pod(e)}} />
                     </div>
                 </div>
             )
