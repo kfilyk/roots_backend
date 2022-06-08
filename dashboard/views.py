@@ -76,7 +76,7 @@ class ExperimentView(viewsets.ModelViewSet):
             if plants[i] != -1:
                 pods.append(Pod(start_date=start_date, phase=phase, position=position, plant=Plant.objects.get(id=plants[i]), experiment=exp))
         Pod.objects.bulk_create(pods)
-        return Response("HELLO WORLD")
+        return JsonResponse(model_to_dict(exp), safe=False) # should this be list?
 
     @action(detail=False, methods=['POST'], name='set_device')
     def set_device(self, request):

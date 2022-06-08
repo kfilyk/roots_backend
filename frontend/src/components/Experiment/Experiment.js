@@ -81,8 +81,9 @@ const ExperimentList = () => {
 
 
   async function deleteEntry(id) {
-    await axios.delete(`/api/experiment/${id}/`);
+    await axios.delete(`/api/experiments/${id}/`);
     setExperimentList(experiment_list.filter(experiment => experiment.id !== id))
+    fetchAvailableDevices()
   }
 
   function openModal(experiment){
@@ -116,9 +117,8 @@ const ExperimentList = () => {
           start_date: addExperiment.start_date,
         })
       .catch((err) => console.log(err));
-      console.log("RESULT 2:", result)
-      setExperimentList(experiment_list => [...experiment_list, result.data]);
-    
+    console.log("RESULT 2:", result)
+    setExperimentList(experiment_list => [...experiment_list, result.data]);
   };
 
   async function editEntry(e) {

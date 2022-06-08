@@ -16,13 +16,11 @@ const PodCarousel = (props) => {
     fetchData(props);
   }, []);
 
-  function renderProgressCircle(pod){
-    pod.key = "exp=" +pod.experiment + "_position=" + pod.position + "_plant=" + pod.plant_id
-
-    if (pod.plant_id === null){
-      pod.plant_name = 'Empty'
-      pod.score = 0
-      pod.key = "exp=" +pod.experiment + "_position=" + pod.position +"_plant=empty"
+  function renderProgressCircle(pod, pos){
+    if (pod === null) {
+      pod = {'plant_name': 'Empty', 'score': 0, 'key': "empty_pod_"+pos} 
+    } else {
+      pod.key = "exp=" +pod.experiment + "_position=" + pod.position + "_plant=" + pod.plant_id
     }
 
     switch(true) {
@@ -39,7 +37,6 @@ const PodCarousel = (props) => {
         pod.colour = 'red'
         break;
     }
-
 
     return (
       //https://codepen.io/sergiopedercini/pen/jmKdbj
@@ -74,10 +71,11 @@ const PodCarousel = (props) => {
 
   function render(){
     let progress_circle_container = []
-    if (device_capacity !== -1 && pod_list !== []) {
+    if (device_capacity !== -1) { // if pod list is straight up empty, we still need to render 5 "empty" pods
       for(let i = 0; i < device_capacity; i++) {
-        let pod = pod_list.filter(pod => pod.position === (i+1))[0]
-        progress_circle_container.push(renderProgressCircle(pod)) 
+        let pod = pod_list.filter(pod => pod.position === (i+1))[0] ?? null;      
+        let pos = i+1  
+        progress_circle_container.push(renderProgressCircle(pod, pos)) 
       }
       return <> {progress_circle_container}</> ;
     } 

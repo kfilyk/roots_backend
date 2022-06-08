@@ -120,7 +120,7 @@ class PodReading(models.Model):
 
 class Pod(models.Model):
     id = models.AutoField(db_column='po_id', primary_key=True)  
-    experiment = models.ForeignKey("Experiment", models.DO_NOTHING, db_column='po_experiment_id')  # pods created automatically when an experiment is created
+    experiment = models.ForeignKey("Experiment", models.CASCADE, db_column='po_experiment_id')  # pods created automatically when an experiment is created
     plant = models.ForeignKey("Plant", models.DO_NOTHING, db_column='po_plant_id', null=True)  # type of plant for this pod 
     seeds_planted = models.IntegerField(db_column = 'po_seeds_planted', blank=True, null=True)
     position = models.IntegerField(db_column = 'po_position', blank=True, null=True) # position of pod in byte
