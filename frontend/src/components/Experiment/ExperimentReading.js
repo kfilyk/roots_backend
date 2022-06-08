@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import Popup from "reactjs-popup";
+import './experiment.css';
 
 const ExperimentReading = (props) => {
     const [modal, set_modal] = useState(true);
@@ -19,11 +20,40 @@ const ExperimentReading = (props) => {
         first_reading: true,
     });
 
+    // const [pod_readings, set_pod_readings] = useState([]);
+    const [pod_readings, set_pod_readings] = useState([{
+        node_count: null,
+        pod_reading: null,
+        leaf_count: null,
+        seeds_germinated: null,
+        pest_coverage: null,
+        algae_coverage: null,
+        blight_coverage: null,
+        harvest_weight: null,
+        harvest_number: null,
+        harvest_quality: null,
+        flower_quality: null,
+        comment: null,
+        exp_id: null,
+        exp_reading_id: null,
+        bud_count: null,
+        flower_count: null,
+        fruit_ripe_count: null,
+        fruit_unripe_count: null,
+        leaf_area_avg: null,
+        max_height: null,
+        media_to_bgp: null,
+        min_height: null,
+        pod_phase: null,
+        score: null,
+        domes: null,
+    }]);
+
     async function fetchData(props){
         const result = await axios
           .post(`/api/experimentreadings/get_last_reading/`, 
             { 
-                exp_id: experiment_reading.exp_id
+                exp_id: props.exp_id
             });
         if (result.status === 200) {
             if (result.data.latest_reading.exp_id !== -1 ){
@@ -35,7 +65,14 @@ const ExperimentReading = (props) => {
                     humidity: result.data.latest_reading.humidity,
                     exp_id: result.data.latest_reading.experiment,
                     exp_phase: result.data.latest_reading.experiment_phase,
-                    first_reading: false
+                    first_reading: false,
+                    device_capacity: result.data.device_capacity,
+                    pods: result.data.pods
+                })
+            } else {
+                set_experiment_reading({...experiment_reading, 
+                    device_capacity: result.data.device_capacity,
+                    pods: result.data.pods
                 })
             }
         }
@@ -43,7 +80,6 @@ const ExperimentReading = (props) => {
 
 
     useEffect(() => {
-        set_experiment_reading({...experiment_reading, exp_id: props.exp_id})
         fetchData(props)
     }, [props])
 
@@ -51,13 +87,35 @@ const ExperimentReading = (props) => {
         console.log("SUBMIT: ", experiment_reading)
     }
 
-    function renderPodReadingModal(){
+    function renderPodReading(){
         return (
             <div>
-                HEYA
+                <div className="form_row">
+                    <label> Experiment: </label> 
+                </div>
             </div>
         )
     }
+
+    function renderPodSelection(){
+        let pod_container = []
+        if (experiment_reading.pods !== []){
+            for(let i = 0; i < experiment_reading.device_capacity; i++) {
+                let curr_pod = experiment_reading.pods.filter(pod => pod.position === (i+1))[0] ?? null
+                // console.log("DD: ", curr_pod)
+                if(curr_pod !== null){
+                    pod_container.push(
+                        <button className="pod_selection" onClick={() => console.log(curr_pod)}>{curr_pod.plant_name}</button> 
+                    )
+                } else {
+                    pod_container.push(
+                        <button disabled className="pod_selection">EMPTY</button> 
+                    )
+                }
+            }
+        }
+        return pod_container
+      }
 
 
     function renderAddModal(){
@@ -65,7 +123,7 @@ const ExperimentReading = (props) => {
             <Popup open={modal} onClose={() => set_modal({show: false})} modal nested>
                 {(close) => (
                 <div className="modal" onClick={close}>
-                    <div className="modal_body"  onClick={e => e.stopPropagation()}>
+                    <div className="modal_body_reading"  onClick={e => e.stopPropagation()}>
                     <div className="modal_type"> Add Experiment Reading {} </div>
                     <div className="modal_content">
                     <div className="form_row">
@@ -73,21 +131,15 @@ const ExperimentReading = (props) => {
                     </div>
                     <div className="form_row">
                             <label> Electrical Conductance:</label> 
-                            <button onClick={() => set_experiment_reading({...experiment_reading, electrical_conductance: experiment_reading.electrical_conductance - 1})}>-</button>
                             <input type="number" value={experiment_reading.electrical_conductance} onChange={(e) => set_experiment_reading({...experiment_reading, electrical_conductance: e.target.value})} />
-                            <button onClick={() => set_experiment_reading({...experiment_reading, electrical_conductance: experiment_reading.electrical_conductance + 1})}>+</button>
                     </div>
                     <div className="form_row">
                             <label> Reservoir TDS:</label> 
-                            <button onClick={() => set_experiment_reading({...experiment_reading, reservoir_tds: experiment_reading.reservoir_tds - 1})}>-</button>
                             <input type="number" value={experiment_reading.reservoir_tds} onChange={(e) => set_experiment_reading({...experiment_reading, reservoir_tds: e.target.value})} />
-                            <button onClick={() => set_experiment_reading({...experiment_reading, reservoir_tds: experiment_reading.reservoir_tds + 1})}>+</button>
                     </div>
                     <div className="form_row">
                             <label> Reservoir PH:</label> 
-                            <button onClick={() => set_experiment_reading({...experiment_reading, reservoir_ph: experiment_reading.reservoir_ph - 1})}>-</button>
                             <input type="number" value={experiment_reading.reservoir_ph} onChange={(e) => set_experiment_reading({...experiment_reading, reservoir_ph: e.target.value})} />
-                            <button onClick={() => set_experiment_reading({...experiment_reading, reservoir_ph: experiment_reading.reservoir_ph + 1})}>+</button>
                     </div>
                     <div className="form_row">
                             <label> Temperature:</label> 
@@ -96,6 +148,10 @@ const ExperimentReading = (props) => {
                     <div className="form_row">
                             <label> Humidity:</label> 
                             <input type="number" value= {experiment_reading.humidity} onChange= {(e) => set_experiment_reading({...experiment_reading, humidity: e.target.value})} step="0.01" placeholder="e.g. 1.22"></input>
+                    </div>
+                    <div>
+                        {renderPodSelection()}
+                        {renderPodReading()}
                     </div>
                     <button className='save' onClick={() => {
                         submit_reading()
