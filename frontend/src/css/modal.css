@@ -18,7 +18,7 @@ POPUP MODAL
   background-color: #fefefe;
   margin: 10% auto; /* 15% from the top and centered */
   padding: 20px;
-  width: 50%;
+  width: min-content; /* dont change this!!! */
   z-index: 2;
 }
 
@@ -64,6 +64,7 @@ POPUP MODAL
   margin: 5px;
   margin-bottom: 5%;
   position:relative;
+  width:min-content; /* dont change this! needed to keep Phases light_intensity_overlay in position over slider */
   /* justify-content: center; */
 }
 
