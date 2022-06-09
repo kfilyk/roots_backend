@@ -21,7 +21,7 @@ class ExperimentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Experiment
         fields = '__all__'
-        read_only_fields = ['user', 'pod_readings']
+        read_only_fields = ['user']
 
 
 class PodReadingSerializer(serializers.ModelSerializer):
@@ -31,8 +31,6 @@ class PodReadingSerializer(serializers.ModelSerializer):
 
 
 class ExperimentReadingSerializer(serializers.ModelSerializer):
-    pod_readings = PodReadingSerializer(many=True)
-
     class Meta:
         model = ExperimentReading
         fields = ("experiment", "electrical_conductance", "reservoir_tds", "reservoir_ph", "temperature", "humidity")
