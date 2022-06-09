@@ -21,7 +21,7 @@ const ExperimentReading = (props) => {
     });
 
     const [pod_readings, set_pod_readings] = useState([]);
-    const [selected_pod, set_selected_pod] = useState();
+    const [selected_pod, set_selected_pod] = useState(null);
 
     function find_value_selected_pod(field){
        let pod = pod_readings.filter(pod => pod.id === selected_pod)[0] ?? null
@@ -35,15 +35,17 @@ const ExperimentReading = (props) => {
     function set_value_selected_pod(e){
         let field = e.target.name
         let value = e.target.value
-        // console.log("AAA: ", field, value)
-        // console.log("ANSWERS: ", pod_readings)
-        let index = pod_readings.findIndex(pod => pod.id === selected_pod) ?? null
+        let index = pod_readings.findIndex(pod => pod.id === selected_pod)
             //EDITING A POD READING
          if(index !== -1){
             let updated_pod = pod_readings[index]
             //Updating old value to new value
             if(value !== ""){
-                updated_pod[field] = parseInt(value)
+                if(field === 'comment'){
+                    updated_pod[field] = value
+                } else {
+                    updated_pod[field] = parseInt(value)
+                }
                 set_pod_readings([
                   ...pod_readings.slice(0, index),
                   updated_pod,
@@ -68,7 +70,6 @@ const ExperimentReading = (props) => {
             let reading = {id: selected_pod, [field]: value}
             set_pod_readings([...pod_readings, reading])
          }
-         console.log("SS: ", pod_readings)
      }
 
 
@@ -220,6 +221,7 @@ const ExperimentReading = (props) => {
     function change_selected_pod(e, pod_id){
         Array.from(document.querySelectorAll('.pod_selection')).forEach((el) => el.classList.remove('pod_selection_active'));
         e.currentTarget.classList.toggle('pod_selection_active');
+        set_pod_readings([...pod_readings, {id: pod_id}])
         set_selected_pod(pod_id)
     }
 
@@ -228,7 +230,6 @@ const ExperimentReading = (props) => {
         if (experiment_reading.pods !== []){
             for(let i = 0; i < experiment_reading.device_capacity; i++) {
                 let curr_pod = experiment_reading.pods.filter(pod => pod.position === (i+1))[0] ?? null
-                // console.log("DD: ", curr_pod)
                 if(curr_pod !== null){
                     pod_container.push(
                         <button key={i} className="pod_selection" onClick={(e) => change_selected_pod(e, curr_pod.id)}>{curr_pod.plant_name}</button> 
