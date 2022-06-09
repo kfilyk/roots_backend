@@ -83,7 +83,96 @@ const ExperimentReading = (props) => {
                     </div>
                     <div className="form_row">
                         <label> Node Count: </label> 
-                        <input type="number" value={find_value_selected_pod('node_count') || ""} name={"node_count"} onChange={(e) => {set_value_selected_pod(e)}} />
+                        <input type="number" value={find_value_selected_pod('node_count') || ""} name={"node_count"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                    <div className="form_row">
+                        <label> Leaf Count: </label> 
+                        <input type="number" value={find_value_selected_pod('leaf_count') || ""} name={"leaf_count"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                    <div className="form_row">
+                        <label> Seeds Germinated: </label> 
+                        <input type="number" value={find_value_selected_pod('seeds_germinated') || ""} name={"seeds_germinated"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                    <div className="form_row">
+                        <label> Pest Coverage: </label> 
+                        <input type="number" value={find_value_selected_pod('pest_coverage') || ""} name={"pest_coverage"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                    <div className="form_row">
+                        <label> Algae Coverage: </label> 
+                        <input type="number" value={find_value_selected_pod('algae_coverage') || ""} name={"algae_coverage"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                    <div className="form_row">
+                        <label> Blight Coverage: </label> 
+                        <input type="number" value={find_value_selected_pod('blight_coverage') || ""} name={"blight_coverage"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                    <div className="form_row">
+                        <label> Seeds: </label> 
+                        <input type="number" value={find_value_selected_pod('seeds_germinated') || ""} name={"seeds_germinated"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                    <div className="form_row">
+                        <label> Harvest Weight: </label> 
+                        <input type="number" value={find_value_selected_pod('harvest_weight') || ""} name={"harvest_weight"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                    <div className="form_row">
+                        <label> Harvest Number: </label> 
+                        <input type="number" value={find_value_selected_pod('harvest_number') || ""} name={"harvest_number"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                    <div className="form_row">
+                        <label> Leaf: </label> 
+                        <input type="number" value={find_value_selected_pod('leaf_count') || ""} name={"leaf_count"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                    <div className="form_row">
+                        <label> Harvest Quality: </label> 
+                        <input type="number" value={find_value_selected_pod('harvest_quality') || ""} name={"harvest_quality"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                    <div className="form_row">
+                        <label> Flower Quality: </label> 
+                        <input type="number" value={find_value_selected_pod('flower_quality') || ""} name={"flower_quality"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                    <div className="form_row">
+                        <label> Comment: </label> 
+                        <textarea name={"comment"} value={find_value_selected_pod('comment') || ""} onChange={(e) => {set_value_selected_pod(e)}} cols="40" rows="5"></textarea>
+                        {/* <input type="" value={find_value_selected_pod('comment') || ""} name={"comment"} min={0} onChange={(e) => {set_value_selected_pod(e)}} /> */}
+                    </div>
+                    <div className="form_row">
+                        <label> Bud Count: </label> 
+                        <input type="number" value={find_value_selected_pod('bud_count') || ""} name={"bud_count"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                    <div className="form_row">
+                        <label> Flower Count: </label> 
+                        <input type="number" value={find_value_selected_pod('flower_count') || ""} name={"flower_count"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                    <div className="form_row">
+                        <label> Fruit Ripe Count: </label> 
+                        <input type="number" value={find_value_selected_pod('fruit_ripe_count') || ""} name={"fruit_ripe_count"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                    <div className="form_row">
+                        <label> Fruit Unripe Count: </label> 
+                        <input type="number" value={find_value_selected_pod('fruit_unripe_count') || ""} name={"fruit_unripe_count"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                    <div className="form_row">
+                        <label> Leaf: </label> 
+                        <input type="number" value={find_value_selected_pod('leaf_count') || ""} name={"leaf_count"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                    <div className="form_row">
+                        <label> Leaf Area Avg: </label> 
+                        <input type="number" value={find_value_selected_pod('leaf_area_avg') || ""} name={"leaf_area_avg"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                    <div className="form_row">
+                        <label> Max Height: </label> 
+                        <input type="number" value={find_value_selected_pod('max_height') || ""} name={"max_height"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                    <div className="form_row">
+                        <label> Media to BGP: </label> 
+                        <input type="number" value={find_value_selected_pod('media_to_bgp') || ""} name={"media_to_bgp"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                    <div className="form_row">
+                        <label> Min Height: </label> 
+                        <input type="number" value={find_value_selected_pod('min_height') || ""} name={"min_height"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                    <div className="form_row">
+                        <label> Domes: </label> 
+                        <input type="number" value={find_value_selected_pod('domes') || ""} name={"domes"} min={0} max={1} onChange={(e) => {set_value_selected_pod(e)}} />
                     </div>
                 </div>
             )
