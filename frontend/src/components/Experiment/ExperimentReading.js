@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import Popup from "reactjs-popup";
+import './experiment.css';
 
 const ExperimentReading = (props) => {
     const [modal, set_modal] = useState(true);
@@ -19,11 +20,170 @@ const ExperimentReading = (props) => {
         first_reading: true,
     });
 
+    const [pod_readings, set_pod_readings] = useState([]);
+    const [selected_pod, set_selected_pod] = useState();
+
+    function find_value_selected_pod(field){
+       let pod = pod_readings.filter(pod => pod.id === selected_pod)[0] ?? null
+        if(pod === null){
+            return ""
+        } else {
+            return pod[field]
+        }
+    }
+
+    function set_value_selected_pod(e){
+        let field = e.target.name
+        let value = e.target.value
+        // console.log("AAA: ", field, value)
+        // console.log("ANSWERS: ", pod_readings)
+        let index = pod_readings.findIndex(pod => pod.id === selected_pod) ?? null
+            //EDITING A POD READING
+         if(index !== -1){
+            let updated_pod = pod_readings[index]
+            //Updating old value to new value
+            if(value !== ""){
+                updated_pod[field] = parseInt(value)
+                set_pod_readings([
+                  ...pod_readings.slice(0, index),
+                  updated_pod,
+                  ...pod_readings.slice(index + 1)
+                ])
+            } else {
+                //Deleting field from pod reading if value is ""
+                delete updated_pod[field]
+                //If deleting this field means there are no other fields to record, delete this singular pod reading
+                if((Object.keys(updated_pod).length) === 1){
+                    set_pod_readings(pod_readings.filter(reading => reading.id !== selected_pod))
+                } else {
+                    set_pod_readings([
+                        ...pod_readings.slice(0, index),
+                        updated_pod,
+                        ...pod_readings.slice(index + 1)
+                    ])
+                }
+            }
+         } else {
+            value = parseInt(value)
+            let reading = {id: selected_pod, [field]: value}
+            set_pod_readings([...pod_readings, reading])
+         }
+         console.log("SS: ", pod_readings)
+     }
+
+
+
+
+    function renderPodReading(){
+        if (selected_pod !== null){
+            return (
+                <div>
+                    <div className='form_row'>
+                        <label>Selected Pod: {selected_pod}</label>
+                    </div>
+                    <div className="form_row">
+                        <label> Node Count: </label> 
+                        <input type="number" value={find_value_selected_pod('node_count') || ""} name={"node_count"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                    <div className="form_row">
+                        <label> Leaf Count: </label> 
+                        <input type="number" value={find_value_selected_pod('leaf_count') || ""} name={"leaf_count"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                    <div className="form_row">
+                        <label> Seeds Germinated: </label> 
+                        <input type="number" value={find_value_selected_pod('seeds_germinated') || ""} name={"seeds_germinated"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                    <div className="form_row">
+                        <label> Pest Coverage: </label> 
+                        <input type="number" value={find_value_selected_pod('pest_coverage') || ""} name={"pest_coverage"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                    <div className="form_row">
+                        <label> Algae Coverage: </label> 
+                        <input type="number" value={find_value_selected_pod('algae_coverage') || ""} name={"algae_coverage"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                    <div className="form_row">
+                        <label> Blight Coverage: </label> 
+                        <input type="number" value={find_value_selected_pod('blight_coverage') || ""} name={"blight_coverage"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                    <div className="form_row">
+                        <label> Seeds: </label> 
+                        <input type="number" value={find_value_selected_pod('seeds_germinated') || ""} name={"seeds_germinated"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                    <div className="form_row">
+                        <label> Harvest Weight: </label> 
+                        <input type="number" value={find_value_selected_pod('harvest_weight') || ""} name={"harvest_weight"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                    <div className="form_row">
+                        <label> Harvest Number: </label> 
+                        <input type="number" value={find_value_selected_pod('harvest_number') || ""} name={"harvest_number"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                    <div className="form_row">
+                        <label> Leaf: </label> 
+                        <input type="number" value={find_value_selected_pod('leaf_count') || ""} name={"leaf_count"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                    <div className="form_row">
+                        <label> Harvest Quality: </label> 
+                        <input type="number" value={find_value_selected_pod('harvest_quality') || ""} name={"harvest_quality"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                    <div className="form_row">
+                        <label> Flower Quality: </label> 
+                        <input type="number" value={find_value_selected_pod('flower_quality') || ""} name={"flower_quality"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                    <div className="form_row">
+                        <label> Comment: </label> 
+                        <textarea name={"comment"} value={find_value_selected_pod('comment') || ""} onChange={(e) => {set_value_selected_pod(e)}} cols="40" rows="5"></textarea>
+                        {/* <input type="" value={find_value_selected_pod('comment') || ""} name={"comment"} min={0} onChange={(e) => {set_value_selected_pod(e)}} /> */}
+                    </div>
+                    <div className="form_row">
+                        <label> Bud Count: </label> 
+                        <input type="number" value={find_value_selected_pod('bud_count') || ""} name={"bud_count"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                    <div className="form_row">
+                        <label> Flower Count: </label> 
+                        <input type="number" value={find_value_selected_pod('flower_count') || ""} name={"flower_count"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                    <div className="form_row">
+                        <label> Fruit Ripe Count: </label> 
+                        <input type="number" value={find_value_selected_pod('fruit_ripe_count') || ""} name={"fruit_ripe_count"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                    <div className="form_row">
+                        <label> Fruit Unripe Count: </label> 
+                        <input type="number" value={find_value_selected_pod('fruit_unripe_count') || ""} name={"fruit_unripe_count"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                    <div className="form_row">
+                        <label> Leaf: </label> 
+                        <input type="number" value={find_value_selected_pod('leaf_count') || ""} name={"leaf_count"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                    <div className="form_row">
+                        <label> Leaf Area Avg: </label> 
+                        <input type="number" value={find_value_selected_pod('leaf_area_avg') || ""} name={"leaf_area_avg"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                    <div className="form_row">
+                        <label> Max Height: </label> 
+                        <input type="number" value={find_value_selected_pod('max_height') || ""} name={"max_height"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                    <div className="form_row">
+                        <label> Media to BGP: </label> 
+                        <input type="number" value={find_value_selected_pod('media_to_bgp') || ""} name={"media_to_bgp"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                    <div className="form_row">
+                        <label> Min Height: </label> 
+                        <input type="number" value={find_value_selected_pod('min_height') || ""} name={"min_height"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                    <div className="form_row">
+                        <label> Domes: </label> 
+                        <input type="number" value={find_value_selected_pod('domes') || ""} name={"domes"} min={0} max={1} onChange={(e) => {set_value_selected_pod(e)}} />
+                    </div>
+                </div>
+            )
+        }
+    }
+
     async function fetchData(props){
         const result = await axios
           .post(`/api/experimentreadings/get_last_reading/`, 
             { 
-                exp_id: experiment_reading.exp_id
+                exp_id: props.exp_id
             });
         if (result.status === 200) {
             if (result.data.latest_reading.exp_id !== -1 ){
@@ -35,7 +195,14 @@ const ExperimentReading = (props) => {
                     humidity: result.data.latest_reading.humidity,
                     exp_id: result.data.latest_reading.experiment,
                     exp_phase: result.data.latest_reading.experiment_phase,
-                    first_reading: false
+                    first_reading: false,
+                    device_capacity: result.data.device_capacity,
+                    pods: result.data.pods
+                })
+            } else {
+                set_experiment_reading({...experiment_reading, 
+                    device_capacity: result.data.device_capacity,
+                    pods: result.data.pods
                 })
             }
         }
@@ -43,21 +210,38 @@ const ExperimentReading = (props) => {
 
 
     useEffect(() => {
-        set_experiment_reading({...experiment_reading, exp_id: props.exp_id})
         fetchData(props)
     }, [props])
 
     function submit_reading(){
-        console.log("SUBMIT: ", experiment_reading)
+        console.log("SUBMIT: ", pod_readings, experiment_reading)
     }
 
-    function renderPodReadingModal(){
-        return (
-            <div>
-                HEYA
-            </div>
-        )
+    function change_selected_pod(e, pod_id){
+        Array.from(document.querySelectorAll('.pod_selection')).forEach((el) => el.classList.remove('pod_selection_active'));
+        e.currentTarget.classList.toggle('pod_selection_active');
+        set_selected_pod(pod_id)
     }
+
+    function renderPodSelection(){
+        let pod_container = []
+        if (experiment_reading.pods !== []){
+            for(let i = 0; i < experiment_reading.device_capacity; i++) {
+                let curr_pod = experiment_reading.pods.filter(pod => pod.position === (i+1))[0] ?? null
+                // console.log("DD: ", curr_pod)
+                if(curr_pod !== null){
+                    pod_container.push(
+                        <button key={i} className="pod_selection" onClick={(e) => change_selected_pod(e, curr_pod.id)}>{curr_pod.plant_name}</button> 
+                    )
+                } else {
+                    pod_container.push(
+                        <button key={i} disabled className="pod_selection">EMPTY</button> 
+                    )
+                }
+            }
+        }
+        return pod_container
+      }
 
 
     function renderAddModal(){
@@ -65,7 +249,7 @@ const ExperimentReading = (props) => {
             <Popup open={modal} onClose={() => set_modal({show: false})} modal nested>
                 {(close) => (
                 <div className="modal" onClick={close}>
-                    <div className="modal_body"  onClick={e => e.stopPropagation()}>
+                    <div className="modal_body_reading"  onClick={e => e.stopPropagation()}>
                     <div className="modal_type"> Add Experiment Reading {} </div>
                     <div className="modal_content">
                     <div className="form_row">
@@ -73,21 +257,15 @@ const ExperimentReading = (props) => {
                     </div>
                     <div className="form_row">
                             <label> Electrical Conductance:</label> 
-                            <button onClick={() => set_experiment_reading({...experiment_reading, electrical_conductance: experiment_reading.electrical_conductance - 1})}>-</button>
                             <input type="number" value={experiment_reading.electrical_conductance} onChange={(e) => set_experiment_reading({...experiment_reading, electrical_conductance: e.target.value})} />
-                            <button onClick={() => set_experiment_reading({...experiment_reading, electrical_conductance: experiment_reading.electrical_conductance + 1})}>+</button>
                     </div>
                     <div className="form_row">
                             <label> Reservoir TDS:</label> 
-                            <button onClick={() => set_experiment_reading({...experiment_reading, reservoir_tds: experiment_reading.reservoir_tds - 1})}>-</button>
                             <input type="number" value={experiment_reading.reservoir_tds} onChange={(e) => set_experiment_reading({...experiment_reading, reservoir_tds: e.target.value})} />
-                            <button onClick={() => set_experiment_reading({...experiment_reading, reservoir_tds: experiment_reading.reservoir_tds + 1})}>+</button>
                     </div>
                     <div className="form_row">
                             <label> Reservoir PH:</label> 
-                            <button onClick={() => set_experiment_reading({...experiment_reading, reservoir_ph: experiment_reading.reservoir_ph - 1})}>-</button>
                             <input type="number" value={experiment_reading.reservoir_ph} onChange={(e) => set_experiment_reading({...experiment_reading, reservoir_ph: e.target.value})} />
-                            <button onClick={() => set_experiment_reading({...experiment_reading, reservoir_ph: experiment_reading.reservoir_ph + 1})}>+</button>
                     </div>
                     <div className="form_row">
                             <label> Temperature:</label> 
@@ -96,6 +274,10 @@ const ExperimentReading = (props) => {
                     <div className="form_row">
                             <label> Humidity:</label> 
                             <input type="number" value= {experiment_reading.humidity} onChange= {(e) => set_experiment_reading({...experiment_reading, humidity: e.target.value})} step="0.01" placeholder="e.g. 1.22"></input>
+                    </div>
+                    <div>
+                        {renderPodSelection()}
+                        {renderPodReading()}
                     </div>
                     <button className='save' onClick={() => {
                         submit_reading()
