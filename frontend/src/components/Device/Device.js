@@ -112,7 +112,7 @@ const Device = () => {
                         <div className="object_name">{ item.name }</div>
                         <div>Device ID: { item.id }</div>
                         {/* <div>Registered: { item.registration_date.substring(0, 10) }</div> */}
-                        <div>Number of Pods: { item.device_capacity }</div>
+                        <div>Number of Pods: { item.capacity }</div>
                         </div>
                         <div className='object_actions'>
                             <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
