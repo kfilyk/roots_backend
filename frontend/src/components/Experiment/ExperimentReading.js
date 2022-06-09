@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import Popup from "reactjs-popup";
-import './experiment.css';
 
 const ExperimentReading = (props) => {
     const [modal, set_modal] = useState(true);
@@ -212,12 +211,12 @@ const ExperimentReading = (props) => {
                     exp_id: result.data.latest_reading.experiment,
                     exp_phase: result.data.latest_reading.experiment_phase,
                     first_reading: false,
-                    device_capacity: result.data.device_capacity,
+                    capacity: result.data.capacity,
                     pods: result.data.pods
                 })
             } else {
                 set_experiment_reading({...experiment_reading, 
-                    device_capacity: result.data.device_capacity,
+                    capacity: result.data.capacity,
                     pods: result.data.pods
                 })
             }
@@ -253,7 +252,7 @@ const ExperimentReading = (props) => {
     function renderPodSelection(){
         let pod_container = []
         if (experiment_reading.pods !== []){
-            for(let i = 0; i < experiment_reading.device_capacity; i++) {
+            for(let i = 0; i < experiment_reading.capacity; i++) {
                 let curr_pod = experiment_reading.pods.filter(pod => pod.position === (i+1))[0] ?? null
                 if(curr_pod !== null){
                     pod_container.push(

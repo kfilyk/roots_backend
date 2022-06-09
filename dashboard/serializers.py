@@ -1,7 +1,7 @@
 from unittest.util import _MAX_LENGTH
 from wsgiref import validate
 from rest_framework import serializers
-from .models import Device, Experiment, Phase, Plant, Pod, ExperimentReading
+from .models import Device, Experiment, Phase, Plant, Pod, ExperimentReading, PodReading
 from django.contrib.auth import get_user_model
 
 # https://www.digitalocean.com/community/tutorials/build-a-to-do-application-using-django-and-react
@@ -21,16 +21,21 @@ class ExperimentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Experiment
         fields = '__all__'
-        read_only_fields = ['user']
+        read_only_fields = ['user', 'pod_readings']
+
+
+class PodReadingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PodReading
+        fields = '__all__'
+
 
 class ExperimentReadingSerializer(serializers.ModelSerializer):
-
-    def create(self, validated_data):
-        return ExperimentReading.objects.create(**validated_data)
+    pod_readings = PodReadingSerializer(many=True)
 
     class Meta:
         model = ExperimentReading
-        fields = '__all__'
+        fields = ("experiment", "electrical_conductance", "reservoir_tds", "reservoir_ph", "temperature", "humidity")
 
 
 class PhaseSerializer(serializers.ModelSerializer):
@@ -94,5 +99,3 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
         fields = ('username', 'password', 'first_name', 'last_name')
-
-

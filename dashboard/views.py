@@ -46,13 +46,13 @@ class ExperimentReadingView(viewsets.ModelViewSet):
         exp_id = request.data['exp_id']
         qs = Pod.objects.filter(experiment = exp_id, end_date__isnull=True).annotate(plant_name=F('plant__name'))
         pods = list(qs.values())
-        device_capacity = Device.objects.get(id=exp_id).device_capacity
+        capacity = Device.objects.get(id=exp_id).capacity
         try:
             latest = ExperimentReading.objects.filter(experiment=exp_id).latest('reading_date')
-            return JsonResponse({"latest_reading": model_to_dict(latest), "pods": pods, "device_capacity": device_capacity}, safe=False)
+            return JsonResponse({"latest_reading": model_to_dict(latest), "pods": pods, "capacity": capacity}, safe=False)
         except ExperimentReading.DoesNotExist:
             latest = {"exp_id": -1}
-            return JsonResponse({"latest_reading": latest, "pods": pods, "device_capacity": device_capacity}, safe=False)
+            return JsonResponse({"latest_reading": latest, "pods": pods, "capacity": capacity}, safe=False)
         
 
 class ExperimentView(viewsets.ModelViewSet):
@@ -140,19 +140,8 @@ class PodView(viewsets.ModelViewSet):
         qs = Pod.objects.filter(experiment = exp_id, end_date__isnull=True).annotate(plant_name=F('plant__name'))
         pods = list(qs.values())
         capacity = Experiment.objects.get(id=exp_id).device.capacity
-        print("PODS: ", pods)
-        print("DEVICE: ", capacity)
         return JsonResponse({"capacity": capacity, "pods": pods}, safe=False)            
-    '''
-    @action(detail=False, methods=["post"], name='populate_pod_carousel')
-    def populate_pod_carousel(self, request):
-        exp_id=json.loads(request.body)["id"]
-        qs = Pod.objects.filter(experiment = exp_id, end_date__isnull=True).annotate(plant_name=F('plant__name'))
-        pods = list(qs.values())
-        # device_capacity = Experiment.objects.get(exp_id).values('device__')
-        device_capacity = 5
-        return JsonResponse({pods: pods, device_capacity: device_capacity}, safe=False)
-    '''
+
 class PlantView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
     serializer_class = PlantSerializer
