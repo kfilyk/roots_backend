@@ -41,13 +41,35 @@ const ExperimentReading = (props) => {
         }
     }
 
+
+    async function create_readings(){
+        const result = await axios
+        .post(`/api/experimentreadings/`, 
+          { 
+            experiment: experiment_reading.exp_id,
+            electrical_conductance : experiment_reading.electrical_conductance,
+            reservoir_tds: experiment_reading.reservoir_tds,
+            reservoir_ph: experiment_reading.reservoir_ph,
+            temperature: experiment_reading.temperature,
+            humidity: experiment_reading.humidity,
+            pod_readings: pod_readings
+          })
+        .catch((err) => console.log(err));
+      if (result.status === 200){
+        console.log("Experiment readings and pod readings uploaded successfully")
+      } else {
+        console.log("SERVER ERROR: Experiment + pod readings were not uploaded")
+      }
+    
+     }
+
     /*
         For a particular pod reading field, this function sets the value of that field. If value is null, assumption is not to record that pod reading field.
     */
     function set_value_selected_pod(e){
         let field = e.target.name
         let value = e.target.value
-        let index = pod_readings.findIndex(pod => pod.id === selected_pod)
+        let index = pod_readings.findIndex(pod => pod.pod_id === selected_pod)
             //EDITING A POD READING
          if(index !== -1){
             let updated_pod = pod_readings[index]
@@ -68,7 +90,7 @@ const ExperimentReading = (props) => {
                 delete updated_pod[field]
                 //If deleting this field means there are no other fields to record, delete this singular pod reading
                 if((Object.keys(updated_pod).length) === 1){
-                    set_pod_readings(pod_readings.filter(reading => reading.id !== selected_pod))
+                    set_pod_readings(pod_readings.filter(reading => reading.pod_id !== selected_pod))
                 } else {
                     set_pod_readings([
                         ...pod_readings.slice(0, index),
@@ -81,7 +103,7 @@ const ExperimentReading = (props) => {
             if(field !== 'comment'){
                 value = parseInt(value)
             } 
-            let reading = {id: selected_pod, [field]: value}
+            let reading = {pod_id: selected_pod, [field]: value}
             set_pod_readings([...pod_readings, reading])
          }
      }
@@ -129,8 +151,8 @@ const ExperimentReading = (props) => {
                         <input type="number" value={find_value_selected_pod('harvest_weight') || ""} name={"harvest_weight"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
                     </div>
                     <div className="form_row">
-                        <label> Harvest Number: </label> 
-                        <input type="number" value={find_value_selected_pod('harvest_number') || ""} name={"harvest_number"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                        <label> Harvest Count: </label> 
+                        <input type="number" value={find_value_selected_pod('harvest_count') || ""} name={"harvest_count"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
                     </div>
                     <div className="form_row">
                         <label> Leaf: </label> 
@@ -229,20 +251,20 @@ const ExperimentReading = (props) => {
     }, [props])
 
     function submit_reading(){
-        console.log("SUBMIT: ", pod_readings, experiment_reading)
+        create_readings()
     }
 
     function change_selected_pod(e, pod_id){
         if (selected_pod !== pod_id){
             Array.from(document.querySelectorAll('.pod_selection')).forEach((el) => el.classList.remove('pod_selection_active'));
             e.currentTarget.classList.toggle('pod_selection_active');
-            set_pod_readings([...pod_readings, {id: pod_id}])
+            set_pod_readings([...pod_readings, {pod_id: pod_id}])
             set_selected_pod(pod_id)
         } else {
             //To remove the pod reading form
-            let index = pod_readings.findIndex(pod => pod.id === selected_pod)
+            let index = pod_readings.findIndex(pod => pod.pod_id === selected_pod)
             if((Object.keys(pod_readings[index]).length) === 1){
-                set_pod_readings(pod_readings.filter(reading => reading.id !== selected_pod))
+                set_pod_readings(pod_readings.filter(reading => reading.pod_id !== selected_pod))
             }
             e.currentTarget.classList.remove('pod_selection_active');
             set_selected_pod(null)
