@@ -33,7 +33,7 @@ class Device(models.Model):
     is_online = models.BooleanField(db_column='d_is_online', default=False)  
     mac_address = models.CharField(db_column='d_mac_address', max_length=45, blank=True, null=True)  
     fill_res_flag = models.BooleanField(db_column='d_fill_res_flag', default=False) 
-    device_capacity = models.IntegerField(db_column='d_device_capacity', default = 5) 
+    capacity = models.IntegerField(db_column='d_capacity', default = 5) 
 
     class Meta:
         managed = True

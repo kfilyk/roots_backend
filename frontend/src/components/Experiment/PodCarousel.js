@@ -4,12 +4,12 @@ import "./pod_carousel.css";
 
 const PodCarousel = (props) => {
   const [pod_list, setPodList] = useState([]);
-  const [device_capacity, setNumPods] = useState(-1);
+  const [capacity, setCapacity] = useState(-1);
 
   async function fetchData(props) {
     const result = await axios.post(`/api/pods/populate_pod_carousel/`, {"id": props.experimentID});
     setPodList(result.data.pods)
-    setNumPods(result.data.device_capacity)
+    setCapacity(result.data.capacity)
   } 
 
   useEffect(() => {
@@ -71,8 +71,8 @@ const PodCarousel = (props) => {
 
   function render(){
     let progress_circle_container = []
-    if (device_capacity !== -1) { // if pod list is straight up empty, we still need to render 5 "empty" pods
-      for(let i = 0; i < device_capacity; i++) {
+    if (capacity !== -1) { // if pod list is straight up empty, we still need to render 5 "empty" pods
+      for(let i = 0; i < capacity; i++) {
         let pod = pod_list.filter(pod => pod.position === (i+1))[0] ?? null;      
         let pos = i+1  
         progress_circle_container.push(renderProgressCircle(pod, pos)) 

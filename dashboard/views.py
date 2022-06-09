@@ -66,13 +66,13 @@ class ExperimentView(viewsets.ModelViewSet):
         exp_id = super().create(request, *args, **kwargs).data['id']
         exp = Experiment.objects.get(id=exp_id)
         plants = request.data['plants']
-        device_capacity = Device.objects.get(id=request.data['device']).device_capacity
+        capacity = Device.objects.get(id=request.data['device']).capacity
         start_date = make_aware(datetime.strptime(request.data['start_date'], '%Y-%m-%d'))
         print(start_date)
         phase = 0
 
         pods = []
-        for i in range(device_capacity):
+        for i in range(capacity):
             position = i+1
             if plants[i] != -1:
                 pods.append(Pod(start_date=start_date, phase=phase, position=position, plant=Plant.objects.get(id=plants[i]), experiment=exp))
@@ -102,7 +102,7 @@ class ExperimentView(viewsets.ModelViewSet):
         query = query.filter(user = self.request.user.id)
         print("QUERY 2: ", query)
 
-        data = list(query.values('id', 'name', 'device_capacity'))
+        data = list(query.values('id', 'name', 'capacity'))
         return JsonResponse(data, safe=False)
 
     @action(detail=False, methods=['GET'], name='loaded_devices')
@@ -139,10 +139,10 @@ class PodView(viewsets.ModelViewSet):
         exp_id=json.loads(request.body)["id"]
         qs = Pod.objects.filter(experiment = exp_id, end_date__isnull=True).annotate(plant_name=F('plant__name'))
         pods = list(qs.values())
-        device_capacity = Experiment.objects.get(id=exp_id).device.device_capacity
+        capacity = Experiment.objects.get(id=exp_id).device.capacity
         print("PODS: ", pods)
-        print("DEVICE: ", device_capacity)
-        return JsonResponse({"device_capacity": device_capacity, "pods": pods}, safe=False)            
+        print("DEVICE: ", capacity)
+        return JsonResponse({"capacity": capacity, "pods": pods}, safe=False)            
     '''
     @action(detail=False, methods=["post"], name='populate_pod_carousel')
     def populate_pod_carousel(self, request):
