@@ -20,9 +20,19 @@ const ExperimentReading = (props) => {
         first_reading: true,
     });
 
+    /*
+        Is an array of pod reading objects
+    */
     const [pod_readings, set_pod_readings] = useState([]);
+    /*
+        The selected pod id that the pod reading form is on
+    */
     const [selected_pod, set_selected_pod] = useState(null);
 
+
+    /*
+        For a particular pod reading field, this function finds the value of that field if it already exists given a pod_id
+    */
     function find_value_selected_pod(field){
        let pod = pod_readings.filter(pod => pod.id === selected_pod)[0] ?? null
         if(pod === null){
@@ -32,6 +42,9 @@ const ExperimentReading = (props) => {
         }
     }
 
+    /*
+        For a particular pod reading field, this function sets the value of that field. If value is null, assumption is not to record that pod reading field.
+    */
     function set_value_selected_pod(e){
         let field = e.target.name
         let value = e.target.value
@@ -66,7 +79,9 @@ const ExperimentReading = (props) => {
                 }
             }
          } else {
-            value = parseInt(value)
+            if(field !== 'comment'){
+                value = parseInt(value)
+            } 
             let reading = {id: selected_pod, [field]: value}
             set_pod_readings([...pod_readings, reading])
          }
@@ -219,10 +234,20 @@ const ExperimentReading = (props) => {
     }
 
     function change_selected_pod(e, pod_id){
-        Array.from(document.querySelectorAll('.pod_selection')).forEach((el) => el.classList.remove('pod_selection_active'));
-        e.currentTarget.classList.toggle('pod_selection_active');
-        set_pod_readings([...pod_readings, {id: pod_id}])
-        set_selected_pod(pod_id)
+        if (selected_pod !== pod_id){
+            Array.from(document.querySelectorAll('.pod_selection')).forEach((el) => el.classList.remove('pod_selection_active'));
+            e.currentTarget.classList.toggle('pod_selection_active');
+            set_pod_readings([...pod_readings, {id: pod_id}])
+            set_selected_pod(pod_id)
+        } else {
+            //To remove the pod reading form
+            let index = pod_readings.findIndex(pod => pod.id === selected_pod)
+            if((Object.keys(pod_readings[index]).length) === 1){
+                set_pod_readings(pod_readings.filter(reading => reading.id !== selected_pod))
+            }
+            e.currentTarget.classList.remove('pod_selection_active');
+            set_selected_pod(null)
+        }
     }
 
     function renderPodSelection(){
