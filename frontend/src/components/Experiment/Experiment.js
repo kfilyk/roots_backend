@@ -3,6 +3,7 @@ import axios from 'axios';
 import Popup from "reactjs-popup";
 import PodCarousel from "./PodCarousel"
 import vertical_menu_icon from "../../img/vertical_menu_icon.png"
+import ExperimentReading from "../Experiment/ExperimentReading"
 
 
 let today_date = new Date();
@@ -268,6 +269,7 @@ const ExperimentList = () => {
                     <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
                     <li key="edit"><button onClick={() => openModal(item)}>EDIT</button></li>
                     <li key="delete"><button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) deleteEntry(item.id) }}> DELETE </button></li>
+                    <li key="add_reading"><ExperimentReading exp_id={item.id}></ExperimentReading></li>
                 </div>
                 </div>
             </div>

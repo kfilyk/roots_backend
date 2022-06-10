@@ -3,7 +3,7 @@ import axios from "axios";
 import Popup from "reactjs-popup";
 
 const ExperimentReading = (props) => {
-    const [modal, set_modal] = useState(true);
+    const [modal, set_modal] = useState(false);
     const [experiment_reading, set_experiment_reading] = useState({
         // To be done automatically
         // water_level: -1,
@@ -26,7 +26,7 @@ const ExperimentReading = (props) => {
     /*
         The selected pod id that the pod reading form is on
     */
-    const [selected_pod, set_selected_pod] = useState(null);
+    const [selected_pod, set_selected_pod] = useState(-1)
 
 
     /*
@@ -112,7 +112,7 @@ const ExperimentReading = (props) => {
 
 
     function renderPodReading(){
-        if (selected_pod !== null){
+        if (selected_pod !== -1){
             return (
                 <div>
                     <div className='form_row'>
@@ -215,11 +215,11 @@ const ExperimentReading = (props) => {
         }
     }
 
-    async function fetchData(props){
+    async function fetchData(exp_id){
         const result = await axios
           .post(`/api/experimentreadings/get_last_reading/`, 
             { 
-                exp_id: props.exp_id
+                exp_id: exp_id
             });
         if (result.status === 200) {
             if (result.data.latest_reading.exp_id !== -1 ){
@@ -246,10 +246,11 @@ const ExperimentReading = (props) => {
 
 
     useEffect(() => {
-        fetchData(props)
-    }, [props])
+        fetchData(props.exp_id)
+    }, [props.exp_id])
 
     function submit_reading(){
+        set_pod_readings(pod_readings.filter(reading => (Object.keys(reading).length !== 1)))
         create_readings()
     }
 
@@ -257,16 +258,12 @@ const ExperimentReading = (props) => {
         if (selected_pod !== pod){
             Array.from(document.querySelectorAll('.pod_selection')).forEach((el) => el.classList.remove('pod_selection_active'));
             e.currentTarget.classList.toggle('pod_selection_active');
-            set_pod_readings([...pod_readings, {pod: pod}])
             set_selected_pod(pod)
         } else {
             //To remove the pod reading form
-            let index = pod_readings.findIndex(reading => reading.pod === selected_pod)
-            if((Object.keys(pod_readings[index]).length) === 1){
-                set_pod_readings(pod_readings.filter(reading => reading.pod !== selected_pod))
-            }
+
             e.currentTarget.classList.remove('pod_selection_active');
-            set_selected_pod(null)
+            set_selected_pod(-1)
         }
     }
 
@@ -340,8 +337,7 @@ const ExperimentReading = (props) => {
 
     return (
         <div>
-            HELLO
-            <button onClick={() => set_modal(true)}>Add Experiment Reading</button>
+            <button onClick={() => set_modal(true)}>ADD READING</button>
             {renderAddModal()}
         </div>
     )

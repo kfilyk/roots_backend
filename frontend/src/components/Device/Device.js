@@ -98,6 +98,7 @@ const Device = () => {
                         <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
                         <li key="edit"><button onClick={() => {}}>EDIT</button></li>
                         <li key="delete"><button onClick={() => {}}>DELETE</button></li>
+                        <li key="add_reading"><ExperimentReading exp_id={item.id}></ExperimentReading></li>
                         </div>
                     </div>
                 )
@@ -163,10 +164,9 @@ const Device = () => {
 
     return (
         <div>
-            <ExperimentReading exp_id={2}></ExperimentReading>
-            {/* {renderNav()}
+            {renderNav()}
             {renderDevices()}
-            {renderModal()} */}
+            {renderModal()}
         </div>
       );
 }

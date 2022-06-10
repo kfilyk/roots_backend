@@ -62,7 +62,7 @@ class ExperimentReadingView(viewsets.ModelViewSet):
         exp_id = request.data['exp_id']
         qs = Pod.objects.filter(experiment = exp_id, end_date__isnull=True).annotate(plant_name=F('plant__name'))
         pods = list(qs.values())
-        capacity = Device.objects.get(id=exp_id).capacity
+        capacity = Device.objects.get(id=Experiment.objects.get(id=exp_id).device.id).capacity
         try:
             latest = ExperimentReading.objects.filter(experiment=exp_id).latest('reading_date')
             return JsonResponse({"latest_reading": model_to_dict(latest), "pods": pods, "capacity": capacity}, safe=False)
