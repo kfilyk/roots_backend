@@ -19,9 +19,19 @@ const ExperimentReading = (props) => {
         first_reading: true,
     });
 
+    /*
+        Is an array of pod reading objects
+    */
     const [pod_readings, set_pod_readings] = useState([]);
-    const [selected_pod, set_selected_pod] = useState();
+    /*
+        The selected pod id that the pod reading form is on
+    */
+    const [selected_pod, set_selected_pod] = useState(null);
 
+
+    /*
+        For a particular pod reading field, this function finds the value of that field if it already exists given a pod_id
+    */
     function find_value_selected_pod(field){
        let pod = pod_readings.filter(pod => pod.id === selected_pod)[0] ?? null
         if(pod === null){
@@ -31,18 +41,45 @@ const ExperimentReading = (props) => {
         }
     }
 
+
+    async function create_readings(){
+        const result = await axios
+        .post(`/api/experimentreadings/`, 
+          { 
+            experiment: experiment_reading.exp_id,
+            electrical_conductance : experiment_reading.electrical_conductance,
+            reservoir_tds: experiment_reading.reservoir_tds,
+            reservoir_ph: experiment_reading.reservoir_ph,
+            temperature: experiment_reading.temperature,
+            humidity: experiment_reading.humidity,
+            pod_readings: pod_readings
+          })
+        .catch((err) => console.log(err));
+      if (result.status === 200){
+        console.log("Experiment readings and pod readings uploaded successfully")
+      } else {
+        console.log("SERVER ERROR: Experiment + pod readings were not uploaded")
+      }
+    
+     }
+
+    /*
+        For a particular pod reading field, this function sets the value of that field. If value is null, assumption is not to record that pod reading field.
+    */
     function set_value_selected_pod(e){
         let field = e.target.name
         let value = e.target.value
-        // console.log("AAA: ", field, value)
-        // console.log("ANSWERS: ", pod_readings)
-        let index = pod_readings.findIndex(pod => pod.id === selected_pod) ?? null
+        let index = pod_readings.findIndex(pod => pod.pod_id === selected_pod)
             //EDITING A POD READING
          if(index !== -1){
             let updated_pod = pod_readings[index]
             //Updating old value to new value
             if(value !== ""){
-                updated_pod[field] = parseInt(value)
+                if(field === 'comment'){
+                    updated_pod[field] = value
+                } else {
+                    updated_pod[field] = parseInt(value)
+                }
                 set_pod_readings([
                   ...pod_readings.slice(0, index),
                   updated_pod,
@@ -53,7 +90,7 @@ const ExperimentReading = (props) => {
                 delete updated_pod[field]
                 //If deleting this field means there are no other fields to record, delete this singular pod reading
                 if((Object.keys(updated_pod).length) === 1){
-                    set_pod_readings(pod_readings.filter(reading => reading.id !== selected_pod))
+                    set_pod_readings(pod_readings.filter(reading => reading.pod_id !== selected_pod))
                 } else {
                     set_pod_readings([
                         ...pod_readings.slice(0, index),
@@ -63,11 +100,12 @@ const ExperimentReading = (props) => {
                 }
             }
          } else {
-            value = parseInt(value)
-            let reading = {id: selected_pod, [field]: value}
+            if(field !== 'comment'){
+                value = parseInt(value)
+            } 
+            let reading = {pod_id: selected_pod, [field]: value}
             set_pod_readings([...pod_readings, reading])
          }
-         console.log("SS: ", pod_readings)
      }
 
 
@@ -113,8 +151,8 @@ const ExperimentReading = (props) => {
                         <input type="number" value={find_value_selected_pod('harvest_weight') || ""} name={"harvest_weight"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
                     </div>
                     <div className="form_row">
-                        <label> Harvest Number: </label> 
-                        <input type="number" value={find_value_selected_pod('harvest_number') || ""} name={"harvest_number"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                        <label> Harvest Count: </label> 
+                        <input type="number" value={find_value_selected_pod('harvest_count') || ""} name={"harvest_count"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
                     </div>
                     <div className="form_row">
                         <label> Leaf: </label> 
@@ -213,21 +251,31 @@ const ExperimentReading = (props) => {
     }, [props])
 
     function submit_reading(){
-        console.log("SUBMIT: ", pod_readings, experiment_reading)
+        create_readings()
     }
 
     function change_selected_pod(e, pod_id){
-        Array.from(document.querySelectorAll('.pod_selection')).forEach((el) => el.classList.remove('pod_selection_active'));
-        e.currentTarget.classList.toggle('pod_selection_active');
-        set_selected_pod(pod_id)
+        if (selected_pod !== pod_id){
+            Array.from(document.querySelectorAll('.pod_selection')).forEach((el) => el.classList.remove('pod_selection_active'));
+            e.currentTarget.classList.toggle('pod_selection_active');
+            set_pod_readings([...pod_readings, {pod_id: pod_id}])
+            set_selected_pod(pod_id)
+        } else {
+            //To remove the pod reading form
+            let index = pod_readings.findIndex(pod => pod.pod_id === selected_pod)
+            if((Object.keys(pod_readings[index]).length) === 1){
+                set_pod_readings(pod_readings.filter(reading => reading.pod_id !== selected_pod))
+            }
+            e.currentTarget.classList.remove('pod_selection_active');
+            set_selected_pod(null)
+        }
     }
 
     function renderPodSelection(){
         let pod_container = []
         if (experiment_reading.pods !== []){
-            for(let i = 0; i < experiment_reading.device_capacity; i++) {
+            for(let i = 0; i < experiment_reading.capacity; i++) {
                 let curr_pod = experiment_reading.pods.filter(pod => pod.position === (i+1))[0] ?? null
-                // console.log("DD: ", curr_pod)
                 if(curr_pod !== null){
                     pod_container.push(
                         <button key={i} className="pod_selection" onClick={(e) => change_selected_pod(e, curr_pod.id)}>{curr_pod.plant_name}</button> 

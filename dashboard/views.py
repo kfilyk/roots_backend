@@ -1,4 +1,4 @@
-from dashboard.models import Device, Experiment, Phase, Plant, Pod, ExperimentReading
+from dashboard.models import Device, Experiment, Phase, Plant, Pod, ExperimentReading, PodReading
 from rest_framework import viewsets
 from django.forms.models import model_to_dict
 from .serializers import DeviceSerializer, ExperimentSerializer, CreateUserSerializer, UserSerializer, PhaseSerializer, PlantSerializer, PodSerializer, ExperimentReadingSerializer
@@ -36,6 +36,22 @@ class ExperimentReadingView(viewsets.ModelViewSet):
     serializer_class = ExperimentReadingSerializer
     filter_backends = [filters.DjangoFilterBackend,]
     filterset_fields = ['experiment']
+
+    def create(self, request, *args, **kwargs):
+        try:
+            pr_values = request.data.get('pod_readings')
+            exp_r = ExperimentReading.objects.create(experiment=Experiment.objects.get(id=request.data.get('experiment')), electrical_conductance=request.data.get('electrical_conductance'), reservoir_tds=request.data.get('reservoir_tds'), 
+                                                                                        reservoir_ph=request.data.get('reservoir_ph'), temperature=request.data.get('temperature'), humidity=request.data.get('humidity'))
+            exp_id = exp_r.experiment_id
+            pod_readings = []
+            for i in range(len(pr_values)):
+                pod_readings.append(PodReading(experiment=Experiment.objects.get(id=exp_id), experiment_reading=ExperimentReading.objects.get(id=exp_r.id), **pr_values[i]))
+            PodReading.objects.bulk_create(pod_readings)
+            return Response("HELLO WORLD", status=200)
+        except Exception as e: 
+            print("ERROR IN EXPERIMENTREADINGVIEW:create ", e)
+            return Response(status=500)
+
 
     def get_queryset(self):
         user = self.request.user
@@ -139,19 +155,8 @@ class PodView(viewsets.ModelViewSet):
         qs = Pod.objects.filter(experiment = exp_id, end_date__isnull=True).annotate(plant_name=F('plant__name'))
         pods = list(qs.values())
         capacity = Experiment.objects.get(id=exp_id).device.capacity
-        print("PODS: ", pods)
-        print("DEVICE: ", capacity)
         return JsonResponse({"capacity": capacity, "pods": pods}, safe=False)            
-    '''
-    @action(detail=False, methods=["post"], name='populate_pod_carousel')
-    def populate_pod_carousel(self, request):
-        exp_id=json.loads(request.body)["id"]
-        qs = Pod.objects.filter(experiment = exp_id, end_date__isnull=True).annotate(plant_name=F('plant__name'))
-        pods = list(qs.values())
-        # device_capacity = Experiment.objects.get(exp_id).values('device__')
-        device_capacity = 5
-        return JsonResponse({pods: pods, device_capacity: device_capacity}, safe=False)
-    '''
+
 class PlantView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
     serializer_class = PlantSerializer
