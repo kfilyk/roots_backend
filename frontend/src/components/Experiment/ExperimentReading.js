@@ -33,11 +33,11 @@ const ExperimentReading = (props) => {
         For a particular pod reading field, this function finds the value of that field if it already exists given a pod_id
     */
     function find_value_selected_pod(field){
-       let pod = pod_readings.filter(pod => pod.id === selected_pod)[0] ?? null
-        if(pod === null){
+       let reading = pod_readings.filter(reading => reading.pod === selected_pod)[0] ?? null
+        if(reading === null){
             return ""
         } else {
-            return pod[field]
+            return reading[field]
         }
     }
 
@@ -69,7 +69,7 @@ const ExperimentReading = (props) => {
     function set_value_selected_pod(e){
         let field = e.target.name
         let value = e.target.value
-        let index = pod_readings.findIndex(pod => pod.pod_id === selected_pod)
+        let index = pod_readings.findIndex(reading => reading.pod === selected_pod)
             //EDITING A POD READING
          if(index !== -1){
             let updated_pod = pod_readings[index]
@@ -90,7 +90,7 @@ const ExperimentReading = (props) => {
                 delete updated_pod[field]
                 //If deleting this field means there are no other fields to record, delete this singular pod reading
                 if((Object.keys(updated_pod).length) === 1){
-                    set_pod_readings(pod_readings.filter(reading => reading.pod_id !== selected_pod))
+                    set_pod_readings(pod_readings.filter(reading => reading.pod !== selected_pod))
                 } else {
                     set_pod_readings([
                         ...pod_readings.slice(0, index),
@@ -103,7 +103,7 @@ const ExperimentReading = (props) => {
             if(field !== 'comment'){
                 value = parseInt(value)
             } 
-            let reading = {pod_id: selected_pod, [field]: value}
+            let reading = {pod: selected_pod, [field]: value}
             set_pod_readings([...pod_readings, reading])
          }
      }
@@ -169,7 +169,6 @@ const ExperimentReading = (props) => {
                     <div className="form_row">
                         <label> Comment: </label> 
                         <textarea name={"comment"} value={find_value_selected_pod('comment') || ""} onChange={(e) => {set_value_selected_pod(e)}} cols="40" rows="5"></textarea>
-                        {/* <input type="" value={find_value_selected_pod('comment') || ""} name={"comment"} min={0} onChange={(e) => {set_value_selected_pod(e)}} /> */}
                     </div>
                     <div className="form_row">
                         <label> Bud Count: </label> 
@@ -254,17 +253,17 @@ const ExperimentReading = (props) => {
         create_readings()
     }
 
-    function change_selected_pod(e, pod_id){
-        if (selected_pod !== pod_id){
+    function change_selected_pod(e, pod){
+        if (selected_pod !== pod){
             Array.from(document.querySelectorAll('.pod_selection')).forEach((el) => el.classList.remove('pod_selection_active'));
             e.currentTarget.classList.toggle('pod_selection_active');
-            set_pod_readings([...pod_readings, {pod_id: pod_id}])
-            set_selected_pod(pod_id)
+            set_pod_readings([...pod_readings, {pod: pod}])
+            set_selected_pod(pod)
         } else {
             //To remove the pod reading form
-            let index = pod_readings.findIndex(pod => pod.pod_id === selected_pod)
+            let index = pod_readings.findIndex(reading => reading.pod === selected_pod)
             if((Object.keys(pod_readings[index]).length) === 1){
-                set_pod_readings(pod_readings.filter(reading => reading.pod_id !== selected_pod))
+                set_pod_readings(pod_readings.filter(reading => reading.pod !== selected_pod))
             }
             e.currentTarget.classList.remove('pod_selection_active');
             set_selected_pod(null)
