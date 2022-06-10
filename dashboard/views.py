@@ -45,13 +45,13 @@ class ExperimentReadingView(viewsets.ModelViewSet):
             exp_id = exp_r.experiment_id
             pod_readings = []
             for i in range(len(pr_values)):
-                pod_readings.append(PodReading(experiment=Experiment.objects.get(id=exp_id), experiment_reading=ExperimentReading.objects.get(id=exp_r.id), **pr_values[i]))
+                pod_id = pr_values[i].pop('pod', None)
+                pod_readings.append(PodReading(experiment=Experiment.objects.get(id=exp_id), experiment_reading=ExperimentReading.objects.get(id=exp_r.id), pod=Pod.objects.get(id=pod_id), **pr_values[i]))
             PodReading.objects.bulk_create(pod_readings)
             return Response("HELLO WORLD", status=200)
         except Exception as e: 
             print("ERROR IN EXPERIMENTREADINGVIEW:create ", e)
             return Response(status=500)
-
 
     def get_queryset(self):
         user = self.request.user
