@@ -161,8 +161,11 @@ const RecipeList = () => {
         <div key={ item.id } className="item" >
           <div className="object_container">
             <div className="object_description">
-              <div>{item.name}</div>
+              <div className="object_name">{item.name}</div>
               <div>{item.supplier}</div>
+            </div>
+            <div className="object_content">                          
+              
             </div>
             <div className='object_actions'>
               <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
