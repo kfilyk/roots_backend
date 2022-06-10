@@ -3,32 +3,41 @@ import axios from 'axios';
 import Popup from "reactjs-popup";
 import vertical_menu_icon from "../../img/vertical_menu_icon.png"
 
-const PlantList = () => {
-  const [plant_list, setPlantList] = useState([]);
+const RecipeList = () => {
+  const [recipe_list, setRecipeList] = useState([]);
+  const [phase_list, setPhaseList] = useState([]);
+
   const [modal, setModal] = useState({
     show: false,
     add: false
   })
-  const [addPlant, setAddPlant] = useState(
+  const [recipe, setRecipe] = useState(
     {
-      name: 's',
-      supplier: 'a'
+      name: null,
+      phase1: null,
+      phase2: null,
+      phase3: null,
+      phase4: null,
+      phase5: null,
+      phase6: null,
+      phase7: null,
+      phase8: null,
+      phase9: null,
+      phase10: null,
     }
   );
-  const [editPlant, setEditPlant] = useState(
-    {
-      id: -1,
-      name: 's',
-      supplier: 'a'
-    }
-  )
 
   async function fetchData() {
     const result = await axios(
-      '/api/plants/',
+      '/api/recipes/',
     );
 
-    setPlantList(result.data)
+    setRecipeList(result.data)
+
+    result = await axios(
+      '/api/phases/',
+    );
+    setPhaseList(result.data)
   } 
 
   useEffect(() => {
@@ -36,42 +45,42 @@ const PlantList = () => {
   }, []);
 
   async function deleteEntry(id) {
-    await axios.delete(`/api/plants/${id}/`);
-    setPlantList(plant_list.filter(plant => plant.id !== id))
+    await axios.delete(`/api/recipes/${id}/`);
+    setRecipeList(recipe_list.filter(recipe => recipe.id !== id))
   }
 
   async function addEntry(e) {
     const result = await axios
-      .post(`/api/plants/`, 
+      .post(`/api/recipes/`, 
         { 
-            name: addPlant.name,
-            supplier: addPlant.supplier
+            name: recipe.name,
+            supplier: recipe.supplier
         });
-    setPlantList(plant_list => [...plant_list, result.data])
+        setRecipeList(recipe_list => [...recipe_list, result.data])
   };
 
   async function editEntry(e) {
     const result = await axios
-        .patch(`/api/plants/${editPlant.id}/`, 
+        .patch(`/api/recipes/${recipe.id}/`, 
         { 
-            id: editPlant.id,
-            name: editPlant.name,
-            supplier: editPlant.supplier
+            id: recipe.id,
+            name: recipe.name,
+            supplier: recipe.supplier
         }).catch((err) => console.log(err));
-    const index = plant_list.findIndex(plant => plant.id === editPlant.id);
+    const index = recipe_list.findIndex(r => r.id === recipe.id);
     const updatedItem = result.data
-    setPlantList([
-      ...plant_list.slice(0, index),
+    setRecipeList([
+      ...recipe_list.slice(0, index),
       updatedItem,
-      ...plant_list.slice(index + 1)
+      ...recipe_list.slice(index + 1)
     ])
   };
 
-  function openModal(plant){
-    if (plant === null ){
+  function openModal(r){
+    if (r === null ){
       setModal({add: true, show: true})
     } else {
-      setEditPlant(plant)
+      setRecipe(r)
       setModal({add: false, show: true})
     }
   }
@@ -84,43 +93,43 @@ const PlantList = () => {
     }
   }
 
-  function renderAddModal(){
+  function renderModal(){
     return (
       <>
         <div className="form_row">
           <label> Name: </label> 
-          <input name="name" value={addPlant.name} onChange={(e) => setAddPlant({...addPlant, name: e.target.value})} />
+          <input name="name" value={recipe.name} onChange={(e) => setRecipe({...recipe, name: e.target.value})} />
         </div>
+        {(() => {
+          let phase_selection = []
 
-        <div className="form_row">
-        <label> Supplier: </label>
-          <input name="supplier" value={addPlant.supplier} onChange={(e) => setAddPlant({...addPlant, supplier: e.target.value})} />
-        </div>
+          for(let i = 0; i< 10; i++) {
+            let p = 'phase'+ i
+            phase_selection.push(
+              <>
+                <div className="form_row">
+                  <label> Phase {i}: </label>
+                  <select name="supplier" onChange={(e) => setRecipe({...recipe, [p]: e.target.value})}>
+                    {phase_list.map((phase) => ( <option key={phase.id} value={phase.id}>{phase.name}</option>))}
+                  </select>
+                </div>
+              </>
+            )
+          }
+          return phase_selection;
+        })()
+        }
+
+
       </>
     )
   }
 
 
-function renderEditModal(){
-  return (
-    <>
-      <div className="form_row">
-        <label> Name: </label> 
-        <input name="name" value={editPlant.name} onChange={(e) => setEditPlant({...editPlant, name: e.target.value})} />
-      </div>
-
-      <div className="form_row">
-      <label> Supplier: </label>
-        <input name="supplier" value={editPlant.supplier} onChange={(e) => setEditPlant({...editPlant, supplier: e.target.value})} />
-      </div>
-    </>
-  )
-}
-
   return (
     <div>
 
-      {plant_list.map(item => (
+      {recipe_list.map(item => (
         <div key={ item.id } className="item" >
           <div className="object_container">
             <div className="object_description">
@@ -138,25 +147,17 @@ function renderEditModal(){
       <button onClick={() => openModal(null)}>+</button>
       <Popup open={modal.show} onClose={() => setModal({...modal, show: false})} modal nested>
             {(close) => (
-            <div className="modal">
-                <div className="modal_body">
-                <button className="close" onClick={close}>
-                    &times;
-                </button>
+            <div className="modal" onClick={close}>
+                <div className="modal_body" onClick={e => e.stopPropagation()}>
                 <div className="modal_type"> { modal.add === true ? "Add Plant" : "Edit Plant" } </div>
                 <div className="modal_content">
-                    
-                      { modal.add === true 
-                        ? renderAddModal()
-                        : renderEditModal()
-                      }
-                    <button className='save' onClick={() => {
+                  {renderModal()}
+                  <button className='save' onClick={() => {
                     submitModal()
                     close();
-                }}>Save</button>
-                    </div>
-
+                  }}>Save</button>
                 </div>
+              </div>
             </div>
             )}
         </Popup>
@@ -165,4 +166,4 @@ function renderEditModal(){
 }
 
 
-export default PlantList;
+export default RecipeList;

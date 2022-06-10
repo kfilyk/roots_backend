@@ -1,7 +1,7 @@
 from unittest.util import _MAX_LENGTH
 from wsgiref import validate
 from rest_framework import serializers
-from .models import Device, Experiment, Phase, Plant, Pod, ExperimentReading, PodReading
+from .models import Device, Experiment, Recipe, Phase, Plant, Pod, ExperimentReading, PodReading
 from django.contrib.auth import get_user_model
 
 # https://www.digitalocean.com/community/tutorials/build-a-to-do-application-using-django-and-react
@@ -36,6 +36,10 @@ class ExperimentReadingSerializer(serializers.ModelSerializer):
         model = ExperimentReading
         fields = ("experiment", "electrical_conductance", "reservoir_tds", "reservoir_ph", "temperature", "humidity")
 
+class RecipeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Recipe
+        fields = '__all__'
 
 class PhaseSerializer(serializers.ModelSerializer):
     user_name = serializers.CharField(allow_blank=True, allow_null=True, required=False)
