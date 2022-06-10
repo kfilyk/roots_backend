@@ -250,6 +250,7 @@ const ExperimentReading = (props) => {
     }, [props])
 
     function submit_reading(){
+        set_pod_readings(pod_readings.filter(reading => (Object.keys(reading).length !== 1)))
         create_readings()
     }
 
@@ -257,14 +258,10 @@ const ExperimentReading = (props) => {
         if (selected_pod !== pod){
             Array.from(document.querySelectorAll('.pod_selection')).forEach((el) => el.classList.remove('pod_selection_active'));
             e.currentTarget.classList.toggle('pod_selection_active');
-            set_pod_readings([...pod_readings, {pod: pod}])
             set_selected_pod(pod)
         } else {
             //To remove the pod reading form
-            let index = pod_readings.findIndex(reading => reading.pod === selected_pod)
-            if((Object.keys(pod_readings[index]).length) === 1){
-                set_pod_readings(pod_readings.filter(reading => reading.pod !== selected_pod))
-            }
+
             e.currentTarget.classList.remove('pod_selection_active');
             set_selected_pod(null)
         }
