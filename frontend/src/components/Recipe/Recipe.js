@@ -6,6 +6,8 @@ import vertical_menu_icon from "../../img/vertical_menu_icon.png"
 const RecipeList = () => {
   const [recipe_list, setRecipeList] = useState([]);
   const [phase_list, setPhaseList] = useState([]);
+  const [value, setValue] = useState("default");
+
 
   const [modal, setModal] = useState({
     show: false,
@@ -34,10 +36,10 @@ const RecipeList = () => {
 
     setRecipeList(result.data)
 
-    result = await axios(
+    const result2 = await axios(
       '/api/phases/',
     );
-    setPhaseList(result.data)
+    setPhaseList(result2.data)
   } 
 
   useEffect(() => {
@@ -54,26 +56,37 @@ const RecipeList = () => {
       .post(`/api/recipes/`, 
         { 
             name: recipe.name,
-            supplier: recipe.supplier
+            phase1: recipe.phase1,
+            phase2: recipe.phase2,
+            phase3: recipe.phase3,
+            phase4: recipe.phase4,
+            phase5: recipe.phase5,
+            phase6: recipe.phase6,
+            phase7: recipe.phase7,
+            phase8: recipe.phase8,
+            phase9: recipe.phase9,
+            phase10: recipe.phase10,
         });
         setRecipeList(recipe_list => [...recipe_list, result.data])
   };
 
   async function editEntry(e) {
-    const result = await axios
-        .patch(`/api/recipes/${recipe.id}/`, 
-        { 
-            id: recipe.id,
-            name: recipe.name,
-            supplier: recipe.supplier
-        }).catch((err) => console.log(err));
-    const index = recipe_list.findIndex(r => r.id === recipe.id);
-    const updatedItem = result.data
-    setRecipeList([
-      ...recipe_list.slice(0, index),
-      updatedItem,
-      ...recipe_list.slice(index + 1)
-    ])
+    await axios
+      .patch(`/api/recipes/${recipe.id}/`, 
+      { 
+          name: recipe.name,
+          phase1: recipe.phase1,
+          phase2: recipe.phase2,
+          phase3: recipe.phase3,
+          phase4: recipe.phase4,
+          phase5: recipe.phase5,
+          phase6: recipe.phase6,
+          phase7: recipe.phase7,
+          phase8: recipe.phase8,
+          phase9: recipe.phase9,
+          phase10: recipe.phase10,
+      }).catch((err) => console.log(err));
+      fetchData();
   };
 
   function openModal(r){
@@ -93,12 +106,29 @@ const RecipeList = () => {
     }
   }
 
+  function closeModal(){
+    setModal({...modal, show: false}) 
+    setRecipe({
+      name: null,
+      phase1: null,
+      phase2: null,
+      phase3: null,
+      phase4: null,
+      phase5: null,
+      phase6: null,
+      phase7: null,
+      phase8: null,
+      phase9: null,
+      phase10: null,
+    })
+  }
+
+
   function renderModal(){
     return (
       <>
         <div className="form_row">
-          <label> Name: </label> 
-          <input name="name" value={recipe.name} onChange={(e) => setRecipe({...recipe, name: e.target.value})} />
+          <input name="name" value={recipe.name} placeholder="Name" onChange={(e) => setRecipe({...recipe, name: e.target.value})} />
         </div>
         {(() => {
           let phase_selection = []
@@ -108,9 +138,9 @@ const RecipeList = () => {
             phase_selection.push(
               <>
                 <div className="form_row">
-                  <label> Phase {i}: </label>
-                  <select name="supplier" onChange={(e) => setRecipe({...recipe, [p]: e.target.value})}>
-                    {phase_list.map((phase) => ( <option key={phase.id} value={phase.id}>{phase.name}</option>))}
+                  <select name="supplier" defaultValue={value} onChange={(e) => { setRecipe({...recipe, [p]: e.target.value}); console.log(recipe)} }>
+                    <option value={"default"} disabled hidden>{"Phase "+(i+1)}</option>
+                    {phase_list.map((phase) => ( <option key={phase.id} value={phase.id}>{phase.name} | ({phase.type})</option>))}
                   </select>
                 </div>
               </>
@@ -119,8 +149,6 @@ const RecipeList = () => {
           return phase_selection;
         })()
         }
-
-
       </>
     )
   }
@@ -145,11 +173,11 @@ const RecipeList = () => {
         </div>
       ))}
       <button onClick={() => openModal(null)}>+</button>
-      <Popup open={modal.show} onClose={() => setModal({...modal, show: false})} modal nested>
+      <Popup open={modal.show} onClose={() => closeModal()} modal nested>
             {(close) => (
             <div className="modal" onClick={close}>
                 <div className="modal_body" onClick={e => e.stopPropagation()}>
-                <div className="modal_type"> { modal.add === true ? "Add Plant" : "Edit Plant" } </div>
+                <div className="modal_type"> { modal.add === true ? "Create Recipe" : "Edit Recipe" } </div>
                 <div className="modal_content">
                   {renderModal()}
                   <button className='save' onClick={() => {
