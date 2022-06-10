@@ -1,7 +1,7 @@
-from dashboard.models import Device, Experiment, Phase, Plant, Pod, ExperimentReading, PodReading
+from dashboard.models import Device, Experiment, Phase, Plant, Pod, ExperimentReading, PodReading, Recipe
 from rest_framework import viewsets
 from django.forms.models import model_to_dict
-from .serializers import DeviceSerializer, ExperimentSerializer, CreateUserSerializer, UserSerializer, PhaseSerializer, PlantSerializer, PodSerializer, ExperimentReadingSerializer
+from .serializers import DeviceSerializer, ExperimentSerializer, CreateUserSerializer, UserSerializer, PhaseSerializer, PlantSerializer, PodSerializer, ExperimentReadingSerializer, RecipeSerializer
 from django.core import serializers
 from django_filters import rest_framework as filters
 from rest_framework.filters import OrderingFilter
@@ -136,7 +136,6 @@ class PhaseView(viewsets.ModelViewSet):
     serializer_class = PhaseSerializer
     filter_backends = [filters.DjangoFilterBackend,]
 
-
     def get_queryset(self):
         return Phase.objects.all().annotate(user_name=F('user__username'))
 
@@ -155,7 +154,14 @@ class PodView(viewsets.ModelViewSet):
         qs = Pod.objects.filter(experiment = exp_id, end_date__isnull=True).annotate(plant_name=F('plant__name'))
         pods = list(qs.values())
         capacity = Experiment.objects.get(id=exp_id).device.capacity
-        return JsonResponse({"capacity": capacity, "pods": pods}, safe=False)            
+        return JsonResponse({"capacity": capacity, "pods": pods}, safe=False)       
+        
+class RecipeView(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated,) 
+    serializer_class = RecipeSerializer
+
+    def get_queryset(self):
+        return Recipe.objects.all()
 
 class PlantView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
