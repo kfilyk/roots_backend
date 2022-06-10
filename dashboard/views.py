@@ -46,13 +46,13 @@ class ExperimentReadingView(viewsets.ModelViewSet):
         exp_id = request.data['exp_id']
         qs = Pod.objects.filter(experiment = exp_id, end_date__isnull=True).annotate(plant_name=F('plant__name'))
         pods = list(qs.values())
-        device_capacity = Device.objects.get(id=exp_id).device_capacity
+        capacity = Device.objects.get(id=exp_id).capacity
         try:
             latest = ExperimentReading.objects.filter(experiment=exp_id).latest('reading_date')
-            return JsonResponse({"latest_reading": model_to_dict(latest), "pods": pods, "device_capacity": device_capacity}, safe=False)
+            return JsonResponse({"latest_reading": model_to_dict(latest), "pods": pods, "capacity": capacity}, safe=False)
         except ExperimentReading.DoesNotExist:
             latest = {"exp_id": -1}
-            return JsonResponse({"latest_reading": latest, "pods": pods, "device_capacity": device_capacity}, safe=False)
+            return JsonResponse({"latest_reading": latest, "pods": pods, "capacity": capacity}, safe=False)
         
 
 class ExperimentView(viewsets.ModelViewSet):
@@ -64,19 +64,18 @@ class ExperimentView(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         exp_id = super().create(request, *args, **kwargs).data['id']
+        print("FLAG 1: ", request.data)
         exp = Experiment.objects.get(id=exp_id)
-        plants = request.data['plants']
-        capacity = Device.objects.get(id=request.data['device']).capacity
+        pod_selection = request.data['pod_selection']
         start_date = make_aware(datetime.strptime(request.data['start_date'], '%Y-%m-%d'))
         print(start_date)
         phase = 0
 
-        pods = []
-        for i in range(capacity):
-            position = i+1
-            if plants[i] != -1:
-                pods.append(Pod(start_date=start_date, phase=phase, position=position, plant=Plant.objects.get(id=plants[i]), experiment=exp))
-        Pod.objects.bulk_create(pods)
+        #new_pods = []
+        for p in pod_selection:
+            print(p)
+            #new_pods.append(Pod(start_date=start_date, phase=phase, position=p, plant=Plant.objects.get(id=pods[p]), experiment=exp))
+            Pod.objects.create(start_date=start_date, phase=phase, position=p, plant=Plant.objects.get(id=pod_selection[p]), experiment=exp)
         return JsonResponse(model_to_dict(exp), safe=False) # should this be list?
 
     @action(detail=False, methods=['POST'], name='set_device')
@@ -113,7 +112,7 @@ class ExperimentView(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        return Experiment.objects.filter(user = user.id).annotate(device_name=F('device__name')) # joins name value from device table to returned results
+        return Experiment.objects.filter(user = user.id).annotate(device_name=F('device__name'))  # joins name value from device table to returned results
 
 
 class PhaseView(viewsets.ModelViewSet):

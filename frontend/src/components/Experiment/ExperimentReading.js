@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import Popup from "reactjs-popup";
-import './experiment.css';
 
 const ExperimentReading = (props) => {
     const [modal, set_modal] = useState(true);
@@ -196,12 +195,12 @@ const ExperimentReading = (props) => {
                     exp_id: result.data.latest_reading.experiment,
                     exp_phase: result.data.latest_reading.experiment_phase,
                     first_reading: false,
-                    device_capacity: result.data.device_capacity,
+                    capacity: result.data.capacity,
                     pods: result.data.pods
                 })
             } else {
                 set_experiment_reading({...experiment_reading, 
-                    device_capacity: result.data.device_capacity,
+                    capacity: result.data.capacity,
                     pods: result.data.pods
                 })
             }

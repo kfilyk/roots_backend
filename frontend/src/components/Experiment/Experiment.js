@@ -20,14 +20,16 @@ const ExperimentList = () => {
     add: false
   })
 
-  const [available_devices, set_available_devices] = useState([])
+  const [available_devices, setAvailableDevices] = useState([])
 
   const [experiment, setExperiment] = useState({
+    id: null,
     name: null,
     device: null,
     device_name: null,
-    capacity: null,
-    plants: [],
+    device_capacity: null,
+    pods: [],
+    pod_selection: {},
     start_date: year+"-"+month+"-"+day,
   })
 
@@ -53,33 +55,41 @@ const ExperimentList = () => {
     const result = await axios(
       '/api/experiments/available_devices/',
     );
-    set_available_devices(result.data)
+    setAvailableDevices(result.data)
   }
 
   useEffect(() => {
     fetchPlants();
   }, []);
 
-  useEffect(() => {
-    fetchAvailableDevices();
-  }, []);
-
-
   async function deleteEntry(id) {
     await axios.delete(`/api/experiments/${id}/`);
     setExperimentList(experiment_list.filter(experiment => experiment.id !== id))
-    fetchAvailableDevices()
+  }
+
+  async function getPods(id) {
+    let result = await axios(
+      `/api/pods/?experiment=${id}`
+      )
+      .catch((err) => console.log(err)); 
+    result = result.data.filter(pod => pod.end_date === null)
+    return result
   }
 
   function openModal(exp){
     if (exp === null ){
+      fetchAvailableDevices()
       setModal({add: true, show: true})
     } else {
-      getDevice(exp.device).then(res => {
-        // after passing in the experiment from the button click -> 
-        console.log("DEVICE NAME: ", res)
-        setExperiment({id: exp.id, device: exp.device, device_name: res.name, capacity:res.capacity, name: exp.name, start_date: exp.start_date.substring(0,10)})
-        setModal({add: false, show: true})
+
+      // get pods first, then device
+      getPods(exp.id).then(res1 => {
+        getDevice(exp.device).then(res2 => {
+          fetchAvailableDevices()
+          setAvailableDevices([...available_devices, res2]) // add current editable device to available devices
+          setExperiment({...experiment, id: exp.id, device: exp.device, device_name: res2.name, device_capacity:res2.capacity, name: exp.name, start_date: exp.start_date.substring(0,10), pods: res1})
+          setModal({add: false, show: true})
+        })
       })
     }
   }
@@ -93,40 +103,73 @@ const ExperimentList = () => {
   }
 
   async function addEntry(e) {
-    const result = await axios
+    console.log("POD SELECTION: ", experiment.pod_selection)
+    await axios
       .post(`/api/experiments/`, 
         { 
           name: experiment.name,
           device: experiment.device,
-          plants: experiment.plants,
+          pod_selection: experiment.pod_selection,
           start_date: experiment.start_date,
         })
       .catch((err) => console.log(err));
-    console.log("RESULT 2:", result)
-    setExperimentList(experiment_list => [...experiment_list, result.data]);
+    fetchData();
   };
 
   async function editEntry(e) {
-    const result = await axios
-        .patch(`/api/experiments/${experiment.id}/`, 
-        { 
-            name: experiment.name,
-            device: experiment.device
+    await axios
+      .patch(`/api/experiments/${experiment.id}/`, 
+      { 
+        name: experiment.name,
+        device: experiment.device,
+      })
+      .then((res) => {
+        fetchData()
+      })
+      .catch((err) => console.log(err));
 
-          }).catch((err) => console.log(err));
-    const index = experiment_list.findIndex(exp => exp.id === experiment.id);
-    const updatedItem = result.data
-    setPlantList([
-      ...experiment_list.slice(0, index),
-      updatedItem,
-      ...experiment_list.slice(index + 1)
-    ])
+    for (const [key, value] of Object.entries(experiment.pod_selection)) {
+      let pod_found = false;
+      // pod 0: [{position: 1, ...}]
+      // what if experiment.pods does not have all filled pods? what if only 4 pods in pod list, but not a fifth?
+      for(let p = 0; p < experiment.pods.length; p++) {
+        // found the pod to be replaced
+        if(experiment.pods[p].position === parseInt(key)) {
+          axios
+            .patch(`/api/pods/${experiment.pods[p].id}/`, { end_date: experiment.start_date }) // end date set to today
+            .catch((err) => console.log(err));
+          
+          // if a new pod was specified for replacement and it WASNT the empty pod option
+          if(value !== '') {  
+            axios
+            .post(`/api/pods/`, { start_date: experiment.start_date, position: parseInt(key), plant: parseInt(value), experiment: experiment.id }) // end date set to today
+            .catch((err) => console.log(err));
+          }
+          pod_found = true
+          break
+        }
+      }
+
+      // otherwise, if no replaceable pod is found, just create a new one
+      if(!pod_found) {
+        axios
+          .post(`/api/pods/`, 
+            { 
+              start_date: experiment.start_date,
+              position: parseInt(key),
+              plant: parseInt(value), 
+              experiment: experiment.id,
+            })
+          .catch((err) => console.log(err));
+      }
+    }
+    fetchData();
   };
 
   function setDevice(e){
-    console.log(e)
-    let selected_device = available_devices.find(device => device.id === e.target.value)
-    setExperiment({...experiment, device: selected_device.id, capacity: selected_device['capacity'] /*, plants:Array(5).fill(null) */})
+    let selected_device = available_devices.find(device => device.id.toString() === e.target.value)
+    console.log("SELECTED DEVICE ID: ", selected_device)
+    setExperiment({...experiment, device: selected_device.id, device_capacity: selected_device.capacity /*, plants:Array(5).fill(null) */})
   }
 
   async function getDevice(device_id){
@@ -151,21 +194,28 @@ const ExperimentList = () => {
   }
 
   function setPod(e){
-    let plant = e.target.value
     let position = e.target.name.substring(4); 
-    let temp = experiment.plants
-    temp[position] = plant
-    setExperiment({...experiment, plants: temp})
+    let temp = experiment.pod_selection
+    temp[position] = e.target.value
+    setExperiment({...experiment, pod_selection: temp})
+    console.log(experiment.pod_selection)
   }
 
   function renderPodSelection(){
-    console.log("EXPERIMENT: ", experiment)
     let pod_container = []
-    if (experiment.device !== null){
-      for(let i = 0; i < experiment.capacity; i++) {
+    // so long as pods is loaded
+    if (experiment.device !== null) {
+      for(let i = 0; i < experiment.device_capacity; i++) {
+        let curr_pod = experiment.pods.filter(pod => pod.position === (i+1))[0] ?? null
+        let plant = null;      
+
+        if (curr_pod !== null){
+          plant = curr_pod['plant']
+        }
+
         pod_container.push(
-          <select className="pod_selection" name={"pod_"+(i)} defaultValue={null} onChange={(e) => setPod(e)}>
-              <option key={null} value={null}> Empty </option>
+          <select className="pod" name={"pod_"+(i+1)} defaultValue={plant} onChange={(e) => setPod(e)}>
+              <option value={null}></option>
               {plant_list.map(item => (
                   <option key={item.id} value={item.id}> {item.name} </option>
               ))}
@@ -195,19 +245,21 @@ const ExperimentList = () => {
 
   function closeModal(){
     setModal({...modal, show: false}) 
-    setExperiment({name: null, device: null, device_name: null, plants: [], start_date: year+"-"+month+"-"+day})
+    setExperiment({name: null, device: null, device_name: null, pods: [], start_date: year+"-"+month+"-"+day, pod_selection: {}})
   }
 
   return (
+    
     <div>
         {experiment_list.map(item => (
             <div key={item.id} className="item">
                 <div className="object_container">
                 <div className="object_description">
                     <div className="object_name">{ item.name }</div>
-                    <div>Device Name: { item.device }</div>
+                    <div>Device Name: { item.device_name } </div>
                     <div>Date: {item.start_date} {"->"} {item.end_date}</div>
-                    <div>Score: { item.score } </div>
+                    {item.score !== null ? <div>Score: { item.score } </div> : <></>}
+                    
                 </div>
                 <div className="object_content">                          
                     <PodCarousel experimentID={item.id} deviceId={item.device}></PodCarousel>
@@ -229,7 +281,7 @@ const ExperimentList = () => {
                     <div className="modal_type"> { modal.add === true ? "Add Experiment" : "Edit Experiment" } </div>
                     <div className="modal_content">
                       { 
-                        renderModal(experiment)
+                        renderModal()
                       }
 
                       <button className='save' onClick={() => {

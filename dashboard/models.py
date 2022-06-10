@@ -85,6 +85,7 @@ class PodReading(models.Model):
     id = models.AutoField(db_column='pr_id', primary_key=True)  
     domes = models.BooleanField(default= 0, null=True)
     experiment = models.ForeignKey("Experiment", models.DO_NOTHING, db_column='pr_experiment_id', blank=True, null=True)  # delete experiment readings if experiment is deleted
+    pod = models.ForeignKey("Pod", models.DO_NOTHING, db_column='pr_pod_id', blank=True, null=True)
     experiment_reading = models.ForeignKey("ExperimentReading", models.DO_NOTHING, db_column='pr_experiment_reading_id', blank=True, null=True)  # delete experiment readings if experiment is deleted
 
     node_count = models.IntegerField(db_column='pr_node_count', blank=True, null=True) 
