@@ -93,6 +93,7 @@ select {
   border: none;
   border-bottom: 1px solid;
   color: #B3896A;
+  margin-bottom: 4%;
 }
 
 select .pod {
@@ -211,4 +212,8 @@ input:valid+span:after {
 
 .hidden {
   display: none;
+}
+
+.recipe_modal_actions {
+  margin: 0 auto
 }
