@@ -14,7 +14,7 @@ const PodCarousel = (props) => {
 
   useEffect(() => {
     fetchData(props);
-  }, []);
+  }, [props]);
 
   function renderProgressCircle(pod, pos){
     if (pod === null) {

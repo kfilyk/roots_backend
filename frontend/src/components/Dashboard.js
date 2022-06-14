@@ -8,7 +8,7 @@ import Plant from "./Plant/Plant";
 import './dashboard.css';
 import Device from './Device/Device';
 
-const Hook_Dashboard = () => {
+const Dashboard = () => {
   const [selected_tab, set_selected_tab] = useState('loading'); // in the future: loading state shows a spinning wheel
   const [auth, set_auth] = useState({
     user: -1
@@ -26,7 +26,8 @@ const Hook_Dashboard = () => {
         .post("/auth/token/")
         .then((res) => {
           set_auth({...auth, user: res.data.username})
-          set_selected_tab("device" )
+          set_selected_tab("experiment" )
+          // set_selected_tab("device" )
 
         })
         .catch(res => {
@@ -115,4 +116,4 @@ const Hook_Dashboard = () => {
   );
 }
 
-export default Hook_Dashboard;
+export default Dashboard;

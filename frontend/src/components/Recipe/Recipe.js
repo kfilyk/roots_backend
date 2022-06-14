@@ -10,9 +10,12 @@ const RecipeList = () => {
 
 
   const [modal, setModal] = useState({
-    show: false,
-    add: false
+    show: true,
+    // show: false,
+    add: true
   })
+
+
   const [recipe, setRecipe] = useState(
     {
       name: null,
@@ -26,6 +29,22 @@ const RecipeList = () => {
       phase8: null,
       phase9: null,
       phase10: null,
+    }
+  );
+
+  const [show_phase, set_show_phase] = useState(
+    {
+      max_phase: 1,
+      phase1: true,
+      phase2: false,
+      phase3: false,
+      phase4: false,
+      phase5: false,
+      phase6: false,
+      phase7: false,
+      phase8: false,
+      phase9: false,
+      phase10:  false,
     }
   );
 
@@ -98,12 +117,22 @@ const RecipeList = () => {
     }
   }
   
-  function submitModal(){
-    if(modal.add){
-      addEntry()
-    } else {
-      editEntry()
+  function submitModal(close){
+    if(recipe.name === null || recipe.name === ""){
+      alert("Please provide a recipe name.")
+      return
+    } 
+
+    for(let i = 1; i <= show_phase.max_phase; i++){
+      let phase = `phase${i}`
+      if(recipe[phase] === null){
+        alert(`Phase ${i} cannot be null`)
+        return
+      }
     }
+
+    addEntry()
+    close();
   }
 
   function closeModal(){
@@ -123,32 +152,106 @@ const RecipeList = () => {
     })
   }
 
+  function update_recipe(e){
+    let phase_position = e.target.name
+    let new_value = e.target.value
+    setRecipe({...recipe,  [phase_position]: parseInt(new_value)})
+  }
+
+  function render_phase_selection(){
+    return (
+      <div>
+        <div className={show_phase.phase1 ? 'form-row' : 'hidden'}>
+            <select name="phase1" defaultValue={value} onChange={(e)=>update_recipe(e)}>
+              <option value={"default"} disabled hidden>Phase 1:</option>
+              {phase_list.map((phase) => ( <option key={phase.id} value={phase.id}>{phase.name} | ({phase.type})</option>))}
+            </select>
+        </div>
+        <div className={show_phase.phase2 ? 'form-row' : 'hidden'}>
+            <select name="phase2" defaultValue={value} onChange={(e)=>update_recipe(e)}>
+              <option value={"default"} disabled hidden>Phase 2:</option>
+              {phase_list.map((phase) => ( <option key={phase.id} value={phase.id}>{phase.name} | ({phase.type})</option>))}
+            </select>
+        </div>
+        <div className={show_phase.phase3 ? 'form-row' : 'hidden'}>
+            <select name="phase3" defaultValue={value} onChange={(e)=>update_recipe(e)}>
+              <option value={"default"} disabled hidden>Phase 3:</option>
+              {phase_list.map((phase) => ( <option key={phase.id} value={phase.id}>{phase.name} | ({phase.type})</option>))}
+            </select>
+        </div>
+        <div className={show_phase.phase4 ? 'form-row' : 'hidden'}>
+            <select name="phase4" defaultValue={value} onChange={(e)=>update_recipe(e)}>
+              <option value={"default"} disabled hidden>Phase 4:</option>
+              {phase_list.map((phase) => ( <option key={phase.id} value={phase.id}>{phase.name} | ({phase.type})</option>))}
+            </select>
+        </div>
+        <div className={show_phase.phase5 ? 'form-row' : 'hidden'}>
+            <select name="phase5" defaultValue={value} onChange={(e)=>update_recipe(e)}>
+              <option value={"default"} disabled hidden>Phase 5:</option>
+              {phase_list.map((phase) => ( <option key={phase.id} value={phase.id}>{phase.name} | ({phase.type})</option>))}
+            </select>
+        </div>
+        <div className={show_phase.phase6 ? 'form-row' : 'hidden'}>
+            <select name="phase6" defaultValue={value} onChange={(e)=>update_recipe(e)}>
+              <option value={"default"} disabled hidden>Phase 6:</option>
+              {phase_list.map((phase) => ( <option key={phase.id} value={phase.id}>{phase.name} | ({phase.type})</option>))}
+            </select>
+        </div>
+        <div className={show_phase.phase7 ? 'form-row' : 'hidden'}>
+            <select name="phase7" defaultValue={value} onChange={(e)=>update_recipe(e)}>
+              <option value={"default"} disabled hidden>Phase 7:</option>
+              {phase_list.map((phase) => ( <option key={phase.id} value={phase.id}>{phase.name} | ({phase.type})</option>))}
+            </select>
+        </div>
+        <div className={show_phase.phase8 ? 'form-row' : 'hidden'}>
+            <select name="phase8" defaultValue={value} onChange={(e)=>update_recipe(e)}>
+              <option value={"default"} disabled hidden>Phase 8:</option>
+              {phase_list.map((phase) => ( <option key={phase.id} value={phase.id}>{phase.name} | ({phase.type})</option>))}
+            </select>
+        </div>
+        <div className={show_phase.phase9 ? 'form-row' : 'hidden'}>
+            <select name="phase9" defaultValue={value} onChange={(e)=>update_recipe(e)}>
+              <option value={"default"} disabled hidden>Phase 9:</option>
+              {phase_list.map((phase) => ( <option key={phase.id} value={phase.id}>{phase.name} | ({phase.type})</option>))}
+            </select>
+        </div>
+        <div className={show_phase.phase10 ? 'form-row' : 'hidden'}>
+            <select name="phase10" defaultValue={value} onChange={(e)=>update_recipe(e)}>
+              <option value={"default"} disabled hidden>Phase 10:</option>
+              {phase_list.map((phase) => ( <option key={phase.id} value={phase.id}>{phase.name} | ({phase.type})</option>))}
+            </select>
+        </div>
+        
+      </div>
+    )
+  }
+
+  function change_max(increase){
+    let new_max = increase ? show_phase.max_phase + 1 : show_phase.max_phase - 1
+    let max_phase = increase ? `phase${new_max}` : `phase${show_phase.max_phase}`
+    if (increase && new_max <= 10){
+      set_show_phase({...show_phase, max_phase: new_max, [max_phase]: true})
+    } else if (!increase && new_max >=1){
+      set_show_phase({...show_phase, max_phase: new_max, [max_phase]: false})
+      setRecipe({...recipe, [`phase${show_phase.max_phase}`]: null})
+    }
+  }
+
 
   function renderModal(){
     return (
       <>
         <div className="form_row">
-          <input name="name" value={recipe.name} placeholder="Name" onChange={(e) => setRecipe({...recipe, name: e.target.value})} />
+          <input name="name" value={recipe.name || ""} placeholder="Name" onChange={(e) => setRecipe({...recipe, name: e.target.value})} />
         </div>
-        {(() => {
-          let phase_selection = []
+        <div className="form_row">
+          {render_phase_selection()}
+        </div>
+        <div className="recipe_modal_actions">
+          <button onClick={()=>change_max(false)}>-</button>
+          <button onClick={()=>change_max(true)}>+</button>
+        </div>
 
-          for(let i = 0; i< 10; i++) {
-            let p = 'phase'+ i
-            phase_selection.push(
-              <>
-                <div className="form_row">
-                  <select name="supplier" defaultValue={value} onChange={(e) => { setRecipe({...recipe, [p]: e.target.value}); console.log(recipe)} }>
-                    <option value={"default"} disabled hidden>{"Phase "+(i+1)}</option>
-                    {phase_list.map((phase) => ( <option key={phase.id} value={phase.id}>{phase.name} | ({phase.type})</option>))}
-                  </select>
-                </div>
-              </>
-            )
-          }
-          return phase_selection;
-        })()
-        }
       </>
     )
   }
@@ -235,8 +338,7 @@ const RecipeList = () => {
                 <div className="modal_content">
                   {renderModal()}
                   <button className='save' onClick={() => {
-                    submitModal()
-                    close();
+                    submitModal(close)
                   }}>Save</button>
                 </div>
               </div>
