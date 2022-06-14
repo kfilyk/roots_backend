@@ -84,16 +84,19 @@ const Device = () => {
 
                 device_list.push(
                     <div key={'loaded_' + item.id} className="object_container">
-                        <div className="object_description">
-                            <div className="object_name">{ item.device_name }</div>
-                            {/* <div>Registered: { item.registration_date.substring(0, 10) }</div> */}
-                            <div className="object_name">{ item.name }</div>
-                            <div>Date: {item.start_date} {"->"} {item.end_date}</div>
-                            <div>Score: { item.score } </div>
+                        <div className="object_top">
+                            <div className="object_description">
+                                <div className="object_name">{ item.device_name }</div>
+                                {/* <div>Registered: { item.registration_date.substring(0, 10) }</div> */}
+                                <div className="object_name">{ item.name }</div>
+                                <div>Date: {item.start_date} {"->"} {item.end_date}</div>
+                                <div>Score: { item.score } </div>
+                            </div>
+                            <div className="object_content">                          
+                                <PodCarousel experimentID={item.id} deviceId={item.device}></PodCarousel>
+                            </div>
                         </div>
-                        <div className="object_content">                          
-                            <PodCarousel experimentID={item.id} deviceId={item.device}></PodCarousel>
-                        </div>
+
                         <div className='object_actions'>
                         <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
                         <li key="edit"><button onClick={() => {}}>EDIT</button></li>

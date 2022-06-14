@@ -53,21 +53,23 @@ button:hover {
 DEVICE
 ============================================================================================ */
 
-.object_name {
-  font-family: "Brandon Grotesque Black";
-}
-
 /* ==========================================================================================
 OBJECT CONTAINERS (DEVICE, EXPERIMENT, ETC)
 ============================================================================================ */
 
+
 .object_container {
-  display: flex;
   position: relative;
   box-shadow: 0px 5px 20px -10px #555555;
   margin:10px;
   border-radius: 10px;
   flex: 1;
+}
+
+.object_top {
+  display:flex;
+  flex-direction: row;
+
 }
 
 .object_description {
@@ -79,15 +81,35 @@ OBJECT CONTAINERS (DEVICE, EXPERIMENT, ETC)
   min-width: 30%;
 }
 
+.object_name {
+  font-family: "Brandon Grotesque Black";
+}
+
 .object_content {
-  display: flex;
+  display:flex;
   align-items: right; 
   flex-direction: row;
   flex:1;
   padding:10px;
-
+  max-width: 50%;
+  margin-left: auto;
+  order:2;
 }
 
+.object_bottom {
+  width:100%;
+  display: flex;
+  margin-top:auto;
+  order:2;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.object_phase {
+  width:100%;
+  clear: left;
+  padding:10px;
+}
 /* HIDDEN start state */
 .object_actions  {
   background: none;

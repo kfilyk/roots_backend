@@ -132,12 +132,12 @@ const Phase = () => {
         </div>
         <div className="form_row">
           <select value={addPhase.type} onChange={(e) => setAddPhase({...addPhase, type: e.target.value})} >
-            <option value="germination">Germination</option>
-            <option value="seedling">Seedling</option>
-            <option value="vegetative">Vegetative Growth</option>
-            <option value="flowering">Flowering</option>
-            <option value="harvest">Harvest</option>
-            <option value="other">Other</option>
+            <option value="Germination">Germination</option>
+            <option value="Seedling">Seedling</option>
+            <option value="Vegetative">Vegetative Growth</option>
+            <option value="Flowering">Flowering</option>
+            <option value="Harvest">Harvest</option>
+            <option value="Other">Other</option>
           </select>
         </div>
         <div className="form_row">
@@ -177,12 +177,12 @@ const Phase = () => {
         </div>
         <div className="form_row">
           <select value={editPhase.type} onChange={(e) => setAddPhase({...editPhase, type: e.target.value})} >
-            <option value="germination">Germination</option>
-            <option value="seedling">Seedling</option>
-            <option value="vegetative">Vegetative Growth</option>
-            <option value="flowering">Flowering</option>
-            <option value="harvest">Harvest</option>
-            <option value="other">Other</option>
+            <option value="Germination">Germination</option>
+            <option value="Seedling">Seedling</option>
+            <option value="Vegetative">Vegetative Growth</option>
+            <option value="Flowering">Flowering</option>
+            <option value="Harvest">Harvest</option>
+            <option value="Other">Other</option>
           </select>
         </div>
         <div className="form_row">
@@ -219,19 +219,19 @@ const Phase = () => {
   function PhaseStyle(type)  {
     let colour = '';
     let font_colour = '';
-    if(type === "germination" ) {
+    if(type === "Germination" ) {
       colour = `#B1C985`
       font_colour = `#FFFFFF`
-    } else if(type === "seedling" ) {
+    } else if(type === "Seedling" ) {
       colour = `#7AA96A`
       font_colour = `#FFFFFF`
-    } else if(type === "vegetative") {
+    } else if(type === "Vegetative") {
       colour = `#2A7351`
       font_colour = `#FFFFFF`
-    } else if(type === "flowering") {
+    } else if(type === "Flowering") {
       colour = `#DEB1B1`
       font_colour = `#FFFFFF`
-    } else if(type === "harvest") {
+    } else if(type === "Harvest") {
       colour = `#D14C4C`
       font_colour = `#FFFFFF`
     } else { // other type
@@ -248,25 +248,25 @@ const Phase = () => {
   function renderNav() {
     return (
       <div className="nav" style={{fontSize: "12px"}}>
-        <span className={selected_phase === "all" ? "nav-link active" : "nav-link"} onClick={() => setPhaseNav("all")}>
+        <span className={selected_phase === "All" ? "nav-link active" : "nav-link"} onClick={() => setPhaseNav("All")}>
           ALL
         </span>
-        <span className={selected_phase === "germination" ? "nav-link active" : "nav-link"} onClick={() => setPhaseNav("germination")}>
+        <span className={selected_phase === "Germination" ? "nav-link active" : "nav-link"} onClick={() => setPhaseNav("Germination")}>
           GERMINATION
         </span>
-        <span className={selected_phase === "seedling" ? "nav-link active" : "nav-link"} onClick={() => setPhaseNav("seedling")}>
+        <span className={selected_phase === "Seedling" ? "nav-link active" : "nav-link"} onClick={() => setPhaseNav("Seedling")}>
           SEEDLING
         </span>
-        <span className={selected_phase === "vegetative" ? "nav-link active" : "nav-link"} onClick={() => setPhaseNav("vegetative")}>
+        <span className={selected_phase === "Vegetative" ? "nav-link active" : "nav-link"} onClick={() => setPhaseNav("Vegetative")}>
           VEGETATIVE GROWTH
         </span>
-        <span className={selected_phase === "flowering" ? "nav-link active" : "nav-link"} onClick={() => setPhaseNav("flowering")}>
+        <span className={selected_phase === "Flowering" ? "nav-link active" : "nav-link"} onClick={() => setPhaseNav("Flowering")}>
           FLOWERING
         </span>
-        <span className={selected_phase === "harvest" ? "nav-link active" : "nav-link"} onClick={() => setPhaseNav("harvest")}>
+        <span className={selected_phase === "Harvest" ? "nav-link active" : "nav-link"} onClick={() => setPhaseNav("Harvest")}>
           HARVEST
         </span>
-        <span className={selected_phase === "other" ? "nav-link active" : "nav-link"} onClick={() => setPhaseNav("other")}>
+        <span className={selected_phase === "Other" ? "nav-link active" : "nav-link"} onClick={() => setPhaseNav("Other")}>
           OTHER
         </span>
       </div>
@@ -279,29 +279,31 @@ const Phase = () => {
       {phaseList.filter(phase => (phase.type === selected_phase) || selected_phase === "all").map(item => (
         <div key={ item.id } className="item" >
           <div className="object_container" >
-            <div className="object_description" style={PhaseStyle(item.type)}>
-              <div className="phase_type object_name"> { item.type.toUpperCase() } | { item.name } </div>
-              <div>Author: { item.user_name } </div>
-              <div> { item.days } Days</div>
-              {/*<div> { item.score } </div>*/}
-            </div>
-            <div className="object_content"> 
-              <div className="phase_content">
-                <div className="watering">
-                  {(() => {
-                    let waterings = [];
-                    for(let i = 0; i < item.waterings_per_day; i++) {
-                      waterings.push(<img src={water_icon} alt="Water" style={{width:'30px', padding:'5px' }}/>)
-                    }
-                    return waterings;
-                  })()}
-                / per day, {item.watering_duration} minute(s) each
-                </div>
-                <div className="lighting">
-                  <div> <img src={blue_light_icon} alt="Blue Light" style={{width:'30px', padding:'5px', paddingBottom:'0px'}}></img> <div className="light_intensity" >{item.blue_intensity}</div> </div>
-                  <div> <img src={red_light_icon} alt="Red Light" style={{width:'30px', padding:'5px', paddingBottom:'0px'}}></img> <div className="light_intensity">{item.red_intensity}</div> </div>
-                  <div> <img src={white_light_icon} alt="White Light" style={{width:'30px', padding:'5px', paddingBottom:'0px'}}></img> <div className="light_intensity">{item.white_intensity}</div> </div>
-                  , { item.lights_on_hours } hours per day
+            <div className="object_top">
+              <div className="object_description" style={PhaseStyle(item.type)}>
+                <div className="phase_type object_name"> { item.type.toUpperCase() } | { item.name } </div>
+                <div>Author: { item.user_name } </div>
+                <div> { item.days } Days</div>
+                {/*<div> { item.score } </div>*/}
+              </div>
+              <div className="object_content"> 
+                <div className="phase_content">
+                  <div className="watering">
+                    {(() => {
+                      let waterings = [];
+                      for(let i = 0; i < item.waterings_per_day; i++) {
+                        waterings.push(<img src={water_icon} alt="Water" style={{width:'30px', padding:'5px' }}/>)
+                      }
+                      return waterings;
+                    })()}
+                  / per day, {item.watering_duration} minute(s) each
+                  </div>
+                  <div className="lighting">
+                    <div> <img src={blue_light_icon} alt="Blue Light" style={{width:'30px', padding:'5px', paddingBottom:'0px'}}></img> <div className="light_intensity" >{item.blue_intensity}</div> </div>
+                    <div> <img src={red_light_icon} alt="Red Light" style={{width:'30px', padding:'5px', paddingBottom:'0px'}}></img> <div className="light_intensity">{item.red_intensity}</div> </div>
+                    <div> <img src={white_light_icon} alt="White Light" style={{width:'30px', padding:'5px', paddingBottom:'0px'}}></img> <div className="light_intensity">{item.white_intensity}</div> </div>
+                    , { item.lights_on_hours } hours per day
+                  </div>
                 </div>
               </div>
             </div>
