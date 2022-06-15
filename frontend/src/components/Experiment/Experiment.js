@@ -4,6 +4,7 @@ import Popup from "reactjs-popup";
 import PodCarousel from "./PodCarousel"
 import vertical_menu_icon from "../../img/vertical_menu_icon.png"
 import ExperimentReading from "../Experiment/ExperimentReading"
+import RecipeBar from '../Recipe/RecipeBar';
 
 
 let today_date = new Date();
@@ -273,6 +274,9 @@ const ExperimentList = () => {
                         <li key="delete"><button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) deleteEntry(item.id) }}> DELETE </button></li>
                         <li key="add_reading"><ExperimentReading exp_id={item.id}></ExperimentReading></li>
                     </div>
+                  </div>
+                  <div className='object_bottom'>
+                    
                   </div>
               </div>
             </div>

@@ -4,6 +4,7 @@ import vertical_menu_icon from "../../img/vertical_menu_icon.png"
 import Popup from "reactjs-popup";
 import PodCarousel from "../Experiment/PodCarousel"
 import ExperimentReading from "../Experiment/ExperimentReading"
+import RecipeBar from '../Recipe/RecipeBar';
 
 const Device = () => {
     const [loaded_devices, set_loaded_devices] = useState([]);
@@ -11,6 +12,7 @@ const Device = () => {
     const [selected_device_status, set_selected_device_status] = useState("all");
     const [available_experiments, set_available_experiments] = useState([]);
     const [modal, set_modal] = useState({show: false, device: -1, experiment: -1});
+    const [phase_list, set_phase_list] = useState([])
     const closeModal = () => set_modal(false);
 
     async function fetch_loaded_devices() {
@@ -19,9 +21,24 @@ const Device = () => {
         );
         set_loaded_devices(result.data)
     } 
+
+    async function fetch_phases() {
+        const result = await axios(
+          '/api/phases/',
+        );
+        set_phase_list(result.data)
+    } 
+
+    async function fetch_recipe() {
+        const result = await axios(
+          '/api/recipes/',
+        );
+        set_phase_list(result.data)
+    } 
     
     useEffect(() => {
         fetch_loaded_devices();
+        fetch_phases();
     }, []);
 
     async function fetch_available_experiments() {
@@ -79,9 +96,11 @@ const Device = () => {
 
     function renderDevices(){
         const device_list = []
+ 
         if (selected_device_status === 'loaded' || selected_device_status === 'all'){   
-            loaded_devices.map((item) => {
 
+            loaded_devices.map((item) => {
+                let recipe = fetch_recipe(item.id)
                 device_list.push(
                     <div key={'loaded_' + item.id} className="object_container">
                         <div className="object_top">
@@ -96,6 +115,11 @@ const Device = () => {
                                 <PodCarousel experimentID={item.id} deviceId={item.device}></PodCarousel>
                             </div>
                         </div>
+                        <div className="object_bottom">
+                            {/*<RecipeBar phase_list = {phase_list} recipe = {item.} ></RecipeBar>*/}
+
+                        </div>
+
 
                         <div className='object_actions'>
                         <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
