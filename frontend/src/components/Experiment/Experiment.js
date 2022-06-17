@@ -17,6 +17,7 @@ day = day > 9 ? day : '0'+day;
 const ExperimentList = () => {
   const [experiment_list, setExperimentList] = useState([]);
   const [plant_list, setPlantList] = useState([]);
+  const [phase_list, set_phase_list] = useState([])
   const [modal, setModal] = useState({
     show: false,
     add: false
@@ -42,10 +43,25 @@ const ExperimentList = () => {
     setExperimentList(result.data)
   } 
 
+  async function fetchPhases() {
+    const result = await axios(
+      '/api/phases/',
+    );
+    set_phase_list(result.data)
+} 
+
   useEffect(() => {
     fetchData();
+    fetchPhases();
   }, []);
 
+  async function getRecipe(id) {
+    const result = await axios(
+      `/api/recipes/?id=${id}`,
+    ).catch((err) => console.log(err));
+
+    return result.data[0]
+  }
   async function fetchPlants() {
     const result = await axios(
       '/api/plants/',
@@ -76,6 +92,14 @@ const ExperimentList = () => {
       .catch((err) => console.log(err)); 
     result = result.data.filter(pod => pod.end_date === null)
     return result
+  }
+
+  async function getDevice(id){
+    const device = await axios(
+      `/api/devices/${id}/`
+      )
+      .catch((err) => console.log("ERROR: ", err));
+    return device.data
   }
 
   function openModal(exp){
@@ -174,14 +198,6 @@ const ExperimentList = () => {
     setExperiment({...experiment, device: selected_device.id, device_capacity: selected_device.capacity /*, plants:Array(5).fill(null) */})
   }
 
-  async function getDevice(device_id){
-    const device = await axios(
-      `/api/devices/${device_id}/`
-      )
-      .catch((err) => console.log("ERROR: ", err));
-    return device.data
-  }
-
   function renderAvailableDevices(){
     return (
 
@@ -276,7 +292,7 @@ const ExperimentList = () => {
                     </div>
                   </div>
                   <div className='object_bottom'>
-                    
+                    {item.recipe !== null ? <RecipeBar recipe={item.recipe} phase_list={phase_list}></RecipeBar> : <></>}
                   </div>
               </div>
             </div>

@@ -51,7 +51,7 @@ class Experiment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, db_column='e_user_id', on_delete=models.CASCADE, blank=True, null=True)  
     start_date = models.DateTimeField(db_column='e_start_date', blank=True, null=True)  
     end_date = models.DateTimeField(db_column='e_end_date', blank=True, null=True)  
-    recipe =  models.ForeignKey("Recipe", models.DO_NOTHING, related_name='+', db_column='e_recipe',blank=True, null=True)
+    recipe = models.ForeignKey("Recipe", models.DO_NOTHING, related_name='+', db_column='e_recipe_id',blank=True, null=True)
 
     class Meta:
         managed = True
