@@ -92,8 +92,6 @@ const ExperimentReading = (props) => {
             //Updating old value to new value
             if(value !== ""){
                 updated_pod[field] = value
-                console.log(field, value)
-                console.log(updated_pod)
 
                 set_pod_readings([
                   ...pod_readings.slice(0, index),
@@ -101,7 +99,6 @@ const ExperimentReading = (props) => {
                   ...pod_readings.slice(index + 1)
                 ])
 
-                console.log(pod_readings)
             } else {
                 //Deleting field from pod reading if value is ""
                 delete updated_pod[field]
