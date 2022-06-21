@@ -28,13 +28,6 @@ const Device = () => {
         );
         set_phase_list(result.data)
     } 
-
-    async function fetch_recipe() {
-        const result = await axios(
-          '/api/recipes/',
-        );
-        set_phase_list(result.data)
-    } 
     
     useEffect(() => {
         fetch_loaded_devices();
@@ -96,11 +89,9 @@ const Device = () => {
 
     function renderDevices(){
         const device_list = []
- 
         if (selected_device_status === 'loaded' || selected_device_status === 'all'){   
 
             loaded_devices.map((item) => {
-                let recipe = fetch_recipe(item.id)
                 device_list.push(
                     <div key={'loaded_' + item.id} className="object_container">
                         <div className="object_top">
@@ -108,18 +99,14 @@ const Device = () => {
                                 <div className="object_name">{ item.device_name }</div>
                                 {/* <div>Registered: { item.registration_date.substring(0, 10) }</div> */}
                                 <div className="object_name">{ item.name }</div>
-                                <div>Date: {item.start_date} {"->"} {item.end_date}</div>
+                                {/* <div>Date: {item.start_date} {"->"} {item.end_date}</div> */}
                                 <div>Score: { item.score } </div>
                             </div>
                             <div className="object_content">                          
                                 <PodCarousel experimentID={item.id} deviceId={item.device}></PodCarousel>
                             </div>
                         </div>
-                        <div className="object_bottom">
-                            {/*<RecipeBar phase_list = {phase_list} recipe = {item.} ></RecipeBar>*/}
-
-                        </div>
-
+                        <RecipeBar phase_list = {phase_list} recipe = {item.recipe_id} experiment = {item}></RecipeBar>
 
                         <div className='object_actions'>
                         <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>

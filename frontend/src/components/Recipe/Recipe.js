@@ -11,7 +11,7 @@ const RecipeList = () => {
 
 
   const [modal, setModal] = useState({
-    show: true,
+    show: false,
     // show: false,
     add: true
   })
@@ -275,9 +275,7 @@ const RecipeList = () => {
                 <button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) deleteEntry(item.id) }}> DELETE </button>
               </div>
             </div>
-            <div className="object_bottom">  
-              <RecipeBar phase_list = {phase_list} recipe = {item} ></RecipeBar>
-            </div>
+            <RecipeBar phase_list = {phase_list} recipe = {item} ></RecipeBar>
           </div>
         </div>
       ))}

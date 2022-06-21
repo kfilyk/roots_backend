@@ -55,13 +55,6 @@ const ExperimentList = () => {
     fetchPhases();
   }, []);
 
-  async function getRecipe(id) {
-    const result = await axios(
-      `/api/recipes/?id=${id}`,
-    ).catch((err) => console.log(err));
-
-    return result.data[0]
-  }
   async function fetchPlants() {
     const result = await axios(
       '/api/plants/',
@@ -291,9 +284,7 @@ const ExperimentList = () => {
                         <li key="add_reading"><ExperimentReading exp_id={item.id}></ExperimentReading></li>
                     </div>
                   </div>
-                  <div className='object_bottom'>
-                    {item.recipe !== null ? <RecipeBar recipe={item.recipe} phase_list={phase_list}></RecipeBar> : <></>}
-                  </div>
+                  <RecipeBar recipe={item.recipe} phase_list={phase_list} experiment = {item}></RecipeBar>
               </div>
             </div>
         ))}
