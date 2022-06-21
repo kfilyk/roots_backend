@@ -91,11 +91,17 @@ const ExperimentReading = (props) => {
             let updated_pod = pod_readings[index]
             //Updating old value to new value
             if(value !== ""){
+                updated_pod[field] = value
+                console.log(field, value)
+                console.log(updated_pod)
+
                 set_pod_readings([
                   ...pod_readings.slice(0, index),
                   updated_pod,
                   ...pod_readings.slice(index + 1)
                 ])
+
+                console.log(pod_readings)
             } else {
                 //Deleting field from pod reading if value is ""
                 delete updated_pod[field]
@@ -252,13 +258,13 @@ const ExperimentReading = (props) => {
                     <div className="exp_r_form_row">
                         <label> Pod Phase: </label> 
                         <select value={find_value_selected_pod('pod_phase') || ""} name={"pod_phase"} onChange={(e) => {set_value_selected_pod(e)}} >
-                            <option key={null} value={null}>SELECT PHASE</option>
-                            <option value="germination">Germination</option>
-                            <option value="seedling">Seedling</option>
-                            <option value="vegetative">Vegetative Growth</option>
-                            <option value="flowering">Flowering</option>
-                            <option value="harvest">Harvest</option>
-                            <option value="other">Other</option>
+                            <option key={"null"} value={""}>SELECT PHASE</option>
+                            <option key={"germination"} value="germination">Germination</option>
+                            <option key={"seedling"} value="seedling">Seedling</option>
+                            <option key={"vegetative"} value="vegetative">Vegetative Growth</option>
+                            <option key={"flowering"} value="flowering">Flowering</option>
+                            <option key={"harvest"} value="harvest">Harvest</option>
+                            <option key={"other"} value="other">Other</option>
                         </select>
                     </div>
                 </div>
