@@ -5,7 +5,7 @@ import LoginOrCreateForm from './common/LoginOrCreateForm'
 const Login = () => {
     return (
       <View style={{ flex: 1 }}>
-        <LoginOrCreateForm />
+        <LoginOrCreateForm form={'register'}/>
       </View>
     );
 }
