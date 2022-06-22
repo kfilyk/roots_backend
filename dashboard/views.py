@@ -113,9 +113,7 @@ class ExperimentView(viewsets.ModelViewSet):
     def available_devices(self, request):
         devices_in_use = Experiment.objects.filter(device_id__isnull=False).values('device_id')
         query = Device.objects.exclude(id__in=devices_in_use)
-        print("QUERY: ", query)
         query = query.filter(user = self.request.user.id)
-        print("QUERY 2: ", query)
 
         data = list(query.values('id', 'name', 'capacity'))
         return JsonResponse(data, safe=False)
