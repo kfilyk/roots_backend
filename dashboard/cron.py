@@ -9,7 +9,7 @@ def check_experiments_end_date_daily():
     curr_date = datetime.now()
     tz = timezone.get_current_timezone()
     curr_date = curr_date.replace(tzinfo=tz)
-    # active_exps.update(day=F('day')+1) 
+    active_exps.update(day=F('day')+1) 
     for exp in active_exps:
         exp_curr_date = exp.start_date.date() + timedelta(days=exp.recipe_days)
         if exp_curr_date >= curr_date.date():
