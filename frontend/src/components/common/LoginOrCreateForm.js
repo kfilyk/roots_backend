@@ -8,6 +8,7 @@ const LoginOrCreateForm = (props) => {
     const [password, set_password] = useState('');
     const [firstName, set_firstName] = useState('');
     const [lastName, set_lastName] = useState('');
+    const [form, set_form] = useState('')
 
     const {
         formContainerStyle,
@@ -43,30 +44,9 @@ const LoginOrCreateForm = (props) => {
     }, []);
 
 
-    function renderCreateForm(){
-        const { fieldStyle, textInputStyle } = style;
-        return (
-            <View style={fieldStyle}>
-            <TextInput
-                placeholder="first name"
-                autoCorrect={false}
-                onChangeText={value => set_firstName(value)}
-                style={textInputStyle}
-            />
-            <TextInput
-                placeholder="last name"
-                autoCorrect={false}
-                onChangeText={value => set_lastName(value)}
-                style={textInputStyle}
-            />
-            </View>
-        );
-    }
-
     function renderButton(){
-        // const buttonText = create ? 'Create' : 'Login';
-        const buttonText = 'Login'
-  
+        const buttonText = form === "register" ? 'Create Account' : 'Login';
+
         return (
           <Button title={buttonText} onPress={() => login()}/>
         );
@@ -89,14 +69,14 @@ const LoginOrCreateForm = (props) => {
     }
 
     function login(){
-      // const endpoint = create ? 'register' : 'login';
-      const endpoint = 'login'
+      const endpoint = form ? 'register' : 'login';
+      // const endpoint = 'login'
       const payload = { username: username, password: password } 
 
-      // if (create) {
-      //   payload.first_name = firstName
-      //   payload.last_name = lastName
-      // }
+      if (form) {
+        payload.first_name = firstName
+        payload.last_name = lastName
+      }
       // console.log("PAYLOAD: ", payload)
       axios
         .post(`/auth/${endpoint}/`, payload)
@@ -113,16 +93,35 @@ const LoginOrCreateForm = (props) => {
         });
     }
 
-    function renderCreateLink() {
-      const { accountCreateTextStyle } = style;
-      return (
-        <Text style={accountCreateTextStyle}>
-          Or 
-          <Text style={{ color: 'blue' }} onPress={() => window.location.replace("/register")}>
-            {'Sign-up'}
-          </Text>
-        </Text>
-      );
+    function renderRegister(){
+      if (form === "register"){
+        return (
+        <View style={formContainerStyle}>
+            <View style={fieldStyle}>
+              <TextInput
+                placeholder="firstName"
+                autoCorrect={false}
+                autoCapitalize="none"
+                onChangeText={value => set_firstName(value)}
+                onKeyPress={(key) => handleKeyPress(key)}
+                style={textInputStyle}
+              />
+            </View>
+            <View style={fieldStyle}>
+              <TextInput
+                placeholder="lastName"
+                autoCorrect={false}
+                autoCapitalize="none"
+                onChangeText={value => set_lastName(value)}
+                onKeyPress={(key) => handleKeyPress(key)}
+                style={textInputStyle}
+              />
+            </View>
+        </View>
+      )
+      } else {
+        return ("")
+      }
     }
 
 
@@ -150,10 +149,12 @@ const LoginOrCreateForm = (props) => {
                 style={textInputStyle}
               />
             </View>
+            {renderRegister()}
             {renderLoginError()}
           </View>
           <View style={buttonContainerStyle}>
             {renderButton()}
+            <Button title={"Switch between Login/Register"} onPress={() => set_form(form === "login" ? "register" : "login")}/>
           </View>
         </View>
       );

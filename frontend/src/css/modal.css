@@ -217,3 +217,60 @@ input:valid+span:after {
 .recipe_modal_actions {
   margin: 0 auto
 }
+
+.exp_r_form_row {
+  display: flex;
+  flex-flow: column wrap;
+  width: calc(30%);
+  margin-right: 2%;
+} 
+
+.exp_pr_modal_content{
+  display: flex;
+  flex-flow: row wrap;
+  row-gap: 3vh;
+}
+
+.exp_r_input {
+  border: none;
+  border-bottom: 1px solid;
+  color: #B3896A;
+  width: calc(80%);
+}
+
+.pod_r_modal:not(:first-child){
+  margin-top: 10%;
+  display: flex;
+  flex-flow: row wrap;
+  row-gap: 3vh;
+}
+
+.selected_pod_div{
+  width: 100%
+}
+
+.selected_pod_div label{
+  width: 100%
+}
+
+.pr_comment {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+}
+
+.pr_coverage{
+  display: flex;
+  flex-direction: column;
+  width: calc(100%);
+}
+
+.pr_coverage div {
+  display: flex;
+  flex-direction: row;
+}
+
+.pr_coverage button {
+  width: calc(60%);
+  margin-left: 0px;
+}
