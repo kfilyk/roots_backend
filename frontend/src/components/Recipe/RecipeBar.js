@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
+import "./recipebar.css"
 
 const RecipeBar = (props) => {
   // we NEED this recipe state object, because the props is variably a recipe id OR a recipe object
@@ -86,7 +87,7 @@ const RecipeBar = (props) => {
               if (recipe["phase"+(i+1)] === null || i === 10) {
                   s['borderBottomRightRadius'] = '10px'
               }
-              phases.push(<div className="recipe_bar_phase" style={s}><span style={{'fontFamily': 'Brandon Grotesque Black'}}>{ph.name} </span> <span className="recipe_bar_phase_days">{ph.days}</span> <br/> {ph.type} </div>)
+              phases.push(<div className="recipe_bar_phase" style={s}> <span className="recipe_bar_phase_days">{ph.days}</span> {ph.type}  <span className="recipe_bar_phase_name"> {ph.name}</span> </div>)
           }
       }
       return ( 

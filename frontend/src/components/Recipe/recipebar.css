@@ -1,0 +1,70 @@
+/* ==========================================================================================
+RECIPE BAR (OBJECT BOTTOM CHIN)
+============================================================================================ */
+
+.recipe_bar_timestamps {
+    padding-left:5px;
+    padding-right:5px;
+    font-family: "Brandon Grotesque Black";
+    font-size:14px;
+    color: red;
+    display: flex;
+    margin-top:auto;
+    order:2;
+  }
+  
+  .recipe_bar_start_date {
+    width:100%;
+  }
+  
+  .recipe_bar_end_date {
+    width:100%;
+    text-align: right;
+  }
+  
+  .recipe_bar {
+    width:100%;
+    display: flex;
+    margin-top:auto;
+    order:2;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    text-align: center;
+  }
+  
+  .recipe_bar_phase {
+    position: relative;
+    width:100%;
+    clear: left;
+    padding:10px;
+    text-align: left;
+    overflow: hidden;
+  }
+  
+  .recipe_bar_phase:hover .recipe_bar_phase_name {
+    transition:0.5s;
+    display: block
+  }
+  
+  
+  .recipe_bar_empty {
+    padding:10px;
+    background-color: #EEEEEE;
+    margin-top:auto;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    text-align: center;
+  }
+  
+  .recipe_bar_phase_days {
+    position: absolute;
+    font-size: 12px;
+    right: 5px;
+    top: 5px;
+  }
+  
+  .recipe_bar_phase_name {
+    display: none;
+    font-family: 'Brandon Grotesque Black'
+  }
+  
