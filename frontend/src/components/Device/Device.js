@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import ReactDOM from 'react-dom';
+import QRCode from 'react-qr-code';
 import axios from "axios";
 import vertical_menu_icon from "../../img/vertical_menu_icon.png"
 import Popup from "reactjs-popup";
 import PodCarousel from "../Experiment/PodCarousel"
 import ExperimentReading from "../Experiment/ExperimentReading"
 import RecipeBar from '../Recipe/RecipeBar';
+
+//ReactDOM.render(<QRCode value="hey" />, document.getElementById("nav"));
 
 const Device = () => {
     const [loaded_devices, set_loaded_devices] = useState([]);
@@ -73,7 +77,7 @@ const Device = () => {
 
     function renderNav() {
         return (
-          <div className="nav" style={{fontSize: "12px"}}>
+          <div className="nav" id="nav" style={{fontSize: "12px"}}>
             <span className={selected_device_status === "all" ? "nav-link active" : "nav-link"} onClick={() => set_selected_device_status("all")}>
               ALL
             </span>
@@ -154,6 +158,8 @@ const Device = () => {
                     <div className="modal_body"  onClick={e => e.stopPropagation()}>
                     <div className="modal_type"> Device: {} </div>
                     <div className="modal_content">
+
+                    
                     <div className="form_row">
                             <label> Experiment: </label> 
                             <select className="" defaultValue={modal.experiment} name="experiment" onChange={(e) => set_modal({...modal, experiment: e.target.value})}>
@@ -180,6 +186,9 @@ const Device = () => {
         <div>
             {renderNav()}
             {renderDevices()}
+            <div style={{ background: 'white', padding: '16px' }}>
+                <QRCode value="https://youtu.be/JWeDqUUGNrg" /> 
+            </div>
             {renderModal()}
         </div>
       );

@@ -17,7 +17,8 @@ day = day > 9 ? day : '0'+day;
 const ExperimentList = () => {
   const [experiment_list, setExperimentList] = useState([]);
   const [plant_list, setPlantList] = useState([]);
-  const [phase_list, set_phase_list] = useState([])
+  const [recipe_list, setRecipeList] = useState([]);
+  const [phase_list, setPhaseList] = useState([])
   const [modal, setModal] = useState({
     show: false,
     add: false
@@ -34,9 +35,10 @@ const ExperimentList = () => {
     pods: [],
     pod_selection: {},
     start_date: year+"-"+month+"-"+day,
+    recipe: null
   })
 
-  async function fetchData() {
+  async function fetchExperiments() {
     const result = await axios(
       '/api/experiments/',
     );
@@ -47,13 +49,15 @@ const ExperimentList = () => {
     const result = await axios(
       '/api/phases/',
     );
-    set_phase_list(result.data)
-} 
+    setPhaseList(result.data)
+  } 
 
-  useEffect(() => {
-    fetchData();
-    fetchPhases();
-  }, []);
+  async function fetchRecipes() {
+    const result = await axios(
+      '/api/recipes/',
+    );
+    setRecipeList(result.data)
+  } 
 
   async function fetchPlants() {
     const result = await axios(
@@ -70,8 +74,12 @@ const ExperimentList = () => {
   }
 
   useEffect(() => {
+    fetchExperiments();
+    fetchPhases();
     fetchPlants();
+    fetchRecipes();
   }, []);
+
 
   async function deleteEntry(id) {
     await axios.delete(`/api/experiments/${id}/`);
@@ -130,9 +138,10 @@ const ExperimentList = () => {
           device: experiment.device,
           pod_selection: experiment.pod_selection,
           start_date: experiment.start_date,
+          recipe: experiment.recipe
         })
       .catch((err) => console.log(err));
-    fetchData();
+    fetchExperiments();
   };
 
   async function editEntry(e) {
@@ -141,9 +150,10 @@ const ExperimentList = () => {
       { 
         name: experiment.name,
         device: experiment.device,
+        recipe: experiment.recipe
       })
       .then((res) => {
-        fetchData()
+        fetchExperiments()
       })
       .catch((err) => console.log(err));
 
@@ -182,7 +192,7 @@ const ExperimentList = () => {
           .catch((err) => console.log(err));
       }
     }
-    fetchData();
+    fetchExperiments();
   };
 
   function setDevice(e){
@@ -212,6 +222,12 @@ const ExperimentList = () => {
     console.log(experiment.pod_selection)
   }
 
+  function setRecipe(e){
+    setExperiment({...experiment, recipe: e.target.value})
+    console.log("RECIPE:", experiment.recipe)
+  }
+
+
   function renderPodSelection(){
     let pod_container = []
     // so long as pods is loaded
@@ -236,6 +252,17 @@ const ExperimentList = () => {
     }
     return pod_container
   }
+
+  function renderRecipeSelection(){
+    return (
+      <select className="experiment_recipe_selection" name="experiment_recipe_selection" default_value="null" onChange={(e) => setRecipe(e)}>
+        <option value={null}></option>
+        {recipe_list.map(item => (
+          <option key={item.id} value={item.id}> {item.name} </option>
+        ))}
+      </select>
+    )
+  }
  
   function renderModal(){
     return (
@@ -250,6 +277,8 @@ const ExperimentList = () => {
             <input className="date_selection" type="date" name="start_date" value={experiment.start_date} onChange={(e) => setExperiment({...experiment, start_date: e.target.value})} />
           </div>
           <div className="form_row">{renderPodSelection()}</div>
+          <div className="form_row">{renderRecipeSelection()}</div>
+
       </div>
     )
   }
@@ -269,8 +298,7 @@ const ExperimentList = () => {
 
                     <div className="object_description">
                         <div className="object_name">{ item.name }</div>
-                        <div>Device Name: { item.device_name } </div>
-                        <div>Date: {item.start_date} {"->"} {item.end_date}</div>
+                        <div>Device: { item.device_name } </div>
                         {item.score !== null ? <div>Score: { item.score } </div> : <></>}
                         
                     </div>

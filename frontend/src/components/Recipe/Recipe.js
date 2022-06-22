@@ -7,19 +7,16 @@ import RecipeBar from "./RecipeBar"
 const RecipeList = () => {
   const [recipe_list, setRecipeList] = useState([]);
   const [phase_list, setPhaseList] = useState([]);
-  const [value, setValue] = useState("default");
-
 
   const [modal, setModal] = useState({
     show: false,
-    // show: false,
-    add: true
+    add: true,
   })
-
 
   const [recipe, setRecipe] = useState(
     {
       name: null,
+      days: 0,
       phase1: null,
       phase2: null,
       phase3: null,
@@ -33,23 +30,7 @@ const RecipeList = () => {
     }
   );
 
-  const [show_phase, set_show_phase] = useState(
-    {
-      max_phase: 1,
-      phase1: true,
-      phase2: false,
-      phase3: false,
-      phase4: false,
-      phase5: false,
-      phase6: false,
-      phase7: false,
-      phase8: false,
-      phase9: false,
-      phase10:  false,
-    }
-  );
-
-  async function fetchData() {
+  async function fetchRecipes() {
     const result = await axios(
       '/api/recipes/',
     );
@@ -63,7 +44,7 @@ const RecipeList = () => {
   } 
 
   useEffect(() => {
-    fetchData();
+    fetchRecipes();
   }, []);
 
   async function deleteEntry(id) {
@@ -71,46 +52,36 @@ const RecipeList = () => {
     setRecipeList(recipe_list.filter(recipe => recipe.id !== id))
   }
 
-  async function addEntry(e) {
+  function countDays() {
+    let days = 0;
+    for(let i = 1; i<=10; i++) {
+      console.log("FLAG")
+      if (recipe["phase"+i] !== null) {
+        days += phase_list.find(phase => phase.id === recipe["phase"+i]).days
+      }
+    }
+    console.log(days)
+    recipe.days = days;
+  }
+
+  async function addRecipe(e) {
+    countDays();
+    
     const result = await axios
-      .post(`/api/recipes/`, 
-        { 
-            name: recipe.name,
-            phase1: recipe.phase1,
-            phase2: recipe.phase2,
-            phase3: recipe.phase3,
-            phase4: recipe.phase4,
-            phase5: recipe.phase5,
-            phase6: recipe.phase6,
-            phase7: recipe.phase7,
-            phase8: recipe.phase8,
-            phase9: recipe.phase9,
-            phase10: recipe.phase10,
-        });
-        setRecipeList(recipe_list => [...recipe_list, result.data])
+      .post(`/api/recipes/`, recipe);
+      setRecipeList(recipe_list => [...recipe_list, result.data])
   };
 
-  async function editEntry(e) {
+  async function editRecipe(e) {
+    countDays();
     await axios
-      .patch(`/api/recipes/${recipe.id}/`, 
-      { 
-          name: recipe.name,
-          phase1: recipe.phase1,
-          phase2: recipe.phase2,
-          phase3: recipe.phase3,
-          phase4: recipe.phase4,
-          phase5: recipe.phase5,
-          phase6: recipe.phase6,
-          phase7: recipe.phase7,
-          phase8: recipe.phase8,
-          phase9: recipe.phase9,
-          phase10: recipe.phase10,
-      }).catch((err) => console.log(err));
-      fetchData();
+      .patch(`/api/recipes/${recipe.id}/`, recipe).catch((err) => console.log(err));
+    fetchRecipes();
   };
 
   function openModal(r){
-    if (r === null ){
+    // if no item passed, we are adding a new one
+    if (r === null){
       setModal({add: true, show: true})
     } else {
       setRecipe(r)
@@ -124,15 +95,18 @@ const RecipeList = () => {
       return
     } 
 
-    for(let i = 1; i <= show_phase.max_phase; i++){
+    for(let i = 1; i <= modal.phases; i++){
       let phase = `phase${i}`
       if(recipe[phase] === null){
         alert(`Phase ${i} cannot be null`)
         return
       }
     }
-
-    addEntry()
+    if(modal.add) {
+      addRecipe()
+    } else {
+      editRecipe()
+    }
     close();
   }
 
@@ -140,6 +114,7 @@ const RecipeList = () => {
     setModal({...modal, show: false}) 
     setRecipe({
       name: null,
+      days: 0,
       phase1: null,
       phase2: null,
       phase3: null,
@@ -154,88 +129,25 @@ const RecipeList = () => {
   }
 
   function update_recipe(e){
-    let phase_position = e.target.name
-    let new_value = e.target.value
-    setRecipe({...recipe,  [phase_position]: parseInt(new_value)})
+    setRecipe({...recipe,  [e.target.name]: (e.target.value.length === 0 ? null: e.target.value)})
   }
 
   function render_phase_selection(){
-    return (
-      <div>
-        <div className={show_phase.phase1 ? 'form-row' : 'hidden'}>
-            <select name="phase1" defaultValue={value} onChange={(e)=>update_recipe(e)}>
-              <option value={"default"} disabled hidden>Phase 1:</option>
-              {phase_list.map((phase) => ( <option key={phase.id} value={phase.id}>{phase.name} | ({phase.type})</option>))}
-            </select>
-        </div>
-        <div className={show_phase.phase2 ? 'form-row' : 'hidden'}>
-            <select name="phase2" defaultValue={value} onChange={(e)=>update_recipe(e)}>
-              <option value={"default"} disabled hidden>Phase 2:</option>
-              {phase_list.map((phase) => ( <option key={phase.id} value={phase.id}>{phase.name} | ({phase.type})</option>))}
-            </select>
-        </div>
-        <div className={show_phase.phase3 ? 'form-row' : 'hidden'}>
-            <select name="phase3" defaultValue={value} onChange={(e)=>update_recipe(e)}>
-              <option value={"default"} disabled hidden>Phase 3:</option>
-              {phase_list.map((phase) => ( <option key={phase.id} value={phase.id}>{phase.name} | ({phase.type})</option>))}
-            </select>
-        </div>
-        <div className={show_phase.phase4 ? 'form-row' : 'hidden'}>
-            <select name="phase4" defaultValue={value} onChange={(e)=>update_recipe(e)}>
-              <option value={"default"} disabled hidden>Phase 4:</option>
-              {phase_list.map((phase) => ( <option key={phase.id} value={phase.id}>{phase.name} | ({phase.type})</option>))}
-            </select>
-        </div>
-        <div className={show_phase.phase5 ? 'form-row' : 'hidden'}>
-            <select name="phase5" defaultValue={value} onChange={(e)=>update_recipe(e)}>
-              <option value={"default"} disabled hidden>Phase 5:</option>
-              {phase_list.map((phase) => ( <option key={phase.id} value={phase.id}>{phase.name} | ({phase.type})</option>))}
-            </select>
-        </div>
-        <div className={show_phase.phase6 ? 'form-row' : 'hidden'}>
-            <select name="phase6" defaultValue={value} onChange={(e)=>update_recipe(e)}>
-              <option value={"default"} disabled hidden>Phase 6:</option>
-              {phase_list.map((phase) => ( <option key={phase.id} value={phase.id}>{phase.name} | ({phase.type})</option>))}
-            </select>
-        </div>
-        <div className={show_phase.phase7 ? 'form-row' : 'hidden'}>
-            <select name="phase7" defaultValue={value} onChange={(e)=>update_recipe(e)}>
-              <option value={"default"} disabled hidden>Phase 7:</option>
-              {phase_list.map((phase) => ( <option key={phase.id} value={phase.id}>{phase.name} | ({phase.type})</option>))}
-            </select>
-        </div>
-        <div className={show_phase.phase8 ? 'form-row' : 'hidden'}>
-            <select name="phase8" defaultValue={value} onChange={(e)=>update_recipe(e)}>
-              <option value={"default"} disabled hidden>Phase 8:</option>
-              {phase_list.map((phase) => ( <option key={phase.id} value={phase.id}>{phase.name} | ({phase.type})</option>))}
-            </select>
-        </div>
-        <div className={show_phase.phase9 ? 'form-row' : 'hidden'}>
-            <select name="phase9" defaultValue={value} onChange={(e)=>update_recipe(e)}>
-              <option value={"default"} disabled hidden>Phase 9:</option>
-              {phase_list.map((phase) => ( <option key={phase.id} value={phase.id}>{phase.name} | ({phase.type})</option>))}
-            </select>
-        </div>
-        <div className={show_phase.phase10 ? 'form-row' : 'hidden'}>
-            <select name="phase10" defaultValue={value} onChange={(e)=>update_recipe(e)}>
-              <option value={"default"} disabled hidden>Phase 10:</option>
-              {phase_list.map((phase) => ( <option key={phase.id} value={phase.id}>{phase.name} | ({phase.type})</option>))}
-            </select>
-        </div>
-        
-      </div>
-    )
-  }
+    let phase_selection = [];
+    for(let i = 1; i<=10; i++) {
 
-  function change_max(increase){
-    let new_max = increase ? show_phase.max_phase + 1 : show_phase.max_phase - 1
-    let max_phase = increase ? `phase${new_max}` : `phase${show_phase.max_phase}`
-    if (increase && new_max <= 10){
-      set_show_phase({...show_phase, max_phase: new_max, [max_phase]: true})
-    } else if (!increase && new_max >=1){
-      set_show_phase({...show_phase, max_phase: new_max, [max_phase]: false})
-      setRecipe({...recipe, [`phase${show_phase.max_phase}`]: null})
+      if(i===1 || recipe['phase'+(i-1)]!== null) {
+        phase_selection.push(
+          <div className='form-row'>
+            <select name={"phase"+i} defaultValue={recipe["phase"+i]} onChange={(e)=>update_recipe(e)}>
+              <option value={null}></option>
+              {phase_list.map((phase) => ( <option key={phase.id} value={phase.id}>{phase.name} | ({phase.type})</option>))}
+            </select>
+          </div>
+        )
+      }
     }
+    return <div>{phase_selection}</div>;
   }
 
   function renderModal(){
@@ -247,11 +159,6 @@ const RecipeList = () => {
         <div className="form_row">
           {render_phase_selection()}
         </div>
-        <div className="recipe_modal_actions">
-          <button onClick={()=>change_max(false)}>-</button>
-          <button onClick={()=>change_max(true)}>+</button>
-        </div>
-
       </>
     )
   }
@@ -265,7 +172,7 @@ const RecipeList = () => {
           <div className="object_container">
             <div className="object_top">
               <div className="object_description">
-                <div className="object_name">{item.name}</div>
+                <div className="object_name">{item.name}</div><div>{item.days} Days</div>
               </div>
 
               

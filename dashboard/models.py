@@ -156,7 +156,8 @@ class Phase(models.Model): # generic periodic phase setting to be used by a reci
 class Recipe(models.Model):
     id = models.AutoField(db_column='r_id', primary_key=True)  
     name = models.CharField(db_column='r_name', max_length=45, default="NO RECIPE NAME")
-    recipe_json = models.CharField(db_column='e_recipe_json', max_length=4096, blank=True, null=True)# store the recipe json used to control the experiment
+    recipe_json = models.CharField(db_column='r_recipe_json', max_length=4096, blank=True, null=True)# store the recipe json used to control the experiment
+    days = models.IntegerField(db_column = 'r_days')
     phase1 = models.ForeignKey("Phase", models.DO_NOTHING, related_name="phase1", db_column='r_phase1_id', blank=True, null=True)
     phase2 = models.ForeignKey("Phase", models.DO_NOTHING, related_name="phase2", db_column='r_phase2_id', blank=True, null=True)
     phase3 = models.ForeignKey("Phase", models.DO_NOTHING, related_name="phase3", db_column='r_phase3_id', blank=True, null=True)
