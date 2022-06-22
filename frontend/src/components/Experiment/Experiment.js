@@ -197,7 +197,7 @@ const ExperimentList = () => {
 
   function setDevice(e){
     let selected_device = available_devices.find(device => device.id.toString() === e.target.value)
-    console.log("SELECTED DEVICE ID: ", selected_device)
+    //console.log("SELECTED DEVICE ID: ", selected_device)
     setExperiment({...experiment, device: selected_device.id, device_capacity: selected_device.capacity /*, plants:Array(5).fill(null) */})
   }
 
@@ -219,12 +219,12 @@ const ExperimentList = () => {
     let temp = experiment.pod_selection
     temp[position] = e.target.value
     setExperiment({...experiment, pod_selection: temp})
-    console.log(experiment.pod_selection)
+    //console.log(experiment.pod_selection)
   }
 
   function setRecipe(e){
     setExperiment({...experiment, recipe: e.target.value})
-    console.log("RECIPE:", experiment.recipe)
+    //console.log("RECIPE:", experiment.recipe)
   }
 
 

@@ -55,12 +55,10 @@ const RecipeList = () => {
   function countDays() {
     let days = 0;
     for(let i = 1; i<=10; i++) {
-      console.log("FLAG")
       if (recipe["phase"+i] !== null) {
         days += phase_list.find(phase => phase.id === recipe["phase"+i]).days
       }
     }
-    console.log(days)
     recipe.days = days;
   }
 

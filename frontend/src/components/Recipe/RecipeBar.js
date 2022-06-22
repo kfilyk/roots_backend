@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import axios from "axios";
 
 const RecipeBar = (props) => {
+  // we NEED this recipe state object, because the props is variably a recipe id OR a recipe object
   const [recipe, setRecipe] = useState(null);
+  const [end_date, setEndDate] = useState(null)
 
   async function getRecipe(id) {
     const result = await axios(
@@ -20,7 +22,12 @@ const RecipeBar = (props) => {
       setRecipe(props.recipe)
     }
 
-  }, [props]);
+    if(recipe !== null && (typeof props.experiment !== 'undefined')) {
+      let sd = new Date(props.experiment.start_date)
+      sd.setDate(sd.getDate()+recipe.days)
+      setEndDate(sd.getFullYear()+ "-"+(sd.getMonth()+1)+"-"+sd.getDate())
+    }
+  }, [props, recipe]); // useEffect runs when props OR recipe changes
 
   function PhaseStyle(type)  {
     let colour = '';
@@ -56,14 +63,14 @@ const RecipeBar = (props) => {
       return (
         <div className="recipe_bar_timestamps"> 
           <div className="recipe_bar_start_date" style={{"color": "#B1C985"}}>{props.experiment.start_date.slice(0,10)} </div>
-          <div className="recipe_bar_end_date" style={{"color": "#D14C4C"}}>{props.experiment.end_date.slice(0,10)} </div>
+          <div className="recipe_bar_end_date" style={{"color": "#D14C4C"}}>{end_date} </div>
         </div>
       )
     }
-
   }
 
   function render() {
+
     if(recipe === null ||  props.phase_list.length === 0 || typeof recipe === 'undefined') {
       return <div className="recipe_bar_empty"> NO RECIPE ALLOCATED </div>;
     } else {
