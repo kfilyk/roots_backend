@@ -21,8 +21,8 @@ class MQTT:
 
     client.username_pw_set(username, password)
 
-    def test(self, device):
-        self.client.on_message=self.on_message
+    def get_device_status(self, device):
+
         self.client.connect(self.broker, port=self.port)#connect
         self.client.loop_start() #start loop to process received messages
 
@@ -31,7 +31,7 @@ class MQTT:
         time.sleep(1)
         self.client.unsubscribe(f'avagrows/device/client/{device}/deviceState')#subscribe
 
-        time.sleep(4)
+        time.sleep(3)
 
         self.client.disconnect() #disconnect
         self.client.loop_stop()
@@ -39,4 +39,22 @@ class MQTT:
         return json.dumps(self.msgs, default=lambda o: o.__dict__, 
             sort_keys=True, indent=4)
 
+
+    def set_start_time(self, device, hour, minute):
+        self.client.on_message=self.on_message
+        self.client.connect(self.broker, port=self.port)#connect
+        self.client.loop_start() #start loop to process received messages
+
+        self.client.subscribe(f'avagrows/device/client/{device}/deviceState')#subscribe
+        self.client.publish(f'avagrows/device/server/{device}/devicecommand', f'{{"command": 11, "hour":{hour}, "minute":{minute}}}', qos=1)
+
+        time.sleep(2)
+        self.client.publish(f'avagrows/device/server/{device}/devicecommand','{"command": 0}')#publish
+        time.sleep(1)
+        self.client.unsubscribe(f'avagrows/device/client/{device}/deviceState')#subscribe
+
+        self.client.disconnect() #disconnect
+        self.client.loop_stop()
+
+        return self.msgs.dailyStartTime
 
