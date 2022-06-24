@@ -54,7 +54,6 @@ const Device = () => {
         const result = await axios(
           '/api/experiments/available_devices/',
         );
-    
         set_free_devices(result.data)
     } 
 
@@ -91,6 +90,24 @@ const Device = () => {
         );
       };
 
+    async function get_device_state(id){
+        const result = await axios
+          .post(`/api/devices/get_device_state/`, 
+            { 
+                device: id
+            });
+        let index = loaded_devices.findIndex(device => device.id === id)
+        let updated_device = loaded_devices[index]
+        updated_device['currentRecipe'] = result.data.currentRecipe
+        updated_device['dailyStartTime'] = result.data.dailyStartTime
+
+        set_loaded_devices([
+            ...loaded_devices.slice(0, index),
+            updated_device,
+            ...loaded_devices.slice(index + 1)
+        ])
+    }
+
     function renderDevices(){
         const device_list = []
         if (selected_device_status === 'loaded' || selected_device_status === 'all'){   
@@ -105,6 +122,9 @@ const Device = () => {
                                 <div className="object_name">{ item.name }</div>
                                 {/* <div>Date: {item.start_date} {"->"} {item.end_date}</div> */}
                                 <div>Score: { item.score } </div>
+                                <div>Current Recipe: { item.currentRecipe ? item.currentRecipe : "N/A"} </div>
+                                <div>Daily Start Time: { item.dailyStartTime ? item.dailyStartTime : "N/A"} </div>
+                                <button onClick={() => get_device_state(item.id)}>Get Device State</button>
                             </div>
                             <div className="object_content">                          
                                 <PodCarousel experimentID={item.id} deviceId={item.device}></PodCarousel>

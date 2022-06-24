@@ -20,7 +20,6 @@ class MQTT:
 
     def on_message(self, client, userdata, message):
         x = json.loads(str(message.payload.decode("utf-8")), object_hook=lambda d: SimpleNamespace(**d))
-        print("X: ", x)
         self.msgs = x
 
     def get_device_status(self, device):
