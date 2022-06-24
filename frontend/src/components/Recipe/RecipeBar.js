@@ -23,6 +23,9 @@ const RecipeBar = (props) => {
       setRecipe(props.recipe)
     }
 
+  }, []); // [] causes useEffect to only happen ONCE after initial render - will not be called as a result of any other change
+
+  useEffect(() => {
     if(recipe !== null && (typeof props.experiment !== 'undefined')) {
       let sd = new Date(props.experiment.start_date)
       sd.setDate(sd.getDate()+recipe.days)
