@@ -12,8 +12,8 @@ export default class App extends Component {
   }
 
   componentWillMount() {
-    //axios.defaults.baseURL = 'http://54.160.156.25:8000';
-    axios.defaults.baseURL = 'http://localhost:8000';
+    axios.defaults.baseURL = 'http://54.160.156.25:8000'; // use this to run on EC2
+    //axios.defaults.baseURL = 'http://localhost:8000'; // use this to run locally
     axios.defaults.timeout = 10000;
   };
 }
