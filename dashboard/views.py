@@ -19,7 +19,9 @@ from rest_framework.decorators import action
 from django.http import HttpResponse, JsonResponse
 from datetime import datetime
 from django.utils.timezone import make_aware
+from .v2_mqtt import MQTT
 import json
+
 
 # https://www.digitalocean.com/community/tutorials/build-a-to-do-application-using-django-and-react
 
@@ -30,6 +32,24 @@ class DeviceView(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         return Device.objects.filter(user = user.id)
+
+    @action(detail=False, methods=['POST'], name='get_device_state')
+    def get_device_state(self, request):
+        token = Device.objects.get(id=request.data['device']).token
+        broker = MQTT()
+        data = json.loads(broker.get_device_status(token))
+        filtered_data = {key: data[key] for key in data if key not in ['luxZone', 'mqttConfig', 'totalLuxZones', 'wifiCredentials']}        
+        return JsonResponse(filtered_data, safe=False)
+
+    @action(detail=False, methods=['POST'], name='set_start_time')
+    def set_start_time(self, request):
+        token = Device.objects.get(id=request.data['device']).token
+        hour = request.data['hour']
+        minute = request.data['minute']
+        broker = MQTT()
+        device_start_time = broker.set_start_time(token, hour, minute)
+        return JsonResponse({"device_start_time": device_start_time}, status=200)
+
 
 class ExperimentReadingView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
