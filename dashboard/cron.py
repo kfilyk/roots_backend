@@ -15,7 +15,8 @@ def check_experiments_end_date_daily():
     active_exps.update(day=F('day')+1) 
     
     for curr_exp in active_exps:
-        if (curr_exp.start_date.date() + timedelta(curr_exp.recipe_days)) <= (curr_exp.start_date.date() + timedelta(curr_exp.days)):
+        # if (curr_exp.start_date.date() + timedelta(curr_exp.recipe_days)) <= (curr_exp.start_date.date() + timedelta(curr_exp.days)):
+        if (curr_exp.start_date.date() + timedelta(curr_exp.recipe_days)) <= curr_date.date():
             curr_exp.end_date = curr_date
             curr_exp.save()
             pods = Pod.objects.filter(experiment = curr_exp.id, end_date__isnull=True)
