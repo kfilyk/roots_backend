@@ -15,7 +15,7 @@ def check_experiments_end_date_daily():
     active_exps.update(day=F('day')+1) 
     
     for curr_exp in active_exps:
-        if (curr_exp.start_date.date() + timedelta(curr_exp.recipe_days)) <= curr_date.date():
+        if (curr_exp.start_date.date() + timedelta(curr_exp.recipe_days)) <= (curr_exp.start_date.date() + timedelta(curr_exp.days)):
             curr_exp.end_date = curr_date
             curr_exp.save()
             pods = Pod.objects.filter(experiment = curr_exp.id, end_date__isnull=True)
@@ -26,6 +26,7 @@ def check_experiments_end_date_daily():
                 curr_phase = getattr(curr_exp.recipe, p.name, None)
                 if curr_phase is not None:
                     if (curr_exp_day - curr_phase.days) < 0:
+                        print("HERE")
                         curr_exp.current_phase = getattr(curr_exp.recipe, p.name, None)
                         curr_exp.phase_day = curr_exp_day
                         curr_exp.save()
