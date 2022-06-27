@@ -21,7 +21,8 @@ from datetime import datetime
 from django.utils.timezone import make_aware
 from .v2_mqtt import MQTT
 import json
-
+from django.utils import timezone
+from datetime import datetime, timedelta
 
 # https://www.digitalocean.com/community/tutorials/build-a-to-do-application-using-django-and-react
 
@@ -148,6 +149,12 @@ class ExperimentView(viewsets.ModelViewSet):
         user = self.request.user
         return Experiment.objects.filter(user = user.id).annotate(device_name=F('device__name'))  # joins name value from device table to returned results
 
+    @action(detail=False, methods=['GET'], name='recipe')
+    def recipe(self, request):
+        
+
+
+        return Response(status=200)
 
 class PhaseView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
