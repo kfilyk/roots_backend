@@ -26,7 +26,6 @@ def check_experiments_end_date_daily():
                 curr_phase = getattr(curr_exp.recipe, p.name, None)
                 if curr_phase is not None:
                     if (curr_exp_day - curr_phase.days) < 0:
-                        print("HERE")
                         curr_exp.current_phase = getattr(curr_exp.recipe, p.name, None)
                         curr_exp.phase_day = curr_exp_day
                         curr_exp.save()
