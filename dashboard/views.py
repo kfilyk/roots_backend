@@ -42,8 +42,8 @@ class DeviceView(viewsets.ModelViewSet):
         filtered_data = {key: data[key] for key in data if key not in ['luxZone', 'mqttConfig', 'totalLuxZones', 'wifiCredentials']}        
         return JsonResponse(filtered_data, safe=False)
 
-    @action(detail=False, methods=['POST'], name='set_start_time')
-    def set_start_time(self, request):
+    @action(detail=False, methods=['POST'], name='set_device_start_time')
+    def set_device_start_time(self, request):
         token = Device.objects.get(id=request.data['device']).token
         hour = request.data['hour']
         minute = request.data['minute']
@@ -150,10 +150,8 @@ class ExperimentView(viewsets.ModelViewSet):
         return Experiment.objects.filter(user = user.id).annotate(device_name=F('device__name'))  # joins name value from device table to returned results
 
     @action(detail=False, methods=['GET'], name='recipe')
-    def recipe(self, request):
-        
-
-
+    def test(self, request):
+        print("TESTING!")
         return Response(status=200)
 
 class PhaseView(viewsets.ModelViewSet):
