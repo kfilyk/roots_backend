@@ -160,5 +160,6 @@ REST_FRAMEWORK = {
 }
 
 CRONJOBS = [
-    ('0 1 * * *', 'dashboard.cron.check_experiments_end_date_daily')
+    ('0 1 * * *', 'dashboard.cron.check_experiments_end_date_daily'),
+    ('* * * * *', 'dashboard.cron.check_device_activity')
 ]

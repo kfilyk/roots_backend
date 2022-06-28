@@ -1,4 +1,4 @@
-from .models import Experiment, Pod
+from .models import Experiment, Pod, Device
 from django.db.models import F
 from datetime import datetime, timedelta
 from django.utils import timezone
@@ -18,3 +18,7 @@ def check_experiments_end_date_daily():
             inactive_exp.save()
             pods = Pod.objects.filter(experiment = exp.id, end_date__isnull=True)
             pods.update(end_date=curr_date)
+
+def check_device_activity():
+    print("RUNNING")
+    devices = Device.objects.all()
