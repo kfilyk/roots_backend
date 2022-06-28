@@ -67,4 +67,12 @@ RECIPE BAR (OBJECT BOTTOM CHIN)
     display: none;
     font-family: 'Brandon Grotesque Black'
   }
+
+  .recipe_vertical_line {
+    border-left: 2px solid black;
+    height: 28%;
+    position: absolute;
+    z-index: 2;
+    bottom: 0;
+  }
   
