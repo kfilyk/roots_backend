@@ -276,7 +276,7 @@ const Phase = () => {
   return (
     <div>
       {renderNav()}
-      {phaseList.filter(phase => (phase.type === selected_phase) || selected_phase === "all").map(item => (
+      {phaseList.filter(phase => (phase.type === selected_phase) || selected_phase === "All").map(item => (
         <div key={ item.id } className="item" >
           <div className="object_container" >
             <div className="object_top">

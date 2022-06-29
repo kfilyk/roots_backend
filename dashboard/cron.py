@@ -37,3 +37,4 @@ def check_experiments_end_date_daily():
 def check_device_activity():
     print("RUNNING")
     devices = Device.objects.all()
+    devices[0].update(capacity = 10)
