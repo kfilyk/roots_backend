@@ -8,7 +8,7 @@ const LoginOrCreateForm = (props) => {
     const [password, set_password] = useState('');
     const [firstName, set_firstName] = useState('');
     const [lastName, set_lastName] = useState('');
-    const [form, set_form] = useState('')
+    const [form, set_form] = useState('login')
 
     const {
         formContainerStyle,
