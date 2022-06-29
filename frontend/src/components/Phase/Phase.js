@@ -10,8 +10,7 @@ import './phase.css'
 
 const Phase = () => {
   const [phaseList, setPhaseList] = useState([]);
-  const [selected_phase, setPhaseNav] = useState("all");
-  console.log("PHASE:", selected_phase)
+  const [selected_phase, setPhaseNav] = useState("All");
   const [modal, setModal] = useState({
     show: false,
     add: false
@@ -141,7 +140,7 @@ const Phase = () => {
           </select>
         </div>
         <div className="form_row">
-          <input value={addPhase.days} placeholder={"Days"} onChange={(e) => setAddPhase({...addPhase, days: e.target.value})} />
+          <input value={addPhase.days} placeholder={"Days"} min="1" type="number" onKeyPress= {(e) => {if(e.charCode === 45) {e.preventDefault()}}} onChange={(e) => setAddPhase({...addPhase, days: e.target.value})} />
         </div>
         <div className="form_row">
           <input value={addPhase.waterings_per_day} placeholder={"Watering Cycles"} onChange={(e) => setAddPhase({...addPhase, waterings_per_day: e.target.value})} />
@@ -186,7 +185,7 @@ const Phase = () => {
           </select>
         </div>
         <div className="form_row">
-          <input value={editPhase.days} placeholder={"Days"}  onChange={(e) => setEditPhase({...editPhase, days: e.target.value})} />
+          <input value={editPhase.days} placeholder={"Days"} min="1" type="number" onKeyPress= {(e) => {if(e.charCode === 45) {e.preventDefault()}}} onChange={(e) => setEditPhase({...editPhase, days: e.target.value})} />
         </div>
         <div className="form_row">
           <input value={editPhase.waterings_per_day} placeholder={"Watering Cycles"} onChange={(e) => setEditPhase({...editPhase, waterings_per_day: e.target.value})} />

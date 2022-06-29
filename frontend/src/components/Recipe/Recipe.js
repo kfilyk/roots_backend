@@ -91,7 +91,10 @@ const RecipeList = () => {
     if(recipe.name === null || recipe.name === ""){
       alert("Please provide a recipe name.")
       return
-    } 
+    } else if(recipe.phase1 === null) {
+      alert("Recipe must have at least 1 phase.")
+      return
+    }
 
     for(let i = 1; i <= modal.phases; i++){
       let phase = `phase${i}`
