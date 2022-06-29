@@ -54,11 +54,20 @@ const LoginOrCreateForm = (props) => {
 
     function renderLoginError() {
         if (login_error) {
-          return (
-            <View >
-              <Text>{"login credentials invalid."}</Text>
-            </View>
-          );
+          if (form === "login"){
+            return (
+              <View >
+                <Text>{"login credentials invalid."}</Text>
+              </View>
+            );
+          } else {
+            return (
+              <View >
+                <Text>{"Error during registration process"}</Text>
+              </View>
+            );
+          }
+
         }
     }
 
@@ -84,10 +93,14 @@ const LoginOrCreateForm = (props) => {
           localStorage.setItem('token', token)
           axios.defaults.headers.common.Authorization = token;
           window.location.replace("/dashboard")
+          
         })
         .catch(error => {
+          if(error.response.status === 409){
+            alert("Username already taken.")
+          }
           set_login_error(true)
-        //   console.log("Error Logging In: ", error)
+            console.log("Error Logging In: ", error)
         });
     }
 
@@ -152,7 +165,7 @@ const LoginOrCreateForm = (props) => {
           </View>
           <View style={buttonContainerStyle}>
             {renderButton()}
-            <Button title={"Switch between Login/Register"} onPress={() => set_form(form === "login" ? "register" : "login")}/>
+            <Button title={"Switch between Login/Register"} onPress={() => {set_form(form === "login" ? "register" : "login"); set_login_error(false)}}/>
           </View>
         </View>
       );
