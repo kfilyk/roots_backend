@@ -3,7 +3,6 @@ from django.db.models import F
 from datetime import datetime, timedelta
 from django.utils import timezone
 
-
 def check_experiments_end_date_daily():
     curr_date = datetime.now()
     tz = timezone.get_current_timezone()
@@ -38,3 +37,4 @@ def check_device_activity():
     print("RUNNING")
     devices = Device.objects.all()
     devices[0].update(capacity = 10)
+    devices[0].save()

@@ -49,7 +49,7 @@ const Phase = () => {
     }
   )
 
-  async function fetchData() {
+  async function fetchPhases() {
     const result = await axios(
       '/api/phases/',
     );
@@ -58,16 +58,16 @@ const Phase = () => {
   } 
 
   useEffect(() => {
-    fetchData();
+    fetchPhases();
   }, []);
 
   async function deleteEntry(id) {
     await axios.delete(`/api/phases/${id}/`);
-    setPhaseList(phaseList.filter(phase => phase.id !== id))
+    fetchPhases();
   }
 
   async function addEntry(e) {
-    const result = await axios
+    await axios
       .post(`/api/phases/`, 
         { 
             name: addPhase.name,
@@ -80,11 +80,11 @@ const Phase = () => {
             white_intensity: addPhase.white_intensity,
             lights_on_hours: addPhase.lights_on_hours
         });
-    setPhaseList(phaseList => [...phaseList, result.data])
-  };
+        fetchPhases();
+      };
 
   async function editEntry(e) {
-    const result = await axios
+    await axios
         .patch(`/api/phases/${editPhase.id}/`, 
         { 
             name: editPhase.name,
@@ -97,13 +97,7 @@ const Phase = () => {
             white_intensity: editPhase.white_intensity,
             lights_on_hours: editPhase.lights_on_hours
         }).catch((err) => console.log(err));
-    const index = phaseList.findIndex(phase => phase.id === editPhase.id);
-    const updatedItem = result.data
-    setPhaseList([
-      ...phaseList.slice(0, index),
-      updatedItem,
-      ...phaseList.slice(index + 1)
-    ])
+    fetchPhases();
   };
 
   function openModal(phase){
