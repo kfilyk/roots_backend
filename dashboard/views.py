@@ -23,6 +23,7 @@ from .v2_mqtt import MQTT
 import json
 from django.utils import timezone
 from datetime import datetime, timedelta
+from django.db import IntegrityError
 
 # https://www.digitalocean.com/community/tutorials/build-a-to-do-application-using-django-and-react
 
@@ -200,19 +201,27 @@ class CreateUserAPIView(CreateAPIView):
     permission_classes = [AllowAny]
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        # We create a token than will be used for future auth
-        token = Token.objects.create(user=serializer.instance)
-        token_data = {"token": token.key}
+        try:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            # We create a token than will be used for future auth
+            token = Token.objects.create(user=serializer.instance)
+            token_data = {"token": token.key}
 
-        return Response(
-            {**serializer.data, **token_data},
-            status=status.HTTP_201_CREATED,
-            headers=headers
-        )
+            return Response(
+                {**serializer.data, **token_data},
+                status=status.HTTP_201_CREATED,
+                headers=headers
+            )
+
+        except IntegrityError as e:
+            return Response(
+                status=409
+            )
+
+
 
 class LogoutUserAPIView(APIView):
     queryset = get_user_model().objects.all() # django specific user type
