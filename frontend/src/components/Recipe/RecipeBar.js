@@ -6,6 +6,7 @@ const RecipeBar = (props) => {
   // we NEED this recipe state object, because the props is variably a recipe id OR a recipe object
   const [recipe, setRecipe] = useState(null);
   const [end_date, setEndDate] = useState(null)
+  const [completion_percentage, setCompletionPercentage] = useState(5)
 
   async function getRecipe(id) {
     const result = await axios(
@@ -30,6 +31,7 @@ const RecipeBar = (props) => {
       let sd = new Date(props.experiment.start_date)
       sd.setDate(sd.getDate()+recipe.days)
       setEndDate(sd.getFullYear()+ "-"+(sd.getMonth()+1)+"-"+sd.getDate())
+      calc_completion_percentage(props.experiment.day, recipe.days)
     }
   }, [props, recipe]); // useEffect runs when props OR recipe changes
 
@@ -73,8 +75,11 @@ const RecipeBar = (props) => {
     }
   }
 
-  function render() {
+  function calc_completion_percentage(exp_days, recipe_days){
+    setCompletionPercentage(Math.round(exp_days/recipe_days*100))
+  }
 
+  function render() {
     if(recipe === null ||  props.phase_list.length === 0 || typeof recipe === 'undefined') {
       return <div className="recipe_bar_empty"> NO RECIPE ALLOCATED </div>;
     } else {
@@ -97,6 +102,8 @@ const RecipeBar = (props) => {
         <>
         {render_timestamps()}
         <div className="recipe_bar"> 
+          <div style={ { left: `${ completion_percentage }%` } } className="recipe_vertical_line"></div>
+          {/* <div style={{left: calc(completion_percentage())}} className="recipe_vertical_line"></div> */}
           {phases} 
         </div>
         </>

@@ -17,6 +17,7 @@ const Device = () => {
     const [available_experiments, set_available_experiments] = useState([]);
     const [modal, set_modal] = useState({show: false, device: -1, experiment: -1});
     const [phase_list, set_phase_list] = useState([])
+    const [edit_device, set_edit_device] = useState({show: false, device: -1, hour: 12, minute: 59});
     const closeModal = () => set_modal(false);
 
     async function fetch_loaded_devices() {
@@ -108,6 +109,25 @@ const Device = () => {
         ])
     }
 
+    async function mqtt_device_start_time(){
+        const result = await axios
+          .post(`/api/devices/set_device_start_time/`, 
+            { 
+                device: edit_device.device,
+                hour: parseInt(edit_device.hour),
+                minute: parseInt(edit_device.minute),
+            });
+        let index = loaded_devices.findIndex(device => device.id === edit_device.device)
+        let updated_device = loaded_devices[index]
+        updated_device['dailyStartTime'] = result.data.device_start_time
+
+        set_loaded_devices([
+            ...loaded_devices.slice(0, index),
+            updated_device,
+            ...loaded_devices.slice(index + 1)
+        ])
+    }
+
     function renderDevices(){
         const device_list = []
         if (selected_device_status === 'loaded' || selected_device_status === 'all'){   
@@ -124,7 +144,6 @@ const Device = () => {
                                 <div>Score: { item.score } </div>
                                 <div>Current Recipe: { item.currentRecipe ? item.currentRecipe : "N/A"} </div>
                                 <div>Daily Start Time: { item.dailyStartTime ? item.dailyStartTime : "N/A"} </div>
-                                <button onClick={() => get_device_state(item.id)}>Get Device State</button>
                             </div>
                             <div className="object_content">                          
                                 <PodCarousel experimentID={item.id} deviceId={item.device}></PodCarousel>
@@ -134,9 +153,11 @@ const Device = () => {
 
                         <div className='object_actions'>
                         <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
-                        <li key="edit"><button onClick={() => {}}>EDIT</button></li>
-                        <li key="delete"><button onClick={() => {}}>DELETE</button></li>
-                        <li key="add_reading"><ExperimentReading exp_id={item.id}></ExperimentReading></li>
+                            <li key="edit"><button onClick={() => {}}>EDIT</button></li>
+                            <li key="delete"><button onClick={() => {}}>DELETE</button></li>
+                            <li key="add_reading"><ExperimentReading exp_id={item.id}></ExperimentReading></li>
+                            <li key="device_state"><button onClick={() => get_device_state(item.id)}>GET DEVICE STATE</button></li>
+                            <li key="device_start_time"><button onClick={() => set_edit_device({...edit_device, show: true, device: item.id})}>SET DEVICE START TIME</button></li>
                         </div>
                     </div>
                 )
@@ -202,6 +223,36 @@ const Device = () => {
         )
     }
 
+    function renderDeviceEdit(){
+        return (
+            <Popup open={edit_device.show} onClose={() => set_edit_device({...edit_device, show: false})} modal nested>
+                {(close) => (
+                <div className="modal" onClick={close}>
+                    <div className="modal_body"  onClick={e => e.stopPropagation()}>
+                    <div className="modal_type"> Device: {edit_device.device} </div>
+                    <div className="modal_content">
+
+                    <div className="form_row">
+                            <label> Hour:</label> 
+                            <input type="number" value={edit_device.hour} min={1} max={23} onChange={(e) => {set_edit_device({...edit_device, hour: e.target.value})}} />
+                    </div>
+                    <div className="form_row">        
+                            <label> Minute:</label> 
+                            <input type="number" value={edit_device.minute} min={0} max={59} onChange={(e) => {set_edit_device({...edit_device, minute: e.target.value})}} />
+                    </div>
+                        <button className='save' onClick={() => {
+                        mqtt_device_start_time()
+                        close();
+                    }}>Save</button>
+                        </div>
+
+                    </div>
+                </div>
+                )}
+            </Popup>
+        )
+    }
+
     return (
         <div>
             {renderNav()}
@@ -210,6 +261,7 @@ const Device = () => {
                 <QRCode value="https://youtu.be/JWeDqUUGNrg" /> 
             </div>
             {renderModal()}
+            {renderDeviceEdit()}
         </div>
       );
 }
