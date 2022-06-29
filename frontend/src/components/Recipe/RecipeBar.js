@@ -6,7 +6,7 @@ const RecipeBar = (props) => {
   // we NEED this recipe state object, because the props is variably a recipe id OR a recipe object
   const [recipe, setRecipe] = useState(null);
   const [end_date, setEndDate] = useState(null)
-  const [completion_percentage, setCompletionPercentage] = useState(5)
+  const [completion_percentage, setCompletionPercentage] = useState(0)
 
   async function getRecipe(id) {
     const result = await axios(

@@ -8,7 +8,7 @@ const LoginOrCreateForm = (props) => {
     const [password, set_password] = useState('');
     const [firstName, set_firstName] = useState('');
     const [lastName, set_lastName] = useState('');
-    const [form, set_form] = useState('')
+    const [form, set_form] = useState('login')
 
     const {
         formContainerStyle,
@@ -69,8 +69,6 @@ const LoginOrCreateForm = (props) => {
     }
 
     function login(){
-      const endpoint = form ? 'register' : 'login';
-      // const endpoint = 'login'
       const payload = { username: username, password: password } 
 
       if (form) {
@@ -79,7 +77,7 @@ const LoginOrCreateForm = (props) => {
       }
       // console.log("PAYLOAD: ", payload)
       axios
-        .post(`/auth/${endpoint}/`, payload)
+        .post(`/auth/${form}/`, payload)
         .then(response => {
           const { token } = response.data;       
           // We set the returned token as the default authorization header

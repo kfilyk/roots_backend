@@ -10,8 +10,8 @@ class MQTT:
 
     def __init__(self):
         self.msgs = []
-        #self.broker='35.183.154.210'
-        self.broker='0.0.0.0'
+        self.broker='35.183.154.210'
+        # self.broker='0.0.0.0'
 
         self.port = 1883
         self.client = paho.Client("client-001") #create client object client1.on_publish = on_publish #assign function to callback client1.connect(broker,port) #establish connection client1.publish("house/bulb1","on")

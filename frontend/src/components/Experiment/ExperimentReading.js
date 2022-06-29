@@ -291,6 +291,7 @@ const ExperimentReading = (props) => {
                 })
             } else {
                 set_experiment_reading({...experiment_reading, 
+                    exp_id: props.exp_id,
                     capacity: result.data.capacity,
                     pods: result.data.pods
                 })
