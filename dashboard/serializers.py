@@ -34,7 +34,7 @@ class PodReadingSerializer(serializers.ModelSerializer):
 class ExperimentReadingSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExperimentReading
-        fields = ("experiment", "electrical_conductance", "reservoir_tds", "reservoir_ph", "temperature", "humidity")
+        fields = ("experiment", "electrical_conductance", "reservoir_ph", "temperature", "humidity")
 
 class RecipeSerializer(serializers.ModelSerializer):
     class Meta:

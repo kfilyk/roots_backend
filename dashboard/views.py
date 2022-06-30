@@ -70,7 +70,7 @@ class ExperimentReadingView(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         try:
             pr_values = request.data.get('pod_readings')
-            exp_r = ExperimentReading.objects.create(experiment=Experiment.objects.get(id=request.data.get('experiment')), electrical_conductance=request.data.get('electrical_conductance'), reservoir_tds=request.data.get('reservoir_tds'), 
+            exp_r = ExperimentReading.objects.create(experiment=Experiment.objects.get(id=request.data.get('experiment')), electrical_conductance=request.data.get('electrical_conductance'),
                                                                                         reservoir_ph=request.data.get('reservoir_ph'), temperature=request.data.get('temperature'), humidity=request.data.get('humidity'))
             exp_id = exp_r.experiment_id
             pod_readings = []

@@ -64,7 +64,6 @@ class ExperimentReading(models.Model):
     water_level = models.IntegerField(db_column='er_water_level', blank=True, null=True) 
     reading_date = models.DateTimeField(db_column='er_reading_date', auto_now_add=True)
     electrical_conductance = models.IntegerField(db_column='er_electrical_conductance', blank=True, null=True) 
-    reservoir_tds = models.IntegerField(db_column='er_reservoir_tds', blank=True, null=True) 
     reservoir_ph = models.IntegerField(db_column='er_reservoir_ph', blank=True, null=True)  
     experiment_phase = models.IntegerField(db_column='er_experiment_phase', blank=True, null=True) 
     temperature = models.DecimalField(db_column='er_temperature', max_digits=2, decimal_places=2, blank=True, null=True) 

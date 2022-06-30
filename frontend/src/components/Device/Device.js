@@ -283,9 +283,9 @@ const Device = () => {
                 <QRCode value="https://www.youtube.com/watch?v=5WfZrKlQrPo" /> 
             </div>
             <div style={{ background: 'white', padding: '16px' }}>
-                <div>How to with AVA: Trellis Assembly</div>
+                <div>How to with AVA: Adding Your Trellis</div>
                 <br></br>
-                <QRCode value="https://www.youtube.com/watch?v=5VE1XkKvDwk" /> 
+                <QRCode value="https://www.youtube.com/watch?v=Zce2NUfoj0w&ab_channel=AVASmartIndoorGarden" /> 
             </div>
             <div style={{ background: 'white', padding: '16px' }}>
                 <div>How to with AVA: Dome Removal</div>
@@ -316,6 +316,11 @@ const Device = () => {
                 <div>How to With AVA: Thinning Plants</div>
                 <br></br>
                 <QRCode value="https://www.youtube.com/watch?v=Ycn4C5_RyF0" /> 
+            </div>
+            <div style={{ background: 'white', padding: '16px' }}>
+                <div>How to With AVA: Enable Offline Mode</div>
+                <br></br>
+                <QRCode value="https://www.youtube.com/watch?v=jgvtICzs078&ab_channel=AVASmartIndoorGarden" /> 
             </div>
             {renderModal()}
             {renderDeviceEdit()}

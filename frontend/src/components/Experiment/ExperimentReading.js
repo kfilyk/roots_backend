@@ -9,7 +9,6 @@ const ExperimentReading = (props) => {
         // water_level: -1,
         // reading_date: -1,
         electrical_conductance: null,
-        reservoir_tds: null,
         reservoir_ph: null,
         temperature: null,
         humidity: null,
@@ -48,7 +47,6 @@ const ExperimentReading = (props) => {
           { 
             experiment: experiment_reading.exp_id,
             electrical_conductance : experiment_reading.electrical_conductance,
-            reservoir_tds: experiment_reading.reservoir_tds,
             reservoir_ph: experiment_reading.reservoir_ph,
             temperature: experiment_reading.temperature,
             humidity: experiment_reading.humidity,
@@ -283,7 +281,6 @@ const ExperimentReading = (props) => {
             if (result.data.latest_reading.exp_id !== -1 ){
                 set_experiment_reading({...experiment_reading, 
                     electrical_conductance: result.data.latest_reading.electrical_conductance,
-                    reservoir_tds: result.data.latest_reading.reservoir_tds,
                     reservoir_ph: result.data.latest_reading.reservoir_ph,
                     temperature: result.data.latest_reading.temperature,
                     humidity: result.data.latest_reading.humidity,
@@ -360,10 +357,6 @@ const ExperimentReading = (props) => {
                     <div className="exp_r_form_row">
                             <label> E.C.:</label> 
                             <input className="exp_r_input" type="number" value={experiment_reading.electrical_conductance || ""} onChange={(e) => set_experiment_reading({...experiment_reading, electrical_conductance: e.target.value})} />
-                    </div>
-                    <div className="exp_r_form_row">
-                            <label> Reserv. TDS:</label> 
-                            <input className="exp_r_input" type="number" value={experiment_reading.reservoir_tds || ""} onChange={(e) => set_experiment_reading({...experiment_reading, reservoir_tds: e.target.value})} />
                     </div>
                     <div className="exp_r_form_row">
                             <label> Reserv. PH:</label> 
