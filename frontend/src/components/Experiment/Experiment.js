@@ -121,12 +121,23 @@ const ExperimentList = () => {
     }
   }
 
-  function submitModal(){
+  function submitModal(close){
+    if (experiment.name === null || experiment.name === ""){
+      alert("Experiment name cannot be null.")
+      return
+    }
+
     if(modal.add){
+      if(experiment.device === null){
+        alert("Device cannot be null.")
+        return
+      }
+
       addEntry()
     } else {
       editEntry()
     }
+    close();
   }
 
   async function addEntry(e) {
@@ -328,8 +339,7 @@ const ExperimentList = () => {
                       }
 
                       <button className='save' onClick={() => {
-                        submitModal();
-                          close();
+                        submitModal(close);
                       }}>Save</button>
                     </div>
                   </div>

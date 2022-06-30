@@ -78,7 +78,7 @@ const PlantList = () => {
   
   function submitModal(){
     if(modal.add){
-      if (editPlant.name === ""){
+      if (addPlant.name === ""){
         alert("Plant name cannot be null.")
         return
       } else {
