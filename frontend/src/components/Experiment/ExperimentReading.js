@@ -8,13 +8,13 @@ const ExperimentReading = (props) => {
         // To be done automatically
         // water_level: -1,
         // reading_date: -1,
-        electrical_conductance: -1,
-        reservoir_tds: -1,
-        reservoir_ph: -1,
-        temperature: 0,
-        humidity: -1,
-        exp_id: -1,
-        exp_phase: -1,
+        electrical_conductance: null,
+        reservoir_tds: null,
+        reservoir_ph: null,
+        temperature: null,
+        humidity: null,
+        exp_id: null,
+        exp_phase: null,
         pods: [],
         first_reading: true,
     });
@@ -64,6 +64,10 @@ const ExperimentReading = (props) => {
      }
 
     function parse_value(field, value){
+        if (value === null || value === "") {
+            return null
+        }
+
         switch(field) {
             case 'comment':
                 return value
@@ -307,7 +311,6 @@ const ExperimentReading = (props) => {
     function submit_reading(){
         set_pod_readings(pod_readings.filter(reading => (Object.keys(reading).length !== 1)))
         create_readings()
-        // console.log(pod_readings)
     }
 
     function change_selected_pod(e, pod){
