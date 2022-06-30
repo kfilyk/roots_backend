@@ -2,6 +2,7 @@ from .models import Experiment, Pod, Recipe, Device
 from django.db.models import F
 from datetime import datetime, timedelta
 from django.utils import timezone
+from .v2_mqtt import MQTT
 
 def check_experiments_end_date_daily():
     curr_date = datetime.now()
@@ -34,7 +35,6 @@ def check_experiments_end_date_daily():
                         curr_exp_day = curr_exp_day - curr_phase.days
 
 def check_device_activity():
-    print("RUNNING")
-    devices = Device.objects.all()
-    devices[0].update(capacity = 10)
-    devices[0].save()
+    broker = MQTT()
+    online_devices = broker.check_online()
+    Device.objects.exclude(token__in=online_devices).update(is_online=0)

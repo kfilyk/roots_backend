@@ -231,7 +231,7 @@ const ExperimentReading = (props) => {
                         <input className="exp_r_input" type="number" value={find_value_selected_pod('fruit_unripe_count') || ""} name={"fruit_unripe_count"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
                     </div>
                     <div className="exp_r_form_row">
-                        <label> Leaf: </label> 
+                        <label> Leaf Count: </label> 
                         <input className="exp_r_input" type="number" value={find_value_selected_pod('leaf_count') || ""} name={"leaf_count"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
                     </div>
                     <div className="exp_r_form_row">

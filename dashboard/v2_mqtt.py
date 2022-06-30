@@ -3,6 +3,7 @@ import paho.mqtt.client as paho
 import ssl
 import json
 from types import SimpleNamespace
+from dashboard.models import Device
 
 #Followed: http://www.steves-internet-guide.com/python-mqtt-publish-subscribe/
 
@@ -65,10 +66,11 @@ class MQTT:
         else: 
             return json.dumps({})
 
-    def check_online(self, tokens):
+    def check_online(self):
         self.client.connect(self.broker, port=self.port)#connect
         self.client.loop_start() #start loop to process received messages
-
+        tokens = list(Device.objects.all().values_list('token', flat=True))
+        
         for device in tokens:
             self.client.subscribe(f'avagrows/device/client/{device}/deviceState')#subscribe
             self.client.publish(f'avagrows/device/server/{device}/devicecommand','{"command": 0}')#publish
@@ -77,12 +79,9 @@ class MQTT:
         
         time.sleep(2)
 
-        x = json.dumps(self.msgs, default=lambda o: o.__dict__, 
-            sort_keys=True, indent=4)
-
-        print("TT: ", x)
+        x = [d.deviceId for d in self.msgs if d.deviceStatus == 1]
 
         self.client.disconnect() #disconnect
         self.client.loop_stop()
 
-        return
+        return set(x)
