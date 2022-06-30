@@ -22,7 +22,7 @@ class MQTT:
 
     def on_message(self, client, userdata, message):
         x = json.loads(str(message.payload.decode("utf-8")), object_hook=lambda d: SimpleNamespace(**d))
-        self.msgs = x
+        self.msgs.append(x)
 
     def get_device_status(self, device):
         self.client.connect(self.broker, port=self.port)#connect
@@ -38,8 +38,11 @@ class MQTT:
         self.client.disconnect() #disconnect
         self.client.loop_stop()
 
-        return json.dumps(self.msgs, default=lambda o: o.__dict__, 
-            sort_keys=True, indent=4)
+        if len(self.msgs) > 0:
+            return json.dumps(self.msgs[0], default=lambda o: o.__dict__, 
+                sort_keys=True, indent=4)
+        else: 
+            return json.dumps({})
 
 
     def set_start_time(self, device, hour, minute):
@@ -57,5 +60,29 @@ class MQTT:
         self.client.disconnect() #disconnect
         self.client.loop_stop()
 
-        return self.msgs.dailyStartTime
+        if len(self.msgs) > 0:
+            return self.msgs[0].dailyStartTime
+        else: 
+            return json.dumps({})
 
+    def check_online(self, tokens):
+        self.client.connect(self.broker, port=self.port)#connect
+        self.client.loop_start() #start loop to process received messages
+
+        for device in tokens:
+            self.client.subscribe(f'avagrows/device/client/{device}/deviceState')#subscribe
+            self.client.publish(f'avagrows/device/server/{device}/devicecommand','{"command": 0}')#publish
+            time.sleep(1)
+            self.client.unsubscribe(f'avagrows/device/client/{device}/deviceState')#subscribe
+        
+        time.sleep(2)
+
+        x = json.dumps(self.msgs, default=lambda o: o.__dict__, 
+            sort_keys=True, indent=4)
+
+        print("TT: ", x)
+
+        self.client.disconnect() #disconnect
+        self.client.loop_stop()
+
+        return

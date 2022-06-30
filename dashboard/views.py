@@ -31,6 +31,14 @@ class DeviceView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
     serializer_class = DeviceSerializer
 
+    @action(detail=False, methods=['GET'], name='tester_call')
+    def tester_call(self, request):
+        # token = Device.objects.get(id=request.data['device']).token
+        tokens = ['udU4x2gqxd1654723666599', 'zcMzKgMwJv1656356006634', '9nDUb09AFc1655252067007', 'hqiA_7xakl1655524401321']
+        broker = MQTT()
+        data = broker.check_online(tokens)
+        return Response(status=200)
+
     def get_queryset(self):
         user = self.request.user
         return Device.objects.filter(user = user.id)
@@ -150,10 +158,6 @@ class ExperimentView(viewsets.ModelViewSet):
         user = self.request.user
         return Experiment.objects.filter(user = user.id).annotate(device_name=F('device__name'))  # joins name value from device table to returned results
 
-    @action(detail=False, methods=['GET'], name='recipe')
-    def test(self, request):
-        print("TESTING!")
-        return Response(status=200)
 
 class PhaseView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
