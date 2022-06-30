@@ -101,8 +101,8 @@ const RecipeBar = (props) => {
       return ( 
         <>
         {render_timestamps()}
+        <div style={ { width: `${ completion_percentage }%` } } className="recipe_vertical_line"></div>
         <div className="recipe_bar"> 
-          <div style={ { left: `${ completion_percentage }%` } } className="recipe_vertical_line"></div>
           {/* <div style={{left: calc(completion_percentage())}} className="recipe_vertical_line"></div> */}
           {phases} 
         </div>
