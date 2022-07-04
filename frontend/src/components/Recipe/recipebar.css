@@ -69,10 +69,8 @@ RECIPE BAR (OBJECT BOTTOM CHIN)
   }
 
   .recipe_vertical_line {
-    border-left: 2px solid black;
-    height: 28%;
-    position: absolute;
-    z-index: 2;
-    bottom: 0;
+    background-color: lightgray;
+    order: 3;
+    height: 1.5vh;
   }
   

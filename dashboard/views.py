@@ -33,10 +33,7 @@ class DeviceView(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['GET'], name='tester_call')
     def tester_call(self, request):
-        # token = Device.objects.get(id=request.data['device']).token
-        tokens = ['udU4x2gqxd1654723666599', 'zcMzKgMwJv1656356006634', '9nDUb09AFc1655252067007', 'hqiA_7xakl1655524401321']
-        broker = MQTT()
-        data = broker.check_online(tokens)
+
         return Response(status=200)
 
     def get_queryset(self):

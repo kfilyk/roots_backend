@@ -63,18 +63,29 @@ const RecipeList = () => {
   }
 
   async function addRecipe(e) {
-    countDays();
-    
     const result = await axios
       .post(`/api/recipes/`, recipe);
       setRecipeList(recipe_list => [...recipe_list, result.data])
   };
 
   async function editRecipe(e) {
-    countDays();
-    await axios
+    const result = await axios
       .patch(`/api/recipes/${recipe.id}/`, recipe).catch((err) => console.log(err));
-    fetchRecipes();
+
+    if (result.status === 200){
+      const index = recipe_list.findIndex(r => r.id === recipe.id);
+      const updatedItem = result.data
+      setRecipeList([
+        ...recipe_list.slice(0, index),
+        updatedItem,
+        ...recipe_list.slice(index + 1)
+      ])
+      fetchRecipes()
+
+    } else {
+      alert("Error during edit recipe")
+    }
+
   };
 
   function openModal(r){
