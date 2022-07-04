@@ -75,6 +75,15 @@ const ExperimentReading = (props) => {
                 return parseFloat(value)
             case 'phase':
                 return parseInt(value) / 100
+            case 'pest_coverage':
+                console.log("FLAG: ", value)
+                return value
+            case 'blight_coverage':
+                console.log("FLAG: ", value)
+                return value
+            case 'algae_coverage':
+                console.log("FLAG: ", value)
+                return value
             default:
                 return parseInt(value)
         }
@@ -167,28 +176,23 @@ const ExperimentReading = (props) => {
                         <input className="exp_r_input" type="number" value={find_value_selected_pod('seeds_germinated') || ""} name={"seeds_germinated"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
                     </div>
                     <div className='pr_coverage'>
-                        <div>
-                            <label> Pest Coverage: </label> 
-                            <div>{find_value_selected_pod('pest_coverage') || 0}%</div>
-                        </div>
-                        <input className="exp_r_input" name="pest_coverage" value={find_value_selected_pod('pest_coverage') || 0} type="range" min={0} max={100} step={25} onChange={(e) => {set_value_selected_pod(e)}} />
-                        <button name="pest_coverage" value={""} onClick={(e)=>{delete_field(e)}}>Set to Null</button>
+                        <label> Pest Coverage: </label> 
+                        <div>{find_value_selected_pod('pest_coverage') || 0}%</div>
+                        <input className="exp_r_input" name="pest_coverage" value={find_value_selected_pod('pest_coverage') || null} type="range" min={0} max={100} step={25} onChange={(e) => {set_value_selected_pod(e)}} />
                     </div>
                     <div className='pr_coverage'>
                         <div>
                             <label> Algae Coverage: </label> 
                             <div>{find_value_selected_pod('algae_coverage') || 0}%</div>
                         </div>
-                        <input className="exp_r_input" name="algae_coverage" value={find_value_selected_pod('algae_coverage') || 0} type="range" min={0} max={100} step={25} onChange={(e) => {set_value_selected_pod(e)}} />
-                        <button name="algae_coverage" value={""} onClick={(e)=>{delete_field(e)}}>Set to Null</button>
+                        <input className="exp_r_input" name="algae_coverage" value={find_value_selected_pod('algae_coverage') || null} type="range" min={0} max={100} step={25} onChange={(e) => {set_value_selected_pod(e)}} />
                     </div>
                     <div className='pr_coverage'>
                         <div>
                             <label> Blight Coverage: </label> 
                             <div>{find_value_selected_pod('blight_coverage') || 0}%</div>
                         </div>
-                        <input className="exp_r_input" name="blight_coverage" value={find_value_selected_pod('blight_coverage') || 0} type="range" min={0} max={100} step={25} onChange={(e) => {set_value_selected_pod(e)}} />
-                        <button name="blight_coverage" value={""} onClick={(e)=>{delete_field(e)}}>Set to Null</button>
+                        <input className="exp_r_input" name="blight_coverage" value={find_value_selected_pod('blight_coverage') || null} type="range" min={0} max={100} step={25} onChange={(e) => {set_value_selected_pod(e)}} />
                     </div>
                     <div className="exp_r_form_row">
                         <label> Harv. Weight: </label> 
