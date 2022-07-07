@@ -8,6 +8,7 @@ import RecipeBar from '../Recipe/RecipeBar';
 
 
 let today_date = new Date();
+console.log("CURRENT DATE: ", today_date)
 let year = today_date.getUTCFullYear();
 let month = today_date.getUTCMonth() + 1;
 month = month > 9 ? month : '0'+month;
@@ -81,9 +82,9 @@ const ExperimentList = () => {
   }, []);
 
 
-  async function deleteEntry(id) {
-    await axios.delete(`/api/experiments/${id}/`);
-    setExperimentList(experiment_list.filter(experiment => experiment.id !== id))
+  async function terminateExperiment(id) {
+    await axios.patch(`/api/experiments/${id}/`, { end_date: year+"-"+month+"-"+day});
+    fetchExperiments()
   }
 
   async function getPods(id) {
@@ -133,14 +134,14 @@ const ExperimentList = () => {
         return
       }
 
-      addEntry()
+      addExperiment()
     } else {
-      editEntry()
+      editExperiment()
     }
     close();
   }
 
-  async function addEntry(e) {
+  async function addExperiment(e) {
     console.log("POD SELECTION: ", experiment.pod_selection)
     await axios
       .post(`/api/experiments/`, 
@@ -155,7 +156,7 @@ const ExperimentList = () => {
     fetchExperiments();
   };
 
-  async function editEntry(e) {
+  async function editExperiment(e) {
     await axios
       .patch(`/api/experiments/${experiment.id}/`, 
       { 
@@ -318,7 +319,7 @@ const ExperimentList = () => {
                     <div className='object_actions'>
                         <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
                         <li key="edit"><button onClick={() => openModal(item)}>EDIT</button></li>
-                        <li key="delete"><button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) deleteEntry(item.id) }}> DELETE </button></li>
+                        <li key="terminate"><button onClick={() => { if (window.confirm(`You are about to terminate experiment ${item.id}, ${item.name}`)) terminateExperiment(item.id) }}> TERMINATE </button></li>
                         <li key="add_reading"><ExperimentReading exp_id={item.id}></ExperimentReading></li>
                     </div>
                   </div>

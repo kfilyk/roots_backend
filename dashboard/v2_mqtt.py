@@ -46,6 +46,7 @@ class MQTT:
             return json.dumps({})
 
 
+    '''
     def set_start_time(self, device, hour, minute):
         self.client.connect(self.broker, port=self.port)#connect
         self.client.loop_start() #start loop to process received messages
@@ -65,6 +66,7 @@ class MQTT:
             return self.msgs[0].dailyStartTime
         else: 
             return json.dumps({})
+    '''
 
     def check_online(self):
         self.client.connect(self.broker, port=self.port)#connect
@@ -74,14 +76,14 @@ class MQTT:
         for device in tokens:
             self.client.subscribe(f'avagrows/device/client/{device}/deviceState')#subscribe
             self.client.publish(f'avagrows/device/server/{device}/devicecommand','{"command": 0}')#publish
-            time.sleep(1)
+            time.sleep(1) # sleep 1 second
             self.client.unsubscribe(f'avagrows/device/client/{device}/deviceState')#subscribe
         
-        time.sleep(2)
+        time.sleep(2) # extra 2 sec just to make sure
 
         x = [d.deviceId for d in self.msgs if d.deviceStatus == 1]
 
         self.client.disconnect() #disconnect
         self.client.loop_stop()
-
+        # get rid of dups: return set
         return set(x)

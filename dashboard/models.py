@@ -49,7 +49,7 @@ class Experiment(models.Model):
     # this score not filled until end of experiment
     score = models.DecimalField(db_column='e_score', max_digits=2, decimal_places=2, blank=True, null=True) # score should be the averaged score of all pod Experiment Readings
     user = models.ForeignKey(settings.AUTH_USER_MODEL, db_column='e_user_id', on_delete=models.CASCADE, blank=True, null=True)  
-    start_date = models.DateTimeField(db_column='e_start_date', blank=True, null=True)  
+    start_date = models.DateTimeField(db_column='e_start_date', blank=True, null=True) 
     end_date = models.DateTimeField(db_column='e_end_date', blank=True, null=True)  
     recipe = models.ForeignKey("Recipe", models.DO_NOTHING, related_name='+', db_column='e_recipe_id',blank=True, null=True)
 
@@ -82,13 +82,13 @@ class ExperimentReading(models.Model):
 # many readings per experiment - is written by a user to the db in reference to an experiment
 class PodReading(models.Model):
     id = models.AutoField(db_column='pr_id', primary_key=True)  
-    domes = models.BooleanField(default= 0, null=True)
     experiment = models.ForeignKey("Experiment", models.DO_NOTHING, db_column='pr_experiment_id', blank=True, null=True)  # delete experiment readings if experiment is deleted
     pod = models.ForeignKey("Pod", models.DO_NOTHING, db_column='pr_pod_id', blank=True, null=True)
     experiment_reading = models.ForeignKey("ExperimentReading", models.DO_NOTHING, db_column='pr_experiment_reading_id', blank=True, null=True)  # delete experiment readings if experiment is deleted
 
+    dome = models.BooleanField(default= 0, db_column='pr_dome', null=True)
     node_count = models.IntegerField(db_column='pr_node_count', blank=True, null=True) 
-    internode_distance = models.DecimalField(db_column='pr_pod_reading', max_digits=5, decimal_places=2, blank=True, null=True) 
+    internode_distance = models.DecimalField(db_column='pr_internode_distance', max_digits=5, decimal_places=2, blank=True, null=True) 
     leaf_count = models.IntegerField(db_column='pr_leaf_count', blank=True, null=True) 
     seeds_germinated = models.IntegerField(db_column='pr_seeds_germinated', blank=True, null=True) 
     pod_phase = models.CharField(db_column='pr_pod_phase', max_length=45, blank=True, null=True)
@@ -106,7 +106,7 @@ class PodReading(models.Model):
     flower_quality = models.IntegerField(db_column='pr_flower_quality', default=False)  
     fruit_unripe_count = models.IntegerField(db_column='pr_fruit_unripe_count', blank=True, null=True)
     fruit_ripe_count = models.IntegerField(db_column='pr_fruit_ripe_count', blank=True, null=True)
-    harvest_count = models.IntegerField(db_column='pr_harvest_number', default=False)  
+    harvest_count = models.IntegerField(db_column='pr_harvest_count', default=False)  
     harvest_weight = models.DecimalField(db_column='pr_harvest_weight', max_digits=5, decimal_places=2, blank=True, null=True)
     harvest_quality = models.IntegerField(db_column='pr_harvest_quality', default=False)  
 

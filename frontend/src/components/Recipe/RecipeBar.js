@@ -5,8 +5,8 @@ import "./recipebar.css"
 const RecipeBar = (props) => {
   // we NEED this recipe state object, because the props is variably a recipe id OR a recipe object
   const [recipe, setRecipe] = useState(null);
-  const [end_date, setEndDate] = useState(null)
-  const [completion_percentage, setCompletionPercentage] = useState(0)
+  const [end_date, setEndDate] = useState(null);
+  const [completion_percentage, setCompletionPercentage] = useState(0);
 
   async function getRecipe(id) {
     const result = await axios(
@@ -26,6 +26,15 @@ const RecipeBar = (props) => {
 
   }, []); // [] causes useEffect to only happen ONCE after initial render - will not be called as a result of any other change
 
+  useEffect(() => {
+    if(typeof props.recipe === 'number') {
+      getRecipe(props.recipe)
+    } else {
+      setRecipe(props.recipe)
+    }  
+  }, [props.recipe])
+
+  
   useEffect(() => {
     if(recipe !== null && (typeof props.experiment !== 'undefined')) {
       let sd = new Date(props.experiment.start_date)

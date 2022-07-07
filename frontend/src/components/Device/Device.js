@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import ReactDOM from 'react-dom';
 import QRCode from 'react-qr-code';
 import axios from "axios";
 import vertical_menu_icon from "../../img/vertical_menu_icon.png"
@@ -8,24 +7,50 @@ import PodCarousel from "../Experiment/PodCarousel"
 import ExperimentReading from "../Experiment/ExperimentReading"
 import RecipeBar from '../Recipe/RecipeBar';
 
-//ReactDOM.render(<QRCode value="hey" />, document.getElementById("nav"));
-
 const Device = () => {
     const [loaded_devices, set_loaded_devices] = useState([]);
     const [free_devices, set_free_devices] = useState([]);
     const [selected_device_status, set_selected_device_status] = useState("all");
     const [available_experiments, set_available_experiments] = useState([]);
-    const [modal, set_modal] = useState({show: false, device: -1, experiment: -1});
+    const [device, set_device] = useState({
+        add: true, 
+        show: false, 
+        id: -1, 
+        experiment_id: -1, 
+        name: null, 
+        token: null,
+        mac_address: null
+
+    });
     const [phase_list, set_phase_list] = useState([])
-    const [edit_device, set_edit_device] = useState({show: false, device: -1, hour: 12, minute: 59});
-    const closeModal = () => set_modal(false);
 
     async function fetch_loaded_devices() {
         const result = await axios(
           '/api/experiments/loaded_devices/',
         );
+        console.log(result.data)
         set_loaded_devices(result.data)
     } 
+    
+    async function fetch_free_devices() {
+        const result = await axios(
+          '/api/experiments/available_devices/',
+        );
+        set_free_devices(result.data)
+    } 
+
+    async function terminateExperiment(id) {
+        let today_date = new Date();
+        let year = today_date.getUTCFullYear();
+        let month = today_date.getUTCMonth() + 1;
+        month = month > 9 ? month : '0'+month;
+        let day = today_date.getUTCDate();
+        day = day > 9 ? day : '0'+day;
+
+        await axios.patch(`/api/experiments/${id}/`, { end_date: year+"-"+month+"-"+day });
+        fetch_loaded_devices()
+        fetch_free_devices()
+      }
 
     async function fetch_phases() {
         const result = await axios(
@@ -34,10 +59,21 @@ const Device = () => {
         set_phase_list(result.data)
     } 
     
+    /// why are these seperate? i dont think they need to be. probably best to concat them into one useEffect
     useEffect(() => {
         fetch_loaded_devices();
         fetch_phases();
     }, []);
+
+    useEffect(() => {
+        fetch_available_experiments();
+    }, []);
+
+
+    useEffect(() => {
+        fetch_free_devices();
+    }, []);
+
 
     async function fetch_available_experiments() {
         const result = await axios(
@@ -46,31 +82,24 @@ const Device = () => {
         set_available_experiments(result.data)
     } 
 
-    useEffect(() => {
-        fetch_available_experiments();
-    }, []);
 
+    async function addDevice() {
 
-    async function fetch_free_devices() {
-        const result = await axios(
-          '/api/experiments/available_devices/',
-        );
-        set_free_devices(result.data)
-    } 
+    }
 
-    useEffect(() => {
-        fetch_free_devices();
-    }, []);
+    async function editDevice() {
+        
+    }
 
     async function setExperiment(e) {
         const result = await axios
           .post(`/api/experiments/set_device/`, 
             { 
-                exp_id: modal.experiment,
-                device_id: modal.device
+                exp_id: device.experiment,
+                device_id: device.id
             });
         if (result.status === 200) {
-            set_free_devices(free_devices.filter(device => device.id !== modal.device))
+            set_free_devices(free_devices.filter(d => d.id !== device.id))
             fetch_loaded_devices()
         }
     };
@@ -97,7 +126,7 @@ const Device = () => {
             { 
                 device: id
             });
-        let index = loaded_devices.findIndex(device => device.id === id)
+        let index = loaded_devices.findIndex(d => d.id === id)
         let updated_device = loaded_devices[index]
         updated_device['currentRecipe'] = result.data.currentRecipe
         updated_device['dailyStartTime'] = result.data.dailyStartTime
@@ -109,24 +138,18 @@ const Device = () => {
         ])
     }
 
+    /*
     async function mqtt_device_start_time(){
         const result = await axios
           .post(`/api/devices/set_device_start_time/`, 
             { 
-                device: edit_device.device,
-                hour: parseInt(edit_device.hour),
-                minute: parseInt(edit_device.minute),
+                device: device.id,
+                //hour: parseInt(device.hour),
+                //minute: parseInt(device.minute),
             });
-        let index = loaded_devices.findIndex(device => device.id === edit_device.device)
-        let updated_device = loaded_devices[index]
-        updated_device['dailyStartTime'] = result.data.device_start_time
-
-        set_loaded_devices([
-            ...loaded_devices.slice(0, index),
-            updated_device,
-            ...loaded_devices.slice(index + 1)
-        ])
+        fetch_loaded_devices();
     }
+    */
 
     function renderDevices(){
         const device_list = []
@@ -138,9 +161,6 @@ const Device = () => {
                         <div className="object_top">
                             <div className="object_description">
                                 <div className="object_name">{ item.device_name }</div>
-                                {/* <div>Registered: { item.registration_date.substring(0, 10) }</div> */}
-                                <div className="object_name">{ item.name }</div>
-                                {/* <div>Date: {item.start_date} {"->"} {item.end_date}</div> */}
                                 <div>Score: { item.score } </div>
                                 <div>Current Recipe: { item.currentRecipe ? item.currentRecipe : "N/A"} </div>
                                 <div>Daily Start Time: { item.dailyStartTime ? item.dailyStartTime : "N/A"} </div>
@@ -153,11 +173,11 @@ const Device = () => {
 
                         <div className='object_actions'>
                         <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
-                            <li key="edit"><button onClick={() => {}}>EDIT</button></li>
-                            <li key="delete"><button onClick={() => {}}>DELETE</button></li>
-                            <li key="add_reading"><ExperimentReading exp_id={item.id}></ExperimentReading></li>
+                            <li key="edit"><button onClick={() => set_device({...device, show:true, name: item.device_name, device: item.device, token: item.token})}>EDIT</button></li>
+                            <li key="terminate"><button onClick={() => { if (window.confirm(`You are about to terminate experiment "${item.name}"`)) terminateExperiment(item.id) }}> TERMINATE EXPERIMENT</button></li>
+                            <li key="add_reading"><ExperimentReading exp_id={item.id} exp_name={item.name}></ExperimentReading></li>
                             <li key="device_state"><button onClick={() => get_device_state(item.id)}>GET DEVICE STATE</button></li>
-                            <li key="device_start_time"><button onClick={() => set_edit_device({...edit_device, show: true, device: item.id})}>SET DEVICE START TIME</button></li>
+                            {/*<li key="device_start_time"><button onClick={() => set_device({...device, show: true, device: item.id})}>SET DEVICE START TIME</button></li> */}
                         </div>
                     </div>
                 )
@@ -176,76 +196,51 @@ const Device = () => {
                         </div>
                         <div className='object_actions'>
                             <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
-                            <li key="add"><button onClick={() => openModal(item.id)}>Add Experiment</button></li>
+                            <li key="edit"><button onClick={() => set_device({...device, show:true, name: item.device_name, device: item.device, token: item.token})}>EDIT</button></li>
+                            <li key="add"><button onClick={() => set_device({...device, show:true})}>Add Experiment</button></li>
+                            <li key="delete"><button onClick={() => {}}>DELETE</button></li>  
+                            <li key="device_state"><button onClick={() => get_device_state(item.id)}>GET DEVICE STATE</button></li>
+                            {/*<li key="device_start_time"><button onClick={() => set_device({...device, show: true, device: item.id})}>SET DEVICE START TIME</button></li> */}
                         </div>
                     </div>
                 )
             })
         }
-
         return device_list
     }
 
-    function openModal(device){
-        set_modal({...modal, show: true, device: device})
-    }
-    
-
     function renderModal(){
         return (
-            <Popup open={modal.show} onClose={() => set_modal({...modal, show: false})} modal nested>
+            <Popup open={device.show} onClose={() => set_device({...device, show: false, id: -1, experiment: -1, token: null})} modal nested>
                 {(close) => (
                 <div className="modal" onClick={close}>
                     <div className="modal_body"  onClick={e => e.stopPropagation()}>
-                    <div className="modal_type"> Device: {} </div>
-                    <div className="modal_content">
+                        <div className="modal_content">
+                            <div className="form_row">
+                                <input value={device.name} placeholder="Device Name" onChange={(e) => {set_device({...device, name: e.target.value})}} />
+                            </div>
+                            <div className="form_row">
+                                <input value={device.mac_address} placeholder="MAC Address" onChange={(e) => {set_device({...device, mac_address: e.target.value})}} />
+                            </div>
+                            <div className="form_row">
+                                    <select className="" defaultValue={device.experiment} name="experiment" onChange={(e) => set_device({...device, experiment: e.target.value})}>
+                                        <option key={-1} value={-1}> SELECT EXPERIMENT </option>
+                                        {available_experiments.map(item => (
+                                            <option key={item.id} value={item.id}> {item.name} </option>
+                                        ))}
+                                    </select> 
+                            </div>
+                            <div className="form_row">        
+                                <input value={device.token} placeholder="Token" onChange={(e) => {set_device({...device, token: e.target.value})}} />
+                            </div>
+                            <button className='save' onClick={() => {
+                                
+                                setExperiment()
 
-                    
-                    <div className="form_row">
-                            <label> Experiment: </label> 
-                            <select className="" defaultValue={modal.experiment} name="experiment" onChange={(e) => set_modal({...modal, experiment: e.target.value})}>
-                                <option key={-1} value={-1}> SELECT EXPERIMENT </option>
-                                {available_experiments.map(item => (
-                                    <option key={item.id} value={item.id}> {item.name} </option>
-                                ))}
-                            </select> 
-                    </div>
-                        <button className='save' onClick={() => {
-                        setExperiment()
-                        close();
-                    }}>Save</button>
+                                //mqtt_device_start_time();
+                                close();
+                            }}>Save</button>
                         </div>
-
-                    </div>
-                </div>
-                )}
-            </Popup>
-        )
-    }
-
-    function renderDeviceEdit(){
-        return (
-            <Popup open={edit_device.show} onClose={() => set_edit_device({...edit_device, show: false})} modal nested>
-                {(close) => (
-                <div className="modal" onClick={close}>
-                    <div className="modal_body"  onClick={e => e.stopPropagation()}>
-                    <div className="modal_type"> Device: {edit_device.device} </div>
-                    <div className="modal_content">
-
-                    <div className="form_row">
-                            <label> Hour:</label> 
-                            <input type="number" value={edit_device.hour} min={1} max={23} onChange={(e) => {set_edit_device({...edit_device, hour: e.target.value})}} />
-                    </div>
-                    <div className="form_row">        
-                            <label> Minute:</label> 
-                            <input type="number" value={edit_device.minute} min={0} max={59} onChange={(e) => {set_edit_device({...edit_device, minute: e.target.value})}} />
-                    </div>
-                        <button className='save' onClick={() => {
-                        mqtt_device_start_time()
-                        close();
-                    }}>Save</button>
-                        </div>
-
                     </div>
                 </div>
                 )}
@@ -323,7 +318,6 @@ const Device = () => {
                 <QRCode value="https://www.youtube.com/watch?v=jgvtICzs078&ab_channel=AVASmartIndoorGarden" /> 
             </div>
             {renderModal()}
-            {renderDeviceEdit()}
         </div>
       );
 }

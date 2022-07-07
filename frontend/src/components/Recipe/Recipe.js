@@ -45,6 +45,7 @@ const RecipeList = () => {
 
   useEffect(() => {
     fetchRecipes();
+    //fetchPhases();
   }, []);
 
   async function deleteEntry(id) {
@@ -56,7 +57,7 @@ const RecipeList = () => {
     let days = 0;
     for(let i = 1; i<=10; i++) {
       if (recipe["phase"+i] !== null) {
-        days += phase_list.find(phase => phase.id === recipe["phase"+i]).days
+        days += phase_list.find(phase => phase.id === parseInt(recipe["phase"+i])).days
       }
     }
     recipe.days = days;
@@ -69,23 +70,10 @@ const RecipeList = () => {
   };
 
   async function editRecipe(e) {
-    const result = await axios
-      .patch(`/api/recipes/${recipe.id}/`, recipe).catch((err) => console.log(err));
-
-    if (result.status === 200){
-      const index = recipe_list.findIndex(r => r.id === recipe.id);
-      const updatedItem = result.data
-      setRecipeList([
-        ...recipe_list.slice(0, index),
-        updatedItem,
-        ...recipe_list.slice(index + 1)
-      ])
-      fetchRecipes()
-
-    } else {
-      alert("Error during edit recipe")
-    }
-
+    await axios
+      .patch(`/api/recipes/${recipe.id}/`, recipe)
+      .then(fetchRecipes())
+      .catch((err) => console.log("Error during edit recipe: ", err))
   };
 
   function openModal(r){
@@ -114,6 +102,7 @@ const RecipeList = () => {
         return
       }
     }
+    countDays();
     if(modal.add) {
       addRecipe()
     } else {

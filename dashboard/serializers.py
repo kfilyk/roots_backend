@@ -10,7 +10,6 @@ from django.contrib.auth import get_user_model
 class DeviceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Device
-        #fields = ('id', 'model', 'name', 'user', 'token', 'registration_date', 'last_update', 'is_online', 'mac_address', 'experiment', 'fill_res_flag') # columns of the database table we are turning into a json object
         fields = '__all__'
 
 class ExperimentSerializer(serializers.ModelSerializer):
@@ -24,12 +23,10 @@ class ExperimentSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['user']
 
-
 class PodReadingSerializer(serializers.ModelSerializer):
     class Meta:
         model = PodReading
         fields = '__all__'
-
 
 class ExperimentReadingSerializer(serializers.ModelSerializer):
     class Meta:

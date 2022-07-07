@@ -36,5 +36,7 @@ def check_experiments_end_date_daily():
 
 def check_device_activity():
     broker = MQTT()
-    online_devices = broker.check_online()
+    online_devices = broker.check_online() # listed in v2_mqtt.py
+    print("CRON CHECK DEVICE ACTIVITY: ", online_devices)
+    Device.objects.filter(token__in=online_devices).update(is_online=1)
     Device.objects.exclude(token__in=online_devices).update(is_online=0)

@@ -83,7 +83,6 @@ export default class CustomModal extends Component {
   };
 
   editEntry(e) {
-    console.log("EDITED EXPERIMENT")
     // patch experiment and update with new device
     axios.patch(`/api/experiments/${this.state.id}/`, {
         name: this.state.name,

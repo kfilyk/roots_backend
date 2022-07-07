@@ -48,6 +48,7 @@ class DeviceView(viewsets.ModelViewSet):
         filtered_data = {key: data[key] for key in data if key not in ['luxZone', 'mqttConfig', 'totalLuxZones', 'wifiCredentials']}        
         return JsonResponse(filtered_data, safe=False)
 
+    '''
     @action(detail=False, methods=['POST'], name='set_device_start_time')
     def set_device_start_time(self, request):
         token = Device.objects.get(id=request.data['device']).token
@@ -56,7 +57,7 @@ class DeviceView(viewsets.ModelViewSet):
         broker = MQTT()
         device_start_time = broker.set_start_time(token, hour, minute)
         return JsonResponse({"device_start_time": device_start_time}, status=200)
-
+    '''
 
 class ExperimentReadingView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
@@ -66,9 +67,14 @@ class ExperimentReadingView(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         try:
+            print("FLAG R DATA: ", request.data)
             pr_values = request.data.get('pod_readings')
-            exp_r = ExperimentReading.objects.create(experiment=Experiment.objects.get(id=request.data.get('experiment')), electrical_conductance=request.data.get('electrical_conductance'),
-                                                                                        reservoir_ph=request.data.get('reservoir_ph'), temperature=request.data.get('temperature'), humidity=request.data.get('humidity'))
+            ec = None if request.data.get('electrical_conductance') == '' else request.data.get('electrical_conductance')
+            ph = None if request.data.get('reservoir_ph')  == '' else request.data.get('reservoir_ph')
+            temp = None if request.data.get('temperature') == '' else request.data.get('temperature')
+            hum = None if request.data.get('humidity')  == '' else request.data.get('humidity')
+            #exp_r = ExperimentReading.objects.create(experiment=Experiment.objects.get(id=request.data.get('experiment')), electrical_conductance= request.data.get('electrical_conductance'), reservoir_ph=request.data.get('reservoir_ph'), temperature=request.data.get('temperature'), humidity=request.data.get('humidity'))
+            exp_r = ExperimentReading.objects.create(experiment=Experiment.objects.get(id=request.data.get('experiment')), electrical_conductance= ec, reservoir_ph=ph, temperature=temp, humidity=hum)
             exp_id = exp_r.experiment_id
             pod_readings = []
             for i in range(len(pr_values)):
@@ -110,7 +116,7 @@ class ExperimentView(viewsets.ModelViewSet):
         print("FLAG 1: ", request.data)
         exp = Experiment.objects.get(id=exp_id)
         pod_selection = request.data['pod_selection']
-        start_date = make_aware(datetime.strptime(request.data['start_date'], '%Y-%m-%d'))
+        start_date = make_aware(datetime.strptime(request.data['start_date'], '%Y-%m-%d-%H-%M'))
         print(start_date)
         phase = 0
 
@@ -138,17 +144,15 @@ class ExperimentView(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['GET'], name='available_devices')
     def available_devices(self, request):
-        devices_in_use = Experiment.objects.filter(device_id__isnull=False).values('device_id')
-        query = Device.objects.exclude(id__in=devices_in_use)
-        query = query.filter(user = self.request.user.id)
-
-        data = list(query.values('id', 'name', 'capacity'))
+        devices = Experiment.objects.filter(device_id__isnull=False).values('device_id')
+        query = Device.objects.exclude(id__in=devices)
+        data = list(query.values('id', 'name', 'capacity').filter(user_id = self.request.user.id))
         return JsonResponse(data, safe=False)
 
     @action(detail=False, methods=['GET'], name='loaded_devices')
     def loaded_devices(self, request):
-        devices_in_use = Experiment.objects.filter(device_id__isnull=False).select_related('device')
-        data = list(devices_in_use.values().annotate(device_name=F('device__name')) )
+        devices = Experiment.objects.filter(device_id__isnull=False).select_related('device')
+        data = list(devices.values().annotate(device_name=F('device__name')).filter(user_id = self.request.user.id))
         return JsonResponse(data, safe=False)
 
     def get_queryset(self):
@@ -221,8 +225,6 @@ class CreateUserAPIView(CreateAPIView):
             return Response(
                 status=409
             )
-
-
 
 class LogoutUserAPIView(APIView):
     queryset = get_user_model().objects.all() # django specific user type

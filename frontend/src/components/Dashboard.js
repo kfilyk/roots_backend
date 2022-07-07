@@ -95,7 +95,7 @@ const Dashboard = () => {
   return (
     <main className="container">
       <div className="header">
-        <h1 className="title">AVA PLANT SCIENCE DATA PLATFORM</h1>
+        <h1 className="title">R.O.O.T.S</h1>
         <div className="user_container">
           <button id="logout" title="Logout" onClick={logout}>
             <span>{ auth.user }</span>
