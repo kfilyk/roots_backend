@@ -84,7 +84,14 @@ const Device = () => {
     }
 
     async function editDevice() {
-        
+        axios.patch(`/api/devices/`, 
+        { 
+            name: device.name,
+            mac_address: device.mac_address,
+            token: device.token,
+        });
+        fetch_free_devices()
+        fetch_loaded_devices();
     }
 
     async function setExperiment(e) {

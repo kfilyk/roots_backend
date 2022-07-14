@@ -40,7 +40,10 @@ const Dashboard = () => {
   }
 
   function logout(){
+    console.log("LOGOUT FLAG1")
+
     if (window.localStorage.getItem("token")) {
+      console.log("LOGOUT FLAG2")
       axios
       .get('/auth/logout/')
       .then((res) => {
