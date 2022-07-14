@@ -39,6 +39,12 @@ class DeviceView(viewsets.ModelViewSet):
 
         return Response(status=200)
 
+    @action(detail=False, methods=['POST'], name='check_devices_online')
+    def check_devices_online(self, request):
+        query = Device.objects.filter(id__in=request.data['devices'])
+        data = list(query.values('id', 'is_online'))
+        return JsonResponse(data, safe=False)
+
     def get_queryset(self):
         user = self.request.user
         return Device.objects.filter(user = user.id)
@@ -155,7 +161,7 @@ class ExperimentView(viewsets.ModelViewSet):
     @action(detail=False, methods=['GET'], name='loaded_devices')
     def loaded_devices(self, request):
         devices = Experiment.objects.filter(device_id__isnull=False).select_related('device')
-        data = list(devices.values().annotate(device_name=F('device__name')).filter(user_id = self.request.user.id))
+        data = list(devices.values().annotate(device_name=F('device__name')).annotate(device_is_online=F('device__is_online')).filter(user_id = self.request.user.id))
         return JsonResponse(data, safe=False)
 
     def get_queryset(self):

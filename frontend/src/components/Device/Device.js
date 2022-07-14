@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import QRCode from 'react-qr-code';
 import axios from "axios";
 import vertical_menu_icon from "../../img/vertical_menu_icon.png"
@@ -6,6 +6,7 @@ import Popup from "reactjs-popup";
 import PodCarousel from "../Experiment/PodCarousel"
 import ExperimentReading from "../Experiment/ExperimentReading"
 import RecipeBar from '../Recipe/RecipeBar';
+import "./device.css"
 
 const Device = () => {
     const [loaded_devices, set_loaded_devices] = useState([]);
@@ -28,6 +29,8 @@ const Device = () => {
           '/api/experiments/loaded_devices/',
         );
         set_loaded_devices(result.data)
+        console.log("RESULT DATA: ", result.data)
+        console.log("LOADED_DEVICES STATE: ", loaded_devices)
     } 
     
     async function fetch_free_devices() {
@@ -66,6 +69,76 @@ const Device = () => {
     useEffect(() => {
         fetch_free_devices();
     }, []);
+
+    function useInterval(callback, delay) {
+        const savedCallback = useRef();
+      
+        // Remember the latest function.
+        useEffect(() => {
+          savedCallback.current = callback;
+        }, [callback]);
+      
+        // Set up the interval.
+        useEffect(() => {
+          function tick() {
+            savedCallback.current();
+          }
+          if (delay !== null) {
+            let id = setInterval(tick, delay);
+            return () => clearInterval(id);
+          }
+        }, [delay]);
+      }
+
+    function check_devices_online(){
+        // console.log("RR: ", loaded_devices)
+        // let devices = loaded_devices.map(device => device.device_id);
+        let device_ids = [1, 2, 4, 5, 6, 7]
+        axios
+            .post(`/api/devices/check_devices_online/`, 
+                { 
+                    devices: device_ids
+                })
+            .then((res) => {
+                res.data.forEach((device) => {
+                    // console.log(device, loaded_devices)
+                    // let index = loaded_devices.findIndex(d => d.device_id === device.id)
+                    // if (loaded_devices[index].is_online !== device.is_online){
+                    //     let updated_device = loaded_devices[index]
+                    //     updated_device.is_online = device.is_online
+                    //     set_loaded_devices([
+                    //     ...loaded_devices.slice(0, index),
+                    //     updated_device,
+                    //     ...loaded_devices.slice(index + 1)
+                    //     ])
+                    // }
+                })
+            }).catch((err) => console.log("LD error: ", err))
+    }
+
+
+
+
+
+
+
+
+
+
+
+    // useInterval(() => {
+    //     check_devices_online()
+    // }, 5000);
+
+
+
+
+
+
+
+
+
+
 
     async function addDevice() {
         axios.post(`/api/devices/`, 
@@ -163,7 +236,7 @@ const Device = () => {
                     <div key={'loaded_' + item.id} className="object_container">
                         <div className="object_top">
                             <div className="object_description">
-                                <div className="object_name">{ item.device_name }</div>
+                                <div className="object_name">{ item.device_name } <div className="blink_me" style={{ color: item.device_is_online ? 'green': 'red'}}>●</div></div>
                                 <div>Score: { item.score } </div>
                                 <div>Current Recipe: { item.currentRecipe ? item.currentRecipe : "N/A"} </div>
                                 <div>Daily Start Time: { item.dailyStartTime ? item.dailyStartTime : "N/A"} </div>
