@@ -11,7 +11,6 @@ const Device = () => {
     const [loaded_devices, set_loaded_devices] = useState([]);
     const [free_devices, set_free_devices] = useState([]);
     const [selected_device_status, set_selected_device_status] = useState("all");
-    const [available_experiments, set_available_experiments] = useState([]);
     const [device, set_device] = useState({
         add: true, 
         show: false, 
@@ -28,7 +27,6 @@ const Device = () => {
         const result = await axios(
           '/api/experiments/loaded_devices/',
         );
-        console.log(result.data)
         set_loaded_devices(result.data)
     } 
     
@@ -66,25 +64,23 @@ const Device = () => {
     }, []);
 
     useEffect(() => {
-        fetch_available_experiments();
-    }, []);
-
-
-    useEffect(() => {
         fetch_free_devices();
     }, []);
 
-
-    async function fetch_available_experiments() {
-        const result = await axios(
-          '/api/experiments/available_experiments/',
-        );
-        set_available_experiments(result.data)
-    } 
-
-
     async function addDevice() {
+        axios.post(`/api/devices/`, 
+            { 
+                name: device.name,
+                mac_address: device.mac_address,
+                token: device.token,
+            });
+        fetch_free_devices()
+    }
 
+    async function deleteDevice(id) {
+        await axios.delete(`/api/devices/${id}`);
+        fetch_free_devices();
+        fetch_loaded_devices();
     }
 
     async function editDevice() {
@@ -197,8 +193,8 @@ const Device = () => {
                         <div className='object_actions'>
                             <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
                             <li key="edit"><button onClick={() => set_device({...device, show:true, name: item.device_name, device: item.device, token: item.token})}>EDIT</button></li>
-                            <li key="add"><button onClick={() => set_device({...device, show:true})}>Add Experiment</button></li>
-                            <li key="delete"><button onClick={() => {}}>DELETE</button></li>  
+                            <li key="add"><button onClick={() => set_device({...device, show:true})}>ADD EXPERIMENT</button></li>
+                            <li key="delete"><button onClick={() => deleteDevice(item.id)}>DELETE</button></li>  
                             <li key="device_state"><button onClick={() => get_device_state(item.id)}>GET DEVICE STATE</button></li>
                             {/*<li key="device_start_time"><button onClick={() => set_device({...device, show: true, device: item.id})}>SET DEVICE START TIME</button></li> */}
                         </div>
@@ -211,7 +207,7 @@ const Device = () => {
 
     function renderModal(){
         return (
-            <Popup open={device.show} onClose={() => set_device({...device, show: false, id: -1, experiment: -1, token: null})} modal nested>
+            <Popup open={device.show} onClose={() => set_device({...device, show: false, id: -1, token: null})} modal nested>
                 {(close) => (
                 <div className="modal" onClick={close}>
                     <div className="modal_body"  onClick={e => e.stopPropagation()}>
@@ -222,20 +218,16 @@ const Device = () => {
                             <div className="form_row">
                                 <input value={device.mac_address} placeholder="MAC Address" onChange={(e) => {set_device({...device, mac_address: e.target.value})}} />
                             </div>
-                            <div className="form_row">
-                                    <select className="" defaultValue={device.experiment} name="experiment" onChange={(e) => set_device({...device, experiment: e.target.value})}>
-                                        <option key={-1} value={-1}> SELECT EXPERIMENT </option>
-                                        {available_experiments.map(item => (
-                                            <option key={item.id} value={item.id}> {item.name} </option>
-                                        ))}
-                                    </select> 
-                            </div>
                             <div className="form_row">        
                                 <input value={device.token} placeholder="Token" onChange={(e) => {set_device({...device, token: e.target.value})}} />
                             </div>
                             <button className='save' onClick={() => {
                                 
-                                setExperiment()
+                                if(device.add===true){
+                                    addDevice()
+                                } else {
+                                    editDevice()
+                                }
 
                                 //mqtt_device_start_time();
                                 close();
@@ -252,71 +244,75 @@ const Device = () => {
         <div>
             {renderNav()}
             {renderDevices()}
-            <div style={{ background: 'white', padding: '16px' }}>
-                <div>How to with AVA: Unboxing & Putting Water Float Back into Place</div>
-                <br></br>
-                <QRCode value="https://www.youtube.com/watch?v=d-p09zEge5g" /> 
+            <div style={{display: "none"}}>
+                <div style={{ background: 'white', padding: '16px' }}>
+                    <div>How to with AVA: Unboxing & Putting Water Float Back into Place</div>
+                    <br></br>
+                    <QRCode value="https://www.youtube.com/watch?v=d-p09zEge5g" /> 
+                </div>
+                <div style={{ background: 'white', padding: '16px' }}>
+                    <div>How to with AVA: Putting Water Float Back into Place</div>
+                    <br></br>
+                    <QRCode value="https://www.youtube.com/clip/UgkxqKL_0N-7qb1ufg6ZFTUG-96uz5n2ZfQz" /> 
+                </div>
+                <div style={{ background: 'white', padding: '16px' }}>
+                    <div>How to with AVA: Connecting to WIFI</div>
+                    <br></br>
+                    <QRCode value="https://www.youtube.com/watch?v=8loSZ5RixKw" /> 
+                </div>
+                <div style={{ background: 'white', padding: '16px' }}>
+                    <div>How to with AVA: Add A Pod Pack (Greens)</div>
+                    <br></br>
+                    <QRCode value="https://www.youtube.com/watch?v=Faq64uvKT1Q&ab_channel=AVASmartIndoorGarden" /> 
+                </div>
+                <div style={{ background: 'white', padding: '16px' }}>
+                    <div>How to with AVA: Add a Pod Pack (Tomatoes)</div>
+                    <br></br>
+                    <QRCode value="https://www.youtube.com/watch?v=5WfZrKlQrPo" /> 
+                </div>
+                <div style={{ background: 'white', padding: '16px' }}>
+                    <div>How to with AVA: Adding Your Trellis</div>
+                    <br></br>
+                    <QRCode value="https://www.youtube.com/watch?v=Zce2NUfoj0w&ab_channel=AVASmartIndoorGarden" /> 
+                </div>
+                <div style={{ background: 'white', padding: '16px' }}>
+                    <div>How to with AVA: Dome Removal</div>
+                    <br></br>
+                    <QRCode value="https://www.youtube.com/watch?v=AMdcnrt_Oc8" /> 
+                </div>
+                <div style={{ background: 'white', padding: '16px' }}>
+                    <div>How to with AVA: Adding Nutrients</div>
+                    <br></br>
+                    <QRCode value="https://www.youtube.com/watch?v=l_zE1_wBRCo" /> 
+                </div>
+                <div style={{ background: 'white', padding: '16px' }}>
+                    <div>How to with AVA: Pruning Technique (Herbs)</div>
+                    <br></br>
+                    <QRCode value="https://www.youtube.com/watch?v=UrY4cWatDQ4&feature=youtu.be" /> 
+                </div>
+                <div style={{ background: 'white', padding: '16px' }}>
+                    <div>How to with AVA: Filling Water Reservoir</div>
+                    <br></br>
+                    <QRCode value="https://www.youtube.com/watch?v=V2GzstdmDvM&feature=youtu.be&ab_channel=AVASmartIndoorGarden" /> 
+                </div>
+                <div style={{ background: 'white', padding: '16px' }}>
+                    <div>How to with AVA: Reconnect your Pump (orange flashing light)</div>
+                    <br></br>
+                    <QRCode value="https://www.youtube.com/watch?v=PvQEg7PERgs&ab_channel=AVASmartIndoorGarden" /> 
+                </div>
+                <div style={{ background: 'white', padding: '16px' }}>
+                    <div>How to With AVA: Thinning Plants</div>
+                    <br></br>
+                    <QRCode value="https://www.youtube.com/watch?v=Ycn4C5_RyF0" /> 
+                </div>
+                <div style={{ background: 'white', padding: '16px' }}>
+                    <div>How to With AVA: Enable Offline Mode</div>
+                    <br></br>
+                    <QRCode value="https://www.youtube.com/watch?v=jgvtICzs078&ab_channel=AVASmartIndoorGarden" /> 
+                </div>
             </div>
-            <div style={{ background: 'white', padding: '16px' }}>
-                <div>How to with AVA: Putting Water Float Back into Place</div>
-                <br></br>
-                <QRCode value="https://www.youtube.com/clip/UgkxqKL_0N-7qb1ufg6ZFTUG-96uz5n2ZfQz" /> 
-            </div>
-            <div style={{ background: 'white', padding: '16px' }}>
-                <div>How to with AVA: Connecting to WIFI</div>
-                <br></br>
-                <QRCode value="https://www.youtube.com/watch?v=8loSZ5RixKw" /> 
-            </div>
-            <div style={{ background: 'white', padding: '16px' }}>
-                <div>How to with AVA: Add A Pod Pack (Greens)</div>
-                <br></br>
-                <QRCode value="https://www.youtube.com/watch?v=Faq64uvKT1Q&ab_channel=AVASmartIndoorGarden" /> 
-            </div>
-            <div style={{ background: 'white', padding: '16px' }}>
-                <div>How to with AVA: Add a Pod Pack (Tomatoes)</div>
-                <br></br>
-                <QRCode value="https://www.youtube.com/watch?v=5WfZrKlQrPo" /> 
-            </div>
-            <div style={{ background: 'white', padding: '16px' }}>
-                <div>How to with AVA: Adding Your Trellis</div>
-                <br></br>
-                <QRCode value="https://www.youtube.com/watch?v=Zce2NUfoj0w&ab_channel=AVASmartIndoorGarden" /> 
-            </div>
-            <div style={{ background: 'white', padding: '16px' }}>
-                <div>How to with AVA: Dome Removal</div>
-                <br></br>
-                <QRCode value="https://www.youtube.com/watch?v=AMdcnrt_Oc8" /> 
-            </div>
-            <div style={{ background: 'white', padding: '16px' }}>
-                <div>How to with AVA: Adding Nutrients</div>
-                <br></br>
-                <QRCode value="https://www.youtube.com/watch?v=l_zE1_wBRCo" /> 
-            </div>
-            <div style={{ background: 'white', padding: '16px' }}>
-                <div>How to with AVA: Pruning Technique (Herbs)</div>
-                <br></br>
-                <QRCode value="https://www.youtube.com/watch?v=UrY4cWatDQ4&feature=youtu.be" /> 
-            </div>
-            <div style={{ background: 'white', padding: '16px' }}>
-                <div>How to with AVA: Filling Water Reservoir</div>
-                <br></br>
-                <QRCode value="https://www.youtube.com/watch?v=V2GzstdmDvM&feature=youtu.be&ab_channel=AVASmartIndoorGarden" /> 
-            </div>
-            <div style={{ background: 'white', padding: '16px' }}>
-                <div>How to with AVA: Reconnect your Pump (orange flashing light)</div>
-                <br></br>
-                <QRCode value="https://www.youtube.com/watch?v=PvQEg7PERgs&ab_channel=AVASmartIndoorGarden" /> 
-            </div>
-            <div style={{ background: 'white', padding: '16px' }}>
-                <div>How to With AVA: Thinning Plants</div>
-                <br></br>
-                <QRCode value="https://www.youtube.com/watch?v=Ycn4C5_RyF0" /> 
-            </div>
-            <div style={{ background: 'white', padding: '16px' }}>
-                <div>How to With AVA: Enable Offline Mode</div>
-                <br></br>
-                <QRCode value="https://www.youtube.com/watch?v=jgvtICzs078&ab_channel=AVASmartIndoorGarden" /> 
-            </div>
+            <button onClick={() => set_device({device, show: true, add:true})}>+</button>
+
             {renderModal()}
         </div>
       );

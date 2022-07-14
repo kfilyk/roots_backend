@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import Popup from "reactjs-popup";
-import AWS from 'aws-sdk'
-
+import AWS from 'aws-sdk';
 
 const ExperimentReading = (props) => {
     const [modal, set_modal] = useState(false);
+
     const [experiment_reading, set_experiment_reading] = useState({
         // To be done automatically
         // water_level: -1,
@@ -59,16 +59,34 @@ const ExperimentReading = (props) => {
     }
 
     /*
-        this function creates the experiment reading object (including pods)
+        this function accesses the api and pushes the experiment reading object (including pods)
     */
     async function create_readings(){
-        
+        const s3 = new AWS.S3({
+            //accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID,
+            //secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY,
+
+            accessKeyId: "AKIA3N5PH5YKPJJ7VT2L",
+            secretAccessKey: "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",
+
+        })
+
         // include the phases of the pods at the time of reading
         for(let p in pod_readings) {
             pod_readings[p]['pod_phase'] = experiment_reading.pods[p].phase
-        }
-        console.log(pod_readings)
 
+            // upload photos to AWS in a seperate process
+            console.log(pod_readings[p]['photos'][0])
+            /*
+            const uploadedImage = await s3.upload({
+                Bucket: process.env.AWS_S3_BUCKET_NAME,
+                Key: req.files[0].originalFilename,
+                Body: blob,
+            }).promise()
+            */
+        }
+
+        /*
         const result = await axios
             .post(`/api/experimentreadings/`, 
             { 
@@ -85,6 +103,7 @@ const ExperimentReading = (props) => {
         } else {
             console.log("SERVER ERROR: Experiment + pod readings were not uploaded")
         }
+        */
 
      }
 
@@ -113,22 +132,36 @@ const ExperimentReading = (props) => {
     function set_value_selected_pod(e){
         let field = e.target.name
         let value = parse_value(field, e.target.value)
-        // let value = e.target.value
         let index = pod_readings.findIndex(reading => reading.pod === selected_pod)
-        //EDITING A POD READING
+
+        // if a pod reading has not been created yet
          if(index !== -1){
             let updated_pod = pod_readings[index]
-            //Updating old value to new value
-            if(value !== ""){
-                updated_pod[field] = value
 
-                // insert copy of updated pod into index 
+            if(field === 'photos') {
+                let images = []
+                const files = e.target.files;
+                for (let i = 0; i < files.length; i++) {
+                    if (files[i].type.match(/^image\//)) {
+                        images.push(files[i])            
+                    }
+                }
+                updated_pod[field] = images
+
                 set_pod_readings([
-                  ...pod_readings.slice(0, index),
-                  updated_pod,
-                  ...pod_readings.slice(index + 1)
+                    ...pod_readings.slice(0, index),
+                    updated_pod,
+                    ...pod_readings.slice(index + 1)
                 ])
 
+            } else if(value !== "") {
+                updated_pod[field] = value
+                // insert copy of updated pod into index 
+                set_pod_readings([
+                    ...pod_readings.slice(0, index),
+                    updated_pod,
+                    ...pod_readings.slice(index + 1)
+                ])
             } else {
                 //Deleting field from pod reading if value is ""
                 delete updated_pod[field]
@@ -143,11 +176,22 @@ const ExperimentReading = (props) => {
                     ])
                 }
             }
-        //ADDING A NEW FIELD IN
-         } else {
+        //Otherwise, add a new field in
+        } else {
             let reading = {pod: selected_pod, [field]: value}
+
+            if(field === 'photos') {
+                let images = []
+                const files = e.target.files;
+                for (let i = 0; i < files.length; i++) {
+                    if (files[i].type.match(/^image\//)) {
+                        images.push(files[i])            
+                    }
+                }
+                reading = {pod: selected_pod, [field]: images}
+            }
             set_pod_readings([...pod_readings, reading])
-         }
+        }
      }
 
     function renderPodReading(){
@@ -164,7 +208,7 @@ const ExperimentReading = (props) => {
                         <input className="exp_r_input" placeholder="Leaf Count" type="number" value={find_value_selected_pod('leaf_count') || ""} name={"leaf_count"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
                     </div>
                     <div className="exp_r_form_row">
-                        <input className="exp_r_input" placeholder="Seeds Germinated" type="number" value={find_value_selected_pod('seeds_germinated') || ""} name={"seeds_germinated"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                        <input className="exp_r_input" placeholder="Germination Rate" type="number" value={find_value_selected_pod('germination_rate') || ""} name={"germination_rate"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
                     </div>
                     <div className='pr_coverage'>
                         <label> Pest Coverage: {find_value_selected_pod('pest_coverage') || 0}% </label>
@@ -223,19 +267,9 @@ const ExperimentReading = (props) => {
                             Dome
                         </label>
                     </div>
-                    {/*
                     <div className="exp_r_form_row">
-                        <select value={find_value_selected_pod('pod_phase') || ""} name={"pod_phase"} onChange={(e) => {set_value_selected_pod(e)}} >
-                            <option key={"null"} value={""}>SELECT PHASE</option>
-                            <option key={"germination"} value="germination">Germination</option>
-                            <option key={"seedling"} value="seedling">Seedling</option>
-                            <option key={"vegetative"} value="vegetative">Vegetative Growth</option>
-                            <option key={"flowering"} value="flowering">Flowering</option>
-                            <option key={"harvest"} value="harvest">Harvest</option>
-                            <option key={"other"} value="other">Other</option>
-                        </select>
+                        <input type="file" accept="image/*" name="photos" capture="camera" onChange={(e) => {set_value_selected_pod(e)}}/>
                     </div>
-                    */}
                 </div>
             )
         }
@@ -288,9 +322,9 @@ const ExperimentReading = (props) => {
             set_selected_pod(pod)
         } else {
             //To remove the pod reading form
-
             e.currentTarget.classList.remove('pod_selection_active');
             set_selected_pod(-1)
+
         }
     }
 

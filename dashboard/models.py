@@ -7,6 +7,7 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 from django.conf import settings
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 '''
 set FOREIGN_KEY_CHECKS = 0;
@@ -18,6 +19,8 @@ set FOREIGN_KEY_CHECKS = 0;
 -- drop table plant_science.podPack cascade;
 -- drop table plant_science.recipe cascade;
 '''
+
+PERCENTAGE_VALIDATOR = [MinValueValidator(0), MaxValueValidator(100)]
 
 # https://www.digitalocean.com/community/tutorials/build-a-to-do-application-using-django-and-react
 # https://djangoadventures.com/how-to-integrate-django-with-existing-database/
@@ -67,7 +70,7 @@ class ExperimentReading(models.Model):
     reservoir_ph = models.IntegerField(db_column='er_reservoir_ph', blank=True, null=True)  
     experiment_phase = models.IntegerField(db_column='er_experiment_phase', blank=True, null=True) 
     temperature = models.DecimalField(db_column='er_temperature', max_digits=2, decimal_places=2, blank=True, null=True) 
-    humidity = models.DecimalField(db_column='er_humidity', max_digits=2, decimal_places=2, blank=True, null=True)
+    humidity = models.IntegerField(db_column='er_humidity', blank=True, null=True, validators=PERCENTAGE_VALIDATOR)
     photo_link = models.CharField(db_column='er_photo_link', max_length=100, blank=True, null=True)
 
     class Meta:
@@ -90,25 +93,25 @@ class PodReading(models.Model):
     node_count = models.IntegerField(db_column='pr_node_count', blank=True, null=True) 
     internode_distance = models.DecimalField(db_column='pr_internode_distance', max_digits=5, decimal_places=2, blank=True, null=True) 
     leaf_count = models.IntegerField(db_column='pr_leaf_count', blank=True, null=True) 
-    seeds_germinated = models.IntegerField(db_column='pr_seeds_germinated', blank=True, null=True) 
+    germination_rate = models.IntegerField(db_column='pr_germination_rate', blank=True, null=True, validators=PERCENTAGE_VALIDATOR) 
     pod_phase = models.CharField(db_column='pr_pod_phase', max_length=45, blank=True, null=True)
     media_to_bgp = models.DecimalField(db_column='pr_media_to_bgp', max_digits=5, decimal_places=2, blank=True, null=True)
     min_height = models.DecimalField(db_column='pr_min_height', max_digits=5, decimal_places=2, blank=True, null=True)
     max_height = models.DecimalField(db_column='pr_max_height', max_digits=5, decimal_places=2, blank=True, null=True)
     leaf_area_avg = models.DecimalField(db_column='pr_leaf_area_avg', max_digits=5, decimal_places=2, blank=True, null=True)
 
-    pest_coverage = models.IntegerField(db_column='pr_pest_coverage', default=False) 
-    algae_coverage =  models.IntegerField(db_column='pr_algae_coverage', default=False)  
-    blight_coverage = models.IntegerField(db_column='pr_blight_coverage', default=False)  
+    pest_coverage = models.IntegerField(db_column='pr_pest_coverage', default=False, validators=PERCENTAGE_VALIDATOR) 
+    algae_coverage =  models.IntegerField(db_column='pr_algae_coverage', default=False, validators=PERCENTAGE_VALIDATOR)  
+    blight_coverage = models.IntegerField(db_column='pr_blight_coverage', default=False, validators=PERCENTAGE_VALIDATOR)  
 
     bud_count = models.IntegerField(db_column='pr_bud_count', blank=True, null=True)
     flower_count = models.IntegerField(db_column='pr_flower_count', blank=True, null=True)
-    flower_quality = models.IntegerField(db_column='pr_flower_quality', default=False)  
+    flower_quality = models.IntegerField(db_column='pr_flower_quality', blank=True, null=True, validators=PERCENTAGE_VALIDATOR)  
     fruit_unripe_count = models.IntegerField(db_column='pr_fruit_unripe_count', blank=True, null=True)
     fruit_ripe_count = models.IntegerField(db_column='pr_fruit_ripe_count', blank=True, null=True)
-    harvest_count = models.IntegerField(db_column='pr_harvest_count', default=False)  
+    harvest_count = models.IntegerField(db_column='pr_harvest_count',  blank=True, null=True,)  
     harvest_weight = models.DecimalField(db_column='pr_harvest_weight', max_digits=5, decimal_places=2, blank=True, null=True)
-    harvest_quality = models.IntegerField(db_column='pr_harvest_quality', default=False)  
+    harvest_quality = models.IntegerField(db_column='pr_harvest_quality',blank=True, null=True, validators=PERCENTAGE_VALIDATOR)  
 
     comment = models.CharField(db_column='pr_comment', max_length=255, blank=True, null=True)
     score = models.DecimalField(db_column='pr_score', max_digits=5, decimal_places=2, blank=True, null=True)
@@ -175,6 +178,43 @@ class Plant(models.Model): # types: basil,
     id = models.AutoField(db_column='pl_id', primary_key=True)  
     name = models.CharField(db_column='pl_name', max_length=45)  
     supplier = models.CharField(db_column = 'pl_supplier', max_length=45, blank=True, null=True)
+    germination_rate = models.IntegerField(db_column='pl_germination_rate', blank=True, null=True, validators=PERCENTAGE_VALIDATOR) # this is a percentage
+    
+    days_to_germinate_min = models.IntegerField(db_column='pl_days_to_germinate_min', blank=True, null=True) 
+    days_to_germinate_max = models.IntegerField(db_column='pl_days_to_germinate_max', blank=True, null=True) 
+
+    days_to_harvest_min = models.IntegerField(db_column='pl_days_to_harvest_min', blank=True, null=True) #how many days passed until first harvest occurred
+    days_to_harvest_max = models.IntegerField(db_column='pl_days_to_harvest_max', blank=True, null=True) #how many days passed until first harvest occurred
+
+    bgp_distance_min = models.IntegerField(db_column='pl_bgp_distance_min', blank=True, null=True) 
+    bgp_distance_max = models.IntegerField(db_column='pl_bgp_distance_max', blank=True, null=True) 
+    
+    final_height_min = models.IntegerField(db_column='pl_final_height_min', blank=True, null=True) 
+    final_height_max = models.IntegerField(db_column='pl_final_height_max', blank=True, null=True) 
+
+    node_count_min = models.IntegerField(db_column='pl_node_count_min', blank=True, null=True) 
+    node_count_max = models.IntegerField(db_column='pl_node_count_max', blank=True, null=True) 
+
+    internode_distance_min = models.IntegerField(db_column='pl_internode_distance_min', blank=True, null=True) 
+    internode_distance_max = models.IntegerField(db_column='pl_internode_distance_max', blank=True, null=True) 
+
+    final_leaf_count_min = models.IntegerField(db_column='pl_final_leaf_count_min', blank=True, null=True) 
+    final_leaf_count_max = models.IntegerField(db_column='pl_final_leaf_count_max', blank=True, null=True) 
+
+    final_leaf_area_min = models.IntegerField(db_column='pl_final_leaf_area_min', blank=True, null=True) #how many days passed until first harvest occurred
+    final_leaf_area_max = models.IntegerField(db_column='pl_final_leaf_area_max', blank=True, null=True) #how many days passed until first harvest occurred
+
+    bud_count_min = models.IntegerField(db_column='pl_bud_count_min', blank=True, null=True)
+    bud_count_max = models.IntegerField(db_column='pl_bud_count_max', blank=True, null=True)
+
+    flower_count = models.IntegerField(db_column='pl_flower_count', blank=True, null=True)
+    flower_quality = models.IntegerField(db_column='pl_flower_quality', blank=True, null=True, validators=PERCENTAGE_VALIDATOR)  
+    fruit_unripe_count = models.IntegerField(db_column='pl_fruit_unripe_count', blank=True, null=True)
+    fruit_ripe_count = models.IntegerField(db_column='pl_fruit_ripe_count', blank=True, null=True)
+    harvest_count = models.IntegerField(db_column='pl_harvest_count', blank=True, null=True)  
+    harvest_weight = models.DecimalField(db_column='pl_harvest_weight', max_digits=5, decimal_places=2, blank=True, null=True)
+    harvest_quality = models.IntegerField(db_column='pl_harvest_quality', blank=True, null=True, validators=PERCENTAGE_VALIDATOR)  
+
     score = models.DecimalField(db_column='pl_score', max_digits=2, decimal_places=2, blank=True, null=True)
 
     class Meta:
