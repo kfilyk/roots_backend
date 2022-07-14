@@ -101,7 +101,7 @@ const Device = () => {
                 })
             .then((res) => {
                 res.data.forEach((device) => {
-                    console.log(device, loaded_devices)
+                    // console.log(device, loaded_devices)
                     // let index = loaded_devices.findIndex(d => d.device_id === device.id)
                     // if (loaded_devices[index].is_online !== device.is_online){
                     //     let updated_device = loaded_devices[index]
@@ -116,9 +116,28 @@ const Device = () => {
             }).catch((err) => console.log("LD error: ", err))
     }
 
-    useInterval(() => {
-        check_devices_online()
-    }, 5000);
+
+
+
+
+
+
+
+
+
+
+    // useInterval(() => {
+    //     check_devices_online()
+    // }, 5000);
+
+
+
+
+
+
+
+
+
 
 
     async function addDevice() {
