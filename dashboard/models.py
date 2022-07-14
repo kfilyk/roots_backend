@@ -170,6 +170,8 @@ class Recipe(models.Model):
     phase8 = models.ForeignKey("Phase", models.DO_NOTHING, related_name="phase8", db_column='r_phase8_id', blank=True, null=True)
     phase9 = models.ForeignKey("Phase", models.DO_NOTHING, related_name="phase9", db_column='r_phase9_id', blank=True, null=True)
     phase10 = models.ForeignKey("Phase", models.DO_NOTHING, related_name="phase10", db_column='r_phase10_id', blank=True, null=True)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, db_column='r_user_id', on_delete=models.CASCADE, blank=True, null=True) 
+
     class Meta:
         managed = True
         db_table = 'recipe'

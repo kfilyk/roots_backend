@@ -198,6 +198,13 @@ class RecipeView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
     serializer_class = RecipeSerializer
 
+    @action(detail=False, methods=['GET'], name='recipe_user_specific')
+    def recipe_user_specific(self, request):
+        user = self.request.user
+        query = Recipe.objects.filter(author = user.id)
+        data = list(query.values())
+        return JsonResponse(data, safe=False)
+
     def get_queryset(self):
         return Recipe.objects.all()
 
