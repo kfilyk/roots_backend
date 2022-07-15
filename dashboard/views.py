@@ -42,7 +42,7 @@ class DeviceView(viewsets.ModelViewSet):
     @action(detail=False, methods=['POST'], name='check_devices_online')
     def check_devices_online(self, request):
         query = Device.objects.filter(id__in=request.data['devices'])
-        data = list(query.values('id', 'is_online'))
+        data = list(query.values('id', device_is_online=F('is_online')))
         return JsonResponse(data, safe=False)
 
     def get_queryset(self):
