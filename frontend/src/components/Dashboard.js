@@ -27,7 +27,7 @@ const Dashboard = () => {
         .then((res) => {
           set_auth({...auth, user: res.data.username})
           //default tab
-          set_selected_tab("device" )
+          set_selected_tab("recipe" )
           // set_selected_tab("device" )
 
         })
@@ -112,9 +112,9 @@ const Dashboard = () => {
 
       <div className="dashboard">
         {renderNav()}
-        <ul className="list-group list-group-flush border-top-0">
+        <div className="list-group list-group-flush border-top-0">
           {renderPage()}
-        </ul>
+        </div>
       </div>
     </main>
   );

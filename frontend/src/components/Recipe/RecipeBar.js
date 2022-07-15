@@ -104,7 +104,7 @@ const RecipeBar = (props) => {
               if (recipe["phase"+(i+1)] === null || i === 10) {
                   s['borderBottomRightRadius'] = '10px'
               }
-              phases.push(<div className="recipe_bar_phase" style={s}> <span className="recipe_bar_phase_days">{ph.days}</span> {ph.type}  <span className="recipe_bar_phase_name"> {ph.name}</span> </div>)
+              phases.push(<div key={`${props.experiment}_${i}`} className="recipe_bar_phase" style={s}> <span className="recipe_bar_phase_days">{ph.days}</span> {ph.type}  <span className="recipe_bar_phase_name"> {ph.name}</span> </div>)
           }
       }
       return ( 

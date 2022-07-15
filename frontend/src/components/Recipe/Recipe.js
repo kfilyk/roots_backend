@@ -35,9 +35,7 @@ const RecipeList = () => {
       '/api/recipes/',
       // '/api/recipes/recipe_user_specific/',
     );
-
-    console.log(result.data)
-
+    // console.log("FR: ", result.data)
     setRecipeList(result.data)
 
     const result2 = await axios(
@@ -142,9 +140,10 @@ const RecipeList = () => {
 
       if(i===1 || recipe['phase'+(i-1)]!== null) {
         phase_selection.push(
-          <div className='form-row'>
+          <div key={i} className='form-row'>
             <select name={"phase"+i} defaultValue={recipe["phase"+i]} onChange={(e)=>update_recipe(e)}>
-              <option value={null}></option>
+              <option key={-1} value={null}></option>
+              {/* {phase_list.map((phase) => ( <option key={`${i}_${phase.id}`} value={phase.id}>{phase.name} | ({phase.type})</option>))} */}
               {phase_list.map((phase) => ( <option key={phase.id} value={phase.id}>{phase.name} | ({phase.type})</option>))}
             </select>
           </div>

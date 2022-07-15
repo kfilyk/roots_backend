@@ -285,7 +285,7 @@ const Phase = () => {
                     {(() => {
                       let waterings = [];
                       for(let i = 0; i < item.waterings_per_day; i++) {
-                        waterings.push(<img src={water_icon} alt="Water" style={{width:'30px', padding:'5px' }}/>)
+                        waterings.push(<img key={`${i}`} src={water_icon} alt="Water" style={{width:'30px', padding:'5px' }}/>)
                       }
                       return waterings;
                     })()}
