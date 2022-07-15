@@ -29,8 +29,6 @@ const Device = () => {
           '/api/experiments/loaded_devices/',
         );
         set_loaded_devices(result.data)
-        console.log("RESULT DATA: ", result.data)
-        console.log("LOADED_DEVICES STATE: ", loaded_devices)
     } 
     
     async function fetch_free_devices() {
@@ -69,6 +67,9 @@ const Device = () => {
     useEffect(() => {
         fetch_free_devices();
     }, []);
+
+    useEffect(() => {
+    }, [loaded_devices, free_devices]);
 
     function useInterval(callback, delay) {
         const savedCallback = useRef();
@@ -147,11 +148,13 @@ const Device = () => {
                 mac_address: device.mac_address,
                 token: device.token,
             });
-        fetch_free_devices()
+        fetch_free_devices();
+        fetch_loaded_devices();
+
     }
 
     async function deleteDevice(id) {
-        await axios.delete(`/api/devices/${id}`);
+        await axios.delete(`/api/devices/${id}/`);
         fetch_free_devices();
         fetch_loaded_devices();
     }

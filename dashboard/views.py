@@ -92,7 +92,7 @@ class ExperimentReadingView(viewsets.ModelViewSet):
             PodReading.objects.bulk_create(pod_readings)
             return Response("HELLO WORLD", status=200)
         except Exception as e: 
-            print("ERROR IN EXPERIMENTREADINGVIEW:create ", e)
+            print("ERROR IN EXPERIMENT_READING_VIEW: create ", e)
             return Response(status=500)
 
     def get_queryset(self):
