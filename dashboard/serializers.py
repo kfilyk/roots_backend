@@ -34,9 +34,12 @@ class ExperimentReadingSerializer(serializers.ModelSerializer):
         fields = ("experiment", "electrical_conductance", "reservoir_ph", "temperature", "humidity")
 
 class RecipeSerializer(serializers.ModelSerializer):
+    author = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
     class Meta:
         model = Recipe
         fields = '__all__'
+        read_only_fields = ['author']
 
 class PhaseSerializer(serializers.ModelSerializer):
     user_name = serializers.CharField(allow_blank=True, allow_null=True, required=False)

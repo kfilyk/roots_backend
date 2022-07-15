@@ -33,7 +33,10 @@ const RecipeList = () => {
   async function fetchRecipes() {
     const result = await axios(
       '/api/recipes/',
+      // '/api/recipes/recipe_user_specific/',
     );
+
+    console.log(result.data)
 
     setRecipeList(result.data)
 
@@ -45,7 +48,7 @@ const RecipeList = () => {
 
   useEffect(() => {
     fetchRecipes();
-    //fetchPhases();
+    // fetchPhases();
   }, []);
 
   async function deleteEntry(id) {
