@@ -28,7 +28,7 @@ const Device = () => {
         const result = await axios(
           '/api/experiments/loaded_devices/',
         );
-        set_loaded_devices(result.data)
+        set_loaded_devices(JSON.parse(JSON.stringify(result.data)))
     } 
     
     async function fetch_free_devices() {
@@ -36,6 +36,13 @@ const Device = () => {
           '/api/experiments/available_devices/',
         );
         set_free_devices(result.data)
+    } 
+
+    async function fetch_phases() {
+        const result = await axios(
+          '/api/phases/',
+        );
+        set_phase_list(result.data)
     } 
 
     async function terminateExperiment(id) {
@@ -50,26 +57,12 @@ const Device = () => {
         fetch_loaded_devices()
         fetch_free_devices()
       }
-
-    async function fetch_phases() {
-        const result = await axios(
-          '/api/phases/',
-        );
-        set_phase_list(result.data)
-    } 
     
-    /// why are these seperate? i dont think they need to be. probably best to concat them into one useEffect
-    useEffect(() => {
-        fetch_loaded_devices();
-        fetch_phases();
-    }, []);
-
     useEffect(() => {
         fetch_free_devices();
-    }, []);
-
-    useEffect(() => {
-    }, [loaded_devices, free_devices]);
+        fetch_loaded_devices();
+        fetch_phases();
+    }, []); // run once after start
 
     function useInterval(callback, delay) {
         const savedCallback = useRef();
@@ -92,9 +85,8 @@ const Device = () => {
       }
 
     function check_devices_online(){
-        // console.log("RR: ", loaded_devices)
-        // let devices = loaded_devices.map(device => device.device_id);
-        let device_ids = [1, 2, 4, 5, 6, 7]
+        let device_ids = loaded_devices.map(device => device.device_id);
+        // let device_ids = [1, 2, 4, 5, 6, 7]
         axios
             .post(`/api/devices/check_devices_online/`, 
                 { 
@@ -102,47 +94,26 @@ const Device = () => {
                 })
             .then((res) => {
                 res.data.forEach((device) => {
-                    // console.log(device, loaded_devices)
-                    // let index = loaded_devices.findIndex(d => d.device_id === device.id)
-                    // if (loaded_devices[index].is_online !== device.is_online){
-                    //     let updated_device = loaded_devices[index]
-                    //     updated_device.is_online = device.is_online
-                    //     set_loaded_devices([
-                    //     ...loaded_devices.slice(0, index),
-                    //     updated_device,
-                    //     ...loaded_devices.slice(index + 1)
-                    //     ])
-                    // }
+                    let index = loaded_devices.findIndex(d => d.device_id === device.id)
+                    if (loaded_devices[index].device_is_online !== device.device_is_online){
+                        let updated_device = loaded_devices[index]
+                        updated_device.device_is_online = device.device_is_online
+                        set_loaded_devices([
+                        ...loaded_devices.slice(0, index),
+                        updated_device,
+                        ...loaded_devices.slice(index + 1)
+                        ])
+                    }
                 })
             }).catch((err) => console.log("LD error: ", err))
     }
 
-
-
-
-
-
-
-
-
-
-
-    // useInterval(() => {
-    //     check_devices_online()
-    // }, 5000);
-
-
-
-
-
-
-
-
-
-
+    useInterval(() => {
+        check_devices_online()
+    }, 300000);
 
     async function addDevice() {
-        axios.post(`/api/devices/`, 
+        await axios.post(`/api/devices/`, 
             { 
                 name: device.name,
                 mac_address: device.mac_address,
@@ -160,7 +131,7 @@ const Device = () => {
     }
 
     async function editDevice() {
-        axios.patch(`/api/devices/`, 
+        await axios.patch(`/api/devices/`, 
         { 
             name: device.name,
             mac_address: device.mac_address,
@@ -239,7 +210,11 @@ const Device = () => {
                     <div key={'loaded_' + item.id} className="object_container">
                         <div className="object_top">
                             <div className="object_description">
-                                <div className="object_name">{ item.device_name } <div className="blink_me" style={{ color: item.device_is_online ? 'green': 'red'}}>●</div></div>
+                                <div className="object_name">
+                                    { item.device_name } 
+                                    <div className="blink_me" style={{ color: item.device_is_online ? 'green': 'red'}}>●</div>
+                                    <div>{item.device_is_online}</div>
+                                </div>
                                 <div>Score: { item.score } </div>
                                 <div>Current Recipe: { item.currentRecipe ? item.currentRecipe : "N/A"} </div>
                                 <div>Daily Start Time: { item.dailyStartTime ? item.dailyStartTime : "N/A"} </div>

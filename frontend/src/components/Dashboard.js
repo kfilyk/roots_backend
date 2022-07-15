@@ -26,6 +26,7 @@ const Dashboard = () => {
         .post("/auth/token/")
         .then((res) => {
           set_auth({...auth, user: res.data.username})
+          //default tab
           set_selected_tab("device" )
           // set_selected_tab("device" )
 
