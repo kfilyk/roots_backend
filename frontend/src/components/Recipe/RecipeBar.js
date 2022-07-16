@@ -73,6 +73,18 @@ const RecipeBar = (props) => {
     return style;
   };
 
+  function render_exp_reading_bars(){
+    let left = '40%'
+    return (
+      <div>
+        <div style={{left: `calc(${left})`}} className="experiment_reading_line"></div>
+        {/* <div style={{left: `calc(100% / ${left})`}} className="experiment_reading_line"></div> */}
+        {/* <div  className="experiment_reading_line"></div> */}
+        {/* <div style={{left: calc(completion_percentage())}} className="recipe_vertical_line"></div> */}
+      </div>
+    )
+  }
+
   function render_timestamps() {
     if(props.experiment){
       return (
@@ -110,9 +122,9 @@ const RecipeBar = (props) => {
       return ( 
         <>
         {render_timestamps()}
+        {render_exp_reading_bars()}
         <div style={ { width: `${ completion_percentage }%` } } className="recipe_vertical_line"></div>
         <div className="recipe_bar"> 
-          {/* <div style={{left: calc(completion_percentage())}} className="recipe_vertical_line"></div> */}
           {phases} 
         </div>
         </>

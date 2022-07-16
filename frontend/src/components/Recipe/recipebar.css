@@ -74,4 +74,12 @@ RECIPE BAR (OBJECT BOTTOM CHIN)
     order: 3;
     height: 1.5vh;
   }
+
+  .experiment_reading_line {
+    background-color: red;
+    height: 1.5vh;
+    width: 5px;
+    z-index: 2;
+    position: absolute;
+  }
   
