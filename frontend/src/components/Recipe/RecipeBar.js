@@ -89,16 +89,24 @@ const RecipeBar = (props) => {
     return style;
   };
 
+  function exp_reading_click(exp_r){
+    console.log("CLICK: ", exp_r)
+  }
+
 
   function render_exp_reading_bars(){
     if (exp_reading_dates !== undefined){
       let bars = []
       exp_reading_dates.map((er, index) => {
         let mid = new Date(er.reading_date)
+        let mid_string = mid.toISOString().substring(5,10)
+        console.log(mid_string)
         let start = new Date(start_date)
         let end = new Date(end_date)
         let style = Math.round(( ( mid - start ) / ( end - start ) ) * 100) + "%";
-        bars.push(<div key={`${props.experiment.id}_${index}`} style={{left: `calc(${style})`}} className="experiment_reading_line"></div>)
+        bars.push(
+            <a onClick={() => exp_reading_click(mid_string)} style={{left: `calc(${style})`}} className="tooltip-top" data-tooltip={mid_string}>▼</a>
+        )
       })
       return bars
     }
@@ -128,7 +136,7 @@ const RecipeBar = (props) => {
           let ph = props.phase_list.filter(phase => phase.id === recipe["phase"+i])[0] ?? null
           if(ph !== null) {
               let s = PhaseStyle(ph.type)
-              s['flex']=ph.days + " 1 0"
+              s['flex']= ph.days + " 1 0"
               if(i === 1) {
                   s['borderBottomLeftRadius'] = '10px'
               } 
