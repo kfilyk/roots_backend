@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import "./recipebar.css"
+import Popup from "reactjs-popup";
 
 const RecipeBar = (props) => {
   // we NEED this recipe state object, because the props is variably a recipe id OR a recipe object
@@ -9,6 +10,15 @@ const RecipeBar = (props) => {
   const [start_date, setStartDate] = useState(null);
   const [completion_percentage, setCompletionPercentage] = useState(0);
   const [exp_reading_dates, set_exp_reading_dates] = useState([])
+  const [show_modal, set_show_modal] = useState(false)
+  const [exp_r, set_exp_r] = useState({
+    id: -1,
+    reading_date: null, 
+    electrical_conductance: null,
+    reservoir_ph: null,
+    temperature: null,
+    humidity: null,
+  });
 
   async function getRecipe(id) {
     const result = await axios(
@@ -26,6 +36,22 @@ const RecipeBar = (props) => {
     if (result.status === 200){
       set_exp_reading_dates(result.data)
     }
+  }
+
+  async function getSingleReading(id) {
+    const result = await axios(
+      `/api/experimentreadings/${id}`
+    )
+    .catch((err) => console.log(err))
+    set_exp_r({
+      ...exp_r, 
+      id: id,
+      reading_date: result.data.reading_date,
+      electrical_conductance: result.data.electrical_conductance, 
+      reservoir_ph: result.data.reservoir_ph,
+      temperature: result.data.temperature,
+      humidity: result.data.humidity
+    })
   }
 
   useEffect(() => {
@@ -89,8 +115,9 @@ const RecipeBar = (props) => {
     return style;
   };
 
-  function exp_reading_click(exp_r){
-    console.log("CLICK: ", exp_r)
+  async function show_exp_reading(id){
+    await getSingleReading(id)
+    set_show_modal(true)
   }
 
 
@@ -100,12 +127,11 @@ const RecipeBar = (props) => {
       exp_reading_dates.map((er, index) => {
         let mid = new Date(er.reading_date)
         let mid_string = mid.toISOString().substring(5,10)
-        console.log(mid_string)
         let start = new Date(start_date)
         let end = new Date(end_date)
         let style = Math.round(( ( mid - start ) / ( end - start ) ) * 100) + "%";
         bars.push(
-            <a onClick={() => exp_reading_click(mid_string)} style={{left: `calc(${style})`}} className="tooltip-top" data-tooltip={mid_string}>▼</a>
+            <a key={`${er.id}_${index}`} onClick={() => show_exp_reading(er.id)} style={{left: `calc(${style})`}} className="tooltip-top" data-tooltip={mid_string}>▼</a>
         )
       })
       return bars
@@ -125,6 +151,42 @@ const RecipeBar = (props) => {
 
   function calc_completion_percentage(exp_days, recipe_days){
     setCompletionPercentage(Math.round(exp_days/recipe_days*100))
+  }
+
+  function renderModal(){
+    return (
+        <Popup open={show_modal} onClose={() => set_show_modal(false)} modal nested>
+            {(close) => (
+            <div className="modal" onClick={close}>
+                <div className="modal_body"  onClick={e => e.stopPropagation()}>
+                    <div className="modal_content">
+                        <div className="exp_general">
+                            <div className="exp_r_form_row">
+                              Experiment Reading ID: {exp_r.id || "N/A"}
+                            </div>
+                            <div className="exp_r_form_row">
+                              Reading Date: {exp_r.reading_date || "N/A"}
+                            </div>
+                            <div className="exp_r_form_row">
+                              Electrical Conductance: {exp_r.electrical_conductance || "N/A"}
+                            </div>
+                            <div className="exp_r_form_row">
+                              Reservoir PH: {exp_r.reservoir_ph || "N/A"}
+                            </div>
+                            <div className="exp_r_form_row">
+                              Temperature: {exp_r.temperature || "N/A"}
+                            </div>
+                            <div className="exp_r_form_row"> Humidity: {exp_r.humidity || "N/A"}</div>
+                          </div>
+                        <button className='save' onClick={() => {
+                            close();
+                        }}>Close</button>
+                    </div>
+                </div>
+            </div>
+            )}
+        </Popup>
+    )
   }
 
   function render() {
@@ -154,6 +216,7 @@ const RecipeBar = (props) => {
         <div className="recipe_bar"> 
           {phases} 
         </div>
+        {renderModal()}
         </>
       )
     }
