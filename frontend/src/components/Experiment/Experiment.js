@@ -323,7 +323,7 @@ const ExperimentList = () => {
                         <li key="add_reading"><ExperimentReading exp_id={item.id}></ExperimentReading></li>
                     </div>
                   </div>
-                  <RecipeBar recipe={item.recipe} phase_list={phase_list} experiment = {item}></RecipeBar>
+                  <RecipeBar recipe={item.recipe} phase_list={phase_list} experiment={item}></RecipeBar>
               </div>
             </div>
         ))}

@@ -6,7 +6,9 @@ const RecipeBar = (props) => {
   // we NEED this recipe state object, because the props is variably a recipe id OR a recipe object
   const [recipe, setRecipe] = useState(null);
   const [end_date, setEndDate] = useState(null);
+  const [start_date, setStartDate] = useState(null);
   const [completion_percentage, setCompletionPercentage] = useState(0);
+  const [exp_reading_dates, set_exp_reading_dates] = useState([])
 
   async function getRecipe(id) {
     const result = await axios(
@@ -14,6 +16,16 @@ const RecipeBar = (props) => {
     )
     .catch((err) => console.log(err))
     setRecipe(result.data)
+  }
+
+  async function getReadings(id) {
+    const result = await axios.post(`/api/experimentreadings/exp_reading_dates/`,
+    { 
+      exp_id: id
+    }).catch((err) => console.log(err))
+    if (result.status === 200){
+      set_exp_reading_dates(result.data)
+    }
   }
 
   useEffect(() => {
@@ -24,6 +36,11 @@ const RecipeBar = (props) => {
       setRecipe(props.recipe)
     }
 
+    if(props.experiment.id !== undefined){
+      getReadings(props.experiment.id)
+      setEndDate(props.experiment.end_date)
+      setStartDate(props.experiment.start_date)
+    }
   }, []); // [] causes useEffect to only happen ONCE after initial render - will not be called as a result of any other change
 
   useEffect(() => {
@@ -33,7 +50,6 @@ const RecipeBar = (props) => {
       setRecipe(props.recipe)
     }  
   }, [props.recipe])
-
   
   useEffect(() => {
     if(recipe !== null && (typeof props.experiment !== 'undefined')) {
@@ -73,16 +89,19 @@ const RecipeBar = (props) => {
     return style;
   };
 
+
   function render_exp_reading_bars(){
-    let left = '40%'
-    return (
-      <div>
-        <div style={{left: `calc(${left})`}} className="experiment_reading_line"></div>
-        {/* <div style={{left: `calc(100% / ${left})`}} className="experiment_reading_line"></div> */}
-        {/* <div  className="experiment_reading_line"></div> */}
-        {/* <div style={{left: calc(completion_percentage())}} className="recipe_vertical_line"></div> */}
-      </div>
-    )
+    if (exp_reading_dates !== undefined){
+      let bars = []
+      exp_reading_dates.map((er, index) => {
+        let mid = new Date(er.reading_date)
+        let start = new Date(start_date)
+        let end = new Date(end_date)
+        let style = Math.round(( ( mid - start ) / ( end - start ) ) * 100) + "%";
+        bars.push(<div key={`${props.experiment.id}_${index}`} style={{left: `calc(${style})`}} className="experiment_reading_line"></div>)
+      })
+      return bars
+    }
   }
 
   function render_timestamps() {

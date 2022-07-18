@@ -111,6 +111,12 @@ class ExperimentReadingView(viewsets.ModelViewSet):
         except ExperimentReading.DoesNotExist:
             latest = {"exp_id": -1}
             return JsonResponse({"latest_reading": latest, "pods": pods, "capacity": capacity}, safe=False)
+
+
+    @action(detail=False, methods=['POST'], name='exp_reading_dates')
+    def exp_reading_dates(self, request):
+        qs = ExperimentReading.objects.filter(experiment=request.data['exp_id']).order_by('reading_date')
+        return JsonResponse(list(qs.values('reading_date')), safe=False)
         
 
 class ExperimentView(viewsets.ModelViewSet):
