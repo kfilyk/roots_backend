@@ -9,7 +9,7 @@ const RecipeList = () => {
   const [phase_list, setPhaseList] = useState([]);
 
   const [modal, setModal] = useState({
-    show: false,
+    show: true,
     add: true,
   })
 
@@ -30,6 +30,44 @@ const RecipeList = () => {
     }
   );
 
+  const initialAddPhase = {
+    show: true,
+    user: null,
+    user_name: null,
+    days: null,
+    waterings_per_day: null,
+    watering_duration: null,
+    blue_intensity: 100,
+    red_intensity: 100,
+    white_intensity: 100,
+    lights_on_hours: null,
+    score: null,
+    type: null,
+    name: null
+  }
+
+  const [addPhase, setAddPhase] = useState(initialAddPhase);
+
+  async function addEntry(e) {
+    console.log("DD: ", addPhase)
+    const result = await axios
+      .post(`/api/phases/`, 
+        { 
+            name: addPhase.name,
+            type: addPhase.type,
+            days: addPhase.days,
+            waterings_per_day: addPhase.waterings_per_day,
+            watering_duration: addPhase.watering_duration,
+            blue_intensity: addPhase.blue_intensity,
+            red_intensity: addPhase.red_intensity,
+            white_intensity: addPhase.white_intensity,
+            lights_on_hours: addPhase.lights_on_hours
+        });
+    if(result.status === 201){
+      setPhaseList([...phase_list, result.data])
+    }
+  };
+
   async function fetchRecipes() {
     const result = await axios(
       '/api/recipes/',
@@ -48,6 +86,18 @@ const RecipeList = () => {
     fetchRecipes();
     // fetchPhases();
   }, []);
+
+  async function fetchPhases() {
+    const result = await axios(
+      '/api/phases/',
+    );
+    setPhaseList(result.data)
+  } 
+
+  useEffect(() => {
+    // fetchPhases();
+    console.log(phase_list)
+  }, [phase_list]);
 
   async function deleteEntry(id) {
     await axios.delete(`/api/recipes/${id}/`);
@@ -153,15 +203,65 @@ const RecipeList = () => {
     return <div>{phase_selection}</div>;
   }
 
+  function renderCreatePhase(){
+    return (
+      <div style={{ visibility: addPhase.show ? 'visible': 'hidden'}}>
+        <div className="form_row">
+          <input value={addPhase.name} placeholder={"Name"} onChange={(e) => setAddPhase({...addPhase, name: e.target.value})} />
+        </div>
+        <div className="form_row">
+          <select value={addPhase.type} onChange={(e) => setAddPhase({...addPhase, type: e.target.value})} >
+            <option value="Germination">Germination</option>
+            <option value="Seedling">Seedling</option>
+            <option value="Vegetative">Vegetative Growth</option>
+            <option value="Flowering">Flowering</option>
+            <option value="Harvest">Harvest</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div className="form_row">
+          <input value={addPhase.days} placeholder={"Days"} min="1" type="number" onKeyPress= {(e) => {if(e.charCode === 45) {e.preventDefault()}}} onChange={(e) => setAddPhase({...addPhase, days: e.target.value})} />
+        </div>
+        <div className="form_row">
+          <input value={addPhase.waterings_per_day} placeholder={"Watering Cycles"} onChange={(e) => setAddPhase({...addPhase, waterings_per_day: e.target.value})} />
+        </div>
+        <div className="form_row">
+          <input value={addPhase.watering_duration} placeholder={"Watering Duration"} onChange={(e) => setAddPhase({...addPhase, watering_duration: e.target.value})} />
+        </div>
+        <div className="form_row">
+          <input value={addPhase.blue_intensity} id="blue_intensity_slider" className="slider" type="range" min={0} max={100} onChange={(e) => setAddPhase({...addPhase, blue_intensity: e.target.value})}/>
+          <div className='intensity_text_overlay'>{addPhase.blue_intensity}</div>
+        </div>
+        <div className="form_row">
+          <input value={addPhase.red_intensity} id="red_intensity_slider" className="slider" type="range" min={0} max={100} onChange={(e) => setAddPhase({...addPhase, red_intensity: e.target.value})} />
+          <div className='intensity_text_overlay'>{addPhase.red_intensity}</div>
+        </div>                    
+        <div className="form_row">
+          <input value={addPhase.white_intensity}  id="white_intensity_slider" className="slider" type="range" min={0} max={100} onChange={(e) => setAddPhase({...addPhase, white_intensity: e.target.value})} />
+          <div className='intensity_text_overlay'>{addPhase.white_intensity}</div>
+        </div>   
+        <div className="form_row">
+          <input value={addPhase.lights_on_hours} placeholder={"Lights On Hours"} onChange={(e) => setAddPhase({...addPhase, lights_on_hours: e.target.value})} />
+        </div>
+        <button className='save' onClick={() => addEntry()}>Create Phase</button>
+      </div>
+    )
+  }
+
   function renderModal(){
     return (
       <>
         <div className="form_row">
-          <input name="name" value={recipe.name || ""} placeholder="Name" onChange={(e) => setRecipe({...recipe, name: e.target.value})} />
+          <div>
+            <input name="name" value={recipe.name || ""} placeholder="Name" onChange={(e) => setRecipe({...recipe, name: e.target.value})} />
+            {render_phase_selection()}
+          </div>
+          {renderCreatePhase()}
         </div>
         <div className="form_row">
-          {render_phase_selection()}
+          
         </div>
+
       </>
     )
   }
@@ -194,7 +294,12 @@ const RecipeList = () => {
             {(close) => (
             <div className="modal" onClick={close}>
                 <div className="modal_body" onClick={e => e.stopPropagation()}>
-                <div className="modal_type"> { modal.add === true ? "Create Recipe" : "Edit Recipe" } </div>
+                  <div className='createRecipeLeft'>
+                    { modal.add === true ? "Create Recipe" : "Edit Recipe" }
+                  </div>
+                  <div className='createPhaseRight'>
+                    Create Phase
+                  </div>
                 <div className="modal_content">
                   {renderModal()}
                   <button className='save' onClick={() => {

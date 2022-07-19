@@ -291,3 +291,14 @@ input:valid+span:after {
   width: calc(60%);
   margin-left: 0px;
 }
+
+.createRecipeLeft {
+  width: 50%;
+  display: inline;
+  margin-right: 25%;
+}
+
+.createPhaseRight {
+  width: 50%;
+  display: inline;
+}
