@@ -62,7 +62,7 @@ const RecipeBar = (props) => {
       setRecipe(props.recipe)
     }
 
-    if(props.experiment.id !== undefined){
+    if(props?.experiment?.id !== undefined){
       getReadings(props.experiment.id)
       setEndDate(props.experiment.end_date)
       setStartDate(props.experiment.start_date)

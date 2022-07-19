@@ -185,7 +185,7 @@ const RecipeList = () => {
                 <button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) deleteEntry(item.id) }}> DELETE </button>
               </div>
             </div>
-            <RecipeBar phase_list = {phase_list} recipe = {item}></RecipeBar>
+            <RecipeBar phase_list = {phase_list} recipe = {item} experiment={undefined}></RecipeBar>
           </div>
         </div>
       ))}
