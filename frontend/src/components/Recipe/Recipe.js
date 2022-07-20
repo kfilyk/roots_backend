@@ -9,7 +9,7 @@ const RecipeList = () => {
   const [phase_list, setPhaseList] = useState([]);
 
   const [modal, setModal] = useState({
-    show: true,
+    show: false,
     add: true,
   })
 
@@ -31,7 +31,7 @@ const RecipeList = () => {
   );
 
   const initialAddPhase = {
-    show: true,
+    show: false,
     user: null,
     user_name: null,
     days: null,
