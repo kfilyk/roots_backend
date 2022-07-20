@@ -37,17 +37,10 @@ class DeviceView(viewsets.ModelViewSet):
     @action(detail=False, methods=['GET'], name='tester_call')
     def tester_call(self, request):
 
-        phases = ['phase1', 'phase2', 'phase3', 'phase4', 'phase5', 'phase6', 'phase7', 'phase8', 'phase9', 'phase10']
-        # recipe = Recipe.objects.filter(id = 1).select_related('phase1', 'phase2', 'phase3', 'phase4', 'phase5', 'phase6', 'phase7', 'phase8', 'phase9', 'phase10')
         recipe = Recipe.objects.filter(id=1) \
                                .select_related('phase1', 'phase2', 'phase3', 'phase4', 'phase5', 'phase6', 'phase7', 'phase8', 'phase9', 'phase10')
-                            #    .filter(phase6__isnull=False, phase7__isnull=False, phase8__isnull=False, phase9__isnull=False, phase10__isnull=False) \
-
-        # x = recipe[0].phase1
-        # print("TT: ", x)
 
         stages = []
-        # print("DD: ", type(DeviceView.create_individual_stage(recipe[0].phase1)))
         if recipe[0].phase1 != None: stages.append(DeviceView.create_individual_stage(recipe[0].phase1))
         if recipe[0].phase2 != None: stages.append(DeviceView.create_individual_stage(recipe[0].phase2))
         if recipe[0].phase3 != None: stages.append(DeviceView.create_individual_stage(recipe[0].phase3))
@@ -60,7 +53,7 @@ class DeviceView(viewsets.ModelViewSet):
         if recipe[0].phase10 != None: stages.append(DeviceView.create_individual_stage(recipe[0].phase10))
 
         recipe_json = {
-            "name": recipe[0].name,
+            "name": recipe[0].name + ".json",
             "recipeFormatVersion":1,
             "pod1GrowthRate":1.2,
             "pod2GrowthRate":1.2,
@@ -74,29 +67,10 @@ class DeviceView(viewsets.ModelViewSet):
             "stages": stages,
         }
 
-        # print("TT: ", recipe_json)
-
         return JsonResponse(recipe_json, status=200)
         # return Response(status=200)
 
-    @staticmethod
-    def create_individual_stage(phase):
-        stage = {}
-        # CHANGE THIS LATER???
-        stage["numCycles"] = 3
-        # stage["numCycles"] = phase.numCycles
-        stage["lightOnTimeMinutes"] = phase.lights_on_hours * 60
 
-        # CHANGE THIS LATER???
-        stage["waterOnTimeMinutes"] = phase.waterings_per_day
-        stage["pumpOnTimeMinutes"] = phase.watering_duration
-        stage["pumpOffTimeMinutes"] = 180 - phase.watering_duration
-        stage["pumpFlowRate"] = 0.9
-        stage["whiteLed1Brightness"] = phase.white_intensity
-        stage["whiteLed2Brightness"] = phase.white_intensity
-        stage["redLedBrightness"] = phase.red_intensity
-        stage["blueLedBrightness"] = phase.blue_intensity
-        return stage
 
     @action(detail=False, methods=['POST'], name='check_devices_online')
     def check_devices_online(self, request):
@@ -269,6 +243,58 @@ class RecipeView(viewsets.ModelViewSet):
         query = Recipe.objects.filter(author = user.id)
         data = list(query.values())
         return JsonResponse(data, safe=False)
+
+    @staticmethod
+    def create_individual_stage(phase):
+        stage = {}
+        stage["numCycles"] = phase.days
+        stage["lightOnTimeMinutes"] = phase.lights_on_hours * 60
+        stage["waterOnTimeMinutes"] = phase.waterings_per_day * 180
+        stage["pumpOnTimeMinutes"] = phase.watering_duration
+        stage["pumpOffTimeMinutes"] = 180 - phase.watering_duration
+        stage["pumpFlowRate"] = 0.9
+        stage["whiteLed1Brightness"] = round(phase.white_intensity / 100, 2)
+
+        #TODO CHANGE THIS
+        stage["whiteLed2Brightness"] = round(phase.white_intensity / 100, 2) 
+        stage["redLedBrightness"] = round(phase.red_intensity / 100, 2)
+        stage["blueLedBrightness"] = round(phase.blue_intensity / 100, 2)
+        return stage
+
+    @action(detail=False, methods=['POST'], name='generate_JSON')
+    def generate_JSON(self, request):
+
+        recipe = Recipe.objects.filter(id=request.data['recipe_id']) \
+                               .select_related('phase1', 'phase2', 'phase3', 'phase4', 'phase5', 'phase6', 'phase7', 'phase8', 'phase9', 'phase10')
+
+        stages = []
+        if recipe[0].phase1 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase1))
+        if recipe[0].phase2 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase2))
+        if recipe[0].phase3 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase3))
+        if recipe[0].phase4 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase4))
+        if recipe[0].phase5 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase5))
+        if recipe[0].phase6 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase6))
+        if recipe[0].phase7 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase7))
+        if recipe[0].phase8 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase8))
+        if recipe[0].phase9 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase9))
+        if recipe[0].phase10 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase10))
+
+        recipe_json = {
+            "name": recipe[0].name.replace(" ", "_") + ".json",
+            "recipeFormatVersion":1,
+            "pod1GrowthRate":1.2,
+            "pod2GrowthRate":1.2,
+            "pod3GrowthRate":1.2,
+            "pod4GrowthRate":1.2,
+            "pod5GrowthRate":1.2,
+            "luxThresholdArray":"",
+            "totalLuxZones":"",
+            "waterConsumptionRate":1001.5,
+            "transitionRandomness":15,
+            "stages": stages,
+        }
+
+        return JsonResponse(recipe_json, status=200)
 
     def get_queryset(self):
         return Recipe.objects.all()

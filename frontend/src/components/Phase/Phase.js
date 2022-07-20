@@ -22,9 +22,9 @@ const Phase = () => {
         days: null,
         waterings_per_day: null,
         watering_duration: null,
-        blue_intensity: 100,
-        red_intensity: 100,
-        white_intensity: 100,
+        blue_intensity: 99,
+        red_intensity: 99,
+        white_intensity: 99,
         lights_on_hours: null,
         score: null,
         type: null,
@@ -143,15 +143,15 @@ const Phase = () => {
           <input value={addPhase.watering_duration} placeholder={"Watering Duration"} onChange={(e) => setAddPhase({...addPhase, watering_duration: e.target.value})} />
         </div>
         <div className="form_row">
-          <input value={addPhase.blue_intensity} id="blue_intensity_slider" className="slider" type="range" min={0} max={100} onChange={(e) => setAddPhase({...addPhase, blue_intensity: e.target.value})}/>
+          <input value={addPhase.blue_intensity} id="blue_intensity_slider" className="slider" type="range" min={0} max={99} onChange={(e) => setAddPhase({...addPhase, blue_intensity: e.target.value})}/>
           <div className='intensity_text_overlay'>{addPhase.blue_intensity}</div>
         </div>
         <div className="form_row">
-          <input value={addPhase.red_intensity} id="red_intensity_slider" className="slider" type="range" min={0} max={100} onChange={(e) => setAddPhase({...addPhase, red_intensity: e.target.value})} />
+          <input value={addPhase.red_intensity} id="red_intensity_slider" className="slider" type="range" min={0} max={99} onChange={(e) => setAddPhase({...addPhase, red_intensity: e.target.value})} />
           <div className='intensity_text_overlay'>{addPhase.red_intensity}</div>
         </div>                    
         <div className="form_row">
-          <input value={addPhase.white_intensity}  id="white_intensity_slider" className="slider" type="range" min={0} max={100} onChange={(e) => setAddPhase({...addPhase, white_intensity: e.target.value})} />
+          <input value={addPhase.white_intensity}  id="white_intensity_slider" className="slider" type="range" min={0} max={99} onChange={(e) => setAddPhase({...addPhase, white_intensity: e.target.value})} />
           <div className='intensity_text_overlay'>{addPhase.white_intensity}</div>
         </div>   
         <div className="form_row">
@@ -188,16 +188,16 @@ const Phase = () => {
           <input value={editPhase.watering_duration} placeholder={"Watering Duration"} onChange={(e) => setEditPhase({...editPhase, watering_duration: e.target.value})} />
         </div>
         <div className="form_row">
-          <input value={editPhase.blue_intensity} id="blue_intensity_slider" className="slider" type="range" min={0} max={100} onChange={(e) => setEditPhase({...editPhase, blue_intensity: e.target.value})} ></input>
+          <input value={editPhase.blue_intensity} id="blue_intensity_slider" className="slider" type="range" min={0} max={99} onChange={(e) => setEditPhase({...editPhase, blue_intensity: e.target.value})} ></input>
           <div className='intensity_text_overlay'>{editPhase.blue_intensity}</div>
         </div>
         <div className="form_row">
-          <input value={editPhase.red_intensity} id="red_intensity_slider" className="slider" type="range" min={0} max={100} onChange={(e) => setEditPhase({...editPhase, red_intensity: e.target.value})} />
+          <input value={editPhase.red_intensity} id="red_intensity_slider" className="slider" type="range" min={0} max={99} onChange={(e) => setEditPhase({...editPhase, red_intensity: e.target.value})} />
           <div className='intensity_text_overlay'>{editPhase.red_intensity}</div>
 
         </div>                    
         <div className="form_row">
-          <input value={editPhase.white_intensity} id="white_intensity_slider" className="slider" type="range" min={0} max={100} onChange={(e) => setEditPhase({...editPhase, white_intensity: e.target.value})} />
+          <input value={editPhase.white_intensity} id="white_intensity_slider" className="slider" type="range" min={0} max={99} onChange={(e) => setEditPhase({...editPhase, white_intensity: e.target.value})} />
           <div className='intensity_text_overlay'>{editPhase.white_intensity}</div>
 
         </div>   
