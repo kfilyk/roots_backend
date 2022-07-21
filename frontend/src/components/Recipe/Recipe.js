@@ -7,6 +7,11 @@ import RecipeBar from "./RecipeBar"
 const RecipeList = () => {
   const [recipe_list, setRecipeList] = useState([]);
   const [phase_list, setPhaseList] = useState([]);
+  const [recipeJSON, setRecipeJSON] = useState({
+    show: false,
+    recipe_id: -1,
+    json: {}
+  })
 
   const [modal, setModal] = useState({
     show: false,
@@ -31,7 +36,7 @@ const RecipeList = () => {
   );
 
   const initialAddPhase = {
-    show: false,
+    show: true,
     user: null,
     user_name: null,
     days: null,
@@ -125,6 +130,12 @@ const RecipeList = () => {
       .patch(`/api/recipes/${recipe.id}/`, recipe)
       .then(fetchRecipes())
       .catch((err) => console.log("Error during edit recipe: ", err))
+  };
+
+  async function getRecipeJSON(id) {
+    const result = await axios
+      .post(`/api/recipes/generate_JSON/`, {recipe_id: id});
+      setRecipeJSON({recipe_id: id, show: true, json: result.data})
   };
 
   function openModal(r){
@@ -266,6 +277,12 @@ const RecipeList = () => {
     )
   }
 
+  
+
+  function generateJSON(id){
+    getRecipeJSON(id)
+  }
+
 
   return (
     <div>
@@ -283,6 +300,7 @@ const RecipeList = () => {
                 <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
                 <button onClick={() => openModal(item)}>EDIT</button>
                 <button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) deleteEntry(item.id) }}> DELETE </button>
+                <button onClick={() => generateJSON(item.id)}>SHOW JSON</button>
               </div>
             </div>
             <RecipeBar phase_list = {phase_list} recipe = {item} experiment={undefined}></RecipeBar>
@@ -309,7 +327,22 @@ const RecipeList = () => {
               </div>
             </div>
             )}
-        </Popup>
+      </Popup>
+      <Popup open={recipeJSON.show} onClose={() => setRecipeJSON({...recipeJSON, show: false})} modal nested>
+            {(close) => (
+            <div className="modal" onClick={close}>
+                <div className="modal_body" onClick={e => e.stopPropagation()}>
+                  <div className='createPhaseRight'>
+                    Growing Recipe JSON for {recipeJSON.recipe_id}
+                  </div>
+                <div className="modal_content">
+                  <pre>{JSON.stringify(recipeJSON.json, null, 2) }</pre>
+                  <button className='save' onClick={() => {navigator.clipboard.writeText(JSON.stringify(recipeJSON.json))}}>COPY</button>
+                </div>
+              </div>
+            </div>
+            )}
+      </Popup>
     </div>
   );
 }
