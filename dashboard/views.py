@@ -41,19 +41,19 @@ class DeviceView(viewsets.ModelViewSet):
                                .select_related('phase1', 'phase2', 'phase3', 'phase4', 'phase5', 'phase6', 'phase7', 'phase8', 'phase9', 'phase10')
 
         stages = []
-        if recipe[0].phase1 != None: stages.append(DeviceView.create_individual_stage(recipe[0].phase1))
-        if recipe[0].phase2 != None: stages.append(DeviceView.create_individual_stage(recipe[0].phase2))
-        if recipe[0].phase3 != None: stages.append(DeviceView.create_individual_stage(recipe[0].phase3))
-        if recipe[0].phase4 != None: stages.append(DeviceView.create_individual_stage(recipe[0].phase4))
-        if recipe[0].phase5 != None: stages.append(DeviceView.create_individual_stage(recipe[0].phase5))
-        if recipe[0].phase6 != None: stages.append(DeviceView.create_individual_stage(recipe[0].phase6))
-        if recipe[0].phase7 != None: stages.append(DeviceView.create_individual_stage(recipe[0].phase7))
-        if recipe[0].phase8 != None: stages.append(DeviceView.create_individual_stage(recipe[0].phase8))
-        if recipe[0].phase9 != None: stages.append(DeviceView.create_individual_stage(recipe[0].phase9))
-        if recipe[0].phase10 != None: stages.append(DeviceView.create_individual_stage(recipe[0].phase10))
+        if recipe[0].phase1 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase1))
+        if recipe[0].phase2 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase2))
+        if recipe[0].phase3 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase3))
+        if recipe[0].phase4 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase4))
+        if recipe[0].phase5 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase5))
+        if recipe[0].phase6 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase6))
+        if recipe[0].phase7 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase7))
+        if recipe[0].phase8 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase8))
+        if recipe[0].phase9 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase9))
+        if recipe[0].phase10 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase10))
 
         recipe_json = {
-            "name": recipe[0].name + ".json",
+            "name": recipe[0].name.replace(" ", "_") + ".json",
             "recipeFormatVersion":1,
             "pod1GrowthRate":1.2,
             "pod2GrowthRate":1.2,
@@ -70,7 +70,44 @@ class DeviceView(viewsets.ModelViewSet):
         return JsonResponse(recipe_json, status=200)
         # return Response(status=200)
 
+    @action(detail=False, methods=['POST'], name='change_recipe')
+    def change_recipe(self, request):
+        # print(request.data)
+        token = Device.objects.get(id=request.data['device_id']).token
+        recipe = Recipe.objects.filter(id=request.data['new_recipe_id']) \
+                        .select_related('phase1', 'phase2', 'phase3', 'phase4', 'phase5', 'phase6', 'phase7', 'phase8', 'phase9', 'phase10')
 
+        stages = []
+        if recipe[0].phase1 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase1))
+        if recipe[0].phase2 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase2))
+        if recipe[0].phase3 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase3))
+        if recipe[0].phase4 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase4))
+        if recipe[0].phase5 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase5))
+        if recipe[0].phase6 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase6))
+        if recipe[0].phase7 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase7))
+        if recipe[0].phase8 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase8))
+        if recipe[0].phase9 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase9))
+        if recipe[0].phase10 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase10))
+
+        recipe_json = {
+            "name": recipe[0].name.replace(" ", "_") + ".json",
+            "recipeFormatVersion":1,
+            "pod1GrowthRate":1.2,
+            "pod2GrowthRate":1.2,
+            "pod3GrowthRate":1.2,
+            "pod4GrowthRate":1.2,
+            "pod5GrowthRate":1.2,
+            "luxThresholdArray":"",
+            "totalLuxZones":"",
+            "waterConsumptionRate":1001.5,
+            "transitionRandomness":15,
+            "stages": stages,
+        }
+        broker = MQTT()
+        broker.trigger_recipe(token, recipe_json, recipe[0].name.replace(" ", "_") + ".json")
+
+        return Response(status=200)
+        # return JsonResponse(data, safe=False)
 
     @action(detail=False, methods=['POST'], name='check_devices_online')
     def check_devices_online(self, request):

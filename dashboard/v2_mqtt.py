@@ -35,6 +35,7 @@ class MQTT:
         self.client.on_message=self.on_message
 
     def on_message(self, client, userdata, message):
+        # x = json.loads(str(message.payload.decode("utf-8")))
         x = json.loads(str(message.payload.decode("utf-8")), object_hook=lambda d: SimpleNamespace(**d))
         self.msgs.append(x)
 
@@ -55,8 +56,10 @@ class MQTT:
         if len(self.msgs) > 0:
             return json.dumps(self.msgs[0], default=lambda o: o.__dict__, 
                 sort_keys=True, indent=4)
+            # return self.msgs[0]
         else: 
             return json.dumps({})
+            # return {}
 
 
     '''
@@ -100,3 +103,30 @@ class MQTT:
         self.client.loop_stop()
         # get rid of dups: return set
         return set(x)
+
+    def trigger_recipe(self, token, recipe, recipe_name):
+        self.client.connect(self.broker, port=self.port)#connect
+        self.client.loop_start() #start loop to process received messages
+        self.client.subscribe(f'avagrows/device/client/{token}/deviceState')#subscribe
+
+        i = 0
+        while i < 5:
+            self.client.publish(f'avagrows/device/server/{token}/devicecommand', \
+                f'{{"command": 3, "name":"{recipe_name}", "data":{json.dumps(recipe)}}}')
+            time.sleep(2)
+            self.client.publish(f'avagrows/device/server/{token}/devicecommand', \
+                f'{{"command": 4, "name":"{recipe_name}"}}')
+            time.sleep(2)
+            i += 1
+            self.client.publish(f'avagrows/device/server/{token}/devicecommand','{"command": 0}')
+            time.sleep(2)
+            if len(self.msgs) > 0:
+                if self.msgs[0]['currentRecipe'] == recipe_name:
+                    break
+
+        self.client.unsubscribe(f'avagrows/device/client/{token}/deviceState')#subscribe
+
+        self.client.disconnect() #disconnect
+        self.client.loop_stop()
+
+        

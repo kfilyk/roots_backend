@@ -220,12 +220,14 @@ const Device = () => {
     */
 
     async function change_recipe(){
-        // const result = await axios
-        //   .post(`/api/devices/change_recipe/`, 
-        //     { 
-        //         device_id: recipe.device.id,
-        //         new_recipe_id: recipe.new_recipe
-        //     });
+        const result = await axios
+        .post(`/api/devices/change_recipe/`, 
+          { 
+              device_id: recipe.device.device_id,
+              new_recipe_id: parseInt(recipe.new_recipe)
+              //hour: parseInt(device.hour),
+              //minute: parseInt(device.minute),
+          });
     }
 
     function change_recipe_form(device){
@@ -342,13 +344,13 @@ const Device = () => {
                             </div>
                             <div className='form-row'>
                                 New Recipe:
-                                <select name={"recipe"} onChange={(e)=>{}}>
-                                    {renderRecipeList()}
+                                <select name={"recipe"} onChange={(e)=>set_recipe({...recipe, new_recipe: e.target.value})}>
+                                {renderRecipeList()}
                                 </select>
                             </div>
                             <button className='save' onClick={() => {
                                 change_recipe()
-                                get_device_state(recipe.device.id)
+                                // get_device_state(recipe.device.id)
                                 close()
                             }}>Change Recipe</button>
                         </div>
@@ -358,6 +360,10 @@ const Device = () => {
             </Popup>
         )
     }
+
+    useEffect(() => {
+        console.log("RR: ", recipe)
+    }, [recipe])
 
     function renderRecipeList(){
         let render = []
