@@ -12,13 +12,26 @@ class MQTT:
     def __init__(self):
         self.msgs = []
         self.broker='35.183.154.210'
-        # self.broker='0.0.0.0'
-
-        self.port = 1883
         self.client = paho.Client("client-001") #create client object client1.on_publish = on_publish #assign function to callback client1.connect(broker,port) #establish connection client1.publish("house/bulb1","on")
-        username = 'avaadmin'
-        password = 'SBrf,$TukF9Zd8:L'
-        self.client.username_pw_set(username, password)
+
+        #####
+        ##### DEV BROKER V2
+        # self.port = 1883
+        # self.username = 'avaadmin'
+        # self.password = 'SBrf,$TukF9Zd8:L'
+        #####
+        ##### 
+
+        #####
+        ##### PROD BROKER V2
+        self.broker='3.98.119.149'
+        self.port = 1883
+        self.username = 'avaadmin'
+        self.password = 'AVrf,$TukF9Zd8:Q'
+        #####
+        #####
+
+        self.client.username_pw_set(self.username, self.password)
         self.client.on_message=self.on_message
 
     def on_message(self, client, userdata, message):
