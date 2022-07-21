@@ -22,7 +22,17 @@ const Device = () => {
         mac_address: null
 
     });
+
+    const [recipe, set_recipe] = useState({
+        show: false, 
+        device: {}, 
+        new_recipe: -1,
+        // hour: 8,
+        // minute: 0, 
+    });
+
     const [phase_list, set_phase_list] = useState([])
+    const [recipe_list, set_recipe_list] = useState([])
 
     async function fetch_loaded_devices() {
         const result = await axios(
@@ -45,6 +55,13 @@ const Device = () => {
         set_phase_list(result.data)
     } 
 
+    async function fetch_recipes() {
+        const result = await axios(
+          '/api/recipes/',
+        );
+        set_recipe_list(result.data)
+    } 
+
     async function terminateExperiment(id) {
         let today_date = new Date();
         let year = today_date.getUTCFullYear();
@@ -62,6 +79,7 @@ const Device = () => {
         fetch_free_devices();
         fetch_loaded_devices();
         fetch_phases();
+        fetch_recipes();
     }, []); // run once after start
 
     function useInterval(callback, delay) {
@@ -201,6 +219,19 @@ const Device = () => {
     }
     */
 
+    async function change_recipe(){
+        // const result = await axios
+        //   .post(`/api/devices/change_recipe/`, 
+        //     { 
+        //         device_id: recipe.device.id,
+        //         new_recipe_id: recipe.new_recipe
+        //     });
+    }
+
+    function change_recipe_form(device){
+        set_recipe({...recipe, show: true, device: device})
+    }
+
     function renderDevices(){
         const device_list = []
         if (selected_device_status === 'loaded' || selected_device_status === 'all'){   
@@ -231,6 +262,7 @@ const Device = () => {
                             <li key="terminate"><button onClick={() => { if (window.confirm(`You are about to terminate experiment "${item.name}"`)) terminateExperiment(item.id) }}> TERMINATE EXPERIMENT</button></li>
                             <li key="add_reading"><ExperimentReading exp_id={item.id} exp_name={item.name}></ExperimentReading></li>
                             <li key="device_state"><button onClick={() => get_device_state(item.id)}>GET DEVICE STATE</button></li>
+                            <li key="change_recipe"><button onClick={() => change_recipe_form(item)}>CHANGE RECIPE</button></li>
                             {/*<li key="device_start_time"><button onClick={() => set_device({...device, show: true, device: item.id})}>SET DEVICE START TIME</button></li> */}
                         </div>
                     </div>
@@ -296,6 +328,43 @@ const Device = () => {
                 )}
             </Popup>
         )
+    }
+
+    function renderChangeRecipe(){
+        return (
+            <Popup open={recipe.show} onClose={() => set_recipe({...recipe, show: false})} modal nested>
+                {(close) => (
+                <div className="modal" onClick={close}>
+                    <div className="modal_body"  onClick={e => e.stopPropagation()}>
+                        <div className="modal_content">
+                            <div style={{width: 'max-content'}}>     
+                                Device Name: {recipe.device.name}
+                            </div>
+                            <div className='form-row'>
+                                New Recipe:
+                                <select name={"recipe"} onChange={(e)=>{}}>
+                                    {renderRecipeList()}
+                                </select>
+                            </div>
+                            <button className='save' onClick={() => {
+                                change_recipe()
+                                get_device_state(recipe.device.id)
+                                close()
+                            }}>Change Recipe</button>
+                        </div>
+                    </div>
+                </div>
+                )}
+            </Popup>
+        )
+    }
+
+    function renderRecipeList(){
+        let render = []
+            recipe_list.map((recipe) => {
+                render.push(<option key={recipe.id} value={recipe.id}>{recipe.name}</option>)
+            })
+        return render
     }
 
     return (
@@ -372,6 +441,7 @@ const Device = () => {
             <button onClick={() => set_device({device, show: true, add:true})}>+</button>
 
             {renderModal()}
+            {renderChangeRecipe()}
         </div>
       );
 }
