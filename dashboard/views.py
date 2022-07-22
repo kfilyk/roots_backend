@@ -236,7 +236,7 @@ class ExperimentView(viewsets.ModelViewSet):
     def loaded_devices(self, request):
         devices = Experiment.objects.filter(device_id__isnull=False).select_related('device')
         # data = list(devices.values().annotate(device_name=F('device__name')).annotate(device_is_online=F('device__is_online')).filter(user_id = self.request.user.id))
-        data = list(devices.values().annotate(device_name=F('device__name')).annotate(device_is_online=F('device__is_online')))
+        data = list(devices.values().annotate(device_name=F('device__name')).annotate(device_is_online=F('device__is_online')).annotate(currentRecipe=F('recipe__name')))
         return JsonResponse(data, safe=False)
 
     def get_queryset(self):

@@ -38,7 +38,7 @@ const Device = () => {
         const result = await axios(
           '/api/experiments/loaded_devices/',
         );
-        set_loaded_devices(JSON.parse(JSON.stringify(result.data)))
+        set_loaded_devices(result.data)
     } 
     
     async function fetch_free_devices() {
@@ -259,7 +259,6 @@ const Device = () => {
                                 </div>
                                 <div>Score: { item.score } </div>
                                 <div>Current Recipe: { item.currentRecipe ? item.currentRecipe : "N/A"} </div>
-                                <div>Daily Start Time: { item.dailyStartTime ? item.dailyStartTime : "N/A"} </div>
                             </div>
                             <div className="object_content">                          
                                 <PodCarousel experimentID={item.id} deviceId={item.device}></PodCarousel>
