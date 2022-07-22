@@ -11,6 +11,7 @@ const RecipeBar = (props) => {
   const [completion_percentage, setCompletionPercentage] = useState(0);
   const [exp_reading_dates, set_exp_reading_dates] = useState([])
   const [show_modal, set_show_modal] = useState(false)
+  const [isHover, setIsHover] = useState(false)
   const [exp_r, set_exp_r] = useState({
     id: -1,
     reading_date: null, 
@@ -209,7 +210,10 @@ const RecipeBar = (props) => {
               if (recipe["phase"+(i+1)] === null || i === 10) {
                   s['borderBottomRightRadius'] = '10px'
               }
-              phases.push(<div key={`${props.experiment}_${i}`} className="recipe_bar_phase" style={s}> <span className="recipe_bar_phase_days">{ph.days}</span> {ph.type}  <span className="recipe_bar_phase_name"> {ph.name}</span> </div>)
+              phases.push(<div key={`${props.experiment}_${i}`} className="recipe_bar_phase" style={s} onMouseEnter={()=> setIsHover(true)} onMouseLeave={()=> setIsHover(false)} > 
+                              <span className="recipe_bar_phase_days">{ph.days}</span> 
+                              <span className="recipe_bar_phase"> {isHover ? ph.name : ph.type}  </span> 
+                          </div>)
           }
       }
       return ( 
