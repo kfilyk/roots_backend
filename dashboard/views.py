@@ -104,10 +104,8 @@ class DeviceView(viewsets.ModelViewSet):
             "stages": stages,
         }
         broker = MQTT()
-        broker.trigger_recipe(token, recipe_json, recipe[0].name.replace(" ", "_") + ".json")
-
-        return Response(status=200)
-        # return JsonResponse(data, safe=False)
+        data = broker.trigger_recipe(token, recipe_json, recipe[0].name.replace(" ", "_") + ".json")
+        return JsonResponse(data, safe=False)
 
     @action(detail=False, methods=['POST'], name='check_devices_online')
     def check_devices_online(self, request):

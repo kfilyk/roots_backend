@@ -228,6 +228,15 @@ const Device = () => {
               //hour: parseInt(device.hour),
               //minute: parseInt(device.minute),
           });
+        let index = loaded_devices.findIndex(d => d.id === recipe.device.device_id)
+        let updated_device = loaded_devices[index]
+        updated_device['currentRecipe'] = result.data.currentRecipe
+        updated_device['dailyStartTime'] = result.data.dailyStartTime
+        set_loaded_devices([
+            ...loaded_devices.slice(0, index),
+            updated_device,
+            ...loaded_devices.slice(index + 1)
+        ])
     }
 
     function change_recipe_form(device){
@@ -360,10 +369,6 @@ const Device = () => {
             </Popup>
         )
     }
-
-    useEffect(() => {
-        console.log("RR: ", recipe)
-    }, [recipe])
 
     function renderRecipeList(){
         let render = []

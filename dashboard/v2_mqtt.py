@@ -109,20 +109,32 @@ class MQTT:
         self.client.loop_start() #start loop to process received messages
         self.client.subscribe(f'avagrows/device/client/{token}/deviceState')#subscribe
 
-        i = 0
-        while i < 5:
-            self.client.publish(f'avagrows/device/server/{token}/devicecommand', \
-                f'{{"command": 3, "name":"{recipe_name}", "data":{json.dumps(recipe)}}}')
-            time.sleep(2)
-            self.client.publish(f'avagrows/device/server/{token}/devicecommand', \
-                f'{{"command": 4, "name":"{recipe_name}"}}')
-            time.sleep(2)
-            i += 1
+        self.client.publish(f'avagrows/device/server/{token}/devicecommand', \
+            f'{{"command": 3, "name":"{recipe_name}", "data":{json.dumps(recipe)}}}')
+        time.sleep(1)
+        self.client.publish(f'avagrows/device/server/{token}/devicecommand', \
+            f'{{"command": 4, "name":"{recipe_name}"}}')
+        time.sleep(1)
+        self.client.publish(f'avagrows/device/server/{token}/devicecommand','{"command": 0}')
+        time.sleep(1)
+        if len(self.msgs) > 0:
+            if self.msgs[0].currentRecipe == recipe_name:
+                self.client.unsubscribe(f'avagrows/device/client/{token}/deviceState')#subscribe
+
+                self.client.disconnect() #disconnect
+                self.client.loop_stop()
+                print("1: ", self.msgs[0].deviceId)
+                return {"currentRecipe": recipe_name, "dailyStartTime": self.msgs[0].dailyStartTime}
+        else: 
             self.client.publish(f'avagrows/device/server/{token}/devicecommand','{"command": 0}')
-            time.sleep(2)
+            time.sleep(1)
             if len(self.msgs) > 0:
-                if self.msgs[0]['currentRecipe'] == recipe_name:
-                    break
+                if self.msgs[0].currentRecipe == recipe_name:
+                    self.client.unsubscribe(f'avagrows/device/client/{token}/deviceState')#subscribe
+                    self.client.disconnect() #disconnect
+                    self.client.loop_stop()
+                    print("2: ", self.msgs[0].deviceId)
+                    return {"currentRecipe": recipe_name, "dailyStartTime": self.msgs[0].dailyStartTime}
 
         self.client.unsubscribe(f'avagrows/device/client/{token}/deviceState')#subscribe
 
