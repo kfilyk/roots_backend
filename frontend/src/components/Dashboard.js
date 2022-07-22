@@ -7,6 +7,7 @@ import user_brown_icon from '../img/user_brown_icon.png';
 import Plant from "./Plant/Plant";
 import './dashboard.css';
 import Device from './Device/Device';
+import Help from './Help/Help';
 
 const Dashboard = () => {
   const [selected_tab, set_selected_tab] = useState('loading'); // in the future: loading state shows a spinning wheel
@@ -27,7 +28,7 @@ const Dashboard = () => {
         .then((res) => {
           set_auth({...auth, user: res.data.username})
           //default tab
-          set_selected_tab("device" )
+          set_selected_tab("help" )
           // set_selected_tab("device" )
 
         })
@@ -73,6 +74,9 @@ const Dashboard = () => {
         <span className={selected_tab === "plant" ? "nav-link active" : "nav-link"} onClick={() => set_selected_tab("plant" )}>
           PLANTS
         </span>
+        <span className={selected_tab === "help" ? "nav-link active" : "nav-link"} onClick={() => set_selected_tab("help" )}>
+          HELP
+        </span>
       </div>
     );
   };
@@ -90,6 +94,8 @@ const Dashboard = () => {
           return <Phase></Phase>
         case 'plant':
           return <Plant></Plant>
+        case 'help':
+            return <Help></Help>
         default:
           return <></> // replace this with spinny wheel
       }

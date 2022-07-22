@@ -99,11 +99,6 @@ const RecipeList = () => {
     setPhaseList(result.data)
   } 
 
-  useEffect(() => {
-    // fetchPhases();
-    console.log(phase_list)
-  }, [phase_list]);
-
   async function deleteEntry(id) {
     await axios.delete(`/api/recipes/${id}/`);
     setRecipeList(recipe_list.filter(recipe => recipe.id !== id))
