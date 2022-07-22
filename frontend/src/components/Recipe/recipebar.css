@@ -82,6 +82,11 @@ RECIPE BAR (OBJECT BOTTOM CHIN)
   position: absolute;
 }
 
+.exp_reading_triangle {
+  bottom: -6px;
+  font-size: 0.8em;
+  line-height: 15px;
+}
 
 
 /**

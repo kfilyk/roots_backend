@@ -132,7 +132,7 @@ const RecipeBar = (props) => {
         let end = new Date(end_date)
         let style = Math.round(( ( mid - start ) / ( end - start ) ) * 100) + "%";
         bars.push(
-            <a key={`${er.id}_${index}`} onClick={() => show_exp_reading(er.id)} style={{left: `calc(${style})`}} className="tooltip-top" data-tooltip={mid_string}>▼</a>
+            <a key={`${er.id}_${index}`} onClick={() => show_exp_reading(er.id)} style={{left: `calc(${style})`}} className="tooltip-top exp_reading_triangle" data-tooltip={mid_string}>▼</a>
         )
       })
       return bars
