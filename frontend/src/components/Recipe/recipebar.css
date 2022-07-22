@@ -3,97 +3,97 @@ RECIPE BAR (OBJECT BOTTOM CHIN)
 ============================================================================================ */
 
 .recipe_bar_timestamps {
-    padding-left:5px;
-    padding-right:5px;
-    font-family: "Brandon Grotesque Black";
-    font-size:14px;
-    color: grey;
-    display: flex;
-    margin-top:auto;
-    order:2;
-  }
-  
-  .recipe_bar_start_date {
-    width:100%;
-  }
-  
-  .recipe_bar_end_date {
-    width:100%;
-    text-align: right;
-  }
-  
-  .recipe_bar {
-    width:100%;
-    display: flex;
-    margin-top:auto;
-    order:2;
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
-    text-align: center;
-  }
-  
-  .recipe_bar_phase {
-    position: relative;
-    width:100%;
-    clear: left;
-    padding:10px;
-    text-align: left;
-    overflow: hidden;
-  }
-  
-  .recipe_bar_phase:hover .recipe_bar_phase_name {
-    transition:0.5s;
-    display: block
-  }
-  
-  
-  .recipe_bar_empty {
-    color: white;
-    padding:10px;
-    background-color: #DDDDDD;
-    margin-top:auto;
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
-    text-align: center;
-  }
-  
-  .recipe_bar_phase_days {
-    position: absolute;
-    font-size: 12px;
-    right: 5px;
-    top: 5px;
-  }
-  
-  .recipe_bar_phase_name {
-    display: none;
-    font-family: 'Brandon Grotesque Black'
-  }
+  padding-left:5px;
+  padding-right:5px;
+  font-family: "Brandon Grotesque Black";
+  font-size:14px;
+  color: grey;
+  display: flex;
+  margin-top:auto;
+  order:2;
+}
 
-  .recipe_vertical_line {
-    background-color: #EEEEEE;
-    order: 3;
-    height: 1.5vh;
-  }
+.recipe_bar_start_date {
+  width:100%;
+}
 
-  .experiment_reading_line {
-    height: 1.5vh;
-    width: 1.5%;
-    z-index: 2;
-    position: absolute;
-  }
-  
+.recipe_bar_end_date {
+  width:100%;
+  text-align: right;
+}
+
+.recipe_bar {
+  width:100%;
+  display: flex;
+  margin-top:auto;
+  order:2;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  text-align: center;
+}
+
+.recipe_bar_phase {
+  position: relative;
+  width:100%;
+  clear: left;
+  padding:10px;
+  text-align: left;
+  overflow: hidden;
+}
+
+.recipe_bar_phase:hover .recipe_bar_phase_name {
+  transition:0.5s;
+  display: block
+}
+
+
+.recipe_bar_empty {
+  color: white;
+  padding:10px;
+  background-color: #DDDDDD;
+  margin-top:auto;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  text-align: center;
+}
+
+.recipe_bar_phase_days {
+  position: absolute;
+  font-size: 12px;
+  right: 5px;
+  top: 5px;
+}
+
+.recipe_bar_phase_name {
+  display: none;
+  font-family: 'Brandon Grotesque Black'
+}
+
+.recipe_vertical_line {
+  background-color: #EEEEEE;
+  order: 3;
+  height: 1.5vh;
+}
+
+.experiment_reading_line {
+  height: 1.5vh;
+  width: 1.5%;
+  z-index: 2;
+  position: absolute;
+}
+
 
 
 /**
- * Tooltip Styles
- * https://codepen.io/cbracco/pen/kNMqmJ
- */
+* Tooltip Styles
+* https://codepen.io/cbracco/pen/kNMqmJ
+*/
 
 /* Base styles for the element that has a tooltip */
 [data-tooltip],
 .tooltip {
-  position: relative;
-  cursor: pointer;
+position: relative;
+cursor: pointer;
 }
 
 /* Base styles for the entire tooltip */
@@ -101,27 +101,27 @@ RECIPE BAR (OBJECT BOTTOM CHIN)
 [data-tooltip]:after,
 .tooltip:before,
 .tooltip:after {
-  position: absolute;
-  visibility: hidden;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
-  opacity: 0;
-  -webkit-transition: 
-	  opacity 0.2s ease-in-out,
-		visibility 0.2s ease-in-out,
-		-webkit-transform 0.2s cubic-bezier(0.71, 1.7, 0.77, 1.24);
-	-moz-transition:    
-		opacity 0.2s ease-in-out,
-		visibility 0.2s ease-in-out,
-		-moz-transform 0.2s cubic-bezier(0.71, 1.7, 0.77, 1.24);
-	transition:         
-		opacity 0.2s ease-in-out,
-		visibility 0.2s ease-in-out,
-		transform 0.2s cubic-bezier(0.71, 1.7, 0.77, 1.24);
-  -webkit-transform: translate3d(0, 0, 0);
-  -moz-transform:    translate3d(0, 0, 0);
-  transform:         translate3d(0, 0, 0);
-  pointer-events: none;
+position: absolute;
+visibility: hidden;
+-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+opacity: 0;
+-webkit-transition: 
+  opacity 0.2s ease-in-out,
+  visibility 0.2s ease-in-out,
+  -webkit-transform 0.2s cubic-bezier(0.71, 1.7, 0.77, 1.24);
+-moz-transition:    
+  opacity 0.2s ease-in-out,
+  visibility 0.2s ease-in-out,
+  -moz-transform 0.2s cubic-bezier(0.71, 1.7, 0.77, 1.24);
+transition:         
+  opacity 0.2s ease-in-out,
+  visibility 0.2s ease-in-out,
+  transform 0.2s cubic-bezier(0.71, 1.7, 0.77, 1.24);
+-webkit-transform: translate3d(0, 0, 0);
+-moz-transform:    translate3d(0, 0, 0);
+transform:         translate3d(0, 0, 0);
+pointer-events: none;
 }
 
 /* Show the entire tooltip on hover and focus */
@@ -133,32 +133,32 @@ RECIPE BAR (OBJECT BOTTOM CHIN)
 .tooltip:hover:after,
 .tooltip:focus:before,
 .tooltip:focus:after {
-  visibility: visible;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
-  opacity: 1;
+visibility: visible;
+-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+opacity: 1;
 }
 
 /* Base styles for the tooltip's directional arrow */
 .tooltip:before,
 [data-tooltip]:before {
-  z-index: 1001;
-  background: transparent;
-  content: "";
+z-index: 1001;
+background: transparent;
+content: "";
 }
 
 /* Base styles for the tooltip's content area */
 .tooltip:after,
 [data-tooltip]:after {
-  z-index: 1000;
-  padding: 8px;
-  width: 60px;
-  background-color: #000;
-  background-color: hsla(0, 0%, 20%, 0.9);
-  color: #fff;
-  content: attr(data-tooltip);
-  font-size: 14px;
-  line-height: 1.2;
+z-index: 1000;
+padding: 8px;
+width: 60px;
+background-color: #000;
+background-color: hsla(0, 0%, 20%, 0.9);
+color: #fff;
+content: attr(data-tooltip);
+font-size: 14px;
+line-height: 1.2;
 }
 
 /* Directions */
@@ -170,25 +170,25 @@ RECIPE BAR (OBJECT BOTTOM CHIN)
 .tooltip:after,
 .tooltip-top:before,
 .tooltip-top:after {
-  bottom: 100%;
-  left: 50%;
+bottom: 100%;
+left: 50%;
 }
 
 [data-tooltip]:before,
 .tooltip:before,
 .tooltip-top:before {
-  margin-left: -6px;
-  margin-bottom: -12px;
-  border-top-color: #000;
-  border-top-color: hsla(0, 0%, 20%, 0.9);
+margin-left: -6px;
+margin-bottom: -12px;
+border-top-color: #000;
+border-top-color: hsla(0, 0%, 20%, 0.9);
 }
 
 /* Horizontally align top/bottom tooltips */
 [data-tooltip]:after,
 .tooltip:after,
 .tooltip-top:after {
-  margin-left: -40px;
-  text-align: center;
+margin-left: -40px;
+text-align: center;
 }
 
 [data-tooltip]:hover:before,
@@ -203,12 +203,11 @@ RECIPE BAR (OBJECT BOTTOM CHIN)
 .tooltip-top:hover:after,
 .tooltip-top:focus:before,
 .tooltip-top:focus:after {
-  -webkit-transform: translateY(-12px);
-  -moz-transform:    translateY(-12px);
-  transform:         translateY(-12px); 
-  border-bottom-color: hsla(0, 0%, 20%, 0.9);
+-webkit-transform: translateY(-12px);
+-moz-transform:    translateY(-12px);
+transform:         translateY(-12px); 
+border-bottom-color: hsla(0, 0%, 20%, 0.9);
 }
-
 
 
 

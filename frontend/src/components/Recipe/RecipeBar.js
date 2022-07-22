@@ -150,7 +150,11 @@ const RecipeBar = (props) => {
   }
 
   function calc_completion_percentage(exp_days, recipe_days){
-    setCompletionPercentage(Math.round(exp_days/recipe_days*100))
+    let percent = Math.round(exp_days/recipe_days*100)
+    if (percent > 100){
+      percent = 100
+    }
+    setCompletionPercentage(percent)
   }
 
   function renderModal(){
