@@ -11,6 +11,7 @@ RECIPE BAR (OBJECT BOTTOM CHIN)
   display: flex;
   margin-top:auto;
   order:2;
+  margin-top: -20px;
 }
 
 .recipe_bar_start_date {
@@ -69,10 +70,10 @@ RECIPE BAR (OBJECT BOTTOM CHIN)
   font-family: 'Brandon Grotesque Black'
 }
 
-.recipe_vertical_line {
+.recipe_horizontal_line {
   background-color: #EEEEEE;
   order: 3;
-  height: 1.5vh;
+  height: 3vh;
 }
 
 .experiment_reading_line {
@@ -83,7 +84,7 @@ RECIPE BAR (OBJECT BOTTOM CHIN)
 }
 
 .exp_reading_triangle {
-  bottom: -6px;
+  bottom: -5px;
   font-size: 0.8em;
   line-height: 15px;
 }

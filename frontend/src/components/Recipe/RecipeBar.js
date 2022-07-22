@@ -142,9 +142,15 @@ const RecipeBar = (props) => {
   function render_timestamps() {
     if(props.experiment){
       return (
-        <div className="recipe_bar_timestamps"> 
+        <div>
+        <div>
+          <div style={ { width: `${ completion_percentage }%` } } className="recipe_horizontal_line"></div>
+        </div>
+        {/* <div className="recipe_bar_timestamps">  */}
+        <div className="recipe_bar_timestamps">
           <div className="recipe_bar_start_date" style={{"color": "#B1C985"}}>{props.experiment.start_date.slice(0,10)} </div>
           <div className="recipe_bar_end_date" style={{"color": "#D14C4C"}}>{end_date} </div>
+        </div> 
         </div>
       )
     }
@@ -218,9 +224,9 @@ const RecipeBar = (props) => {
       }
       return ( 
         <>
-        {render_timestamps()}
         {render_exp_reading_bars()}
-        <div style={ { width: `${ completion_percentage }%` } } className="recipe_vertical_line"></div>
+        {render_timestamps()}
+        {/* <div style={ { width: `${ completion_percentage }%` } } className="recipe_horizontal_line"></div> */}
         <div className="recipe_bar"> 
           {phases} 
         </div>
