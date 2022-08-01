@@ -64,6 +64,7 @@ OBJECT CONTAINERS (DEVICE, EXPERIMENT, ETC)
   margin:10px;
   border-radius: 10px;
   flex: 1;
+  max-width: calc(100% - 20px);
 }
 
 .object_top {
