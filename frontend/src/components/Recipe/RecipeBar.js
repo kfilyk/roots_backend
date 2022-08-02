@@ -122,7 +122,7 @@ const RecipeBar = (props) => {
   }
 
 
-  function render_exp_reading_bars(){
+  function render_exp_reading_tags(){
     if (exp_reading_dates !== undefined){
       let bars = []
       exp_reading_dates.map((er, index) => {
@@ -143,14 +143,15 @@ const RecipeBar = (props) => {
     if(props.experiment){
       return (
         <div>
-        <div>
-          <div style={ { width: `${ completion_percentage }%` } } className="recipe_horizontal_line"></div>
-        </div>
-        {/* <div className="recipe_bar_timestamps">  */}
-        <div className="recipe_bar_timestamps">
-          <div className="recipe_bar_start_date" style={{"color": "#B1C985"}}>{props.experiment.start_date.slice(0,10)} </div>
-          <div className="recipe_bar_end_date" style={{"color": "#D14C4C"}}>{end_date} </div>
-        </div> 
+          <div className="recipe_bar_timestamps">
+            <div className="recipe_bar_start_date" >{props.experiment.start_date.slice(0,10)} </div>
+            <div className="recipe_bar_end_date">{end_date} </div>
+          </div> 
+          <div>
+            <div style={ { width: `${ completion_percentage }%` } } className="recipe_horizontal_line"></div>
+          </div>
+          {/* <div className="recipe_bar_timestamps">  */}
+
         </div>
       )
     }
@@ -200,6 +201,7 @@ const RecipeBar = (props) => {
     )
   }
 
+  /* controls the width and flex of the phase elements in the recipe bar*/
   function render() {
     if(recipe === null ||  props.phase_list.length === 0 || typeof recipe === 'undefined') {
       return <div className="recipe_bar_empty"> NO RECIPE ALLOCATED </div>;
@@ -208,23 +210,28 @@ const RecipeBar = (props) => {
       for(let i = 1; i <= 10; i++) {
           let ph = props.phase_list.filter(phase => phase.id === recipe["phase"+i])[0] ?? null
           if(ph !== null) {
+              // allocate  size proportional to number of phase days
               let s = PhaseStyle(ph.type)
               s['flex']= ph.days + " 1 0"
               if(i === 1) {
                   s['borderBottomLeftRadius'] = '10px'
               } 
               if (recipe["phase"+(i+1)] === null || i === 10) {
-                  s['borderBottomRightRadius'] = '10px'
+                s['borderBottomRightRadius'] = '10px'
+              } else {
+                s['boxShadow'] = 'inset -10px 0px 20px -20px #000000';
               }
-              phases.push(<div key={`${props.experiment}_${i}`} className="recipe_bar_phase" style={s} onMouseEnter={()=> setIsHover(true)} onMouseLeave={()=> setIsHover(false)} > 
-                              <span className="recipe_bar_phase_days">{ph.days}</span> 
-                              <span className="recipe_bar_phase"> {isHover ? ph.name : ph.type}  </span> 
-                          </div>)
+              let dtt = ph.name
+              phases.push(<div key={`${props.experiment}_${i}`} className="recipe_bar_phase tooltip-top" data-tooltip={dtt} style={s} > 
+                <span className="recipe_bar_phase_days">{ph.days}</span> 
+                <span className="recipe_bar_phase_type"> {ph.type} </span> 
+
+              </div>)
           }
       }
       return ( 
         <>
-        {render_exp_reading_bars()}
+        {render_exp_reading_tags()}
         {render_timestamps()}
         {/* <div style={ { width: `${ completion_percentage }%` } } className="recipe_horizontal_line"></div> */}
         <div className="recipe_bar"> 
