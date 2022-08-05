@@ -4,7 +4,7 @@ import "./help.css"
 const Glossary = () => {
     function renderPlantAnatomy(){
       return (
-        <div>
+        <div id="gl-plant-anatomy">
             <h2>Plant Anatomy</h2>
             <table style={{width: '100%'}}>
                 <tbody>
@@ -81,7 +81,7 @@ const Glossary = () => {
 
     function renderPlantCare() {
         return (
-            <div>
+            <div id="gl-plant-care">
                 <h2>Plant Care</h2>
                 <div>
                     <h3>Plant Types</h3>
@@ -181,7 +181,7 @@ const Glossary = () => {
 
     function renderOptimalPlantGrowth() {
         return (
-            <div>
+            <div id="gl-optimal">
                 <h2>What is Optimal for Plant Growth?</h2>
                 <div>
                     <table style={{width: '100%'}}>
@@ -397,7 +397,7 @@ const Glossary = () => {
 
     function renderTools(){
         return (
-            <div>
+            <div id="gl-tools">
             <div>
                 <h2>Tools: </h2>
                 <h3>Data Collection:</h3>
@@ -424,7 +424,7 @@ const Glossary = () => {
 
     function renderPlantIssues(){
         return (
-            <div>
+            <div id="gl-plant-issues">
             <div>
                 <h2>Plant Issues: </h2>
                 <h3>Growing Recipes:</h3>
@@ -458,7 +458,7 @@ const Glossary = () => {
 
     function renderPlantRecipes(){
         return (
-            <div>
+            <div id="gl-plant-recipes">
                 <h2>Plant Recipes: </h2>
             <div>
                 <h3>Growing Recipes</h3>
@@ -535,7 +535,7 @@ const Glossary = () => {
 
     function renderAccessories(){
         return (
-            <div>
+            <div id="gl-accessories">
             <div>
                 <h2>Accessories </h2>
                 <table style={{width: '100%'}}>
