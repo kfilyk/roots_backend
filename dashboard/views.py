@@ -73,7 +73,7 @@ class DeviceView(viewsets.ModelViewSet):
     @action(detail=False, methods=['POST'], name='change_recipe')
     def change_recipe(self, request):
         # print(request.data)
-        token = Device.objects.get(id=request.data['device_id']).token
+        id = Device.objects.get(id=request.data['device_id']).id
         recipe = Recipe.objects.filter(id=request.data['new_recipe_id']) \
                         .select_related('phase1', 'phase2', 'phase3', 'phase4', 'phase5', 'phase6', 'phase7', 'phase8', 'phase9', 'phase10')
 
@@ -104,13 +104,14 @@ class DeviceView(viewsets.ModelViewSet):
             "stages": stages,
         }
         broker = MQTT()
-        data = broker.trigger_recipe(token, recipe_json, recipe[0].name.replace(" ", "_") + ".json")
+        data = broker.trigger_recipe(id, recipe_json, recipe[0].name.replace(" ", "_") + ".json")
         return JsonResponse(data, safe=False)
 
     @action(detail=False, methods=['POST'], name='check_devices_online')
     def check_devices_online(self, request):
-        query = Device.objects.filter(id__in=request.data['devices'])
-        data = list(query.values('id', device_is_online=F('is_online')))
+        #query = Device.objects.filter(id__in=request.data['devices'])
+        data = list(Device.objects.all().values('id', is_online=F('is_online')))
+        print("DATA FLAG: ", data)
         return JsonResponse(data, safe=False)
 
     def get_queryset(self):
@@ -119,9 +120,9 @@ class DeviceView(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['POST'], name='get_device_state')
     def get_device_state(self, request):
-        token = Device.objects.get(id=request.data['device']).token
+        id = Device.objects.get(id=request.data['device']).id
         broker = MQTT()
-        data = json.loads(broker.get_device_status(token))
+        data = json.loads(broker.get_device_status(id))
         filtered_data = {key: data[key] for key in data if key not in ['luxZone', 'mqttConfig', 'totalLuxZones', 'wifiCredentials']}        
         return JsonResponse(filtered_data, safe=False)
 
@@ -225,18 +226,20 @@ class ExperimentView(viewsets.ModelViewSet):
         data = list(query.values('id', 'name'))
         return JsonResponse(data, safe=False)
 
+    # available devices: those with no active experi
     @action(detail=False, methods=['GET'], name='available_devices')
     def available_devices(self, request):
-        devices = Experiment.objects.filter(device_id__isnull=False).values('device_id')
-        query = Device.objects.exclude(id__in=devices)
-        data = list(query.values('id', 'name', 'capacity').filter(user_id = self.request.user.id))
+        excluded = Experiment.objects.filter(end_date__isnull=True).filter(device_id__isnull=False).values('device_id') # list of all devices referenced by currently active experiments
+        query = Device.objects.exclude(id__in=excluded) # exclude from device list all devices which an active experiment references
+        data = list(query.values('id', 'name', 'capacity', 'mac_address', 'is_online')) # filter devices by user #.filter(user_id = self.request.user.id)
         return JsonResponse(data, safe=False)
 
+    # need to filter: loaded devices exclude those with a non-null "end_date"
     @action(detail=False, methods=['GET'], name='loaded_devices')
     def loaded_devices(self, request):
-        devices = Experiment.objects.filter(device_id__isnull=False).select_related('device')
+        devices = Experiment.objects.filter(end_date__isnull=True).filter(device_id__isnull=False).select_related('device')
         # data = list(devices.values().annotate(device_name=F('device__name')).annotate(device_is_online=F('device__is_online')).filter(user_id = self.request.user.id))
-        data = list(devices.values().annotate(device_name=F('device__name')).annotate(device_is_online=F('device__is_online')).annotate(currentRecipe=F('recipe__name')))
+        data = list(devices.values().annotate(device_name=F('device__name')).annotate(is_online=F('device__is_online')).annotate(mac_address=F('device__mac_address')).annotate(currentRecipe=F('recipe__name')))
         return JsonResponse(data, safe=False)
 
     def get_queryset(self):
@@ -264,7 +267,7 @@ class PodView(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"], name='populate_pod_carousel')
     def populate_pod_carousel(self, request):
         exp_id=json.loads(request.body)["id"]
-        qs = Pod.objects.filter(experiment = exp_id, end_date__isnull=True).annotate(plant_name=F('plant__name'))
+        qs = Pod.objects.filter(experiment = exp_id).filter(end_date__isnull=True).annotate(plant_name=F('plant__name')) #(experiment = exp_id, end_date__isnull=True)
         pods = list(qs.values())
         capacity = Experiment.objects.get(id=exp_id).device.capacity
         return JsonResponse({"capacity": capacity, "pods": pods}, safe=False)       

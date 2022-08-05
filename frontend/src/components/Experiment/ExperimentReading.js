@@ -330,6 +330,7 @@ const ExperimentReading = (props) => {
 
     function renderPodSelection(){
         let pod_container = []
+        //console.log(experiment_reading.pods)
         if (experiment_reading.pods !== []){
             for(let i = 0; i < experiment_reading.capacity; i++) {
                 let curr_pod = experiment_reading.pods.filter(pod => pod.position === (i+1))[0] ?? null

@@ -26,11 +26,10 @@ PERCENTAGE_VALIDATOR = [MinValueValidator(0), MaxValueValidator(100)]
 # https://djangoadventures.com/how-to-integrate-django-with-existing-database/
 
 class Device(models.Model):
-    id = models.AutoField(db_column='d_id', primary_key=True)
+    id = models.CharField(db_column='d_id', max_length=255, primary_key=True)
     model = models.CharField(db_column='d_model', max_length=45, blank=True, null=True) 
     name = models.CharField(db_column='d_name', max_length=45, blank=True, null=True)  
     user = models.ForeignKey(settings.AUTH_USER_MODEL, db_column='d_user_id', on_delete=models.CASCADE, blank=True, null=True)  
-    token = models.CharField(max_length=45, blank=True, null=True)
     registration_date = models.DateTimeField(db_column='d_registration_date', auto_now_add=True)  
     last_update = models.DateTimeField(db_column='d_last_update', blank=True, null=True)  
     is_online = models.BooleanField(db_column='d_is_online', default=False)  

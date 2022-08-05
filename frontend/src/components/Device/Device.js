@@ -9,8 +9,8 @@ import RecipeBar from '../Recipe/RecipeBar';
 import "./device.css"
 
 const Device = () => {
-    const [loaded_devices, set_loaded_devices] = useState([]);
-    const [free_devices, set_free_devices] = useState([]);
+    const [loaded_devices, set_loaded_devices] = useState([]); // list of device objects
+    const [free_devices, set_free_devices] = useState([]); // list of device objects
     const [selected_device_status, set_selected_device_status] = useState("all");
     const [device, set_device] = useState({
         add: true, 
@@ -18,9 +18,7 @@ const Device = () => {
         id: -1, 
         experiment_id: -1, 
         name: null, 
-        token: null,
         mac_address: null
-
     });
 
     const [recipe, set_recipe] = useState({
@@ -73,7 +71,20 @@ const Device = () => {
         await axios.patch(`/api/experiments/${id}/`, { end_date: year+"-"+month+"-"+day });
         fetch_loaded_devices()
         fetch_free_devices()
-      }
+    }
+
+    async function concludeExperiment(id) {
+        let today_date = new Date();
+        let year = today_date.getUTCFullYear();
+        let month = today_date.getUTCMonth() + 1;
+        month = month > 9 ? month : '0'+month;
+        let day = today_date.getUTCDate();
+        day = day > 9 ? day : '0'+day;
+
+        await axios.patch(`/api/experiments/${id}/`, { end_date: year+"-"+month+"-"+day });
+        fetch_loaded_devices()
+        fetch_free_devices()
+    }
     
     useEffect(() => {
         fetch_free_devices();
@@ -81,6 +92,10 @@ const Device = () => {
         fetch_phases();
         fetch_recipes();
     }, []); // run once after start
+    
+    useEffect(() => {
+        check_devices_online();
+    }, [loaded_devices, free_devices]);
 
     function useInterval(callback, delay) {
         const savedCallback = useRef();
@@ -103,24 +118,39 @@ const Device = () => {
       }
 
     function check_devices_online(){
-        let device_ids = loaded_devices.map(device => device.device_id);
-        // let device_ids = [1, 2, 4, 5, 6, 7]
+        console.log("LOADED: ", loaded_devices)
+        console.log("FREE: ", free_devices)
+
+
         axios
-            .post(`/api/devices/check_devices_online/`, 
-                { 
-                    devices: device_ids
-                })
+            .post(`/api/devices/check_devices_online/`)
             .then((res) => {
                 res.data.forEach((device) => {
-                    let index = loaded_devices.findIndex(d => d.device_id === device.id)
-                    if (loaded_devices[index].device_is_online !== device.device_is_online){
-                        let updated_device = loaded_devices[index]
-                        updated_device.device_is_online = device.device_is_online
-                        set_loaded_devices([
-                        ...loaded_devices.slice(0, index),
-                        updated_device,
-                        ...loaded_devices.slice(index + 1)
-                        ])
+                    console.log("DEVICE: ", device)
+
+                    let index = loaded_devices.findIndex(d => d.id === device.id)
+                    if(index === -1) {
+                        index = free_devices.findIndex(d => d.id === device.id)
+                        
+                        if (free_devices[index].is_online !== device.is_online){
+                            let updated_device = free_devices[index]
+                            updated_device.is_online = device.is_online
+                            set_free_devices([
+                            ...free_devices.slice(0, index),
+                            updated_device,
+                            ...free_devices.slice(index + 1)
+                            ])
+                        }
+                    } else {
+                        if (loaded_devices[index].is_online !== device.is_online){
+                            let updated_device = loaded_devices[index]
+                            updated_device.is_online = device.is_online
+                            set_loaded_devices([
+                            ...loaded_devices.slice(0, index),
+                            updated_device,
+                            ...loaded_devices.slice(index + 1)
+                            ])
+                        }
                     }
                 })
             }).catch((err) => console.log("LD error: ", err))
@@ -128,14 +158,13 @@ const Device = () => {
 
     useInterval(() => {
         check_devices_online()
-    }, 300000);
+    }, 60000);
 
     async function addDevice() {
         await axios.post(`/api/devices/`, 
             { 
                 name: device.name,
                 mac_address: device.mac_address,
-                token: device.token,
             });
         fetch_free_devices();
         fetch_loaded_devices();
@@ -153,7 +182,6 @@ const Device = () => {
         { 
             name: device.name,
             mac_address: device.mac_address,
-            token: device.token,
         });
         fetch_free_devices()
         fetch_loaded_devices();
@@ -252,28 +280,28 @@ const Device = () => {
                     <div key={'loaded_' + item.id} className="object_container">
                         <div className="object_top">
                             <div className="object_description">
-                                <div className="object_name">
+                                <div className="object_name tooltip-top" data-tooltip={"ID: "+item.id + " | MAC: " + item.mac_address.toUpperCase()}>
                                     { item.device_name } 
-                                    <div className="blink_me" style={{ color: item.device_is_online ? 'green': 'red'}}>●</div>
-                                    <div>{item.device_is_online}</div>
+                                    <div className="blink_me" style={{ color: item.is_online ? 'green': 'red'}}>●</div>
+                                    <div>{item.is_online}</div>
                                 </div>
                                 <div>Score: { item.score } </div>
-                                <div>Current Recipe: { item.currentRecipe ? item.currentRecipe : "N/A"} </div>
                             </div>
                             <div className="object_content">                          
                                 <PodCarousel experimentID={item.id} deviceId={item.device}></PodCarousel>
                             </div>
                         </div>
-                        <RecipeBar phase_list = {phase_list} recipe = {item.recipe_id} experiment = {item}></RecipeBar>
+                        <RecipeBar phase_list = {phase_list} recipe = {item.recipe_id} recipe_name = {item.currentRecipe} experiment = {item}></RecipeBar>
 
                         <div className='object_actions'>
-                        <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
-                            <li key="edit"><button onClick={() => set_device({...device, show:true, name: item.device_name, device: item.device, token: item.token})}>EDIT</button></li>
-                            <li key="terminate"><button onClick={() => { if (window.confirm(`You are about to terminate experiment "${item.name}"`)) terminateExperiment(item.id) }}> TERMINATE EXPERIMENT</button></li>
+                            <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
+                            <li key="edit"><button onClick={() => set_device({...device, show:true, name: item.device_name, device: item.device})}>EDIT</button></li>
+                            {item.end_date === null && <li key="terminate"><button onClick={() => { if (window.confirm(`Terminate experiment "${item.name}"?`)) terminateExperiment(item.id) }}> TERMINATE EXPERIMENT</button></li> }
+                            {item.end_date !== null && <li key="conclude"><button onClick={() => { if (window.confirm(`Conclude experiment "${item.name}"?`)) concludeExperiment(item.id) }}> CONCLUDE EXPERIMENT</button></li> }
                             <li key="add_reading"><ExperimentReading exp_id={item.id} exp_name={item.name}></ExperimentReading></li>
                             <li key="device_state"><button onClick={() => get_device_state(item.id)}>GET DEVICE STATE</button></li>
                             <li key="change_recipe"><button onClick={() => change_recipe_form(item)}>CHANGE RECIPE</button></li>
-                            {/*<li key="device_start_time"><button onClick={() => set_device({...device, show: true, device: item.id})}>SET DEVICE START TIME</button></li> */}
+                                {/*<li key="device_start_time"><button onClick={() => set_device({...device, show: true, device: item.id})}>SET DEVICE START TIME</button></li> */}
                         </div>
                     </div>
                 )
@@ -285,14 +313,15 @@ const Device = () => {
                 device_list.push(
                     <div key={'free_' + item.id}  className="object_container">
                         <div className="object_description">
-                        <div className="object_name">{ item.name }</div>
-                        <div>Device ID: { item.id }</div>
+                        <div className="object_name tooltip-top" data-tooltip={"ID: "+item.id + " | MAC: " + item.mac_address.toUpperCase()} >{ item.name }
+                            <div className="blink_me" style={{ color: item.is_online ? 'green': 'red'}}>●</div>
+                            <div>{item.is_online}</div>
+                        </div>
                         {/* <div>Registered: { item.registration_date.substring(0, 10) }</div> */}
-                        <div>Number of Pods: { item.capacity }</div>
                         </div>
                         <div className='object_actions'>
                             <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
-                            <li key="edit"><button onClick={() => set_device({...device, show:true, name: item.device_name, device: item.device, token: item.token})}>EDIT</button></li>
+                            <li key="edit"><button onClick={() => set_device({...device, show:true, name: item.device_name, device: item.device})}>EDIT</button></li>
                             <li key="add"><button onClick={() => set_device({...device, show:true})}>ADD EXPERIMENT</button></li>
                             <li key="delete"><button onClick={() => deleteDevice(item.id)}>DELETE</button></li>  
                             <li key="device_state"><button onClick={() => get_device_state(item.id)}>GET DEVICE STATE</button></li>
@@ -307,7 +336,7 @@ const Device = () => {
 
     function renderModal(){
         return (
-            <Popup open={device.show} onClose={() => set_device({...device, show: false, id: -1, token: null})} modal nested>
+            <Popup open={device.show} onClose={() => set_device({...device, show: false, id: -1})} modal nested>
                 {(close) => (
                 <div className="modal" onClick={close}>
                     <div className="modal_body"  onClick={e => e.stopPropagation()}>
@@ -317,9 +346,6 @@ const Device = () => {
                             </div>
                             <div className="form_row">
                                 <input value={device.mac_address} placeholder="MAC Address" onChange={(e) => {set_device({...device, mac_address: e.target.value})}} />
-                            </div>
-                            <div className="form_row">        
-                                <input value={device.token} placeholder="Token" onChange={(e) => {set_device({...device, token: e.target.value})}} />
                             </div>
                             <button className='save' onClick={() => {
                                 

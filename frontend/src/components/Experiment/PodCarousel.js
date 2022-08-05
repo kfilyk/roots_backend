@@ -17,7 +17,8 @@ const PodCarousel = (props) => {
   }, [props]);
 
   function renderProgressCircle(pod, pos){
-    if (pod === null) {
+    //console.log(pod)
+    if (pod === null || pod.end_date !== null) {
       pod = {'plant_name': 'Empty', 'score': 0, 'key': "empty_pod_"+pos} 
     } else {
       pod.key = "exp=" +pod.experiment + "_position=" + pod.position + "_plant=" + pod.plant_id
@@ -42,27 +43,26 @@ const PodCarousel = (props) => {
       //https://codepen.io/sergiopedercini/pen/jmKdbj
       <div key={pod.key} className="single-chart">
           <svg viewBox="0 0 36 36" className={'circular-chart ' + pod.colour}>
-          <path className="circle-bg"
-              d="M18 2.0845
-              a 16 16 0 0 1 0 32
-              a 16 16 0 0 1 0 -32"
-              
-          />
-          <path className="circle"
-              strokeDasharray={pod.score * 100 + ' 100'}
-              d="M18 2.0845
-              a 16 16 0 0 1 0 32
-              a 16 16 0 0 1 0 -32"
-          />
-          { pod.score === 0 ?
-              <text x="18" y="20" className="caption"> {pod.plant_name}</text>
-          : 
-          <>
-              <text x="18" y="18" className="caption"> {pod.plant_name}</text>
-              <text x="18" y="24" className="percentage"> {pod.score * 100 + "%"}</text>
-          </> 
-
-          }
+            <path className="circle-bg"
+                d="M18 2.0845
+                a 16 16 0 0 1 0 32
+                a 16 16 0 0 1 0 -32"
+                
+            />
+            <path className="circle"
+                strokeDasharray={pod.score * 100 + ' 100'}
+                d="M18 2.0845
+                a 16 16 0 0 1 0 32
+                a 16 16 0 0 1 0 -32"
+            />
+            { pod.score === 0 ?
+                <text x="18" y="20" className="caption"> {pod.plant_name}</text>
+            : 
+            <>
+                <text x="18" y="18" className="caption"> {pod.plant_name}</text>
+                <text x="18" y="24" className="percentage"> {pod.score * 100 + "%"}</text>
+            </> 
+            }
 
           </svg>
       </div>

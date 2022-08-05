@@ -11,7 +11,6 @@ const RecipeBar = (props) => {
   const [completion_percentage, setCompletionPercentage] = useState(0);
   const [exp_reading_dates, set_exp_reading_dates] = useState([])
   const [show_modal, set_show_modal] = useState(false)
-  const [isHover, setIsHover] = useState(false)
   const [exp_r, set_exp_r] = useState({
     id: -1,
     reading_date: null, 
@@ -144,7 +143,7 @@ const RecipeBar = (props) => {
       return (
         <div>
           <div className="recipe_bar_timestamps">
-            <div className="recipe_bar_start_date" >{props.experiment.start_date.slice(0,10)} </div>
+            <div className="recipe_bar_start_date" >{props.experiment.start_date.slice(0,10) + " | "+ props.recipe_name} </div>
             <div className="recipe_bar_end_date">{end_date} </div>
           </div> 
           <div>
