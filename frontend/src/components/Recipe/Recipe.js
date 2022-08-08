@@ -129,7 +129,7 @@ const RecipeList = () => {
 
   async function getRecipeJSON(id) {
     const result = await axios
-      .post(`/api/recipes/generate_JSON/`, {recipe_id: id});
+      .post(`/api/recipes/get_JSON/`, {recipe_id: id});
       setRecipeJSON({recipe_id: id, show: true, json: result.data})
   };
 
@@ -274,7 +274,7 @@ const RecipeList = () => {
 
   
 
-  function generateJSON(id){
+  function showJSON(id){
     getRecipeJSON(id)
   }
 
@@ -295,7 +295,7 @@ const RecipeList = () => {
                 <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
                 <button onClick={() => openModal(item)}>EDIT</button>
                 <button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) deleteEntry(item.id) }}> DELETE </button>
-                <button onClick={() => generateJSON(item.id)}>SHOW JSON</button>
+                <button onClick={() => showJSON(item.id)}>SHOW JSON</button>
               </div>
             </div>
             <RecipeBar phase_list = {phase_list} recipe = {item} experiment={undefined}></RecipeBar>

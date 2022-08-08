@@ -1,3 +1,4 @@
+from urllib3 import HTTPResponse
 from dashboard.models import Device, Experiment, Phase, Plant, Pod, ExperimentReading, PodReading, Recipe
 from rest_framework import viewsets
 from django.forms.models import model_to_dict
@@ -276,6 +277,13 @@ class RecipeView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
     serializer_class = RecipeSerializer
 
+    def create(self, request, *args, **kwargs):
+        recipe_id = super().create(request, *args, **kwargs).data['id']
+        recipe = Recipe.objects.get(id=recipe_id)
+        recipe.recipe_json = RecipeView.generate_JSON(recipe_id)
+        recipe.save()
+        return JsonResponse(model_to_dict(recipe), safe=False) 
+
     @action(detail=False, methods=['GET'], name='recipe_user_specific')
     def recipe_user_specific(self, request):
         user = self.request.user
@@ -300,10 +308,19 @@ class RecipeView(viewsets.ModelViewSet):
         stage["blueLedBrightness"] = round(phase.blue_intensity / 100, 2)
         return stage
 
-    @action(detail=False, methods=['POST'], name='generate_JSON')
-    def generate_JSON(self, request):
+    @action(detail=False, methods=['POST'], name='get_JSON')
+    def get_JSON(self, request):
+        # print("QQ: ", request.data['recipe_id'])
+        recipe = Recipe.objects.get(id=request.data['recipe_id'])
+        print("SS: ", recipe.recipe_json)
+        # return JsonResponse(model_to_dict(recipe), safe=False)
+        return Response(data=recipe.recipe_json, status=200)
 
-        recipe = Recipe.objects.filter(id=request.data['recipe_id']) \
+    @staticmethod
+    @action(detail=False, methods=['POST'], name='generate_JSON')
+    def generate_JSON(recipe_id):
+
+        recipe = Recipe.objects.filter(id=recipe_id) \
                                .select_related('phase1', 'phase2', 'phase3', 'phase4', 'phase5', 'phase6', 'phase7', 'phase8', 'phase9', 'phase10')
 
         stages = []
@@ -333,7 +350,7 @@ class RecipeView(viewsets.ModelViewSet):
             "stages": stages,
         }
 
-        return JsonResponse(recipe_json, status=200)
+        return recipe_json
 
     def get_queryset(self):
         return Recipe.objects.all()

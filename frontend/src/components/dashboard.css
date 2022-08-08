@@ -106,6 +106,7 @@ OBJECT CONTAINERS (DEVICE, EXPERIMENT, ETC)
   top:0px;
   border:none;
   transition: .5s transform linear;
+  z-index: 3
 }
 
 .object_actions img {
