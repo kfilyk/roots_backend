@@ -73,7 +73,6 @@ class DeviceView(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['POST'], name='change_recipe')
     def change_recipe(self, request):
-        # print(request.data)
         id = Device.objects.get(id=request.data['device_id']).id
         recipe = Recipe.objects.filter(id=request.data['new_recipe_id']) \
                         .select_related('phase1', 'phase2', 'phase3', 'phase4', 'phase5', 'phase6', 'phase7', 'phase8', 'phase9', 'phase10')
@@ -332,10 +331,7 @@ class RecipeView(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['POST'], name='get_JSON')
     def get_JSON(self, request):
-        # print("QQ: ", request.data['recipe_id'])
         recipe = Recipe.objects.get(id=request.data['recipe_id'])
-        print("SS: ", recipe.recipe_json)
-        # return JsonResponse(model_to_dict(recipe), safe=False)
         return Response(data=recipe.recipe_json, status=200)
 
     @staticmethod
@@ -379,7 +375,7 @@ class RecipeView(viewsets.ModelViewSet):
                                .select_related('phase1', 'phase2', 'phase3', 'phase4', 'phase5', 'phase6', 'phase7', 'phase8', 'phase9', 'phase10')
 
         days = 0
-        print(recipe)
+        
         if recipe[0].phase1 != None: days += recipe[0].phase1.days
         if recipe[0].phase2 != None: days += recipe[0].phase2.days
         if recipe[0].phase3 != None: days += recipe[0].phase3.days
@@ -389,7 +385,8 @@ class RecipeView(viewsets.ModelViewSet):
         if recipe[0].phase7 != None: days += recipe[0].phase7.days
         if recipe[0].phase8 != None: days += recipe[0].phase8.days
         if recipe[0].phase9 != None: days += recipe[0].phase9.days
-        if recipe[0].phase10 != None: day += recipe[0].phase10.days
+        if recipe[0].phase10 != None: days += recipe[0].phase10.days
+
         return days
 
 
