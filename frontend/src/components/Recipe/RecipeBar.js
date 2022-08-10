@@ -203,7 +203,7 @@ const RecipeBar = (props) => {
   /* controls the width and flex of the phase elements in the recipe bar*/
   function render() {
     if(recipe === null ||  props.phase_list.length === 0 || typeof recipe === 'undefined') {
-      return <div className="recipe_bar_empty"> NO RECIPE ALLOCATED </div>;
+      return <div className="empty_object"> NO RECIPE ALLOCATED </div>;
     } else {
       let phases = []
       for(let i = 1; i <= 10; i++) {
@@ -221,11 +221,18 @@ const RecipeBar = (props) => {
                 s['boxShadow'] = 'inset -10px 0px 20px -20px #000000';
               }
               let dtt = ph.name
-              phases.push(<div key={`${props.experiment}_${i}`} className="recipe_bar_phase tooltip-top" data-tooltip={dtt} style={s} > 
-                <span className="recipe_bar_phase_days">{ph.days}</span> 
-                <span className="recipe_bar_phase_type"> {ph.type} </span> 
-
-              </div>)
+              if(props.is_object) {
+                phases.push(<div key={`${props.experiment}_${i}`} class="recipe_bar_phase" style={s} > 
+                  <span class="recipe_bar_phase_days">{ph.days}</span> 
+                  <span class= "recipe_bar_phase_name object_name">{ph.name}<br></br></span>
+                  <span class="recipe_bar_phase_type"> {ph.type} </span>
+                </div>)
+              } else {
+                phases.push(<div key={`${props.experiment}_${i}`} class="recipe_bar_phase tooltip-top" data-tooltip={dtt} style={s} > 
+                  <span class="recipe_bar_phase_days">{ph.days}</span> 
+                  <span class="recipe_bar_phase_type"> {ph.type} </span>
+                </div>)
+              }
           }
       }
       return ( 

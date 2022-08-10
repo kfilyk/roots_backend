@@ -287,9 +287,10 @@ const Phase = () => {
                       for(let i = 0; i < item.waterings_per_day; i++) {
                         waterings.push(<img key={`${i}`} src={water_icon} alt="Water" style={{width:'30px', padding:'5px' }}/>)
                       }
+
                       return waterings;
                     })()}
-                  {/* per day, {item.watering_duration} minute(s) each */}
+                    watering(s) per day, {item.watering_duration} minute(s) each
                   </div>
                   <div className="lighting">
                     <div> <img src={blue_light_icon} alt="Blue Light" style={{width:'30px', padding:'5px', paddingBottom:'0px'}}></img> <div className="light_intensity" >{item.blue_intensity}</div> </div>

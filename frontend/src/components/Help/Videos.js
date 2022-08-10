@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import "./help.css"
+import QRCode from 'react-qr-code';
 
 const Videos = () => {
     function renderVideos(){
@@ -17,8 +18,9 @@ const Videos = () => {
                         </tr>
                         <tr>
                             <td>Growing Tips</td>
-                            <td>Germination Dome Removal</td>
+                            <td><a href="https://www.youtube.com/watch?v=AMdcnrt_Oc8">How to with AVA: Dome Removal</a></td>
                             <td></td>
+                            <QRCode  style={{display: "none"}} value="https://www.youtube.com/watch?v=AMdcnrt_Oc8" />
                             <td>x</td>
                         </tr>
                         <tr>
@@ -205,6 +207,76 @@ const Videos = () => {
                         </tr> */}
                         </tbody>
                     </table>
+                    
+                <div style={{display: "none"}}>
+                    <div style={{ background: 'white', padding: '16px' }}>
+                        <div>How to with AVA: Unboxing & Putting Water Float Back into Place</div>
+                        <br></br>
+                        <QRCode value="https://www.youtube.com/watch?v=d-p09zEge5g" /> 
+                    </div>
+                    <div style={{ background: 'white', padding: '16px' }}>
+                        <div>How to with AVA: Putting Water Float Back into Place</div>
+                        <br></br>
+                        <QRCode value="https://www.youtube.com/clip/UgkxqKL_0N-7qb1ufg6ZFTUG-96uz5n2ZfQz" /> 
+                    </div>
+                    <div style={{ background: 'white', padding: '16px' }}>
+                        <div>How to with AVA: Connecting to WIFI</div>
+                        <br></br>
+                        <QRCode value="https://www.youtube.com/watch?v=8loSZ5RixKw" /> 
+                    </div>
+                    <div style={{ background: 'white', padding: '16px' }}>
+                        <div>How to with AVA: Add A Pod Pack (Greens)</div>
+                        <br></br>
+                        <QRCode value="https://www.youtube.com/watch?v=Faq64uvKT1Q&ab_channel=AVASmartIndoorGarden" /> 
+                    </div>
+                    <div style={{ background: 'white', padding: '16px' }}>
+                        <div>How to with AVA: Add a Pod Pack (Tomatoes)</div>
+                        <br></br>
+                        <QRCode value="https://www.youtube.com/watch?v=5WfZrKlQrPo" /> 
+                    </div>
+                    <div style={{ background: 'white', padding: '16px' }}>
+                        <div>How to with AVA: Adding Your Trellis</div>
+                        <br></br>
+                        <QRCode value="https://www.youtube.com/watch?v=Zce2NUfoj0w&ab_channel=AVASmartIndoorGarden" /> 
+                    </div>
+                    <div style={{ background: 'white', padding: '16px' }}>
+                        <div>How to with AVA: Dome Removal</div>
+                        <br></br>
+                        <QRCode value="https://www.youtube.com/watch?v=AMdcnrt_Oc8" /> 
+                    </div>
+                    <div style={{ background: 'white', padding: '16px' }}>
+                        <div>How to with AVA: Adding Nutrients</div>
+                        <br></br>
+                        <QRCode value="https://www.youtube.com/watch?v=l_zE1_wBRCo" /> 
+                    </div>
+                    <div style={{ background: 'white', padding: '16px' }}>
+                        <div>How to with AVA: Pruning Technique (Herbs)</div>
+                        <br></br>
+                        <QRCode value="https://www.youtube.com/watch?v=UrY4cWatDQ4&feature=youtu.be" /> 
+                    </div>
+                    <div style={{ background: 'white', padding: '16px' }}>
+                        <div>How to with AVA: Filling Water Reservoir</div>
+                        <br></br>
+                        <QRCode value="https://www.youtube.com/watch?v=V2GzstdmDvM&feature=youtu.be&ab_channel=AVASmartIndoorGarden" /> 
+                    </div>
+                    <div style={{ background: 'white', padding: '16px' }}>
+                        <div>How to with AVA: Reconnect your Pump (orange flashing light)</div>
+                        <br></br>
+                        <QRCode value="https://www.youtube.com/watch?v=PvQEg7PERgs&ab_channel=AVASmartIndoorGarden" /> 
+                    </div>
+                    <div style={{ background: 'white', padding: '16px' }}>
+                        <div>How to With AVA: Thinning Plants</div>
+                        <br></br>
+                        <QRCode value="https://www.youtube.com/watch?v=Ycn4C5_RyF0" /> 
+                    </div>
+                    <div style={{ background: 'white', padding: '16px' }}>
+                        <div>How to With AVA: Enable Offline Mode</div>
+                        <br></br>
+                        <QRCode value="https://www.youtube.com/watch?v=jgvtICzs078&ab_channel=AVASmartIndoorGarden" /> 
+                    </div>
+                </div>
+
+
             </div>
             </div>
         )

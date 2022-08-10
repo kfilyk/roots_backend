@@ -81,6 +81,10 @@ const ExperimentList = () => {
     fetchRecipes();
   }, []);
 
+  useEffect(() => {
+    console.log(experiment_list);
+  }, [experiment_list]);
+
 
   async function terminateExperiment(id) {
     await axios.patch(`/api/experiments/${id}/`, { end_date: year+"-"+month+"-"+day});
@@ -208,9 +212,14 @@ const ExperimentList = () => {
   };
 
   function setDevice(e){
+
     let selected_device = available_devices.find(device => device.id.toString() === e.target.value)
     //console.log("SELECTED DEVICE ID: ", selected_device)
-    setExperiment({...experiment, device: selected_device.id, device_capacity: selected_device.capacity /*, plants:Array(5).fill(null) */})
+    if(selected_device === undefined) {
+      setExperiment({...experiment, device: null, device_capacity: null})
+    } else {
+      setExperiment({...experiment, device: selected_device.id, device_capacity: selected_device.capacity})
+    }
   }
 
   function renderAvailableDevices(){
@@ -300,7 +309,6 @@ const ExperimentList = () => {
   }
 
   return (
-    
     <div>
         {experiment_list.map(item => (
             <div key={item.id} className="item">
@@ -323,7 +331,7 @@ const ExperimentList = () => {
                         <li key="add_reading"><ExperimentReading exp_id={item.id}></ExperimentReading></li>
                     </div>
                   </div>
-                  <RecipeBar recipe={item.recipe} phase_list={phase_list} experiment={item}></RecipeBar>
+                  <RecipeBar recipe={item.recipe} phase_list={phase_list} recipe_name = {item.recipe_name} experiment={item}></RecipeBar>
               </div>
             </div>
         ))}
@@ -352,6 +360,5 @@ const ExperimentList = () => {
 
   );
 }
-
 
 export default ExperimentList;

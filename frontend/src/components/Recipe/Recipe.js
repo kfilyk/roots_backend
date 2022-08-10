@@ -283,22 +283,18 @@ const RecipeList = () => {
     <div>
 
       {recipe_list.map(item => (
-        <div key={ item.id } className="item" >
-          <div className="object_container">
-            <div className="object_top">
-              <div className="object_description">
-                <div className="object_name">{item.name}</div><div>{item.days} Days</div>
-              </div>
-
-              
-              <div className='object_actions'>
-                <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
-                <button onClick={() => openModal(item)}>EDIT</button>
-                <button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) deleteEntry(item.id) }}> DELETE </button>
-                <button onClick={() => generateJSON(item.id)}>SHOW JSON</button>
+        <div key={ item.id } class="item" >
+          <div class="object_container">
+            <div class="object_top">
+              <div class="object_description_2"><span class= "object_name">{item.name + " | "}</span>{item.days} Days</div>
+              <div class='object_actions'>
+                  <img class="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
+                  <button onClick={() => openModal(item)}>EDIT</button>
+                  <button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) deleteEntry(item.id) }}> DELETE </button>
+                  <button onClick={() => generateJSON(item.id)}>SHOW JSON</button>
               </div>
             </div>
-            <RecipeBar phase_list = {phase_list} recipe = {item} experiment={undefined}></RecipeBar>
+            <RecipeBar phase_list = {phase_list} recipe = {item} experiment={undefined} is_object={true}></RecipeBar> 
           </div>
         </div>
       ))}

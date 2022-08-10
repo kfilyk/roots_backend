@@ -14,6 +14,7 @@ class DeviceSerializer(serializers.ModelSerializer):
 
 class ExperimentSerializer(serializers.ModelSerializer):
     device_name = serializers.CharField(allow_blank=True, allow_null=True, required=False)
+    recipe_name = serializers.CharField(allow_blank=True, allow_null=True, required=False)
 
     def create(self, validated_data):
         return Experiment.objects.create(**validated_data)

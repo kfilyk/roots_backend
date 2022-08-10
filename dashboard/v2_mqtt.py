@@ -121,23 +121,23 @@ class MQTT:
         self.client.publish(f'avagrows/device/server/{id}/devicecommand','{"command": 0}')
         time.sleep(1)
         if len(self.msgs) > 0:
-            if self.msgs[0].currentRecipe == recipe_name:
+            if self.msgs[0].current_recipe == recipe_name:
                 self.client.unsubscribe(f'avagrows/device/client/{id}/deviceState')#subscribe
 
                 self.client.disconnect() #disconnect
                 self.client.loop_stop()
                 print("1: ", self.msgs[0].deviceId)
-                return {"currentRecipe": recipe_name, "dailyStartTime": self.msgs[0].dailyStartTime}
+                return {"current_recipe": recipe_name, "dailyStartTime": self.msgs[0].dailyStartTime}
         else: 
             self.client.publish(f'avagrows/device/server/{id}/devicecommand','{"command": 0}')
             time.sleep(1)
             if len(self.msgs) > 0:
-                if self.msgs[0].currentRecipe == recipe_name:
+                if self.msgs[0].current_recipe == recipe_name:
                     self.client.unsubscribe(f'avagrows/device/client/{id}/deviceState')#subscribe
                     self.client.disconnect() #disconnect
                     self.client.loop_stop()
                     print("2: ", self.msgs[0].deviceId)
-                    return {"currentRecipe": recipe_name, "dailyStartTime": self.msgs[0].dailyStartTime}
+                    return {"current_recipe": recipe_name, "dailyStartTime": self.msgs[0].dailyStartTime}
 
         self.client.unsubscribe(f'avagrows/device/client/{id}/deviceState')#subscribe
 

@@ -110,8 +110,8 @@ class DeviceView(viewsets.ModelViewSet):
     @action(detail=False, methods=['POST'], name='check_devices_online')
     def check_devices_online(self, request):
         #query = Device.objects.filter(id__in=request.data['devices'])
-        data = list(Device.objects.all().values('id', is_online=F('is_online')))
-        print("DATA FLAG: ", data)
+        #data = list(Device.objects.all().values('id', is_online=F('is_online')))
+        data = list(Device.objects.all().values('id', 'is_online'))
         return JsonResponse(data, safe=False)
 
     def get_queryset(self):
@@ -238,13 +238,13 @@ class ExperimentView(viewsets.ModelViewSet):
     @action(detail=False, methods=['GET'], name='loaded_devices')
     def loaded_devices(self, request):
         devices = Experiment.objects.filter(end_date__isnull=True).filter(device_id__isnull=False).select_related('device')
-        # data = list(devices.values().annotate(device_name=F('device__name')).annotate(device_is_online=F('device__is_online')).filter(user_id = self.request.user.id))
-        data = list(devices.values().annotate(device_name=F('device__name')).annotate(is_online=F('device__is_online')).annotate(mac_address=F('device__mac_address')).annotate(currentRecipe=F('recipe__name')))
+        data = list(devices.values().annotate(device_name=F('device__name')).annotate(is_online=F('device__is_online')).annotate(mac_address=F('device__mac_address')).annotate(current_recipe=F('recipe__name'))) # 
         return JsonResponse(data, safe=False)
 
     def get_queryset(self):
         user = self.request.user
-        return Experiment.objects.filter(user = user.id).annotate(device_name=F('device__name'))  # joins name value from device table to returned results
+        #.filter(user = user.id)
+        return Experiment.objects.annotate(device_name=F('device__name')).annotate(recipe_name=F('recipe__name'))  # joins name value from device table to returned results
 
 
 class PhaseView(viewsets.ModelViewSet):
