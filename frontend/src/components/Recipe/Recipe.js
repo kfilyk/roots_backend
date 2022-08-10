@@ -121,10 +121,17 @@ const RecipeList = () => {
   };
 
   async function editRecipe(e) {
-    await axios
+    const result = await axios
       .patch(`/api/recipes/${recipe.id}/`, recipe)
-      .then(fetchRecipes())
       .catch((err) => console.log("Error during edit recipe: ", err))
+
+    const index = recipe_list.findIndex(r => r.id === recipe.id);
+    const updatedItem = result.data
+    setRecipeList([
+      ...recipe_list.slice(0, index),
+      updatedItem,
+      ...recipe_list.slice(index + 1)
+    ])
   };
 
   async function getRecipeJSON(id) {
