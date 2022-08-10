@@ -35,6 +35,24 @@ class DeviceView(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
+    @action(detail=False, methods=['POST'], name='send_command')
+    def send_command(self, request):
+        command = request.data['parameters']['id']
+        device = request.data['parameters']['device']
+        broker = MQTT()
+        if command == 0:
+            data = json.loads(broker.get_device_status(device))
+            data = {key: data[key] for key in data if key not in ['luxZone', 'mqttConfig', 'totalLuxZones', 'wifiCredentials']}
+        elif command == 1:
+            data = json.loads(broker.get_device_status(device))
+        else: 
+            data = {"error": "wrong command id"}
+        
+        # filtered_data = {key: data[key] for key in data if key not in ['luxZone', 'mqttConfig', 'totalLuxZones', 'wifiCredentials']}        
+        return JsonResponse(data, safe=False)
+        # return Response(status=200)
+        
+
     @action(detail=False, methods=['GET'], name='tester_call')
     def tester_call(self, request):
 

@@ -21,6 +21,19 @@ const Device = () => {
         mac_address: null
     });
 
+    const [command, set_command] = useState({
+        show: false,
+        id: 0,
+        device: -1,
+        name: null,
+        data: null,
+        hour: null,
+        minute: null,
+        cycle: null,
+        stage: null,
+        response: {}
+    });
+
     const [recipe, set_recipe] = useState({
         show: false, 
         device: {}, 
@@ -161,14 +174,12 @@ const Device = () => {
     }, 60000);
 
     async function addDevice() {
-        await axios.post(`/api/devices/`, 
+        await axios.post(`/api/experiments/${device.experiment_id}`, 
             { 
-                name: device.name,
-                mac_address: device.mac_address,
+                device: device.id
             });
         fetch_free_devices();
         fetch_loaded_devices();
-
     }
 
     async function deleteDevice(id) {
@@ -216,22 +227,14 @@ const Device = () => {
         );
       };
 
-    async function get_device_state(id){
+    async function send_command(id){
         const result = await axios
-          .post(`/api/devices/get_device_state/`, 
+          .post(`/api/devices/send_command/`, 
             { 
-                device: id
+                id: command.id,
+                parameters: command
             });
-        let index = loaded_devices.findIndex(d => d.id === id)
-        let updated_device = loaded_devices[index]
-        updated_device['currentRecipe'] = result.data.currentRecipe
-        updated_device['dailyStartTime'] = result.data.dailyStartTime
-
-        set_loaded_devices([
-            ...loaded_devices.slice(0, index),
-            updated_device,
-            ...loaded_devices.slice(index + 1)
-        ])
+        set_command({...command, response: result.data})
     }
 
     /*
@@ -299,7 +302,7 @@ const Device = () => {
                             {item.end_date === null && <li key="terminate"><button onClick={() => { if (window.confirm(`Terminate experiment "${item.name}"?`)) terminateExperiment(item.id) }}> TERMINATE EXPERIMENT</button></li> }
                             {item.end_date !== null && <li key="conclude"><button onClick={() => { if (window.confirm(`Conclude experiment "${item.name}"?`)) concludeExperiment(item.id) }}> CONCLUDE EXPERIMENT</button></li> }
                             <li key="add_reading"><ExperimentReading exp_id={item.id} exp_name={item.name}></ExperimentReading></li>
-                            <li key="device_state"><button onClick={() => get_device_state(item.id)}>GET DEVICE STATE</button></li>
+                            <li key="device_state"><button onClick={() => set_command({...command, show: true, device: item.id})}>SEND COMMAND</button></li>
                             <li key="change_recipe"><button onClick={() => change_recipe_form(item)}>CHANGE RECIPE</button></li>
                                 {/*<li key="device_start_time"><button onClick={() => set_device({...device, show: true, device: item.id})}>SET DEVICE START TIME</button></li> */}
                         </div>
@@ -322,9 +325,9 @@ const Device = () => {
                         <div className='object_actions'>
                             <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
                             <li key="edit"><button onClick={() => set_device({...device, show:true, name: item.device_name, device: item.device})}>EDIT</button></li>
-                            <li key="add"><button onClick={() => set_device({...device, show:true})}>ADD EXPERIMENT</button></li>
+                            <li key="add"><button onClick={() => set_device({...device, id: item.id, add:true, show:true})}>ADD EXPERIMENT</button></li>
                             <li key="delete"><button onClick={() => deleteDevice(item.id)}>DELETE</button></li>  
-                            <li key="device_state"><button onClick={() => get_device_state(item.id)}>GET DEVICE STATE</button></li>
+                            <li key="device_state"><button onClick={() => set_command({...command, show: true, device: item.id})}>SEND COMMAND</button></li>
                             {/*<li key="device_start_time"><button onClick={() => set_device({...device, show: true, device: item.id})}>SET DEVICE START TIME</button></li> */}
                         </div>
                     </div>
@@ -342,10 +345,11 @@ const Device = () => {
                     <div className="modal_body"  onClick={e => e.stopPropagation()}>
                         <div className="modal_content">
                             <div className="form_row">
-                                <input value={device.name} placeholder="Device Name" onChange={(e) => {set_device({...device, name: e.target.value})}} />
-                            </div>
-                            <div className="form_row">
-                                <input value={device.mac_address} placeholder="MAC Address" onChange={(e) => {set_device({...device, mac_address: e.target.value})}} />
+                            { device.add === true 
+                                // ? <input value={device.name} placeholder="Device Name" onChange={(e) => {set_device({...device, name: e.target.value})}} />
+                                ? "IN PROGRESS OF CHANGING"
+                                : ""
+                            }
                             </div>
                             <button className='save' onClick={() => {
                                 
@@ -384,9 +388,44 @@ const Device = () => {
                             </div>
                             <button className='save' onClick={() => {
                                 change_recipe()
-                                // get_device_state(recipe.device.id)
                                 close()
                             }}>Change Recipe</button>
+                        </div>
+                    </div>
+                </div>
+                )}
+            </Popup>
+        )
+    }
+
+    function renderCommand(){
+        return (
+            <Popup open={command.show} onClose={() => set_command({...command, response: {}, show: false})} modal nested>
+                {(close) => (
+                <div className="modal" onClick={close}>
+                    <div className="modal_body"  onClick={e => e.stopPropagation()}>
+                        <div className="modal_content">
+                            <div style={{width: 'max-content'}}>     
+                                
+                            </div>
+                            <div className="form_row">
+                                Device ID: {command.device}
+                            </div>
+                            <div className="form_row">
+                                <select value={command.id} onChange={(e) => set_command({...command, id: e.target.value})} >
+                                    <option value="0">Get Device State</option>
+                                    <option value="1">Get Device Logs</option>
+                                </select>
+                            </div>
+                            <div className='form-row'>
+                                Response: 
+                                <pre>{JSON.stringify(command.response, null, 2) }</pre>
+                                <button className='save' onClick={() => {navigator.clipboard.writeText(JSON.stringify(command.response))}}>COPY RESPONSE</button>
+                            </div>
+                            <button className='save' onClick={() => {
+                                send_command()
+                                // close()
+                            }}>Send Command</button>
                         </div>
                     </div>
                 </div>
@@ -477,6 +516,7 @@ const Device = () => {
             <button onClick={() => set_device({device, show: true, add:true})}>+</button>
 
             {renderModal()}
+            {renderCommand()}
             {renderChangeRecipe()}
         </div>
       );
