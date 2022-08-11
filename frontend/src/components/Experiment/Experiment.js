@@ -81,10 +81,11 @@ const ExperimentList = () => {
     fetchRecipes();
   }, []);
 
+  /*
   useEffect(() => {
     console.log(experiment_list);
   }, [experiment_list]);
-
+*/
 
   async function terminateExperiment(id) {
     await axios.patch(`/api/experiments/${id}/`, { end_date: year+"-"+month+"-"+day});

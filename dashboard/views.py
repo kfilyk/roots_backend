@@ -216,7 +216,6 @@ class ExperimentView(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         exp_id = super().create(request, *args, **kwargs).data['id']
-        print("FLAG 1: ", request.data)
         exp = Experiment.objects.get(id=exp_id)
         pod_selection = request.data['pod_selection']
         #start_date = make_aware(datetime.strptime(request.data['start_date'], '%Y-%m-%d-%H-%M'))
@@ -226,7 +225,6 @@ class ExperimentView(viewsets.ModelViewSet):
 
         #new_pods = []
         for p in pod_selection:
-            print(p)
             #new_pods.append(Pod(start_date=start_date, phase=phase, position=p, plant=Plant.objects.get(id=pods[p]), experiment=exp))
             Pod.objects.create(start_date=start_date, phase=phase, position=p, plant=Plant.objects.get(id=pod_selection[p]), experiment=exp)
         return JsonResponse(model_to_dict(exp), safe=False) # should this be list?
@@ -253,16 +251,16 @@ class ExperimentView(viewsets.ModelViewSet):
     def available_devices(self, request):
         excluded = Experiment.objects.filter(end_date__isnull=True).filter(device__isnull=False).values('device') # list of all devices referenced by currently active experiments
         query = Device.objects.exclude(id__in=excluded) # exclude from device list all devices which an active experiment references
-        data = list(query.values('id', 'name', 'capacity', 'mac_address', 'is_online').order_by('name')) # filter devices by user #.filter(user_id = self.request.user.id)
+        #data = list(query.values('id', 'name', 'capacity', 'mac_address', 'is_online').order_by('name')) # filter devices by user #.filter(user_id = self.request.user.id)
+        data = list(query.values('id', 'name', 'capacity', 'mac_address', 'is_online')) 
         return JsonResponse(data, safe=False)
 
     # need to filter: loaded devices exclude those with a non-null "end_date"
     @action(detail=False, methods=['GET'], name='loaded_devices')
     def loaded_devices(self, request):
         devices = Experiment.objects.filter(end_date__isnull=True)
-        print(list(devices.values()))
         devices = devices.filter(device__isnull=False).select_related('device')
-        data = list(devices.values().annotate(device_name=F('device__name')).annotate(is_online=F('device__is_online')).annotate(mac_address=F('device__mac_address')).annotate(current_recipe=F('recipe__name')).order_by('name')) # 
+        data = list(devices.values().annotate(device_name=F('device__name')).annotate(is_online=F('device__is_online')).annotate(mac_address=F('device__mac_address')).annotate(current_recipe=F('recipe__name'))) # 
         return JsonResponse(data, safe=False)
 
     def get_queryset(self):

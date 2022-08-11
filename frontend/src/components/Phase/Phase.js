@@ -137,7 +137,7 @@ const Phase = () => {
           <input value={addPhase.days} placeholder={"Days"} min="1" type="number" onKeyPress= {(e) => {if(e.charCode === 45) {e.preventDefault()}}} onChange={(e) => setAddPhase({...addPhase, days: e.target.value})} />
         </div>
         <div className="form_row">
-          <input value={addPhase.waterings_per_day} placeholder={"Watering Cycles"} onChange={(e) => setAddPhase({...addPhase, waterings_per_day: e.target.value})} />
+          <input value={addPhase.waterings_per_day} placeholder={"Waterings Per Day"} onChange={(e) => setAddPhase({...addPhase, waterings_per_day: e.target.value})} />
         </div>
         <div className="form_row">
           <input value={addPhase.watering_duration} placeholder={"Watering Duration"} onChange={(e) => setAddPhase({...addPhase, watering_duration: e.target.value})} />
@@ -182,7 +182,7 @@ const Phase = () => {
           <input value={editPhase.days} placeholder={"Days"} min="1" type="number" onKeyPress= {(e) => {if(e.charCode === 45) {e.preventDefault()}}} onChange={(e) => setEditPhase({...editPhase, days: e.target.value})} />
         </div>
         <div className="form_row">
-          <input value={editPhase.waterings_per_day} placeholder={"Watering Cycles"} onChange={(e) => setEditPhase({...editPhase, waterings_per_day: e.target.value})} />
+          <input value={editPhase.waterings_per_day} placeholder={"Waterings Per Day"} onChange={(e) => setEditPhase({...editPhase, waterings_per_day: e.target.value})} />
         </div>
         <div className="form_row">
           <input value={editPhase.watering_duration} placeholder={"Watering Duration"} onChange={(e) => setEditPhase({...editPhase, watering_duration: e.target.value})} />
@@ -269,6 +269,7 @@ const Phase = () => {
   return (
     <div>
       {renderNav()}
+      <button onClick={() => openModal(null)}>+</button>
       {phaseList.filter(phase => (phase.type === selected_phase) || selected_phase === "All").map(item => (
         <div key={ item.id } className="item" >
           <div className="object_container" >
@@ -310,7 +311,6 @@ const Phase = () => {
         </div>
       ))}
 
-      <button onClick={() => openModal(null)}>+</button>
       <Popup open={modal.show} onClose={() => setModal({...modal, show: false})} modal nested>
             {(close) => (
             <div className="modal" onClick={close}>

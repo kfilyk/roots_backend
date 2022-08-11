@@ -9,6 +9,7 @@ const RecipeList = () => {
   const [phase_list, setPhaseList] = useState([]);
   const [recipeJSON, setRecipeJSON] = useState({
     show: false,
+    name: null,
     recipe_id: -1,
     json: {}
   })
@@ -236,7 +237,7 @@ const RecipeList = () => {
           <input value={addPhase.days} placeholder={"Days"} min="1" type="number" onKeyPress= {(e) => {if(e.charCode === 45) {e.preventDefault()}}} onChange={(e) => setAddPhase({...addPhase, days: e.target.value})} />
         </div>
         <div className="form_row">
-          <input value={addPhase.waterings_per_day} placeholder={"Watering Cycles"} onChange={(e) => setAddPhase({...addPhase, waterings_per_day: e.target.value})} />
+          <input value={addPhase.waterings_per_day} placeholder={"Waterings Per Day"} onChange={(e) => setAddPhase({...addPhase, waterings_per_day: e.target.value})} />
         </div>
         <div className="form_row">
           <input value={addPhase.watering_duration} placeholder={"Watering Duration"} onChange={(e) => setAddPhase({...addPhase, watering_duration: e.target.value})} />
@@ -335,9 +336,6 @@ const RecipeList = () => {
             {(close) => (
             <div className="modal" onClick={close}>
                 <div className="modal_body" onClick={e => e.stopPropagation()}>
-                  <div className='createPhaseRight'>
-                    Growing Recipe JSON for {recipeJSON.recipe_id}
-                  </div>
                 <div className="modal_content">
                   <pre>{JSON.stringify(recipeJSON.json, null, 2) }</pre>
                   <button className='save' onClick={() => {navigator.clipboard.writeText(JSON.stringify(recipeJSON.json))}}>COPY</button>

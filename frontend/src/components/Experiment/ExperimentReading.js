@@ -62,6 +62,7 @@ const ExperimentReading = (props) => {
         this function accesses the api and pushes the experiment reading object (including pods)
     */
     async function create_readings(){
+        /*
         const s3 = new AWS.S3({
             //accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID,
             //secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY,
@@ -70,13 +71,14 @@ const ExperimentReading = (props) => {
             secretAccessKey: "Av0jM8W+w/D/rIpOGeqCdQQPwCH+vaVvKYGBXk3o",
 
         })
+        */
 
         // include the phases of the pods at the time of reading
         for(let p in pod_readings) {
             pod_readings[p]['pod_phase'] = experiment_reading.pods[p].phase
 
             // upload photos to AWS in a seperate process
-            console.log(pod_readings[p]['photos'][0])
+            //console.log(pod_readings[p]['photos'][0])
             /*
             const uploadedImage = await s3.upload({
                 Bucket: process.env.AWS_S3_BUCKET_NAME,
@@ -86,7 +88,6 @@ const ExperimentReading = (props) => {
             */
         }
 
-        /*
         const result = await axios
             .post(`/api/experimentreadings/`, 
             { 
@@ -100,11 +101,11 @@ const ExperimentReading = (props) => {
             .catch((err) => console.log(err));
         if (result.status === 200){
             console.log("Experiment readings and pod readings uploaded successfully")
+            // refresh devices
         } else {
             console.log("SERVER ERROR: Experiment + pod readings were not uploaded")
         }
-        */
-
+        
      }
 
     function parse_value(field, value){

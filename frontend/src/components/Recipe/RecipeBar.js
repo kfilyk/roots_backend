@@ -131,7 +131,7 @@ const RecipeBar = (props) => {
         let end = new Date(end_date)
         let style = Math.round(( ( mid - start ) / ( end - start ) ) * 100) + "%";
         bars.push(
-            <a key={`${er.id}_${index}`} onClick={() => show_exp_reading(er.id)} style={{left: `calc(${style})`}} className="tooltip-top exp_reading_triangle" data-tooltip={mid_string}>▼</a>
+            <a key={`${er.id}_${index}`} onClick={() => show_exp_reading(er.id)} style={{left: `calc(${style})`}} className="tooltip exp_reading_triangle" data-tooltip={mid_string}>▼</a>
         )
       })
       return bars
@@ -228,7 +228,7 @@ const RecipeBar = (props) => {
                   <span className="recipe_bar_phase_type"> {ph.type} </span>
                 </div>)
               } else {
-                phases.push(<div key={`${props.experiment}_${i}`} className="recipe_bar_phase tooltip-top" data-tooltip={dtt} style={s} > 
+                phases.push(<div key={`${props.experiment}_${i}`} className="recipe_bar_phase tooltip" data-tooltip={dtt} style={s} > 
                   <span className="recipe_bar_phase_days">{ph.days}</span> 
                   <span className="recipe_bar_phase_type"> {ph.type} </span>
                 </div>)

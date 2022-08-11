@@ -45,7 +45,6 @@ const Device = () => {
     const [phase_list, set_phase_list] = useState([])
     const [recipe_list, set_recipe_list] = useState([])
     const [plant_list, setPlantList] = useState([]);
-
     const [experiment, setExperiment] = useState({
         id: null,
         name: null,
@@ -259,7 +258,7 @@ const Device = () => {
                     <div key={'loaded_' + item.id} className="object_container">
                         <div className="object_top">
                             <div className="object_description">
-                                <div className="object_name tooltip-top" data-tooltip={"ID: "+item.id + " | MAC: " + item.mac_address.toUpperCase()}>
+                                <div className="object_name tooltip" data-tooltip={"ID: "+item.id + " | MAC: " + item.mac_address.toUpperCase()}>
                                     {item.device_name + " | " + item.name} 
                                     <div className="blink_me" style={{ color: item.is_online ? 'green': 'red'}}>●</div>
                                 </div>
@@ -289,7 +288,7 @@ const Device = () => {
                     <div key={'free_' + item.id}  className="object_container">
                         <div className="object_top">
                             <div className="object_description">
-                            <div className="object_name tooltip-top" data-tooltip={"ID: "+item.id + " | MAC: " + item.mac_address.toUpperCase()} >
+                            <div className="object_name tooltip" data-tooltip={"ID: "+item.id + " | MAC: " + item.mac_address.toUpperCase()} >
                                 { item.name }
                                 <div className="blink_me" style={{ color: item.is_online ? 'green': 'red'}}>●</div>
                             </div>

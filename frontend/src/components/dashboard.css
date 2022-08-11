@@ -249,9 +249,7 @@ opacity: 1;
 [data-tooltip]:before,
 [data-tooltip]:after,
 .tooltip:before,
-.tooltip:after,
-.tooltip-top:before,
-.tooltip-top:after {
+.tooltip:after {
   text-align: center;
   bottom: 110%;
   left: 0%;
