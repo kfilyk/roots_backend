@@ -85,16 +85,13 @@ class MQTT:
             return json.dumps({})
             # return {}
 
-
-    '''
     def set_start_time(self, device, hour, minute):
         self.client.connect(self.broker, port=self.port)#connect
         self.client.loop_start() #start loop to process received messages
 
         self.client.subscribe(f'avagrows/device/client/{device}/deviceState')#subscribe
         self.client.publish(f'avagrows/device/server/{device}/devicecommand', f'{{"command": 11, "hour":{hour}, "minute":{minute}}}', qos=1)
-
-        time.sleep(2)
+        time.sleep(1)
         self.client.publish(f'avagrows/device/server/{device}/devicecommand','{"command": 0}')#publish
         time.sleep(1)
         self.client.unsubscribe(f'avagrows/device/client/{device}/deviceState')#subscribe
@@ -105,8 +102,9 @@ class MQTT:
         if len(self.msgs) > 0:
             return self.msgs[0].dailyStartTime
         else: 
-            return json.dumps({})
-    '''
+            return -1
+        
+
 
     def check_online(self):
         self.client.connect(self.broker, port=self.port)#connect
