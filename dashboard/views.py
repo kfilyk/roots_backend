@@ -1,3 +1,4 @@
+from urllib3 import HTTPResponse
 from dashboard.models import Device, Experiment, Phase, Plant, Pod, ExperimentReading, PodReading, Recipe
 from rest_framework import viewsets
 from django.forms.models import model_to_dict
@@ -33,6 +34,24 @@ class DeviceView(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+    @action(detail=False, methods=['POST'], name='send_command')
+    def send_command(self, request):
+        command = request.data['parameters']['id']
+        device = request.data['parameters']['device']
+        broker = MQTT()
+        if command == 0:
+            data = json.loads(broker.get_device_status(device))
+            data = {key: data[key] for key in data if key not in ['luxZone', 'mqttConfig', 'totalLuxZones', 'wifiCredentials']}
+        elif command == 1:
+            data = json.loads(broker.get_device_status(device))
+        else: 
+            data = {"error": "wrong command id"}
+        
+        # filtered_data = {key: data[key] for key in data if key not in ['luxZone', 'mqttConfig', 'totalLuxZones', 'wifiCredentials']}        
+        return JsonResponse(data, safe=False)
+        # return Response(status=200)
+        
 
     @action(detail=False, methods=['GET'], name='tester_call')
     def tester_call(self, request):
@@ -72,7 +91,6 @@ class DeviceView(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['POST'], name='change_recipe')
     def change_recipe(self, request):
-        # print(request.data)
         id = Device.objects.get(id=request.data['device_id']).id
         recipe = Recipe.objects.filter(id=request.data['new_recipe_id']) \
                         .select_related('phase1', 'phase2', 'phase3', 'phase4', 'phase5', 'phase6', 'phase7', 'phase8', 'phase9', 'phase10')
@@ -276,6 +294,35 @@ class RecipeView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
     serializer_class = RecipeSerializer
 
+    def create(self, request, *args, **kwargs):
+        recipe_id = super().create(request, *args, **kwargs).data['id']
+        recipe = Recipe.objects.get(id=recipe_id)
+        recipe.recipe_json = RecipeView.generate_JSON(recipe_id)
+        recipe.save()
+        return JsonResponse(model_to_dict(recipe), safe=False) 
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        instance.recipe_json = RecipeView.generate_JSON(instance.id)
+        request.data['days'] = RecipeView.calculate_days(instance.id)
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        if getattr(instance, '_prefetched_objects_cache', None):
+            # If 'prefetch_related' has been applied to a queryset, we need to
+            # forcibly invalidate the prefetch cache on the instance.
+            instance._prefetched_objects_cache = {}
+
+        return Response(serializer.data)
+
     @action(detail=False, methods=['GET'], name='recipe_user_specific')
     def recipe_user_specific(self, request):
         user = self.request.user
@@ -300,10 +347,14 @@ class RecipeView(viewsets.ModelViewSet):
         stage["blueLedBrightness"] = round(phase.blue_intensity / 100, 2)
         return stage
 
-    @action(detail=False, methods=['POST'], name='generate_JSON')
-    def generate_JSON(self, request):
+    @action(detail=False, methods=['POST'], name='get_JSON')
+    def get_JSON(self, request):
+        recipe = Recipe.objects.get(id=request.data['recipe_id'])
+        return Response(data=recipe.recipe_json, status=200)
 
-        recipe = Recipe.objects.filter(id=request.data['recipe_id']) \
+    @staticmethod
+    def generate_JSON(recipe_id):
+        recipe = Recipe.objects.filter(id=recipe_id) \
                                .select_related('phase1', 'phase2', 'phase3', 'phase4', 'phase5', 'phase6', 'phase7', 'phase8', 'phase9', 'phase10')
 
         stages = []
@@ -333,7 +384,29 @@ class RecipeView(viewsets.ModelViewSet):
             "stages": stages,
         }
 
-        return JsonResponse(recipe_json, status=200)
+        return recipe_json
+
+    @staticmethod
+    @action(detail=False, methods=['POST'], name='calculate_days')
+    def calculate_days(recipe_id):
+        recipe = Recipe.objects.filter(id=recipe_id) \
+                               .select_related('phase1', 'phase2', 'phase3', 'phase4', 'phase5', 'phase6', 'phase7', 'phase8', 'phase9', 'phase10')
+
+        days = 0
+        
+        if recipe[0].phase1 != None: days += recipe[0].phase1.days
+        if recipe[0].phase2 != None: days += recipe[0].phase2.days
+        if recipe[0].phase3 != None: days += recipe[0].phase3.days
+        if recipe[0].phase4 != None: days += recipe[0].phase4.days
+        if recipe[0].phase5 != None: days += recipe[0].phase5.days
+        if recipe[0].phase6 != None: days += recipe[0].phase6.days
+        if recipe[0].phase7 != None: days += recipe[0].phase7.days
+        if recipe[0].phase8 != None: days += recipe[0].phase8.days
+        if recipe[0].phase9 != None: days += recipe[0].phase9.days
+        if recipe[0].phase10 != None: days += recipe[0].phase10.days
+
+        return days
+
 
     def get_queryset(self):
         return Recipe.objects.all()

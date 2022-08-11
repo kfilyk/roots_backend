@@ -83,16 +83,7 @@ OBJECT CONTAINERS (DEVICE, EXPERIMENT, ETC)
   border-top-left-radius: 10px;
   min-width: 30%;
 }
-.object_description_2 {
-  display: inline_block;
-  flex-direction: column;
-  padding:5px;
-  padding-left:10px;
-  padding-top:10px;
-  border-bottom-left-radius: 10px;
-  border-top-left-radius: 10px;
-  min-width: 30%;
-}
+
 .object_name {
   font-family: "Brandon Grotesque Black";
 }
@@ -116,7 +107,7 @@ OBJECT CONTAINERS (DEVICE, EXPERIMENT, ETC)
   top:0px;
   border:none;
   transition: .5s transform linear;
-  z-index: 1000;
+  z-index: 3
 }
 
 .object_actions img {

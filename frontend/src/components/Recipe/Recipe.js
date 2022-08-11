@@ -121,15 +121,22 @@ const RecipeList = () => {
   };
 
   async function editRecipe(e) {
-    await axios
+    const result = await axios
       .patch(`/api/recipes/${recipe.id}/`, recipe)
-      .then(fetchRecipes())
       .catch((err) => console.log("Error during edit recipe: ", err))
+
+    const index = recipe_list.findIndex(r => r.id === recipe.id);
+    const updatedItem = result.data
+    setRecipeList([
+      ...recipe_list.slice(0, index),
+      updatedItem,
+      ...recipe_list.slice(index + 1)
+    ])
   };
 
   async function getRecipeJSON(id) {
     const result = await axios
-      .post(`/api/recipes/generate_JSON/`, {recipe_id: id});
+      .post(`/api/recipes/get_JSON/`, {recipe_id: id});
       setRecipeJSON({recipe_id: id, show: true, json: result.data})
   };
 
@@ -274,7 +281,7 @@ const RecipeList = () => {
 
   
 
-  function generateJSON(id){
+  function showJSON(id){
     getRecipeJSON(id)
   }
 
@@ -283,15 +290,20 @@ const RecipeList = () => {
     <div>
 
       {recipe_list.map(item => (
-        <div key={ item.id } class="item" >
-          <div class="object_container">
-            <div class="object_top">
-              <div class="object_description_2"><span class= "object_name">{item.name + " | "}</span>{item.days} Days</div>
-              <div class='object_actions'>
-                  <img class="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
-                  <button onClick={() => openModal(item)}>EDIT</button>
-                  <button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) deleteEntry(item.id) }}> DELETE </button>
-                  <button onClick={() => generateJSON(item.id)}>SHOW JSON</button>
+
+        <div key={ item.id } className="item" >
+          <div className="object_container">
+            <div className="object_top">
+              <div className="object_description">
+                <div className="object_name">{item.name}</div><div>{item.days} Days</div>
+              </div>
+
+              
+              <div className='object_actions'>
+                <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
+                <button onClick={() => openModal(item)}>EDIT</button>
+                <button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) deleteEntry(item.id) }}> DELETE </button>
+                <button onClick={() => showJSON(item.id)}>SHOW JSON</button>
               </div>
             </div>
             <RecipeBar phase_list = {phase_list} recipe = {item} experiment={undefined} is_object={true}></RecipeBar> 

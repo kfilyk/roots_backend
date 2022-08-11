@@ -63,6 +63,28 @@ class MQTT:
             return json.dumps({})
             # return {}
 
+    def get_device_logs(self, device):
+        self.client.connect(self.broker, port=self.port)#connect
+        self.client.loop_start() #start loop to process received messages
+
+        self.client.subscribe(f'avagrows/device/client/{device}/devicelogs')#subscribe
+        self.client.publish(f'avagrows/device/server/{device}/devicecommand','{"command": 1}')#publish
+        time.sleep(2)
+        self.client.unsubscribe(f'avagrows/device/client/{device}/deviceState')#subscribe
+
+        time.sleep(1)
+
+        self.client.disconnect() #disconnect
+        self.client.loop_stop()
+
+        if len(self.msgs) > 0:
+            return json.dumps(self.msgs[0], default=lambda o: o.__dict__, 
+                sort_keys=True, indent=4)
+            # return self.msgs[0]
+        else: 
+            return json.dumps({})
+            # return {}
+
 
     '''
     def set_start_time(self, device, hour, minute):
