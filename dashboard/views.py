@@ -218,7 +218,8 @@ class ExperimentView(viewsets.ModelViewSet):
         print("FLAG 1: ", request.data)
         exp = Experiment.objects.get(id=exp_id)
         pod_selection = request.data['pod_selection']
-        start_date = make_aware(datetime.strptime(request.data['start_date'], '%Y-%m-%d-%H-%M'))
+        #start_date = make_aware(datetime.strptime(request.data['start_date'], '%Y-%m-%d-%H-%M'))
+        start_date = make_aware(datetime.strptime(request.data['start_date'], '%Y-%m-%d'))
         print(start_date)
         phase = 0
 

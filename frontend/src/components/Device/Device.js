@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import QRCode from 'react-qr-code';
 import axios from "axios";
 import vertical_menu_icon from "../../img/vertical_menu_icon.png"
 import Popup from "reactjs-popup";
@@ -18,7 +17,7 @@ day = day > 9 ? day : '0'+day;
 
 const Device = () => {
     const [loaded_devices, set_loaded_devices] = useState([]); // list of device objects
-    const [free_devices, set_free_devices] = useState([]); // list of device objects
+    const [available_devices, set_available_devices] = useState([]); // list of device objects
     const [selected_device_status, set_selected_device_status] = useState("all");
     const [device, set_device] = useState({
         add: true, 
@@ -69,7 +68,7 @@ const Device = () => {
         const result = await axios(
           '/api/experiments/available_devices/',
         );
-        set_free_devices(result.data)
+        set_available_devices(result.data)
     } 
 
     async function fetch_phases() {
@@ -93,7 +92,6 @@ const Device = () => {
         setPlantList(result.data)
       }
       
-
     async function terminateExperiment(id) {
         let today_date = new Date();
         let year = today_date.getUTCFullYear();
@@ -117,7 +115,7 @@ const Device = () => {
     
     useEffect(() => {
         check_devices_online();
-    }, [loaded_devices, free_devices]);
+    }, [loaded_devices, available_devices]);
 
     function useInterval(callback, delay) {
         const savedCallback = useRef();
@@ -140,10 +138,6 @@ const Device = () => {
       }
 
     function check_devices_online(){
-        console.log("LOADED: ", loaded_devices)
-        console.log("FREE: ", free_devices)
-
-
         axios
             .post(`/api/devices/check_devices_online/`)
             .then((res) => {
@@ -152,14 +146,14 @@ const Device = () => {
                 res.data.forEach((device) => {
                     let index = loaded_devices.findIndex(d => d.id === device.id)
                     if(index === -1) {
-                        index = free_devices.findIndex(d => d.id === device.id)
-                        if (free_devices[index].is_online !== device.is_online){
-                            let updated_device = free_devices[index]
+                        index = available_devices.findIndex(d => d.id === device.id)
+                        if (available_devices[index].is_online !== device.is_online){
+                            let updated_device = available_devices[index]
                             updated_device.is_online = device.is_online
-                            set_free_devices([
-                            ...free_devices.slice(0, index),
+                            set_available_devices([
+                            ...available_devices.slice(0, index),
                             updated_device,
-                            ...free_devices.slice(index + 1)
+                            ...available_devices.slice(index + 1)
                             ])
                         }
                     } else {
@@ -232,7 +226,7 @@ const Device = () => {
         fetch_loaded_devices();
     }
     */
-
+    /*
     async function change_recipe(){
         const result = await axios
         .post(`/api/devices/change_recipe/`, 
@@ -251,6 +245,7 @@ const Device = () => {
             ...loaded_devices.slice(index + 1)
         ])
     }
+    */
 
     /*
     function change_recipe_form(device){
@@ -293,7 +288,7 @@ const Device = () => {
         }
 
         if (selected_device_status === 'free' || selected_device_status === 'all'){
-            free_devices.map((item) => {
+            available_devices.map((item) => {
                 device_list.push(
                     <div key={'free_' + item.id}  className="object_container">
                         <div className="object_top">
@@ -416,8 +411,11 @@ const Device = () => {
             recipe: experiment.recipe
           })
         .catch((err) => console.log(err));
+        fetch_free_devices();
+        fetch_loaded_devices();
         close();
-      }
+
+    }
 
     function renderModal(){
         return (
