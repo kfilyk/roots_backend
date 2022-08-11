@@ -33,12 +33,11 @@ const Device = () => {
         show: false,
         id: 0,
         device: -1,
-        name: null,
-        data: null,
-        hour: null,
-        minute: null,
-        cycle: null,
-        stage: null,
+        hour: 0,
+        minute: 0,
+        cycle: 0,
+        stage: 0,
+        timezone: "Etc/GMT-7",
         response: {}
     });
 
@@ -187,7 +186,9 @@ const Device = () => {
         );
       };
 
-    async function send_command(id){
+    async function send_command(e){
+        e.preventDefault()
+        set_command({...command, response: {}})
         const result = await axios
           .post(`/api/devices/send_command/`, 
             { 
@@ -446,6 +447,76 @@ const Device = () => {
         setExperiment({name: null, device: null, device_name: null, pods: [], start_date: year+"-"+month+"-"+day, pod_selection: {}})
     }
 
+
+    function renderCommandParameters(id){
+        switch(true) {
+            case id == 7:
+                return(
+                    <div>
+                        <div>
+                            Select Timezone
+                            <select value={command.timezone} onChange={(e) => set_command({...command, timezone: e.target.value})} >
+                                <option value="Etc/GMT-12">Etc/GMT+12</option>
+                                <option value="Etc/GMT-11">Etc/GMT+11</option>
+                                <option value="Etc/GMT-10">Etc/GMT+10</option>
+                                <option value="Etc/GMT-9">Etc/GMT+9</option>
+                                <option value="Etc/GMT-8">Etc/GMT+8</option>
+                                <option value="Etc/GMT-7">Etc/GMT+7</option>
+                                <option value="Etc/GMT-6">Etc/GMT+6</option>
+                                <option value="Etc/GMT-5">Etc/GMT+5</option>
+                                <option value="Etc/GMT-4">Etc/GMT+4</option>
+                                <option value="Etc/GMT-3">Etc/GMT+3</option>
+                                <option value="Etc/GMT-2">Etc/GMT+2</option>
+                                <option value="Etc/GMT-1">Etc/GMT+1</option>
+                                <option value="Etc/GMT">Etc/GMT</option>
+                                <option value="Etc/GMT+1">Etc/GMT-1</option>
+                                <option value="Etc/GMT+2">Etc/GMT-2</option>
+                                <option value="Etc/GMT+3">Etc/GMT-3</option>
+                                <option value="Etc/GMT+4">Etc/GMT-4</option>
+                                <option value="Etc/GMT+5">Etc/GMT-5</option>
+                                <option value="Etc/GMT+6">Etc/GMT-6</option>
+                                <option value="Etc/GMT+7">Etc/GMT-7</option>
+                                <option value="Etc/GMT+8">Etc/GMT-8</option>
+                                <option value="Etc/GMT+9">Etc/GMT-9</option>
+                                <option value="Etc/GMT+10">Etc/GMT-10</option>
+                                <option value="Etc/GMT+11">Etc/GMT-11</option>
+                                <option value="Etc/GMT+12">Etc/GMT-12</option>
+                            </select>
+                        </div>
+                        <div>
+                        </div>
+                    </div>
+                )
+            case id == 11:
+                return(
+                    <div>
+                        <div>
+                            Hour (0 to 23):
+                            <input type="number" value={command.hour} min={0} max={23} onChange={(e) => {set_command({...command, hour: e.target.value})}} />
+                        </div>
+                        <div>
+                            Minute (0 to 59):
+                            <input type="number" value={command.minute} min={0} max={59} onChange={(e) => {set_command({...command, minute: e.target.value})}} />
+                        </div>
+                    </div>
+                )
+            case id == 14:
+                return(
+                    <div>
+                        <div>
+                            Stage:
+                            <input type="number" value={command.stage} min={0} onChange={(e) => {set_command({...command, stage: e.target.value})}} />
+                        </div>
+                        <div>
+                            Cycle:
+                            <input type="number" value={command.cycle} min={0} onChange={(e) => {set_command({...command, cycle: e.target.value})}} />
+                        </div>
+                    </div>
+            )
+        }
+        return
+    }
+
     function renderCommand(){
         return (
             <Popup open={command.show} onClose={() => set_command({...command, response: {}, show: false})} modal nested>
@@ -463,15 +534,20 @@ const Device = () => {
                                 <select value={command.id} onChange={(e) => set_command({...command, id: e.target.value})} >
                                     <option value="0">Get Device State</option>
                                     <option value="1">Get Device Logs</option>
+                                    <option value="7">Change Timezone</option>
+                                    <option value="11">Change Start Time</option>
+                                    <option value="12">Trigger OTA</option>
+                                    <option value="14">Change Stage and Cycle</option>
                                 </select>
                             </div>
+                            {renderCommandParameters(command.id)}
                             <div className='form-row'>
                                 Response: 
                                 <pre>{JSON.stringify(command.response, null, 2) }</pre>
                                 <button className='save' onClick={() => {navigator.clipboard.writeText(JSON.stringify(command.response))}}>COPY RESPONSE</button>
                             </div>
-                            <button className='save' onClick={() => {
-                                send_command()
+                            <button className='save' onClick={(e) => {
+                                send_command(e)
                                 // close()
                             }}>Send Command</button>
                         </div>

@@ -85,16 +85,13 @@ class MQTT:
             return json.dumps({})
             # return {}
 
-
-    '''
     def set_start_time(self, device, hour, minute):
         self.client.connect(self.broker, port=self.port)#connect
         self.client.loop_start() #start loop to process received messages
 
         self.client.subscribe(f'avagrows/device/client/{device}/deviceState')#subscribe
         self.client.publish(f'avagrows/device/server/{device}/devicecommand', f'{{"command": 11, "hour":{hour}, "minute":{minute}}}', qos=1)
-
-        time.sleep(2)
+        time.sleep(1)
         self.client.publish(f'avagrows/device/server/{device}/devicecommand','{"command": 0}')#publish
         time.sleep(1)
         self.client.unsubscribe(f'avagrows/device/client/{device}/deviceState')#subscribe
@@ -105,8 +102,64 @@ class MQTT:
         if len(self.msgs) > 0:
             return self.msgs[0].dailyStartTime
         else: 
-            return json.dumps({})
-    '''
+            return -11
+
+    def change_timezone(self, device, timezone):
+        self.client.connect(self.broker, port=self.port)#connect
+        self.client.loop_start() #start loop to process received messages
+
+        self.client.subscribe(f'avagrows/device/client/{device}/deviceState')#subscribe
+        self.client.publish(f'avagrows/device/server/{device}/devicecommand', f'{{"command": 7, "timezone":"{timezone}"}}')
+        time.sleep(2)
+        self.client.publish(f'avagrows/device/server/{device}/devicecommand','{"command": 0}')#publish
+        time.sleep(2)
+        self.client.unsubscribe(f'avagrows/device/client/{device}/deviceState')#subscribe
+
+        self.client.disconnect() #disconnect
+        self.client.loop_stop()
+
+        if len(self.msgs) > 0:
+            return {"timezone": self.msgs[0].timezone, "localTime": self.msgs[0].localTime, "isTimeSynced": self.msgs[0].isTimeSynced}
+        else: 
+            return -7
+
+    def trigger_OTA(self, device):
+        self.client.connect(self.broker, port=self.port)#connect
+        self.client.loop_start() #start loop to process received messages
+
+        self.client.subscribe(f'avagrows/device/client/{device}/deviceState')#subscribe
+        self.client.publish(f'avagrows/device/server/{device}/devicecommand', f'{{"command": 12}}')
+        time.sleep(1)
+        self.client.publish(f'avagrows/device/server/{device}/devicecommand', f'{{"command": 12}}')
+        time.sleep(1)
+        self.client.publish(f'avagrows/device/server/{device}/devicecommand', f'{{"command": 0}}')
+        time.sleep(1)
+        self.client.unsubscribe(f'avagrows/device/client/{device}/deviceState')#subscribe
+
+        self.client.disconnect() #disconnect
+        self.client.loop_stop()
+
+        if len(self.msgs) > 0:
+            return self.msgs[0].macAddress
+        else: 
+            return -12
+        
+    def change_stage_cycle(self, device, stage, cycle):
+        self.client.connect(self.broker, port=self.port)#connect
+        self.client.loop_start() #start loop to process received messages
+        x = f'{{"command": 14, "newCycle":{cycle}, "newStage":{stage}}}'
+        print("DSLJDALKDJASL ", x)
+        self.client.subscribe(f'avagrows/device/client/{device}/deviceState')#subscribe
+        self.client.publish(f'avagrows/device/server/{device}/devicecommand', f'{{"command": 14, "newCycle":{cycle}, "newStage":{stage}}}')
+        time.sleep(1)
+        self.client.publish(f'avagrows/device/server/{device}/devicecommand', f'{{"command": 14, "newCycle":{cycle}, "newStage":{stage}}}')
+        time.sleep(1)
+        self.client.unsubscribe(f'avagrows/device/client/{device}/deviceState')#subscribe
+
+        self.client.disconnect() #disconnect
+        self.client.loop_stop()
+
+        return {"msg": "Command sent. Please wait two minutes for stage and cycle to update."}
 
     def check_online(self):
         self.client.connect(self.broker, port=self.port)#connect
