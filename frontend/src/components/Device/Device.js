@@ -277,6 +277,7 @@ const Device = () => {
                             {/*<li key="edit"><button onClick={() => set_device({...device, show:true, name: item.device_name, device: item.device})}>EDIT</button></li> */}
                             {item.end_date === null && <li key="terminate"><button onClick={() => { if (window.confirm(`Terminate experiment "${item.name}"?`)) terminateExperiment(item.id) }}> TERMINATE EXPERIMENT</button></li> }
                             <li key="add_reading"><ExperimentReading exp_id={item.id} exp_name={item.name}></ExperimentReading></li>
+                            <li key="send_command"><button onClick={() => set_command({...command, show: true, device: item.id})}>SEND COMMAND</button></li>
                             {/*<li key="device_state"><button onClick={() => get_device_state(item.id)}>GET DEVICE STATE</button></li>*/}
                         </div>
                     </div>
@@ -534,7 +535,7 @@ const Device = () => {
                             <div className="form_row">
                                 <select value={command.id} onChange={(e) => set_command({...command, id: e.target.value})} >
                                     <option value="0">Get Device State</option>
-                                    <option value="1">Get Device Logs</option>
+                                    {/* <option value="1">Get Device Logs</option> */}
                                     <option value="7">Change Timezone</option>
                                     <option value="11">Change Start Time</option>
                                     <option value="12">Trigger OTA</option>
