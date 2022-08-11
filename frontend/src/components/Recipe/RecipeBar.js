@@ -222,15 +222,15 @@ const RecipeBar = (props) => {
               }
               let dtt = ph.name
               if(props.is_object) {
-                phases.push(<div key={`${props.experiment}_${i}`} class="recipe_bar_phase" style={s} > 
-                  <span class="recipe_bar_phase_days">{ph.days}</span> 
-                  <span class= "recipe_bar_phase_name object_name">{ph.name}<br></br></span>
-                  <span class="recipe_bar_phase_type"> {ph.type} </span>
+                phases.push(<div key={`${props.experiment}_${i}`} className="recipe_bar_phase" style={s} > 
+                  <span className="recipe_bar_phase_days">{ph.days}</span> 
+                  <span className= "recipe_bar_phase_name object_name">{ph.name}<br></br></span>
+                  <span className="recipe_bar_phase_type"> {ph.type} </span>
                 </div>)
               } else {
-                phases.push(<div key={`${props.experiment}_${i}`} class="recipe_bar_phase tooltip-top" data-tooltip={dtt} style={s} > 
-                  <span class="recipe_bar_phase_days">{ph.days}</span> 
-                  <span class="recipe_bar_phase_type"> {ph.type} </span>
+                phases.push(<div key={`${props.experiment}_${i}`} className="recipe_bar_phase tooltip-top" data-tooltip={dtt} style={s} > 
+                  <span className="recipe_bar_phase_days">{ph.days}</span> 
+                  <span className="recipe_bar_phase_type"> {ph.type} </span>
                 </div>)
               }
           }

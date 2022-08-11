@@ -144,9 +144,6 @@ const Device = () => {
                     let index = loaded_devices.findIndex(d => d.device_id === device.id)
                     if(index === -1) {
                         index = available_devices.findIndex(d => d.id === device.id)
-                        console.log("DEVICE: ", device)
-                        console.log(loaded_devices)
-                        console.log(available_devices)
                         if (available_devices[index].is_online !== device.is_online){
                             let updated_device = available_devices[index]
                             updated_device.is_online = device.is_online
@@ -301,7 +298,7 @@ const Device = () => {
                             {/* <div>Registered: { item.registration_date.substring(0, 10) }</div> */}
                             </div>
                         </div>
-                        <div class= "empty_object" onClick={() => {set_device({...device, show:true}); setExperiment({...experiment, device:item.id, device_capacity:item.capacity});}}> 
+                        <div className= "empty_object" onClick={() => {set_device({...device, show:true}); setExperiment({...experiment, device:item.id, device_capacity:item.capacity});}}> 
                            ADD EXPERIMENT
                         </div>
                         <div className='object_actions'>
