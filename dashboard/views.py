@@ -48,23 +48,23 @@ class DeviceView(viewsets.ModelViewSet):
             # REQUIRES CHANGES TO V2_MQTT.py
         elif command == 7:
             timezone = request.data['parameters']['timezone']
-            print(timezone)
+            data = broker.change_timezone(device, timezone)
         elif command == 11:
             hour = int(request.data['parameters']['hour'])
             minute = int(request.data['parameters']['minute'])
             print(hour, minute)
             data = {"dailyStartTime": broker.set_start_time(device, hour, minute)}
         elif command == 12:
-            print("HERE")
+            data = {
+                "macAddress": broker.trigger_OTA(device),
+                "msg": "OTA Trigger sent, check Mender to see if device is downloading firmware"}
         elif command == 14:
             stage = int(request.data['parameters']['stage'])
             cycle = int(request.data['parameters']['cycle'])
-            print(stage, cycle)
+            data = broker.change_stage_cycle(device, stage, cycle)
         else: 
             data = {"error": "wrong command id"}
-        # filtered_data = {key: data[key] for key in data if key not in ['luxZone', 'mqttConfig', 'totalLuxZones', 'wifiCredentials']}        
         return JsonResponse(data, safe=False)
-        # return Response(status=200)
 
     @action(detail=False, methods=['GET'], name='tester_call')
     def tester_call(self, request):

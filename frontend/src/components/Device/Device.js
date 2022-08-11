@@ -37,6 +37,7 @@ const Device = () => {
         minute: 0,
         cycle: 0,
         stage: 0,
+        timezone: "Etc/GMT-7",
         response: {}
     });
 
