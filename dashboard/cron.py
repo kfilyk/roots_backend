@@ -21,8 +21,8 @@ def check_experiments_end_date_daily():
 
 
     for curr_exp in active_exps:
-
-        if curr_exp.recipe_id != None:
+        
+        if curr_exp.recipe != None:
             curr_exp.day = (curr_date.date() - curr_exp.start_date.date()).days
 
             # if the experiment has a recipe allocated to it, and the current date does not exceed the max date range

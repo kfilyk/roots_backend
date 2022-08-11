@@ -113,10 +113,6 @@ const Device = () => {
         fetchPlants();
     }, []); // run once after start
     
-    useEffect(() => {
-        check_devices_online();
-    }, [loaded_devices, available_devices]);
-
     function useInterval(callback, delay) {
         const savedCallback = useRef();
       
@@ -139,14 +135,18 @@ const Device = () => {
 
     function check_devices_online(){
         axios
+        
             .post(`/api/devices/check_devices_online/`)
             .then((res) => {
 
                 // for each device, determine if online or offline
                 res.data.forEach((device) => {
-                    let index = loaded_devices.findIndex(d => d.id === device.id)
+                    let index = loaded_devices.findIndex(d => d.device_id === device.id)
                     if(index === -1) {
                         index = available_devices.findIndex(d => d.id === device.id)
+                        console.log("DEVICE: ", device)
+                        console.log(loaded_devices)
+                        console.log(available_devices)
                         if (available_devices[index].is_online !== device.is_online){
                             let updated_device = available_devices[index]
                             updated_device.is_online = device.is_online
@@ -263,9 +263,8 @@ const Device = () => {
                         <div className="object_top">
                             <div className="object_description">
                                 <div className="object_name tooltip-top" data-tooltip={"ID: "+item.id + " | MAC: " + item.mac_address.toUpperCase()}>
-                                    { item.name } 
+                                    {item.device_name + " | " + item.name} 
                                     <div className="blink_me" style={{ color: item.is_online ? 'green': 'red'}}>●</div>
-                                    <div>{item.is_online}</div>
                                 </div>
                                 <div>Score: { item.score } </div>
                             </div>
@@ -296,8 +295,9 @@ const Device = () => {
                             <div className="object_name tooltip-top" data-tooltip={"ID: "+item.id + " | MAC: " + item.mac_address.toUpperCase()} >
                                 { item.name }
                                 <div className="blink_me" style={{ color: item.is_online ? 'green': 'red'}}>●</div>
-                                <div>{item.is_online}</div>
                             </div>
+                            
+
                             {/* <div>Registered: { item.registration_date.substring(0, 10) }</div> */}
                             </div>
                         </div>

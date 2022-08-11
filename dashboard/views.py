@@ -89,6 +89,7 @@ class DeviceView(viewsets.ModelViewSet):
         return JsonResponse(recipe_json, status=200)
         # return Response(status=200)
 
+    '''
     @action(detail=False, methods=['POST'], name='change_recipe')
     def change_recipe(self, request):
         id = Device.objects.get(id=request.data['device_id']).id
@@ -124,7 +125,7 @@ class DeviceView(viewsets.ModelViewSet):
         broker = MQTT()
         data = broker.trigger_recipe(id, recipe_json, recipe[0].name.replace(" ", "_") + ".json")
         return JsonResponse(data, safe=False)
-
+    '''
     @action(detail=False, methods=['POST'], name='check_devices_online')
     def check_devices_online(self, request):
         #query = Device.objects.filter(id__in=request.data['devices'])
@@ -230,25 +231,27 @@ class ExperimentView(viewsets.ModelViewSet):
             Pod.objects.create(start_date=start_date, phase=phase, position=p, plant=Plant.objects.get(id=pod_selection[p]), experiment=exp)
         return JsonResponse(model_to_dict(exp), safe=False) # should this be list?
 
+    '''
     @action(detail=False, methods=['POST'], name='set_device')
     def set_device(self, request):
         device_id = request.data['device_id']
         exp_id = request.data['exp_id']
         exp = Experiment.objects.get(id=exp_id)
-        exp.device_id = Device.objects.get(id=device_id)
+        exp.device = Device.objects.get(id=device_id)
         exp.save()
         return Response(status=200)
+    '''
     
     @action(detail=False, methods=['GET'], name='available_experiments')
     def available_experiments(self, request):
-        query = Experiment.objects.filter(device_id__isnull=True).values('device_id')
+        query = Experiment.objects.filter(device__isnull=True).values('device')
         data = list(query.values('id', 'name'))
         return JsonResponse(data, safe=False)
 
     # available devices: those with no active experi
     @action(detail=False, methods=['GET'], name='available_devices')
     def available_devices(self, request):
-        excluded = Experiment.objects.filter(end_date__isnull=True).filter(device_id__isnull=False).values('device_id') # list of all devices referenced by currently active experiments
+        excluded = Experiment.objects.filter(end_date__isnull=True).filter(device__isnull=False).values('device') # list of all devices referenced by currently active experiments
         query = Device.objects.exclude(id__in=excluded) # exclude from device list all devices which an active experiment references
         data = list(query.values('id', 'name', 'capacity', 'mac_address', 'is_online').order_by('name')) # filter devices by user #.filter(user_id = self.request.user.id)
         return JsonResponse(data, safe=False)
@@ -256,8 +259,10 @@ class ExperimentView(viewsets.ModelViewSet):
     # need to filter: loaded devices exclude those with a non-null "end_date"
     @action(detail=False, methods=['GET'], name='loaded_devices')
     def loaded_devices(self, request):
-        devices = Experiment.objects.filter(end_date__isnull=True).filter(device_id__isnull=False).select_related('device')
-        data = list(devices.values().annotate(name=F('device__name')).annotate(is_online=F('device__is_online')).annotate(mac_address=F('device__mac_address')).annotate(current_recipe=F('recipe__name')).order_by('name')) # 
+        devices = Experiment.objects.filter(end_date__isnull=True)
+        print(list(devices.values()))
+        devices = devices.filter(device__isnull=False).select_related('device')
+        data = list(devices.values().annotate(device_name=F('device__name')).annotate(is_online=F('device__is_online')).annotate(mac_address=F('device__mac_address')).annotate(current_recipe=F('recipe__name')).order_by('name')) # 
         return JsonResponse(data, safe=False)
 
     def get_queryset(self):
