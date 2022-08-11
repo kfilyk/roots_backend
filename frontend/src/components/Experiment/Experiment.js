@@ -87,7 +87,7 @@ const ExperimentList = () => {
   }, [experiment_list]);
 */
 
-  async function terminateExperiment(id) {
+  async function concludeExperiment(id) {
     await axios.patch(`/api/experiments/${id}/`, { end_date: year+"-"+month+"-"+day});
     fetchExperiments()
   }
@@ -328,7 +328,7 @@ const ExperimentList = () => {
                     <div className='object_actions'>
                         <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
                         <li key="edit"><button onClick={() => openModal(item)}>EDIT</button></li>
-                        <li key="terminate"><button onClick={() => { if (window.confirm(`You are about to terminate experiment ${item.id}, ${item.name}`)) terminateExperiment(item.id) }}> TERMINATE </button></li>
+                        <li key="conclude"><button onClick={() => { if (window.confirm(`You are about to conclude experiment ${item.id}, ${item.name}`)) concludeExperiment(item.id) }}> CONCLUDE </button></li>
                         <li key="add_reading"><ExperimentReading exp_id={item.id}></ExperimentReading></li>
                     </div>
                   </div>

@@ -89,8 +89,12 @@ const Device = () => {
         );
         setPlantList(result.data)
       }
+
+    function updateRecipeBar() {
+        console.log("UPDATE RECIPE BAR");
+    }
       
-    async function terminateExperiment(id) {
+    async function concludeExperiment(id) {
         let today_date = new Date();
         let year = today_date.getUTCFullYear();
         let month = today_date.getUTCMonth() + 1;
@@ -274,8 +278,8 @@ const Device = () => {
                         <div className='object_actions'>
                             <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
                             {/*<li key="edit"><button onClick={() => set_device({...device, show:true, name: item.device_name, device: item.device})}>EDIT</button></li> */}
-                            {item.end_date === null && <li key="terminate"><button onClick={() => { if (window.confirm(`Terminate experiment "${item.name}"?`)) terminateExperiment(item.id) }}> TERMINATE EXPERIMENT</button></li> }
-                            <li key="add_reading"><ExperimentReading exp_id={item.id} exp_name={item.name}></ExperimentReading></li>
+                            {item.end_date === null && <li key="conclude"><button onClick={() => { if (window.confirm(`Conclude experiment "${item.name}"?`)) concludeExperiment(item.id) }}> CONCLUDE EXPERIMENT</button></li> }
+                            <li key="add_reading"><ExperimentReading exp_id={item.id} exp_name={item.name} updateRecipeBar={updateRecipeBar()}></ExperimentReading></li>
                             <li key="send_command"><button onClick={() => set_command({...command, show: true, device: item.id})}>SEND COMMAND</button></li>
                             {/*<li key="device_state"><button onClick={() => get_device_state(item.id)}>GET DEVICE STATE</button></li>*/}
                         </div>
