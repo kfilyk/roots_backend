@@ -288,7 +288,7 @@ const RecipeList = () => {
 
   return (
     <div>
-
+      <button onClick={() => openModal(null)}>+</button>
       {recipe_list.map(item => (
 
         <div key={ item.id } className="item" >
@@ -310,7 +310,6 @@ const RecipeList = () => {
           </div>
         </div>
       ))}
-      <button onClick={() => openModal(null)}>+</button>
       <Popup open={modal.show} onClose={() => closeModal()} modal nested>
             {(close) => (
             <div className="modal" onClick={close}>
