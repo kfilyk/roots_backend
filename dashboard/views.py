@@ -94,6 +94,9 @@ class DeviceView(viewsets.ModelViewSet):
     # this generates a recipe during "AddExperiment"
     @action(detail=False, methods=['POST'], name='change_recipe')
     def change_recipe(self, request):
+        print("CHANGE RECIPE DEVICE: ", request.data['device_id'])
+        print("CHANGE RECIPE: ", request.data['new_recipe_id'])
+
         id = Device.objects.get(id=request.data['device_id']).id
         recipe = Recipe.objects.filter(id=request.data['new_recipe_id']) \
                         .select_related('phase1', 'phase2', 'phase3', 'phase4', 'phase5', 'phase6', 'phase7', 'phase8', 'phase9', 'phase10')
@@ -126,6 +129,7 @@ class DeviceView(viewsets.ModelViewSet):
         }
         broker = MQTT()
         data = broker.trigger_recipe(id, recipe_json, recipe[0].name.replace(" ", "_") + ".json")
+        print("DATA: ", data)
         return JsonResponse(data, safe=False)
 
     @action(detail=False, methods=['POST'], name='check_devices_online')

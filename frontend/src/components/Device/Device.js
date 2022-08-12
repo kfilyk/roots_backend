@@ -201,6 +201,7 @@ const Device = () => {
     async function send_command(e){
         e.preventDefault()
         set_command({...command, response: {}})
+        console.log(command.id, command)
         const result = await axios
           .post(`/api/devices/send_command/`, 
             { 
@@ -267,7 +268,7 @@ const Device = () => {
                     <div key={'loaded_' + item.id} className="object_container">
                         <div className="object_top">
                             <div className="object_description">
-                                <div className="object_name tooltip" data-tooltip={"ID: "+item.id + " | MAC: " + item.mac_address.toUpperCase()}>
+                                <div className="object_name tooltip" data-tooltip={"DEVICE ID: "+item.device_id + " | MAC: " + item.mac_address.toUpperCase()}>
                                     {item.device_name + " | " + item.name} 
                                     <div className="blink_me" style={{ color: item.is_online ? 'green': 'red'}}>●</div>
                                 </div>
@@ -284,7 +285,7 @@ const Device = () => {
                             {/*<li key="edit"><button onClick={() => set_device({...device, show:true, name: item.device_name, device: item.device})}>EDIT</button></li> */}
                             {item.end_date === null && <li key="conclude"><button onClick={() => { if (window.confirm(`Conclude experiment "${item.name}"?`)) concludeExperiment(item.id) }}> CONCLUDE EXPERIMENT</button></li> }
                             <li key="add_reading"><ExperimentReading exp_id={item.id} exp_name={item.name} updateRecipeBar={updateRecipeBar()}></ExperimentReading></li>
-                            <li key="send_command"><button onClick={() => set_command({...command, show: true, device: item.id})}>SEND COMMAND</button></li>
+                            <li key="send_command"><button onClick={() => set_command({...command, show: true, device: item.device_id})}>SEND COMMAND</button></li>
                             {/*<li key="device_state"><button onClick={() => get_device_state(item.id)}>GET DEVICE STATE</button></li>*/}
                         </div>
                     </div>
@@ -298,7 +299,7 @@ const Device = () => {
                     <div key={'free_' + item.id}  className="object_container">
                         <div className="object_top">
                             <div className="object_description">
-                            <div className="object_name tooltip" data-tooltip={"ID: "+item.id + " | MAC: " + item.mac_address.toUpperCase()} >
+                            <div className="object_name tooltip" data-tooltip={"DEVICE ID: "+item.id + " | MAC: " + item.mac_address.toUpperCase()} >
                                 { item.name }
                                 <div className="blink_me" style={{ color: item.is_online ? 'green': 'red'}}>●</div>
                             </div>
@@ -312,7 +313,7 @@ const Device = () => {
                         <div className='object_actions'>
                             <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
                             {/*<li key="device_state"><button onClick={() => get_device_state(item.id)}>GET DEVICE STATE</button></li>*/}
-                            <li key="send_command"><button onClick={() => set_command({...command, show: true, device: item.id})}>SEND COMMAND</button></li>
+                            <li key="send_command"><button onClick={() => set_command({...command, show: true, device: item.device})}>SEND COMMAND</button></li>
                         </div>
                     </div>
                 )
