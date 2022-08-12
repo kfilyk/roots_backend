@@ -33,9 +33,3 @@ body {
 .section {
   text-decoration: none;
 }
-
-.scrollUp{
-  position: fixed;
-  bottom: 0;
-  right: 2%;
-}

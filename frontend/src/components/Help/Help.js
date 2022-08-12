@@ -52,16 +52,8 @@ const Help = () => {
       }
     }
 
-    function renderScrollUp(){
-      return (
-        <button className="scrollUp" onClick={() => window.scroll({top: 0, behavior: 'smooth'})}>⬆</button>
-      )
-      
-    }
-
     return (
         <div>
-            {renderScrollUp()}
             {renderNav()}
             {renderTab()}
         </div>

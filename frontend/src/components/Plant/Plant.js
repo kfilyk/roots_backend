@@ -125,7 +125,7 @@ function renderEditModal(){
 
   return (
     <div>
-
+            <button onClick={() => openModal(null)}>+</button>
       {plant_list.map(item => (
         <div key={ item.id } className="item" >
           <div className="object_container">
@@ -141,7 +141,6 @@ function renderEditModal(){
           </div>
         </div>
       ))}
-      <button onClick={() => openModal(null)}>+</button>
       <Popup open={modal.show} onClose={() => setModal({...modal, show: false})} modal nested>
             {(close) => (
             <div className="modal" onClick={close}>

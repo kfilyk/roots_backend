@@ -80,6 +80,12 @@ const Dashboard = () => {
     );
   };
 
+  function renderScrollUp(){
+    return (
+      <button className="scrollUp" onClick={() => window.scroll({top: 0, behavior: 'smooth'})}>⬆</button>
+    )
+  }
+
   function renderPage() {
     if(auth.user !== -1) {
       switch(selected_tab) {
@@ -118,6 +124,7 @@ const Dashboard = () => {
       <div className="dashboard">
         {renderNav()}
         <div className="list-group list-group-flush border-top-0">
+          {renderScrollUp()}
           {renderPage()}
         </div>
       </div>

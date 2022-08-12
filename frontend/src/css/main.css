@@ -35,5 +35,9 @@
     color: #B3896A;
   }
   
-  .save{
+  .scrollUp{
+    position: fixed;
+    bottom: 0;
+    right: 2%;
+    z-index: 10
   }
