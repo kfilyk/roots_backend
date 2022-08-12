@@ -22,7 +22,6 @@ const RecipeList = () => {
   const [recipe, setRecipe] = useState(
     {
       name: null,
-      days: 0,
       phase1: null,
       phase2: null,
       phase3: null,

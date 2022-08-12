@@ -311,27 +311,14 @@ class RecipeView(viewsets.ModelViewSet):
         recipe.save()
         return JsonResponse(model_to_dict(recipe), safe=False) 
 
-    def update(self, request, *args, **kwargs):
-        partial = kwargs.pop('partial', False)
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-
-        partial = kwargs.pop('partial', False)
-        instance = self.get_object()
-        instance.recipe_json = RecipeView.generate_JSON(instance.id)
-        request.data['days'] = RecipeView.calculate_days(instance.id)
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-
-        if getattr(instance, '_prefetched_objects_cache', None):
-            # If 'prefetch_related' has been applied to a queryset, we need to
-            # forcibly invalidate the prefetch cache on the instance.
-            instance._prefetched_objects_cache = {}
-
-        return Response(serializer.data)
+    def perform_update(self, serializer):
+        # Save with the new value for the target model fields
+        serializer.save()
+        recipe_id = self.get_object().id
+        recipe_json = RecipeView.generate_JSON(recipe_id)
+        days = RecipeView.calculate_days(recipe_id)
+        serializer.save(recipe_json=recipe_json, days=days)
+        
 
     @action(detail=False, methods=['GET'], name='recipe_user_specific')
     def recipe_user_specific(self, request):
