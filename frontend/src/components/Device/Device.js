@@ -272,7 +272,7 @@ const Device = () => {
                                     {item.device_name + " | " + item.name} 
                                     <div className="blink_me" style={{ color: item.is_online ? 'green': 'red'}}>●</div>
                                 </div>
-                                <div>Score: { item.score } </div>
+                                {item.score !== null ? <div>Score: { item.score } </div>: <></>}
                             </div>
                             <div className="object_content">                          
                                 <PodCarousel experimentID={item.id} deviceId={item.device}></PodCarousel>
