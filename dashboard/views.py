@@ -39,6 +39,7 @@ class DeviceView(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['POST'], name='send_command')
     def send_command(self, request):
+        print("REQUEST: ", request.data)
         command = request.data['parameters']['id']
         device = request.data['parameters']['device']
         broker = MQTT()
