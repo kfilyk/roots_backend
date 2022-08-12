@@ -61,9 +61,9 @@ const Dashboard = () => {
         <span className={selected_tab === "device" ? "nav-link active" : "nav-link"} onClick={() => set_selected_tab("device" )}>
           DEVICES
         </span>
-        {/* <span className={selected_tab === "experiment" ? "nav-link active" : "nav-link"} onClick={() => set_selected_tab("experiment" )}>
+        <span className={selected_tab === "experiment" ? "nav-link active" : "nav-link"} onClick={() => set_selected_tab("experiment" )}>
           EXPERIMENTS
-        </span> */}
+        </span>
         <span className={selected_tab === "recipe" ? "nav-link active" : "nav-link"} onClick={() => set_selected_tab("recipe" )}>
           RECIPES
         </span>
@@ -91,8 +91,8 @@ const Dashboard = () => {
       switch(selected_tab) {
         case 'device':
           return <Device></Device>
-        // case 'experiment':
-        //   return <Experiment></Experiment>
+        case 'experiment':
+          return <Experiment></Experiment>
         case 'recipe':
           return <Recipe></Recipe>
         case 'phase':
