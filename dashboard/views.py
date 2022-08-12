@@ -91,7 +91,7 @@ class DeviceView(viewsets.ModelViewSet):
         return JsonResponse(recipe_json, status=200)
         # return Response(status=200)
 
-    '''
+    # this generates a recipe during "AddExperiment"
     @action(detail=False, methods=['POST'], name='change_recipe')
     def change_recipe(self, request):
         id = Device.objects.get(id=request.data['device_id']).id
@@ -127,7 +127,7 @@ class DeviceView(viewsets.ModelViewSet):
         broker = MQTT()
         data = broker.trigger_recipe(id, recipe_json, recipe[0].name.replace(" ", "_") + ".json")
         return JsonResponse(data, safe=False)
-    '''
+
     @action(detail=False, methods=['POST'], name='check_devices_online')
     def check_devices_online(self, request):
         #query = Device.objects.filter(id__in=request.data['devices'])

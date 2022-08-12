@@ -122,7 +122,7 @@ const Device = () => {
     useEffect(() => {
     }, [loaded_devices, available_devices]);
     */
-   
+
     function useInterval(callback, delay) {
         const savedCallback = useRef();
       
@@ -235,32 +235,28 @@ const Device = () => {
         fetch_loaded_devices();
     }
     */
-    /*
+
+    /* this calls the 'change_recipe()' function in the backend (views.py), which sends the recipe of an experiment to a device via MQTT */
     async function change_recipe(){
         const result = await axios
         .post(`/api/devices/change_recipe/`, 
           { 
-              device_id: device.id,
-              new_recipe_id: parseInt(device.recipe)
+              device_id: experiment.device,
+              new_recipe_id: parseInt(experiment.recipe)
 
           });
         let index = loaded_devices.findIndex(d => d.id === device.id)
-        let updated_device = loaded_devices[index]
-        updated_device['current_recipe'] = result.data.current_recipe
-        updated_device['dailyStartTime'] = result.data.dailyStartTime
-        set_loaded_devices([
-            ...loaded_devices.slice(0, index),
-            updated_device,
-            ...loaded_devices.slice(index + 1)
-        ])
+        if(index !== -1) {
+            let updated_device = loaded_devices[index]
+            updated_device['current_recipe'] = result.data.current_recipe
+            updated_device['dailyStartTime'] = result.data.dailyStartTime
+            set_loaded_devices([
+                ...loaded_devices.slice(0, index),
+                updated_device,
+                ...loaded_devices.slice(index + 1)
+            ])
+        }
     }
-    */
-
-    /*
-    function change_recipe_form(device){
-        set_recipe({...recipe, show: true, device: device})
-    }
-    */
 
     function renderDevices(){
         const device_list = []
@@ -311,9 +307,8 @@ const Device = () => {
                             {/* <div>Registered: { item.registration_date.substring(0, 10) }</div> */}
                             </div>
                         </div>
-                        <div className= "empty_object" onClick={() => {set_device({...device, show:true}); setExperiment({...experiment, device:item.id, device_name:item.name, device_capacity:item.capacity});}}> 
-                           ADD EXPERIMENT
-                        </div>
+                        {item.is_online ?  <div className= "empty_object" onClick={() => {set_device({...device, show:true}); setExperiment({...experiment, device:item.id, device_name:item.name, device_capacity:item.capacity});}}>  ADD EXPERIMENT</div> : <div className= "empty_object">DEVICE OFFLINE</div>}
+                       
                         <div className='object_actions'>
                             <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
                             {/*<li key="device_state"><button onClick={() => get_device_state(item.id)}>GET DEVICE STATE</button></li>*/}
@@ -366,10 +361,10 @@ const Device = () => {
     function renderRecipeSelection(){
         return (
             <select className="experiment_recipe_selection" name="experiment_recipe_selection" default_value="null" onChange={(e) => setRecipe(e)}>
-            <option value={null}></option>
-            {recipe_list.map(item => (
-                <option key={item.id} value={item.id}> {item.name} </option>
-            ))}
+                <option value={null}></option>
+                {recipe_list.map(item => (
+                    <option key={item.id} value={item.id}> {item.name} </option>
+                ))}
             </select>
             /*
             <Popup open={device.show} onClose={() => set_device({...device, show: false, id: -1})} modal nested>
@@ -421,11 +416,12 @@ const Device = () => {
             recipe: experiment.recipe
           })
         .then(res =>{
+            change_recipe()
             fetch_available_devices();
             fetch_loaded_devices();
         })
         .catch((err) => console.log(err));
-
+        
         close();
 
     }
