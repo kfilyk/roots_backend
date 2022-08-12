@@ -27,7 +27,7 @@ const Phase = () => {
         white_intensity: 99,
         lights_on_hours: null,
         score: null,
-        type: null,
+        type: "Germination",
         name: null
     }
   );
@@ -81,7 +81,8 @@ const Phase = () => {
             lights_on_hours: addPhase.lights_on_hours
         });
         fetchPhases();
-      };
+    
+  };
 
   async function editEntry(e) {
     await axios
@@ -316,17 +317,16 @@ const Phase = () => {
             <div className="modal" onClick={close}>
                 <div className="modal_body"  onClick={e => e.stopPropagation()}>
                 <div className="modal_type"> { modal.add === true ? "Add Phase" : "Edit Phase" } </div>
-                <div className="modal_content">
-                      { modal.add === true 
-                        ? renderAddModal()
-                        : renderEditModal()
-                      }
-                    <button className='save' onClick={() => {
-                    submitModal()
-                    close();
-                }}>Save</button>
+                    <div className="modal_content">
+                          { modal.add === true 
+                            ? renderAddModal()
+                            : renderEditModal()
+                          }
+                        <button className='save' onClick={() => {
+                        submitModal()
+                        close();
+                    }}>Save</button>
                     </div>
-
                 </div>
             </div>
             )}
