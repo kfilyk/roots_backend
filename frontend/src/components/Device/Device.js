@@ -557,7 +557,7 @@ const Device = () => {
                             <div className='form-row'>
                                 Response: 
                                 <pre>{JSON.stringify(command.response, null, 2) }</pre>
-                                <button className='save' onClick={() => {navigator.clipboard.writeText(JSON.stringify(command.response))}}>COPY RESPONSE</button>
+                                {/* <button className='save' onClick={() => {navigator.clipboard.writeText(JSON.stringify(command.response))}}>COPY RESPONSE</button> */}
                             </div>
                             <button className='save' onClick={(e) => {
                                 send_command(e)
