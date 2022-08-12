@@ -29,6 +29,18 @@ const Device = () => {
         mac_address: null
     });
 
+    const [experiment, setExperiment] = useState({
+        id: null,
+        name: null,
+        device: null,
+        device_name:null,
+        device_capacity: null,
+        pods: [],
+        pod_selection: {},
+        start_date: year+"-"+month+"-"+day,
+        recipe: null
+      })
+
     const [command, set_command] = useState({
         show: false,
         id: 0,
@@ -44,16 +56,7 @@ const Device = () => {
     const [phase_list, set_phase_list] = useState([])
     const [recipe_list, set_recipe_list] = useState([])
     const [plant_list, setPlantList] = useState([]);
-    const [experiment, setExperiment] = useState({
-        id: null,
-        name: null,
-        device: null,
-        device_capacity: null,
-        pods: [],
-        pod_selection: {},
-        start_date: year+"-"+month+"-"+day,
-        recipe: null
-      })
+
 
     async function fetch_loaded_devices() {
         const result = await axios(
@@ -62,7 +65,7 @@ const Device = () => {
         set_loaded_devices(result.data)
     } 
     
-    async function fetch_free_devices() {
+    async function fetch_available_devices() {
         const result = await axios(
           '/api/experiments/available_devices/',
         );
@@ -104,17 +107,22 @@ const Device = () => {
 
         await axios.patch(`/api/experiments/${id}/`, { end_date: year+"-"+month+"-"+day });
         fetch_loaded_devices()
-        fetch_free_devices()
+        fetch_available_devices()
     }
 
     useEffect(() => {
-        fetch_free_devices();
+        fetch_available_devices();
         fetch_loaded_devices();
         fetch_phases();
         fetch_recipes();
         fetchPlants();
     }, []); // run once after start
-    
+
+    /*
+    useEffect(() => {
+    }, [loaded_devices, available_devices]);
+    */
+   
     function useInterval(callback, delay) {
         const savedCallback = useRef();
       
@@ -303,7 +311,7 @@ const Device = () => {
                             {/* <div>Registered: { item.registration_date.substring(0, 10) }</div> */}
                             </div>
                         </div>
-                        <div className= "empty_object" onClick={() => {set_device({...device, show:true}); setExperiment({...experiment, device:item.id, device_capacity:item.capacity});}}> 
+                        <div className= "empty_object" onClick={() => {set_device({...device, show:true}); setExperiment({...experiment, device:item.id, device_name:item.name, device_capacity:item.capacity});}}> 
                            ADD EXPERIMENT
                         </div>
                         <div className='object_actions'>
@@ -412,9 +420,12 @@ const Device = () => {
             start_date: experiment.start_date,
             recipe: experiment.recipe
           })
+        .then(res =>{
+            fetch_available_devices();
+            fetch_loaded_devices();
+        })
         .catch((err) => console.log(err));
-        fetch_free_devices();
-        fetch_loaded_devices();
+
         close();
 
     }
@@ -426,7 +437,7 @@ const Device = () => {
                 <div className="modal" onClick={close}>
                     <div className="modal_body"  onClick={e => e.stopPropagation()}>
                         <div className="modal_content">
-                            <div> DEVICE {experiment.device} </div>
+                            <div> DEVICE {experiment.device_name} </div>
                             <div className="form_row">
                                 <input name="name" value={experiment.name} placeholder = {"Experiment Name"} onChange={(e) => setExperiment({...experiment, name: e.target.value})} />
                             </div>

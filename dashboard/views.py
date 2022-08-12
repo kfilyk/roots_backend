@@ -5,6 +5,8 @@ from django.forms.models import model_to_dict
 from .serializers import DeviceSerializer, ExperimentSerializer, CreateUserSerializer, UserSerializer, PhaseSerializer, PlantSerializer, PodSerializer, ExperimentReadingSerializer, RecipeSerializer
 from django.core import serializers
 from django_filters import rest_framework as filters
+from django.db.models.functions import Length
+
 from rest_framework.filters import OrderingFilter
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
@@ -37,34 +39,21 @@ class DeviceView(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['POST'], name='send_command')
     def send_command(self, request):
-        command = int(request.data['parameters']['id'])
+        command = request.data['parameters']['id']
         device = request.data['parameters']['device']
         broker = MQTT()
         if command == 0:
             data = json.loads(broker.get_device_status(device))
             data = {key: data[key] for key in data if key not in ['luxZone', 'mqttConfig', 'totalLuxZones', 'wifiCredentials']}
         elif command == 1:
-            data = {}
-            # REQUIRES CHANGES TO V2_MQTT.py
-        elif command == 7:
-            timezone = request.data['parameters']['timezone']
-            data = broker.change_timezone(device, timezone)
-        elif command == 11:
-            hour = int(request.data['parameters']['hour'])
-            minute = int(request.data['parameters']['minute'])
-            print(hour, minute)
-            data = {"dailyStartTime": broker.set_start_time(device, hour, minute)}
-        elif command == 12:
-            data = {
-                "macAddress": broker.trigger_OTA(device),
-                "msg": "OTA Trigger sent, check Mender to see if device is downloading firmware"}
-        elif command == 14:
-            stage = int(request.data['parameters']['stage'])
-            cycle = int(request.data['parameters']['cycle'])
-            data = broker.change_stage_cycle(device, stage, cycle)
+            data = json.loads(broker.get_device_status(device))
         else: 
             data = {"error": "wrong command id"}
+        
+        # filtered_data = {key: data[key] for key in data if key not in ['luxZone', 'mqttConfig', 'totalLuxZones', 'wifiCredentials']}        
         return JsonResponse(data, safe=False)
+        # return Response(status=200)
+        
 
     @action(detail=False, methods=['GET'], name='tester_call')
     def tester_call(self, request):
@@ -265,7 +254,7 @@ class ExperimentView(viewsets.ModelViewSet):
         excluded = Experiment.objects.filter(end_date__isnull=True).filter(device__isnull=False).values('device') # list of all devices referenced by currently active experiments
         query = Device.objects.exclude(id__in=excluded) # exclude from device list all devices which an active experiment references
         #data = list(query.values('id', 'name', 'capacity', 'mac_address', 'is_online').order_by('name')) # filter devices by user #.filter(user_id = self.request.user.id)
-        data = list(query.values('id', 'name', 'capacity', 'mac_address', 'is_online')) 
+        data = list(query.values('id', 'name', 'capacity', 'mac_address', 'is_online'))
         return JsonResponse(data, safe=False)
 
     # need to filter: loaded devices exclude those with a non-null "end_date"
@@ -273,7 +262,7 @@ class ExperimentView(viewsets.ModelViewSet):
     def loaded_devices(self, request):
         devices = Experiment.objects.filter(end_date__isnull=True)
         devices = devices.filter(device__isnull=False).select_related('device')
-        data = list(devices.values().annotate(device_name=F('device__name')).annotate(is_online=F('device__is_online')).annotate(mac_address=F('device__mac_address')).annotate(current_recipe=F('recipe__name'))) # 
+        data = list(devices.values().order_by(Length('name').asc()).order_by('name').annotate(device_name=F('device__name')).annotate(is_online=F('device__is_online')).annotate(mac_address=F('device__mac_address')).annotate(current_recipe=F('recipe__name'))) # 
         return JsonResponse(data, safe=False)
 
     def get_queryset(self):

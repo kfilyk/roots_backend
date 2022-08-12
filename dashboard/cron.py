@@ -36,17 +36,15 @@ def check_experiments_end_date_daily():
                 curr_exp_day = curr_exp.day
                 for p in phases:
                     curr_phase = getattr(curr_exp.recipe, p.name, None)
-                    
-                    # if phase has never been set before
                     if curr_phase is not None:
-
+                        
                         if (curr_exp_day - curr_phase.days) < 0:
                             curr_exp.current_phase = getattr(curr_exp.recipe, p.name, None)
                             curr_exp.phase_day = curr_exp_day
                             curr_exp.save()
                             break
-                    else:
-                        curr_exp_day = curr_exp_day - curr_phase.days
+                        else:
+                            curr_exp_day = curr_exp_day - curr_phase.days
 
 def check_device_activity():
     broker = MQTT()
