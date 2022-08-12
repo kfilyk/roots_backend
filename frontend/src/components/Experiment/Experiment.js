@@ -328,7 +328,7 @@ const ExperimentList = () => {
                     </div>
                     <div className='object_actions'>
                         <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
-                        <li key="edit"><button onClick={() => openModal(item)}>EDIT</button></li>
+                        {/* <li key="edit"><button onClick={() => openModal(item)}>EDIT</button></li> */}
                         <li key="conclude"><button onClick={() => { if (window.confirm(`You are about to conclude experiment ${item.id}, ${item.name}`)) concludeExperiment(item.id) }}> CONCLUDE </button></li>
                         <li key="add_reading"><ExperimentReading exp_id={item.id}></ExperimentReading></li>
                     </div>
