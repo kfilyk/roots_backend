@@ -93,6 +93,8 @@ class PodReading(models.Model):
     internode_distance = models.DecimalField(db_column='pr_internode_distance', max_digits=5, decimal_places=2, blank=True, null=True) 
     leaf_count = models.IntegerField(db_column='pr_leaf_count', blank=True, null=True) 
     germination_rate = models.IntegerField(db_column='pr_germination_rate', blank=True, null=True, validators=PERCENTAGE_VALIDATOR) 
+    days_to_germinate = models.IntegerField(db_column='po_days_to_germinate', blank=True, null=True) 
+
     pod_phase = models.CharField(db_column='pr_pod_phase', max_length=45, blank=True, null=True)
     media_to_bgp = models.DecimalField(db_column='pr_media_to_bgp', max_digits=5, decimal_places=2, blank=True, null=True)
     min_height = models.DecimalField(db_column='pr_min_height', max_digits=5, decimal_places=2, blank=True, null=True)
@@ -180,7 +182,6 @@ class Plant(models.Model): # types: basil,
     name = models.CharField(db_column='pl_name', max_length=45)  
     supplier = models.CharField(db_column = 'pl_supplier', max_length=45, blank=True, null=True)
     germination_rate = models.IntegerField(db_column='pl_germination_rate', blank=True, null=True, validators=PERCENTAGE_VALIDATOR) # this is a percentage
-    
     days_to_germinate_min = models.IntegerField(db_column='pl_days_to_germinate_min', blank=True, null=True) 
     days_to_germinate_max = models.IntegerField(db_column='pl_days_to_germinate_max', blank=True, null=True) 
 

@@ -67,6 +67,7 @@ const Phase = () => {
   }
 
   async function addEntry(e) {
+    console.log("DD: ", addPhase)
     await axios
       .post(`/api/phases/`, 
         { 

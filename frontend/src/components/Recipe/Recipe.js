@@ -35,40 +35,40 @@ const RecipeList = () => {
     }
   );
 
-  const initialAddPhase = {
-    show: true,
-    user: null,
-    user_name: null,
-    days: null,
-    waterings_per_day: null,
-    watering_duration: null,
-    blue_intensity: 100,
-    red_intensity: 100,
-    white_intensity: 100,
-    lights_on_hours: null,
-    score: null,
-    type: null,
-    name: null
-  }
+  const [phase, setPhase] = useState(
+    {
+      show: true,
+      user: null,
+      user_name: null,
+      days: null,
+      waterings_per_day: null,
+      watering_duration: null,
+      blue_intensity: 99,
+      red_intensity: 99,
+      white_intensity: 99,
+      lights_on_hours: null,
+      score: null,
+      type: "Germination",
+      name: null
+    }
+  );
 
-  const [addPhase, setAddPhase] = useState(initialAddPhase);
-
-  async function addEntry(e) {
-    console.log("DD: ", addPhase)
+  async function addPhase(e) {
+    console.log("DD: ", phase)
     const result = await axios
       .post(`/api/phases/`, 
         { 
-            name: addPhase.name,
-            type: addPhase.type,
-            days: addPhase.days,
-            waterings_per_day: addPhase.waterings_per_day,
-            watering_duration: addPhase.watering_duration,
-            blue_intensity: addPhase.blue_intensity,
-            red_intensity: addPhase.red_intensity,
-            white_intensity: addPhase.white_intensity,
-            lights_on_hours: addPhase.lights_on_hours
+            name: phase.name,
+            type: phase.type,
+            days: phase.days,
+            waterings_per_day: phase.waterings_per_day,
+            watering_duration: phase.watering_duration,
+            blue_intensity: phase.blue_intensity,
+            red_intensity: phase.red_intensity,
+            white_intensity: phase.white_intensity,
+            lights_on_hours: phase.lights_on_hours
         });
-    if(result.status === 201){
+    if(result.status === 201 || result.status === 200){
       setPhaseList([...phase_list, result.data])
     }
   };
@@ -218,12 +218,12 @@ const RecipeList = () => {
 
   function renderCreatePhase(){
     return (
-      <div style={{ visibility: addPhase.show ? 'visible': 'hidden'}}>
+      <div style={{ visibility: phase.show ? 'visible': 'hidden'}}>
         <div className="form_row">
-          <input value={addPhase.name} placeholder={"Name"} onChange={(e) => setAddPhase({...addPhase, name: e.target.value})} />
+          <input value={phase.name} placeholder={"Name"} onChange={(e) => setPhase({...phase, name: e.target.value})} />
         </div>
         <div className="form_row">
-          <select value={addPhase.type} onChange={(e) => setAddPhase({...addPhase, type: e.target.value})} >
+          <select value={phase.type} onChange={(e) => setPhase({...phase, type: e.target.value})} >
             <option value="Germination">Germination</option>
             <option value="Seedling">Seedling</option>
             <option value="Vegetative">Vegetative Growth</option>
@@ -233,30 +233,30 @@ const RecipeList = () => {
           </select>
         </div>
         <div className="form_row">
-          <input value={addPhase.days} placeholder={"Days"} min="1" type="number" onKeyPress= {(e) => {if(e.charCode === 45) {e.preventDefault()}}} onChange={(e) => setAddPhase({...addPhase, days: e.target.value})} />
+          <input value={phase.days} placeholder={"Days"} min="1" type="number" onKeyPress= {(e) => {if(e.charCode === 45) {e.preventDefault()}}} onChange={(e) => setPhase({...phase, days: e.target.value})} />
         </div>
         <div className="form_row">
-          <input value={addPhase.waterings_per_day} placeholder={"Waterings Per Day"} onChange={(e) => setAddPhase({...addPhase, waterings_per_day: e.target.value})} />
+          <input value={phase.waterings_per_day} placeholder={"Waterings Per Day"} onChange={(e) => setPhase({...phase, waterings_per_day: e.target.value})} />
         </div>
         <div className="form_row">
-          <input value={addPhase.watering_duration} placeholder={"Watering Duration"} onChange={(e) => setAddPhase({...addPhase, watering_duration: e.target.value})} />
+          <input value={phase.watering_duration} placeholder={"Watering Duration"} onChange={(e) => setPhase({...phase, watering_duration: e.target.value})} />
         </div>
         <div className="form_row">
-          <input value={addPhase.blue_intensity} id="blue_intensity_slider" className="slider" type="range" min={0} max={100} onChange={(e) => setAddPhase({...addPhase, blue_intensity: e.target.value})}/>
-          <div className='intensity_text_overlay'>{addPhase.blue_intensity}</div>
+          <input value={phase.blue_intensity} id="blue_intensity_slider" className="slider" type="range" min={0} max={99} onChange={(e) => setPhase({...phase, blue_intensity: e.target.value})}/>
+          <div className='intensity_text_overlay'>{phase.blue_intensity}</div>
         </div>
         <div className="form_row">
-          <input value={addPhase.red_intensity} id="red_intensity_slider" className="slider" type="range" min={0} max={100} onChange={(e) => setAddPhase({...addPhase, red_intensity: e.target.value})} />
-          <div className='intensity_text_overlay'>{addPhase.red_intensity}</div>
+          <input value={phase.red_intensity} id="red_intensity_slider" className="slider" type="range" min={0} max={99} onChange={(e) => setPhase({...phase, red_intensity: e.target.value})} />
+          <div className='intensity_text_overlay'>{phase.red_intensity}</div>
         </div>                    
         <div className="form_row">
-          <input value={addPhase.white_intensity}  id="white_intensity_slider" className="slider" type="range" min={0} max={100} onChange={(e) => setAddPhase({...addPhase, white_intensity: e.target.value})} />
-          <div className='intensity_text_overlay'>{addPhase.white_intensity}</div>
+          <input value={phase.white_intensity}  id="white_intensity_slider" className="slider" type="range" min={0} max={99} onChange={(e) => setPhase({...phase, white_intensity: e.target.value})} />
+          <div className='intensity_text_overlay'>{phase.white_intensity}</div>
         </div>   
         <div className="form_row">
-          <input value={addPhase.lights_on_hours} placeholder={"Lights On Hours"} onChange={(e) => setAddPhase({...addPhase, lights_on_hours: e.target.value})} />
+          <input value={phase.lights_on_hours} placeholder={"Lights On Hours"} onChange={(e) => setPhase({...phase, lights_on_hours: e.target.value})} />
         </div>
-        <button className='save' onClick={() => addEntry()}>Create Phase</button>
+        <button className='save' onClick={() => addPhase()}>Create Phase</button>
       </div>
     )
   }
