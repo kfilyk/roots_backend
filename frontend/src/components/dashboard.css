@@ -1,6 +1,5 @@
 .dashboard {
   padding: 10px;
-  background-color: #FFFFFF;
 }
 
 ul {
@@ -36,16 +35,15 @@ td {
 button {
   font-family: "Brandon Grotesque";
   margin: 10px;
-  border: 1px #B3896A solid;
+  border: 1px #1b372a solid;
   background-color: #ffffff;
-  color: #B3896A;;
   padding: 6px 12px;
   border-radius: 20px;
 }
 
 button:hover {
   transition: 0.25s;
-  background-color: #B3896A;
+  background-color: #1b372a;
   color: #FFFFFF;;
 }
 
@@ -59,6 +57,7 @@ OBJECT CONTAINERS (DEVICE, EXPERIMENT, ETC)
 
 
 .object_container {
+  background-color: #FFFFFF;
   position: relative;
   box-shadow: 0px 5px 20px -10px #555555;
   margin:10px;
@@ -135,8 +134,7 @@ OBJECT CONTAINERS (DEVICE, EXPERIMENT, ETC)
 .object_actions button {
   background-color: #ffffff;
   border: none;
-  border-bottom: 1px solid #B3896A;
-  color: #B3896A;
+  border-bottom: 1px solid #1b372a;
   border-radius: 0px;
   margin:0px;
   width:100%;
@@ -144,23 +142,22 @@ OBJECT CONTAINERS (DEVICE, EXPERIMENT, ETC)
 
 .object_actions button:hover {
   transition: 0.5;
-  color: #323232;
+  color: #1b372a;
 }
 
 .empty_object {
-  color: white;
   padding:10px;
-  background-color: #DDDDDD;
   margin-top:auto;
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
+  border-top: #1b372a 1px dashed;
   text-align: center;
   transition: 0.5s;
 
 }
 
 .empty_object:hover {
-  background-color: #CCCCCC;
+  background-color: #EEEEEE;
   transition: 0.5s;
   cursor: pointer;
 }

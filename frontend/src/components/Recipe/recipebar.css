@@ -7,7 +7,7 @@ RECIPE BAR (OBJECT BOTTOM CHIN)
   padding-right:5px;
   font-family: "Brandon Grotesque Black";
   font-size:14px;
-  color: grey;
+  color: #1b372a;
   display: flex;
   margin-top:auto;
   order:2;
@@ -15,12 +15,10 @@ RECIPE BAR (OBJECT BOTTOM CHIN)
 }
 
 .recipe_bar_start_date {
-  color: #B3896A;
   width:100%;
 }
 
 .recipe_bar_end_date {
-  color: #B3896A;
   width:100%;
   text-align: right;
 }

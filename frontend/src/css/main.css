@@ -15,24 +15,21 @@
 
   body {
     font-family: "Brandon Grotesque";
-    color: #B3896A;
-    background-color: #0E3829;
+    color: #1b372a;
+    background-color: #FFFFFF;
     margin:2%;
   }
 
   select {
     font-family: "Brandon Grotesque";
-    color: #B3896A;
   }
 
   input {
     font-family: "Brandon Grotesque";
-    color: #B3896A;
   }
 
   input.name {
     font-family: "Brandon Grotesque Black";
-    color: #B3896A;
   }
   
   .scrollUp{
