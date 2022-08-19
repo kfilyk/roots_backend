@@ -303,6 +303,7 @@ class RecipeView(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         recipe_id = super().create(request, *args, **kwargs).data['id']
         recipe = Recipe.objects.get(id=recipe_id)
+        recipe.name = recipe.name.replace(" ", "_")
         recipe.recipe_json = RecipeView.generate_JSON(recipe_id)
         recipe.save()
         return JsonResponse(model_to_dict(recipe), safe=False) 
@@ -311,10 +312,10 @@ class RecipeView(viewsets.ModelViewSet):
         # Save with the new value for the target model fields
         serializer.save()
         recipe_id = self.get_object().id
+        recipe_name = self.get_object().name
         recipe_json = RecipeView.generate_JSON(recipe_id)
         days = RecipeView.calculate_days(recipe_id)
-        serializer.save(recipe_json=recipe_json, days=days)
-        
+        serializer.save(recipe_json=recipe_json, days=days, name = recipe_name.replace(" ", "_"))
 
     @action(detail=False, methods=['GET'], name='recipe_user_specific')
     def recipe_user_specific(self, request):

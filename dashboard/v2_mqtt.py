@@ -238,7 +238,7 @@ class MQTT:
     Purpose: Sends command to verify that all devices in the database are online. 
     Returns a list of the devices that are online.
     """ 
-    def check_online(self):
+    def get_device_data(self):
         self.client.connect(self.broker, port=self.port)#connect
         self.client.loop_start() #start loop to process received messages
         devices = list(Device.objects.all().values_list('id', flat=True))
@@ -250,17 +250,18 @@ class MQTT:
             i = i+1
 
         time.sleep(30) 
+
         for device in devices:
             self.client.unsubscribe(f'avagrows/device/client/{device}/deviceState')
-
-        x = [d.deviceId for d in self.msgs if d.deviceStatus == 1] # x is the set of all online devices
         
         #print("DEVICES CONTACTED: ", i) # debug: check 
         #print("DEVICES RETURNED: ", len(self.msgs))
 
         self.client.disconnect() 
         self.client.loop_stop()
-        return set(x)  # get rid of dups: return set
+
+        #x = [d.deviceId for d in self.msgs if d.deviceStatus == 1] # x is the set of all online devices
+        return self.msgs
 
     """
     Input from: views.py/send_command()
@@ -269,20 +270,23 @@ class MQTT:
     Last Edit: Stella T 08/19/2022
     Purpose: Given a deviceId, recipe JSON, and recipe_json, function sends two commands (command 3: add & command 4: trigger)
     to the device which sets the recipe on the device. 
+
+    command 3 uploads recipe
+    command 4 triggers it
     """ 
     def trigger_recipe(self, id, recipe, recipe_name):
         self.client.connect(self.broker, port=self.port)#connect
         self.client.loop_start() #start loop to process received messages
         self.client.subscribe(f'avagrows/device/client/{id}/deviceState')#subscribe
-
         self.client.publish(f'avagrows/device/server/{id}/devicecommand', \
             f'{{"command": 3, "name":"{recipe_name}", "data":{json.dumps(recipe)}}}')
-        time.sleep(1)
+        time.sleep(5)
         self.client.publish(f'avagrows/device/server/{id}/devicecommand', \
             f'{{"command": 4, "name":"{recipe_name}"}}')
-        time.sleep(1)
+        time.sleep(5)
         self.client.publish(f'avagrows/device/server/{id}/devicecommand','{"command": 0}')
-        time.sleep(1)
+        '''
+        time.sleep(5)
         if len(self.msgs) > 0:
             if self.msgs[0].current_recipe == recipe_name:
                 self.client.unsubscribe(f'avagrows/device/client/{id}/deviceState')#subscribe
@@ -293,7 +297,6 @@ class MQTT:
                 return {"current_recipe": recipe_name, "dailyStartTime": self.msgs[0].dailyStartTime}
         else: 
             self.client.publish(f'avagrows/device/server/{id}/devicecommand','{"command": 0}')
-            time.sleep(1)
             if len(self.msgs) > 0:
                 if self.msgs[0].current_recipe == recipe_name:
                     self.client.unsubscribe(f'avagrows/device/client/{id}/deviceState')#subscribe
@@ -301,7 +304,10 @@ class MQTT:
                     self.client.loop_stop()
                     print("2: ", self.msgs[0].deviceId)
                     return {"current_recipe": recipe_name, "dailyStartTime": self.msgs[0].dailyStartTime}
-
+        '''
+        time.sleep(10)
+        if len(self.msgs) > 0:
+            print("DEVICE STATE: ", self.msgs[0])
         self.client.unsubscribe(f'avagrows/device/client/{id}/deviceState')#subscribe
 
         self.client.disconnect() #disconnect
