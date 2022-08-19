@@ -157,24 +157,6 @@ class DeviceView(viewsets.ModelViewSet):
         user = self.request.user
         return Device.objects.filter(user = user.id)
 
-    @action(detail=False, methods=['POST'], name='get_device_state')
-    def get_device_state(self, request):
-        id = Device.objects.get(id=request.data['device']).id
-        broker = MQTT()
-        data = json.loads(broker.get_device_status(id))
-        filtered_data = {key: data[key] for key in data if key not in ['luxZone', 'mqttConfig', 'totalLuxZones', 'wifiCredentials']}        
-        return JsonResponse(filtered_data, safe=False)
-
-    '''
-    @action(detail=False, methods=['POST'], name='set_device_start_time')
-    def set_device_start_time(self, request):
-        token = Device.objects.get(id=request.data['device']).token
-        hour = request.data['hour']
-        minute = request.data['minute']
-        broker = MQTT()
-        device_start_time = broker.set_start_time(token, hour, minute)
-        return JsonResponse({"device_start_time": device_start_time}, status=200)
-    '''
 
 class ExperimentReadingView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 

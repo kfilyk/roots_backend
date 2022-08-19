@@ -158,8 +158,17 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }
 
+
+"""
+    Input from: cron.py
+    Outputs to: cron.py
+    Created by: Stella T 08/18/2022
+    Last Edit: Kelvin Filyk 08/19/2022
+    Purpose: Lists out all the cronjobs with their cron expression
+"""
 CRONJOBS = [
     ('0 1 * * *', 'dashboard.cron.check_experiments_end_date_daily'),
+    ('* */3 * * *', 'dashboard.cron.check_device_activity'), 
     ('* * * * *', 'dashboard.cron.check_devices'), 
     ('* * * * *', 'dashboard.cron.poll_mongo_db')
 ]
