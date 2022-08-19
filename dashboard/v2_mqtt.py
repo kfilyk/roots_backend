@@ -227,12 +227,17 @@ class MQTT:
                     print("2: ", self.msgs[0].deviceId)
                     return {"current_recipe": recipe_name, "dailyStartTime": self.msgs[0].dailyStartTime}
         '''
-        time.sleep(10)
+        time.sleep(5)
         if len(self.msgs) > 0:
-            print("DEVICE STATE: ", self.msgs[0])
+            print("DEVICE STATE: \n")
+            print(self.msgs[0])
         self.client.unsubscribe(f'avagrows/device/client/{id}/deviceState')#subscribe
 
         self.client.disconnect() #disconnect
         self.client.loop_stop()
 
-        
+    def set_recipe_day_cycle(self, id, cycle, phase):
+        self.client.connect(self.broker, port=self.port)#connect
+        self.client.loop_start() #start loop to process received messages
+        self.client.subscribe(f'avagrows/device/client/{id}/deviceState')#subscribe
+        self.client.publish(f'avagrows/device/server/{id}/devicecommand', f'{{"command": 14, "newCycle": 0, "newStage":0}}')

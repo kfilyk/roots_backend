@@ -66,16 +66,22 @@ def check_devices():
     for d in online_devices:
         #print("DEVICE IN DB: ", Device.objects.filter(id = d.deviceId).values())
         e = list(Experiment.objects.filter(device_id = d.deviceId).select_related('recipe').annotate(recipe_name=F('recipe__name')).values())
+
         # if there is an experiment currently running for a given device:
+
         if e:
+            r = Recipe.objects.get(id = e[0]['recipe_id'])
+            #print(dir(r))
             #print("EXPERIMENT IN DB FOR :"+d.deviceId, e)
-            #print("CURRENT RECIPE IN "+d.deviceId+": ", d.currentRecipe)
-            #print("CURRENT RECIPE IN DB: ", e[0]['recipe_name']+ ".json")
 
             # update recipe in byte 
-            if e[0]['recipe_name']+ ".json" != d.currentRecipe:
+            #print("EXPERIMENT RECIPE DAY/PHASE: "+ str(e[0]['day']) +" | " + str(e[0]['phase_day']))
 
-                broker.trigger_recipe(id, e[0]['recipe_json'], e[0]['recipe_name']+ ".json")
+            if e[0]['recipe_name']+ ".json" != d.currentRecipe:
+                print("CURRENT RECIPE IN "+d.deviceId+": ", d.currentRecipe)
+                print("CURRENT RECIPE IN DB: ", e[0]['recipe_name']+ ".json: \n\n" + r.recipe_json)
+                broker.trigger_recipe(d.deviceId, r.recipe_json, e[0]['recipe_name']+ ".json")
+                broker.set_recipe_day_cycle(d.deviceId, e[0]['day'], e[0]['phase_day'])
 
 
 
