@@ -19,7 +19,7 @@ Created by: Stella T 08/19/2022
 Last Edit: Stella T 08/19/2022
 Purpose: Checks to see if experiment has ended otherwise updates phase day
 """
-def check_experiments_end_date_daily():
+def update_experiments_daily():
     curr_date = datetime.now()
     tz = timezone.get_current_timezone()
     curr_date = curr_date.replace(tzinfo=tz)
