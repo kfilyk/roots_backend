@@ -162,11 +162,11 @@ class MQTT:
         return {"msg": "Command sent. Please wait two minutes for stage and cycle to update."}
 
     """
-    Input: cron.py/check_device_activity()
+    Input: cron.py/check_devices()
     Created: Stella Tran @ 2022/07
     Last Edit: Kelvin Filyk @ 2022/08/18
     """
-    def check_online(self):
+    def get_device_data(self):
         self.client.connect(self.broker, port=self.port)#connect
         self.client.loop_start() #start loop to process received messages
         devices = list(Device.objects.all().values_list('id', flat=True))
@@ -178,31 +178,37 @@ class MQTT:
             i = i+1
 
         time.sleep(30) 
+
         for device in devices:
             self.client.unsubscribe(f'avagrows/device/client/{device}/deviceState')
-
-        x = [d.deviceId for d in self.msgs if d.deviceStatus == 1] # x is the set of all online devices
         
         #print("DEVICES CONTACTED: ", i) # debug: check 
         #print("DEVICES RETURNED: ", len(self.msgs))
 
         self.client.disconnect() 
         self.client.loop_stop()
-        return set(x)  # get rid of dups: return set
 
+        #x = [d.deviceId for d in self.msgs if d.deviceStatus == 1] # x is the set of all online devices
+        return self.msgs
+
+    '''
+    command 3 uploads recipe
+    command 4 triggers it
+
+    '''
     def trigger_recipe(self, id, recipe, recipe_name):
         self.client.connect(self.broker, port=self.port)#connect
         self.client.loop_start() #start loop to process received messages
         self.client.subscribe(f'avagrows/device/client/{id}/deviceState')#subscribe
-
         self.client.publish(f'avagrows/device/server/{id}/devicecommand', \
             f'{{"command": 3, "name":"{recipe_name}", "data":{json.dumps(recipe)}}}')
-        time.sleep(1)
+        time.sleep(5)
         self.client.publish(f'avagrows/device/server/{id}/devicecommand', \
             f'{{"command": 4, "name":"{recipe_name}"}}')
-        time.sleep(1)
+        time.sleep(5)
         self.client.publish(f'avagrows/device/server/{id}/devicecommand','{"command": 0}')
-        time.sleep(1)
+        '''
+        time.sleep(5)
         if len(self.msgs) > 0:
             if self.msgs[0].current_recipe == recipe_name:
                 self.client.unsubscribe(f'avagrows/device/client/{id}/deviceState')#subscribe
@@ -213,7 +219,6 @@ class MQTT:
                 return {"current_recipe": recipe_name, "dailyStartTime": self.msgs[0].dailyStartTime}
         else: 
             self.client.publish(f'avagrows/device/server/{id}/devicecommand','{"command": 0}')
-            time.sleep(1)
             if len(self.msgs) > 0:
                 if self.msgs[0].current_recipe == recipe_name:
                     self.client.unsubscribe(f'avagrows/device/client/{id}/deviceState')#subscribe
@@ -221,7 +226,10 @@ class MQTT:
                     self.client.loop_stop()
                     print("2: ", self.msgs[0].deviceId)
                     return {"current_recipe": recipe_name, "dailyStartTime": self.msgs[0].dailyStartTime}
-
+        '''
+        time.sleep(10)
+        if len(self.msgs) > 0:
+            print("DEVICE STATE: ", self.msgs[0])
         self.client.unsubscribe(f'avagrows/device/client/{id}/deviceState')#subscribe
 
         self.client.disconnect() #disconnect

@@ -46,13 +46,41 @@ def check_experiments_end_date_daily():
                         else:
                             curr_exp_day = curr_exp_day - curr_phase.days
 
-def check_device_activity():
-    broker = MQTT()
-    online_devices = broker.check_online() # listed in v2_mqtt.py
-    print("FLAG:", online_devices)
+'''
+updates isonline
+checks recipe status 
 
-    Device.objects.filter(id__in=online_devices).update(is_online=1)
-    Device.objects.exclude(id__in=online_devices).update(is_online=0)
+Issues: Update to check for duplicate return messages from the same byte - so sayeth El Capitan. Also, the "e = list(Experiment.objects.filter(device_id = d.deviceId).select_related('recipe').annotate(recipe_name=F('recipe__name')).values())[0]" is ugly. fix it!
+'''
+def check_devices():
+    broker = MQTT()
+    online_devices = broker.get_device_data() # listed in v2_mqtt.py
+    device_ids = [d.deviceId for d in online_devices] 
+    #print("FLAG:", online_devices)
+
+    # update which devices online
+    Device.objects.filter(id__in=device_ids).update(is_online=1)
+    Device.objects.exclude(id__in=device_ids).update(is_online=0)
+
+    #confirm devices have correct recipe - if not, reset to correct recipe
+    for d in online_devices:
+        #print("DEVICE IN DB: ", Device.objects.filter(id = d.deviceId).values())
+        e = list(Experiment.objects.filter(device_id = d.deviceId).select_related('recipe').annotate(recipe_name=F('recipe__name')).values())
+        # if there is an experiment currently running for a given device:
+        if e:
+            #print("EXPERIMENT IN DB FOR :"+d.deviceId, e)
+            #print("CURRENT RECIPE IN "+d.deviceId+": ", d.currentRecipe)
+            #print("CURRENT RECIPE IN DB: ", e[0]['recipe_name']+ ".json")
+
+            # update recipe in byte 
+            if e[0]['recipe_name']+ ".json" != d.currentRecipe:
+
+                broker.trigger_recipe(id, e[0]['recipe_json'], e[0]['recipe_name']+ ".json")
+
+
+
+
+
 
 url = "https://data.mongodb-api.com/app/data-ldetp/endpoint/data/v1/action/find"
 payload = json.dumps({

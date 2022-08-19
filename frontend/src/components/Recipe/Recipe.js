@@ -81,15 +81,17 @@ const RecipeList = () => {
     // console.log("FR: ", result.data)
     setRecipeList(result.data)
 
+    /*
     const result2 = await axios(
       '/api/phases/',
     );
     setPhaseList(result2.data)
+    */
   } 
 
   useEffect(() => {
+    fetchPhases();
     fetchRecipes();
-    // fetchPhases();
   }, []);
 
   async function fetchPhases() {
