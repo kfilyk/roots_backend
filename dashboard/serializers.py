@@ -4,6 +4,14 @@ from rest_framework import serializers
 from .models import Device, Experiment, Recipe, Phase, Plant, Pod, ExperimentReading, PodReading
 from django.contrib.auth import get_user_model
 
+"""
+OVERALL FILE PURPOSE: FILE OUTLINES SERIALIZERS USED IN PROJECT
+
+Serializers in Django REST Framework are responsible for converting objects into data types understandable by javascript and front-end frameworks. 
+Serializers also provide deserialization, allowing parsed data to be converted back into complex types, after first validating the incoming data.
+FOR MORE INFO: https://www.django-rest-framework.org/api-guide/serializers/
+"""
+
 # https://www.digitalocean.com/community/tutorials/build-a-to-do-application-using-django-and-react
 
 # Serializers convert models to JSON so they can be displayed on a react frontend

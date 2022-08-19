@@ -9,6 +9,13 @@ from django.db import models
 from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
 
+"""
+OVERALL FILE PURPOSE: DEFINES ALL MODELS IN OUR SQL DATABASE.
+CHANGES MADE HERE CAN AFFECT THE DATABASE DIRECTLY VIA TERMINAL COMMANDS:
+python manage.py makemigrations
+python manage.py migrate
+"""
+
 '''
 set FOREIGN_KEY_CHECKS = 0;
 -- drop table plant_science.device cascade;

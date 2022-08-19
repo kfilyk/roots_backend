@@ -7,8 +7,21 @@ from dashboard.models import Device
 
 #Followed: http://www.steves-internet-guide.com/python-mqtt-publish-subscribe/
 
+"""
+OVERALL FILE PURPOSE: USES PAHO's MQTT CLIENT TO CONNECT TO OUR MQTT BROKER AND SEND COMMANDS TO DEVICES.
+
+"""
+
 class MQTT:
 
+    """
+    Input from: NONE
+    Outputs to: NONE
+    Created by: Stella T 08/19/2022
+    Last Edit: Stella T 08/19/2022
+    Purpose: Initializes MQTT client and connects to specificed MQTT broker. 
+    Sets on_message which defines what happens to the response received from device.
+    """
     def __init__(self):
         self.msgs = []
         self.client = paho.Client("client-001") #create client object client1.on_publish = on_publish #assign function to callback client1.connect(broker,port) #establish connection client1.publish("house/bulb1","on")
@@ -36,11 +49,28 @@ class MQTT:
         self.client.username_pw_set(self.username, self.password)
         self.client.on_message=self.on_message
 
+    """
+    Input from: NONE
+    Outputs to: self.msgs
+    Created by: Stella T 08/19/2022
+    Last Edit: Stella T 08/19/2022
+    Purpose: Defines what happens to the response received from device.
+    In this case, it decodes the response, converts to it a SimpleNamespace then JSON object.
+    Lastly, it gets appended to a messages array. 
+    """
     def on_message(self, client, userdata, message):
         # x = json.loads(str(message.payload.decode("utf-8")))
         x = json.loads(str(message.payload.decode("utf-8")), object_hook=lambda d: SimpleNamespace(**d))
         self.msgs.append(x)
 
+
+    """
+    Input from: views.py/send_command()
+    Outputs to: views.py/send_command()
+    Created by: Stella T 08/19/2022
+    Last Edit: Stella T 08/19/2022
+    Purpose: Gets the entire device state for a single device
+    """
     def get_device_status(self, device):
         self.client.connect(self.broker, port=self.port)#connect
         self.client.loop_start() #start loop to process received messages
@@ -63,6 +93,15 @@ class MQTT:
             return json.dumps({})
             # return {}
 
+
+    """
+    Input from: views.py/send_command()
+    Outputs to: views.py/send_command()
+    Created by: Stella T 08/19/2022
+    Last Edit: Stella T 08/19/2022
+    Purpose: DOES NOT WORK. 
+    The format of device logs is plain txt so the on_message cannot be used on response.
+    """
     def get_device_logs(self, device):
         self.client.connect(self.broker, port=self.port)#connect
         self.client.loop_start() #start loop to process received messages
@@ -85,6 +124,14 @@ class MQTT:
             return json.dumps({})
             # return {}
 
+
+    """
+    Input from: views.py/send_command()
+    Outputs to: views.py/send_command()
+    Created by: Stella T 08/19/2022
+    Last Edit: Stella T 08/19/2022
+    Purpose: Takes the given deviceId, hour and minute values and changes its start time accordingly. 
+    """
     def set_start_time(self, device, hour, minute):
         self.client.connect(self.broker, port=self.port)#connect
         self.client.loop_start() #start loop to process received messages
@@ -104,6 +151,14 @@ class MQTT:
         else: 
             return -11
 
+    """
+    Input from: views.py/send_command()
+    Outputs to: views.py/send_command()
+    Created by: Stella T 08/19/2022
+    Last Edit: Stella T 08/19/2022
+    Purpose: Takes the given deviceId and timezone and changes its timezone accordingly. 
+    The device's firmware has a bug where +/- are flipped for timezones. 
+    """
     def change_timezone(self, device, timezone):
         self.client.connect(self.broker, port=self.port)#connect
         self.client.loop_start() #start loop to process received messages
@@ -123,6 +178,13 @@ class MQTT:
         else: 
             return -7
 
+    """
+    Input from: views.py/send_command()
+    Outputs to: views.py/send_command()
+    Created by: Stella T 08/19/2022
+    Last Edit: Stella T 08/19/2022
+    Purpose: Sends a command that triggers device to check for an OTA update
+    """
     def trigger_OTA(self, device):
         self.client.connect(self.broker, port=self.port)#connect
         self.client.loop_start() #start loop to process received messages
@@ -144,6 +206,13 @@ class MQTT:
         else: 
             return -12
         
+    """
+    Input from: views.py/send_command()
+    Outputs to: views.py/send_command()
+    Created by: Stella T 08/19/2022
+    Last Edit: Stella T 08/19/2022
+    Purpose: Changes the stage and cycle of a device
+    """ 
     def change_stage_cycle(self, device, stage, cycle):
         self.client.connect(self.broker, port=self.port)#connect
         self.client.loop_start() #start loop to process received messages
@@ -162,10 +231,13 @@ class MQTT:
         return {"msg": "Command sent. Please wait two minutes for stage and cycle to update."}
 
     """
-    Input: cron.py/check_device_activity()
-    Created: Stella Tran @ 2022/07
-    Last Edit: Kelvin Filyk @ 2022/08/18
-    """
+    Input from: views.py/check_device_activity()
+    Outputs to: views.py/send_command()
+    Created by: Stella T 08/18/2022
+    Last Edit: Kelvin Filyk 08/19/2022
+    Purpose: Sends command to verify that all devices in the database are online. 
+    Returns a list of the devices that are online.
+    """ 
     def check_online(self):
         self.client.connect(self.broker, port=self.port)#connect
         self.client.loop_start() #start loop to process received messages
@@ -190,6 +262,14 @@ class MQTT:
         self.client.loop_stop()
         return set(x)  # get rid of dups: return set
 
+    """
+    Input from: views.py/send_command()
+    Outputs to: views.py/send_command()
+    Created by: Stella T 08/18/2022
+    Last Edit: Stella T 08/19/2022
+    Purpose: Given a deviceId, recipe JSON, and recipe_json, function sends two commands (command 3: add & command 4: trigger)
+    to the device which sets the recipe on the device. 
+    """ 
     def trigger_recipe(self, id, recipe, recipe_name):
         self.client.connect(self.broker, port=self.port)#connect
         self.client.loop_start() #start loop to process received messages

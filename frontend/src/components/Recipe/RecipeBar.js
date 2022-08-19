@@ -130,6 +130,9 @@ const RecipeBar = (props) => {
         let start = new Date(start_date)
         let end = new Date(end_date)
         let style = Math.round(( ( mid - start ) / ( end - start ) ) * 100) + "%";
+
+        // console.log("START DATE: ", start_date)
+        // console.log("ADD DATE: ", mid, start, end, style)
         bars.push(
             <a key={`${er.id}_${index}`} onClick={() => show_exp_reading(er.id)} style={{left: `calc(${style})`}} className="tooltip exp_reading_triangle" data-tooltip={mid_string}>▼</a>
         )

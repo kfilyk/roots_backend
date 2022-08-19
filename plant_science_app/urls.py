@@ -32,6 +32,10 @@ router.register(r'plants', views.PlantView, 'dashboard')
 router.register(r'pods', views.PodView, 'dashboard')
 router.register(r'experimentreadings', views.ExperimentReadingView, 'dashboard')
 
+"""
+OVERALL FILE PURPOSE: Lists the url paths. This is the highest level of url paths.
+"""
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     # 'dashboard' path would hypothetically connect the urls.py file in 'dashboard' app - but code has been commented out. dashboard app exclusively for accessing database objects instead. 'frontend' used for displaying urls at :3000 port.

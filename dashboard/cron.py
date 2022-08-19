@@ -7,6 +7,18 @@ from .v2_mqtt import MQTT
 import requests
 import json
 
+"""
+OVERALL FILE PURPOSE: DEFINES ALL FUNCTIONS RELATED TO CRONJOBS OUTLINED IN settings.py/CRONJOBS.
+"""
+
+
+"""
+Input from: settings.py/CRONJOBS
+Outputs to: Directly to Database
+Created by: Stella T 08/19/2022
+Last Edit: Stella T 08/19/2022
+Purpose: Checks to see if experiment has ended otherwise updates phase day
+"""
 def check_experiments_end_date_daily():
     curr_date = datetime.now()
     tz = timezone.get_current_timezone()
@@ -46,6 +58,13 @@ def check_experiments_end_date_daily():
                         else:
                             curr_exp_day = curr_exp_day - curr_phase.days
 
+"""
+Input from: v2_mqtt.py/check_online()
+Outputs to: Directly to Database
+Created by: Stella T 08/19/2022
+Last Edit: Stella T 08/19/2022
+Purpose: Checks if all devices are online and updates their status in the Database accordingly
+"""
 def check_device_activity():
     broker = MQTT()
     online_devices = broker.check_online() # listed in v2_mqtt.py
@@ -70,6 +89,13 @@ headers = {
   'api-key': 'gOvJhCMCWcU3DFs2tAuZoAvO6qk7FAioyklQk6xZ8KlfSS9YG2Ya1SYKLTtudk61', 
 }
 
+"""
+Input from: variables (url, payload, headers) in cron.py
+Outputs to: Database
+Created by: Kelvin F 08/19/2022
+Last Edit: Kelvin F 08/19/2022
+Purpose: Polls devices from the Roots MongoDB database into the Roots SQL database
+"""
 # used to pull new devices, experiments, etc from the mobile app
 def poll_mongo_db():
     response = requests.request("POST", url, headers=headers, data=payload)

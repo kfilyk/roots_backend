@@ -2,6 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Button, View, Text, TextInput, StyleSheet } from 'react-native';
 import axios from "axios";
 
+
+
+/*
+OVERALL FILE PURPOSE: The Login/Register Page that users are directed to when they're not yet logged in.
+Contains all the logic to register for another account or login.
+*/
+
 const LoginOrCreateForm = (props) => {
     const [login_error, set_login_error] = useState(false);
     const [username, set_username] = useState('');
@@ -18,7 +25,15 @@ const LoginOrCreateForm = (props) => {
         accountCreateContainerStyle
       } = style;
 
+    
 
+    /*
+    Input from: window.localStorage.getItem("token")
+    Outputs to: LoginOrCreateForm.js/useEffect()
+    Created by: Stella T 08/19/2022
+    Last Edit: Stella T 08/19/2022
+    Purpose: Automatically logs user in if they have the correct token
+    */
     function auto_login() {
       if (window.localStorage.getItem("token")) {
         // console.log("POST")
@@ -44,6 +59,13 @@ const LoginOrCreateForm = (props) => {
     }, []);
 
 
+    /*
+    Input from: None
+    Outputs to: LoginOrCreateForm.js/return()
+    Created by: Stella T 08/19/2022
+    Last Edit: Stella T 08/19/2022
+    Purpose: Renders button text to say either create account or login depending on state
+    */
     function renderButton(){
         const buttonText = form === "register" ? 'Create Account' : 'Login';
 
@@ -52,6 +74,13 @@ const LoginOrCreateForm = (props) => {
         );
     }
 
+    /*
+    Input from: None
+    Outputs to: LoginOrCreateForm.js/return()
+    Created by: Stella T 08/19/2022
+    Last Edit: Stella T 08/19/2022
+    Purpose: Renders login error message
+    */
     function renderLoginError() {
         if (login_error) {
           if (form === "login"){
@@ -71,12 +100,26 @@ const LoginOrCreateForm = (props) => {
         }
     }
 
+    /*
+    Input from: None
+    Outputs to: LoginOrCreateForm.js/return()
+    Created by: Kelvin F 08/19/2022
+    Last Edit: Kelvin F 08/19/2022
+    Purpose: Treats keyboard enter as equivalent to clicking login button
+    */
     function handleKeyPress(event) {
         if(event.key === 'Enter'){
           login()
         }
     }
 
+    /*
+    Input from: None
+    Outputs to: LoginOrCreateForm.js/return()
+    Created by: Kelvin F 08/19/2022
+    Last Edit: Kelvin F 08/19/2022
+    Purpose: Sends API call to backend to verify user login credentials
+    */
     function login(){
       const payload = { username: username, password: password } 
 
@@ -104,6 +147,13 @@ const LoginOrCreateForm = (props) => {
         });
     }
 
+    /*
+    Input from: None
+    Outputs to: LoginOrCreateForm.js/return()
+    Created by: Kelvin F 08/19/2022
+    Last Edit: Kelvin F 08/19/2022
+    Purpose: Renders register input fields
+    */
     function renderRegister(){
       if (form === "register"){
         return (
@@ -136,6 +186,13 @@ const LoginOrCreateForm = (props) => {
     }
 
 
+    /*
+    Input from: None
+    Outputs to: LoginOrCreateForm.js/return()
+    Created by: Kelvin F 08/19/2022
+    Last Edit: Kelvin F 08/19/2022
+    Purpose: Returns LoginOrCreateForm page to be rendered 
+    */
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
           <View style={formContainerStyle}>
@@ -171,6 +228,14 @@ const LoginOrCreateForm = (props) => {
       );
 }
 
+
+   /*
+    Input from: None
+    Outputs to: None
+    Created by: Kelvin F 08/19/2022
+    Last Edit: Kelvin F 08/19/2022
+    Purpose: Styling for components on this page
+    */
 const style = StyleSheet.create({
     formContainerStyle: {
       flex: 1,
