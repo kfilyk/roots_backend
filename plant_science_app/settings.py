@@ -138,14 +138,16 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+#
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
-    'http://3.232.27.231:3000'
+    'http://avaroots.io',
+    'http://3.232.27.231:3000',
 ]
-
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000',
-    'http://3.232.27.231:3000'
+    'http://avaroots.io',
+    'http://3.232.27.231:3000',
 ]
 
 REST_FRAMEWORK = {
@@ -168,7 +170,6 @@ REST_FRAMEWORK = {
 """
 CRONJOBS = [
     ('0 1 * * *', 'dashboard.cron.update_experiments_daily'),
-    ('* */3 * * *', 'dashboard.cron.check_device_activity'), 
     ('* * * * *', 'dashboard.cron.check_devices'), 
     ('* * * * *', 'dashboard.cron.poll_mongo_db')
 ]
