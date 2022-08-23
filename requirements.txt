@@ -3,3 +3,5 @@ pymysql
 djangorestframework
 django-cors-headers
 django-filter
+paho-mqtt
+django-crontab
