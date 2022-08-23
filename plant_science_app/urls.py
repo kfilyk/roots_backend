@@ -42,4 +42,5 @@ urlpatterns = [
     #path('dashboard/', include('dashboard.urls')),
     path('api/', include(router.urls)),
     path('auth/', include('dashboard.urls')),
+    path('mqtt/', views.MQTTView.as_view()),
 ]

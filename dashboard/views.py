@@ -456,3 +456,10 @@ class VerifyUserView(APIView):
     def post(self, request, *args, **kwargs):
         if request.user:
             return Response(UserSerializer(request.user).data)
+
+
+class MQTTView(APIView):
+    permission_classes = (IsAuthenticated,) 
+
+    def get(self, request, *args, **kwargs):
+        return Response({"message": "Hello, world!"}, status=200)
