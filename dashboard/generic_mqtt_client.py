@@ -121,3 +121,228 @@ class GenericMQTT:
             return self.logs[0]
         else: 
             return {"logs": "none"}
+
+    """
+    Input from: views.py/send_command()
+    Outputs to: views.py/send_command()
+    Created by: Stella T 08/19/2022
+    Last Edit: Stella T 08/19/2022
+    Purpose: Takes the given deviceId, hour and minute values and changes its start time accordingly. 
+    """
+    def set_start_time(self, device, hour, minute):
+        self.client.connect(self.broker, port=self.port)#connect
+        self.client.loop_start() #start loop to process received messages
+
+        self.client.subscribe(f'avagrows/device/client/{device}/deviceState')#subscribe
+        self.client.publish(f'avagrows/device/server/{device}/devicecommand', f'{{"command": 11, "hour":{hour}, "minute":{minute}}}', qos=1)
+        time.sleep(1)
+        self.client.publish(f'avagrows/device/server/{device}/devicecommand','{"command": 0}')#publish
+        time.sleep(1)
+        self.client.unsubscribe(f'avagrows/device/client/{device}/deviceState')#subscribe
+
+        self.client.disconnect() #disconnect
+        self.client.loop_stop()
+
+        if len(self.msgs) > 0:
+            return {"dailyStartTime": self.msgs[0]['dailyStartTime']}
+        else: 
+            return -11
+
+    """
+    Input from: views.py/send_command()
+    Outputs to: views.py/send_command()
+    Created by: Stella T 08/19/2022
+    Last Edit: Stella T 08/19/2022
+    Purpose: Takes the given deviceId and timezone and changes its timezone accordingly. 
+    The device's firmware has a bug where +/- are flipped for timezones. 
+    """
+    def change_timezone(self, device, timezone):
+        self.client.connect(self.broker, port=self.port)#connect
+        self.client.loop_start() #start loop to process received messages
+
+        self.client.subscribe(f'avagrows/device/client/{device}/deviceState')#subscribe
+        self.client.publish(f'avagrows/device/server/{device}/devicecommand', f'{{"command": 7, "timezone":"{timezone}"}}')
+        time.sleep(2)
+        self.client.publish(f'avagrows/device/server/{device}/devicecommand','{"command": 0}')#publish
+        time.sleep(2)
+        self.client.unsubscribe(f'avagrows/device/client/{device}/deviceState')#subscribe
+
+        self.client.disconnect() #disconnect
+        self.client.loop_stop()
+
+        if len(self.msgs) > 0:
+            return {"timezone": self.msgs[0]['timezone'], "localTime": self.msgs[0]['localTime'], "isTimeSynced": self.msgs[0]['isTimeSynced']}
+        else: 
+            return -7
+
+    """
+    Input from: views.py/send_command()
+    Outputs to: views.py/send_command()
+    Created by: Stella T 08/19/2022
+    Last Edit: Stella T 08/19/2022
+    Purpose: Sends a command that triggers device to check for an OTA update
+    """
+    def trigger_OTA(self, device):
+        self.client.connect(self.broker, port=self.port)#connect
+        self.client.loop_start() #start loop to process received messages
+
+        self.client.subscribe(f'avagrows/device/client/{device}/deviceState')#subscribe
+        self.client.publish(f'avagrows/device/server/{device}/devicecommand', f'{{"command": 12}}')
+        time.sleep(1)
+        self.client.publish(f'avagrows/device/server/{device}/devicecommand', f'{{"command": 12}}')
+        time.sleep(1)
+        self.client.publish(f'avagrows/device/server/{device}/devicecommand', f'{{"command": 0}}')
+        time.sleep(1)
+        self.client.unsubscribe(f'avagrows/device/client/{device}/deviceState')#subscribe
+
+        self.client.disconnect() #disconnect
+        self.client.loop_stop()
+
+        if len(self.msgs) > 0:
+            return {"macAddress": self.msgs[0]['macAddress']}
+        else: 
+            return -12
+        
+    """
+    Input from: views.py/send_command()
+    Outputs to: views.py/send_command()
+    Created by: Stella T 08/19/2022
+    Last Edit: Stella T 08/19/2022
+    Purpose: Changes the stage and cycle of a device
+    """ 
+    def change_stage_cycle(self, device, stage, cycle):
+        self.client.connect(self.broker, port=self.port)#connect
+        self.client.loop_start() #start loop to process received messages
+        x = f'{{"command": 14, "newCycle":{cycle}, "newStage":{stage}}}'
+        print("DSLJDALKDJASL ", x)
+        self.client.subscribe(f'avagrows/device/client/{device}/deviceState')#subscribe
+        self.client.publish(f'avagrows/device/server/{device}/devicecommand', f'{{"command": 14, "newCycle":{cycle}, "newStage":{stage}}}')
+        time.sleep(1)
+        self.client.publish(f'avagrows/device/server/{device}/devicecommand', f'{{"command": 14, "newCycle":{cycle}, "newStage":{stage}}}')
+        time.sleep(1)
+        self.client.unsubscribe(f'avagrows/device/client/{device}/deviceState')#subscribe
+
+        self.client.disconnect() #disconnect
+        self.client.loop_stop()
+
+        return {"msg": "Command sent. Please wait two minutes for stage and cycle to update."}
+
+
+    """
+    Input from: views.py/send_command()
+    Outputs to: views.py/send_command()
+    Created by: Stella T 08/18/2022
+    Last Edit: Stella T 08/19/2022
+    Purpose: Given a deviceId, recipe JSON, and recipe_json, function sends two commands (command 3: add & command 4: trigger)
+    to the device which sets the recipe on the device. 
+
+    command 3 uploads recipe
+    command 4 triggers it
+    """ 
+    def trigger_recipe(self, id, recipe, recipe_name):
+        self.client.connect(self.broker, port=self.port)#connect
+        self.client.loop_start() #start loop to process received messages
+        self.client.subscribe(f'avagrows/device/client/{id}/deviceState')#subscribe
+        self.client.publish(f'avagrows/device/server/{id}/devicecommand', \
+            f'{{"command": 3, "name":"{recipe_name}", "data":{json.dumps(recipe)}}}')
+        time.sleep(5)
+        self.client.publish(f'avagrows/device/server/{id}/devicecommand', \
+            f'{{"command": 4, "name":"{recipe_name}"}}')
+        time.sleep(5)
+        self.client.publish(f'avagrows/device/server/{id}/devicecommand','{"command": 0}')
+        '''
+        time.sleep(5)
+        if len(self.msgs) > 0:
+            if self.msgs[0].current_recipe == recipe_name:
+                self.client.unsubscribe(f'avagrows/device/client/{id}/deviceState')#subscribe
+
+                self.client.disconnect() #disconnect
+                self.client.loop_stop()
+                print("1: ", self.msgs[0].deviceId)
+                return {"current_recipe": recipe_name, "dailyStartTime": self.msgs[0].dailyStartTime}
+        else: 
+            self.client.publish(f'avagrows/device/server/{id}/devicecommand','{"command": 0}')
+            if len(self.msgs) > 0:
+                if self.msgs[0].current_recipe == recipe_name:
+                    self.client.unsubscribe(f'avagrows/device/client/{id}/deviceState')#subscribe
+                    self.client.disconnect() #disconnect
+                    self.client.loop_stop()
+                    print("2: ", self.msgs[0].deviceId)
+                    return {"current_recipe": recipe_name, "dailyStartTime": self.msgs[0].dailyStartTime}
+        '''
+        time.sleep(5)
+        if len(self.msgs) > 0:
+            print("DEVICE STATE: \n")
+            print(self.msgs[0])
+        self.client.unsubscribe(f'avagrows/device/client/{id}/deviceState')#subscribe
+
+        self.client.disconnect() #disconnect
+        self.client.loop_stop()
+
+    def set_recipe_day_cycle(self, id, cycle, phase):
+        self.client.connect(self.broker, port=self.port)#connect
+        self.client.loop_start() #start loop to process received messages
+        self.client.subscribe(f'avagrows/device/client/{id}/deviceState')#subscribe
+        self.client.publish(f'avagrows/device/server/{id}/devicecommand', f'{{"command": 14, "newCycle": 0, "newStage":0}}')
+
+    def get_recipe_list(self, device):
+        self.client.connect(self.broker, port=self.port)#connect
+        self.client.loop_start() #start loop to process received messages
+
+        self.client.subscribe(f'avagrows/device/client/{device}/deviceState')#subscribe
+        self.client.publish(f'avagrows/device/server/{device}/devicecommand','{"command": 0}')#publish
+        time.sleep(2)
+        self.client.unsubscribe(f'avagrows/device/client/{device}/deviceState')#subscribe
+
+        time.sleep(1)
+
+        self.client.disconnect() #disconnect
+        self.client.loop_stop()
+
+        if len(self.msgs) > 0:
+            return {"currentRecipe": self.msgs[0]["currentRecipe"], "recipeList": self.msgs[0]["recipeList"], 
+                    "recipeNextStartTime": self.msgs[0]["recipeNextStartTime"]}
+            return {}
+
+    def trigger_recipe_by_name(self, device, recipe_name):
+        self.client.connect(self.broker, port=self.port)#connect
+        self.client.loop_start() #start loop to process received messages
+
+        self.client.subscribe(f'avagrows/device/client/{device}/deviceState')#subscribe
+        self.client.publish(f'avagrows/device/server/{device}/devicecommand', \
+            f'{{"command": 4, "name":"{recipe_name}"}}')
+        time.sleep(2)
+
+        self.client.publish(f'avagrows/device/server/{device}/devicecommand','{"command": 0}')#publish
+        time.sleep(1)
+        self.client.unsubscribe(f'avagrows/device/client/{device}/deviceState')#subscribe
+
+        self.client.disconnect() #disconnect
+        self.client.loop_stop()
+
+        if len(self.msgs) > 0:
+            return {"currentRecipe": self.msgs[0]["currentRecipe"], 
+                    "recipeNextStartTime": self.msgs[0]["recipeNextStartTime"]}
+            return {}
+
+        self.client.connect(self.broker, port=self.port)#connect
+        self.client.loop_start() #start loop to process received messages
+
+        self.client.subscribe(f'avagrows/device/client/{device}/deviceState')#subscribe
+        self.client.publish(f'avagrows/device/server/{device}/devicecommand','{"command": 0}')#publish
+        time.sleep(2)
+        self.client.unsubscribe(f'avagrows/device/client/{device}/deviceState')#subscribe
+
+        time.sleep(1)
+
+        self.client.disconnect() #disconnect
+        self.client.loop_stop()
+
+        if len(self.msgs) > 0:
+            return {"macAddress": self.msgs[0]["macAddress"], 
+                    "softwareRevision": self.msgs[0]["softwareRevision"], 
+                    "deviceStatus": self.msgs[0]["deviceStatus"], 
+                    "userLED": self.msgs[0]["userLED"], 
+                    "ipaddress": self.msgs[0]["ipaddress"], 
+                    "recipeNextStartTime": self.msgs[0]["recipeNextStartTime"]}
+            return {}

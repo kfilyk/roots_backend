@@ -8,6 +8,7 @@ import Plant from "./Plant/Plant";
 import './dashboard.css';
 import Device from './Device/Device';
 import Help from './Help/Help';
+import MQTT from './MQTT/MQTT';
 
 const Dashboard = () => {
   const [selected_tab, set_selected_tab] = useState('loading'); // in the future: loading state shows a spinning wheel
@@ -28,7 +29,7 @@ const Dashboard = () => {
         .then((res) => {
           set_auth({...auth, user: res.data.username})
           //default tab
-          set_selected_tab("device" )
+          set_selected_tab("mqtt" )
 
         })
         .catch(res => {
@@ -76,6 +77,9 @@ const Dashboard = () => {
         <span className={selected_tab === "help" ? "nav-link active" : "nav-link"} onClick={() => set_selected_tab("help" )}>
           HELP
         </span>
+        <span className={selected_tab === "mqtt" ? "nav-link active" : "nav-link"} onClick={() => set_selected_tab("mqtt" )}>
+          MQTT
+        </span>
       </div>
     );
   };
@@ -101,6 +105,8 @@ const Dashboard = () => {
           return <Plant></Plant>
         case 'help':
             return <Help></Help>
+        case 'mqtt':
+              return <MQTT></MQTT>
         default:
           return <></> // replace this with spinny wheel
       }
