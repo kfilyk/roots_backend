@@ -23,6 +23,7 @@ from django.http import HttpResponse, JsonResponse
 from datetime import datetime
 from django.utils.timezone import make_aware
 from .v2_mqtt import MQTT
+from .generic_mqtt_client import GenericMQTT
 import json
 from django.utils import timezone
 from datetime import datetime, timedelta
@@ -461,5 +462,18 @@ class VerifyUserView(APIView):
 class MQTTView(APIView):
     permission_classes = (IsAuthenticated,) 
 
-    def get(self, request, *args, **kwargs):
-        return Response({"message": "Hello, world!"}, status=200)
+    def post(self, request, *args, **kwargs):
+        env = request.data['env']
+        device = request.data['device']
+        command = request.data['command']
+        mqtt = GenericMQTT(env)
+
+        if command == 0:
+            data = mqtt.get_device_status(device)
+            return JsonResponse(data, safe=False)
+        elif command == 1: 
+            data = mqtt.get_device_logs(device)
+            return Response(data, content_type='text/plain; charset=utf8')
+        # print("XX: ", data)
+        # return Response({"message": "Hello, world!"}. status=200)
+        
