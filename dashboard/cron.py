@@ -90,7 +90,6 @@ def check_devices():
 
         # if there is an experiment currently running for a given device:
 
-        '''
         if e:
             r = Recipe.objects.get(id = e[0]['recipe_id'])
             #print(dir(r))
@@ -108,7 +107,6 @@ def check_devices():
 
                 broker.trigger_recipe(d.deviceId, r.recipe_json, e[0]['recipe_name']+ ".json")
                 broker.change_stage_cycle(d.deviceId, e[0]['phase_day'], e[0]['phase_number'])
-        '''
 
 
 

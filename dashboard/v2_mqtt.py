@@ -235,8 +235,7 @@ class MQTT:
     Outputs to: views.py/send_command()
     Created by: Stella T 08/18/2022
     Last Edit: Kelvin Filyk 08/19/2022
-    Purpose: Sends command to verify that all devices in the database are online. 
-    Returns a list of the devices that are online.
+    Purpose: Gets the entire device state for all devices. Returns a list of all online devices.
     """ 
     def get_device_data(self):
         self.client.connect(self.broker, port=self.port)#connect
