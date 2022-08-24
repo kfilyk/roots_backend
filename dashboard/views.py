@@ -466,14 +466,47 @@ class MQTTView(APIView):
         env = request.data['env']
         device = request.data['device']
         command = request.data['command']
-        mqtt = GenericMQTT(env)
+        broker = GenericMQTT(env)
 
         if command == 0:
-            data = mqtt.get_device_status(device)
+            data = broker.get_device_status(device)
+            data = {key: data[key] for key in data if key not in ['luxZone', 'mqttConfig', 'totalLuxZones', 'wifiCredentials']}
             return JsonResponse(data, safe=False)
         elif command == 1: 
-            data = mqtt.get_device_logs(device)
+            #WORKS BUT FORMATTING ISSUES
+            data = broker.get_device_logs(device)
             return Response(data, content_type='text/plain; charset=utf8')
-        # print("XX: ", data)
-        # return Response({"message": "Hello, world!"}. status=200)
+        elif command == 7:
+            timezone = request.data['parameters']['timezone']
+            data = broker.change_timezone(device, timezone)
+            return JsonResponse(data, safe=False)
+        elif command == 11:
+            hour = int(request.data['parameters']['hour'])
+            minute = int(request.data['parameters']['minute'])
+            data = broker.set_start_time(device, hour, minute)
+            return JsonResponse(data, safe=False)
+        elif command == 12:
+            data = {
+                "macAddress": broker.trigger_OTA(device),
+                "msg": "OTA Trigger sent, check Mender to see if device is downloading firmware"}
+            return JsonResponse(data, safe=False)
+        elif command == 14:
+            #Cannot change stage + cycle if byte hasn't started recipe yet?
+            stage = int(request.data['parameters']['stage'])
+            cycle = int(request.data['parameters']['cycle'])
+            data = broker.change_stage_cycle(device, stage, cycle)
+            return JsonResponse(data, safe=False)
+        elif command == 15:
+            ##GET RECIPE LIST
+            data = broker.get_recipe_list(device)
+            return JsonResponse(data, safe=False)
+        elif command == 16:
+            #RECIPE NAME MUST BE EXACT AND INCLUDE .json at the end!
+            recipe_name = request.data["parameters"]["recipe_name"]
+            data = broker.trigger_recipe_by_name(device, recipe_name)
+            return JsonResponse(data, safe=False)
+        else: 
+            data = {"error": "wrong command id"}
+            return JsonResponse(data, safe=False)
+        
         
