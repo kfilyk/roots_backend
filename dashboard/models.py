@@ -51,9 +51,10 @@ class Device(models.Model):
 class Experiment(models.Model):
     id = models.AutoField(db_column='e_id', primary_key=True)  
     name = models.CharField(db_column='e_name', max_length=255, blank=True, null=True)
-    current_phase = models.ForeignKey("Phase", models.DO_NOTHING, related_name='+', db_column='e_current_phase',blank=True, null=True) # germination, seedling, vegetative growth, flowering, fruiting, other1, terminated, complete
     day = models.IntegerField(db_column='e_day', default = 0) 
+    phase = models.ForeignKey("Phase", models.DO_NOTHING, related_name='+', db_column='e_phase_id',blank=True, null=True) # germination, seedling, vegetative growth, flowering, fruiting, other1, terminated, complete
     phase_day = models.IntegerField(db_column='e_phase_day', default = 0) 
+    phase_number = models.IntegerField(db_column='e_phase_number', default = 0) 
     device = models.ForeignKey("Device", models.DO_NOTHING, related_name='+', db_column='e_device_id', blank=False, null=False)  
     # this score not filled until end of experiment
     score = models.DecimalField(db_column='e_score', max_digits=2, decimal_places=2, blank=True, null=True) # score should be the averaged score of all pod Experiment Readings
