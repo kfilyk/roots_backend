@@ -6,15 +6,15 @@ const PodCarousel = (props) => {
   const [pod_list, setPodList] = useState([]);
   const [capacity, setCapacity] = useState(-1);
 
-  async function fetchData(props) {
-    const result = await axios.post(`/api/pods/populate_pod_carousel/`, {"id": props.experimentID});
+  async function fetchData(id) {
+    const result = await axios.post(`/api/pods/populate_pod_carousel/`, {"id":id});
     setPodList(result.data.pods)
     setCapacity(result.data.capacity)
   } 
 
   useEffect(() => {
-    fetchData(props);
-  }, [props]);
+    fetchData(props?.experimentID);
+  }, [props?.experimentID]);
 
   function renderProgressCircle(pod, pos){
     //console.log(pod)

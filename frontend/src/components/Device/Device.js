@@ -457,7 +457,7 @@ const Device = () => {
 
     function renderCommandParameters(id){
         switch(true) {
-            case id === 7:
+            case id === '7':
                 return(
                     <div>
                         <div>
@@ -494,7 +494,7 @@ const Device = () => {
                         </div>
                     </div>
                 )
-            case id === 11:
+            case id === '11':
                 return(
                     <div>
                         <div>
@@ -507,7 +507,7 @@ const Device = () => {
                         </div>
                     </div>
                 )
-            case id === 14:
+            case id === '14':
                 return(
                     <div>
                         <div>
@@ -520,8 +520,9 @@ const Device = () => {
                         </div>
                     </div>
             )
+            default:
+                return(<></>)
         } 
-        return
     }
 
     function renderCommand(){

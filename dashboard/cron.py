@@ -77,7 +77,7 @@ def check_devices():
     broker = MQTT()
     online_devices = broker.get_device_data() # listed in v2_mqtt.py
     device_ids = [d.deviceId for d in online_devices] 
-    #print("FLAG:", online_devices)
+    print("ONLINE DEVICES ("+ str(len(device_ids))+"): ", device_ids)
 
     # update which devices online
     Device.objects.filter(id__in=device_ids).update(is_online=1)
@@ -90,8 +90,8 @@ def check_devices():
 
         # if there is an experiment currently running for a given device:
 
+        '''
         if e:
-            print("FLAG")
             r = Recipe.objects.get(id = e[0]['recipe_id'])
             #print(dir(r))
             #print("EXPERIMENT IN DB FOR :"+d.deviceId, e)
@@ -107,7 +107,8 @@ def check_devices():
                 print("PHASE NUMBER: ", e[0]['phase_number'])
 
                 broker.trigger_recipe(d.deviceId, r.recipe_json, e[0]['recipe_name']+ ".json")
-                broker.set_recipe_day_cycle(d.deviceId, e[0]['phase_day'], e[0]['phase_number'])
+                broker.change_stage_cycle(d.deviceId, e[0]['phase_day'], e[0]['phase_number'])
+        '''
 
 
 
