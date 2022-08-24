@@ -1,0 +1,25 @@
+.mainContainer {
+    display: flex;
+    justify-content: center;
+}
+
+.leftContainer{
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+}
+
+.leftContainer > * {
+    margin-bottom: 8%;    
+}
+
+.rightContainer{
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+    margin-left: 5%
+}
+
+.rightContainer > pre {
+    margin-top: 0%;
+}

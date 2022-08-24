@@ -1,5 +1,6 @@
 import React, { useState, } from 'react';
 import axios from "axios";
+import "./mqtt.css"
 
 const MQTT = () => {
     const [command, set_command] = useState({
@@ -97,7 +98,8 @@ const MQTT = () => {
             case id === 16:
                 return(
                     <div>
-                        <input type="text" value={command.recipe_name} placeholder="Recipe name (spelling, capitalization must be exact. must include .json at the end)" onChange={(e) => set_command({...command, recipe_name: e.target.value})} />
+                        <p>Recipe name (spelling, capitalization must be exact. must include .json at the end)</p>
+                        <input type="text" value={command.recipe_name} placeholder="Recipe Name" onChange={(e) => set_command({...command, recipe_name: e.target.value})} />
                     </div>
                 )
             default:
@@ -108,19 +110,15 @@ const MQTT = () => {
 
     function renderCommand(){
         return (
-                <div>
-                    <div className="form_row">
+                <div className="mainContainer">
+                    <div className="leftContainer">
                         <input type="text" value={command.device} placeholder="Device ID" onChange={(e) => set_command({...command, device: e.target.value})} />
-                    </div>
-                    <div className="form_row">
                         <select value={command.env} onChange={(e) => set_command({...command, env: e.target.value})} >
                             <option value="qa">QA</option>
                             <option value="prod">Prod</option>
                             <option value="dev">Dev</option>
                             <option value="roots">Roots</option>
                         </select>
-                    </div>
-                    <div className="form_row">
                         <select value={command.id} onChange={(e) => set_command({...command, id: parseInt(e.target.value)})} >
                             <option value="0">Get Device State</option>
                             {/* <option value="1">Get Device Logs</option> */}
@@ -131,12 +129,12 @@ const MQTT = () => {
                             <option value="15">Get Recipe List</option>
                             <option value="16">Trigger Recipe by Name</option>
                         </select>
-                    </div>
+                    {renderCommandParameters(command.id)}
                     <button className='save' onClick={(e) => {
                         send_command(e)
                     }}>Send Command</button>
-                    {renderCommandParameters(command.id)}
-                    <div className='form-row'>
+                    </div>
+                    <div className='rightContainer'>
                         Response: 
                         <pre>{JSON.stringify(command.response, null, 2) }</pre>
                         {/* <button className='save' onClick={() => {navigator.clipboard.writeText(JSON.stringify(command.response))}}>COPY RESPONSE</button> */}
