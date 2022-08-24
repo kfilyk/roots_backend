@@ -14,7 +14,8 @@ const MQTT = () => {
         stage: 0,
         timezone: "Etc/GMT-7",
         response: {},
-        recipe_name: "null.json",
+        recipe_name: "recipe.json",
+        recipe_json: "",
         env: "qa"
     });
 
@@ -32,6 +33,14 @@ const MQTT = () => {
 
     function renderCommandParameters(id){
         switch(true) {
+            case id === 3:
+                return(
+                    <div className='leftContainer' style={{width: "100%"}}>
+                        <p> Recipe name must include .json at the end. No spaces, use underscores instead</p>
+                        <input type="text" value={command.recipe_name} placeholder="Recipe Name" onChange={(e) => set_command({...command, recipe_name: e.target.value})} />
+                        <textarea placeholder="Recipe JSON" value={command.recipe_json} onChange={(e) => set_command({...command, recipe_json: e.target.value})} rows="10"></textarea>
+                    </div>
+                )
             case id === 7:
                 return(
                     <div>
@@ -122,6 +131,7 @@ const MQTT = () => {
                         <select value={command.id} onChange={(e) => set_command({...command, id: parseInt(e.target.value)})} >
                             <option value="0">Get Device State</option>
                             {/* <option value="1">Get Device Logs</option> */}
+                            <option value="3">Add Recipe</option>
                             <option value="7">Change Timezone</option>
                             <option value="11">Change Start Time</option>
                             <option value="12">Trigger OTA</option>

@@ -476,6 +476,11 @@ class MQTTView(APIView):
             #WORKS BUT FORMATTING ISSUES
             data = broker.get_device_logs(device)
             return Response(data, content_type='text/plain; charset=utf8')
+        elif command == 3:
+            recipe_name = request.data["parameters"]['recipe_name']
+            recipe_json = request.data["parameters"]['recipe_json']
+            data = broker.add_recipe(device, recipe_name, recipe_json)
+            return JsonResponse(data, safe=False)
         elif command == 7:
             timezone = request.data['parameters']['timezone']
             data = broker.change_timezone(device, timezone)

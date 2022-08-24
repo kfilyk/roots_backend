@@ -13,6 +13,10 @@
     margin-bottom: 8%;    
 }
 
+.leftContainer textarea {
+    height: auto;
+}
+
 .rightContainer{
     display: flex;
     flex-direction: column;
@@ -23,3 +27,4 @@
 .rightContainer > pre {
     margin-top: 0%;
 }
+
