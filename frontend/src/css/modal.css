@@ -33,9 +33,9 @@ POPUP MODAL
 .pod_selection {
   font-family: "Brandon Grotesque";
   margin: 2px;
-  border: 1px #B3896A solid;
+  border: 1px #1b372a solid;
   background-color: #ffffff;
-  color: #B3896A;;
+  color: #1b372a;;
   padding: 6px 12px;
   border-radius: 20px;
 }
@@ -43,8 +43,8 @@ POPUP MODAL
 .pod_selection_active {
   font-family: "Brandon Grotesque";
   margin: 2px;
-  border: 1px #B3896A solid;
-  background-color: #B3896A;
+  border: 1px #1b372a solid;
+  background-color: #1b372a;
   color: #ffffff;;
   padding: 6px 12px;
   border-radius: 20px;
@@ -92,13 +92,13 @@ POPUP MODAL
 input {
   border: none;
   border-bottom: 1px solid;
-  color: #B3896A;
+  color: #1b372a;
 }
 
 select {
   border: none;
   border-bottom: 1px solid;
-  color: #B3896A;
+  color: #1b372a;
   margin-bottom: 4%;
 }
 
@@ -109,17 +109,17 @@ select .pod {
   border: none;
   background: rgb(224, 224, 224);
   border-radius: 50%;
-  color:#B3896A;
+  color:#1b372a;
 }
 
 .device_selection {
   padding:5px;
-  border: 1px solid #B3896A;
+  border: 1px solid #1b372a;
   border-radius: 10px;
 }
 
 .name_selection {
-  color: #B3896A;
+  color: #1b372a;
   font-weight: bold;
 }
 
@@ -130,7 +130,7 @@ select .pod {
 
 
 .date_selection {
-  color: #B3896A;
+  color: #1b372a;
   margin-left: auto;
 }
 
@@ -248,12 +248,12 @@ input:valid+span:after {
 .exp_r_input {
   border: none;
   border-bottom: 1px solid;
-  color: #B3896A;
+  color: #1b372a;
 }
 
 .pod_r_modal_2{
   text-align: center;
-  border: 1px solid #B3896A;
+  border: 1px solid #1b372a;
   border-radius: 20px;
   padding:20px;
 }

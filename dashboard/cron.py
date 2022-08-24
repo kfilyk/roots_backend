@@ -91,7 +91,7 @@ def check_devices():
 
             if e[0]['recipe_name']+ ".json" != d.currentRecipe:
                 print("CURRENT RECIPE IN "+d.deviceId+": ", d.currentRecipe)
-                print("CURRENT RECIPE IN DB: ", e[0]['recipe_name']+ ".json: \n\n" + r.recipe_json)
+                print("CURRENT RECIPE IN DB: ", str(e[0]['recipe_name'])+ ".json: \n\n" + str(r.recipe_json))
                 broker.trigger_recipe(d.deviceId, r.recipe_json, e[0]['recipe_name']+ ".json")
                 broker.set_recipe_day_cycle(d.deviceId, e[0]['day'], e[0]['phase_day'])
 
@@ -134,8 +134,8 @@ def poll_mongo_db():
         g_device = g['device']
         #print(g_device)
         g_device_state = json.loads(g_device['rawStateJSON'])
-        #print(g_device_state['deviceId'])
-        d = Device.objects.create(id = str(g_device_state['deviceId']), name=g['name'], user= User.objects.filter(id=61)[0], registration_date=g['createdAt'], last_update=g['updatedAt'], mac_address= g_device_state['macAddress'])
-        d.save()
+        if g_device_state and Device.objects.filter(id=g_device_state['deviceId']).first() == None:
+            d = Device.objects.create(id = str(g_device_state['deviceId']), name=g['name'], user= User.objects.filter(id=61)[0], registration_date=g['createdAt'], last_update=g['updatedAt'], mac_address= g_device_state['macAddress'])
+            d.save()
         i= i+1
 
