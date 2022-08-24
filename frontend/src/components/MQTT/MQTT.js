@@ -13,6 +13,7 @@ const MQTT = () => {
         stage: 0,
         timezone: "Etc/GMT-7",
         response: {},
+        recipe_name: "null.json",
         env: "qa"
     });
 
@@ -93,6 +94,12 @@ const MQTT = () => {
                         </div>
                     </div>
             )
+            case id === 16:
+                return(
+                    <div>
+                        <input type="text" value={command.recipe_name} placeholder="Recipe name (spelling, capitalization must be exact. must include .json at the end)" onChange={(e) => set_command({...command, recipe_name: e.target.value})} />
+                    </div>
+                )
             default:
                 return
         } 
@@ -125,15 +132,15 @@ const MQTT = () => {
                             <option value="16">Trigger Recipe by Name</option>
                         </select>
                     </div>
+                    <button className='save' onClick={(e) => {
+                        send_command(e)
+                    }}>Send Command</button>
                     {renderCommandParameters(command.id)}
                     <div className='form-row'>
                         Response: 
                         <pre>{JSON.stringify(command.response, null, 2) }</pre>
                         {/* <button className='save' onClick={() => {navigator.clipboard.writeText(JSON.stringify(command.response))}}>COPY RESPONSE</button> */}
                     </div>
-                    <button className='save' onClick={(e) => {
-                        send_command(e)
-                    }}>Send Command</button>
                 </div>
         )
     }
