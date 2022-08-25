@@ -144,7 +144,8 @@ class GenericMQTT:
         self.client.loop_stop()
 
         if len(self.msgs) > 0:
-            return {"dailyStartTime": self.msgs[0]['dailyStartTime']}
+            return {"dailyStartTime": self.msgs[0]['dailyStartTime'],
+                    "recipeNextStartTime": self.msgs[0]["recipeNextStartTime"]}
         else: 
             return -11
 
@@ -344,5 +345,24 @@ class GenericMQTT:
                     "deviceStatus": self.msgs[0]["deviceStatus"], 
                     "userLED": self.msgs[0]["userLED"], 
                     "ipaddress": self.msgs[0]["ipaddress"], 
+                    "recipeNextStartTime": self.msgs[0]["recipeNextStartTime"]}
+            return {}
+
+    def add_recipe(self, device, recipe_name, recipe_json):
+        self.client.connect(self.broker, port=self.port)#connect
+        self.client.loop_start() #start loop to process received messages
+        self.client.subscribe(f'avagrows/device/client/{device}/deviceState')#subscribe
+        self.client.publish(f'avagrows/device/server/{device}/devicecommand', \
+            f'{{"command": 3, "name":"{recipe_name}", "data":{recipe_json}}}')
+        time.sleep(3)
+        self.client.publish(f'avagrows/device/server/{device}/devicecommand','{"command": 0}')
+        time.sleep(1)
+
+        self.client.unsubscribe(f'avagrows/device/client/{device}/deviceState')#subscribe
+        self.client.disconnect() #disconnect
+        self.client.loop_stop()
+
+        if len(self.msgs) > 0:
+            return {"currentRecipe": self.msgs[0]["currentRecipe"], "recipeList": self.msgs[0]["recipeList"], 
                     "recipeNextStartTime": self.msgs[0]["recipeNextStartTime"]}
             return {}

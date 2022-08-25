@@ -1,5 +1,6 @@
 import React, { useState, } from 'react';
 import axios from "axios";
+import "./mqtt.css"
 
 const MQTT = () => {
     const [command, set_command] = useState({
@@ -13,7 +14,8 @@ const MQTT = () => {
         stage: 0,
         timezone: "Etc/GMT-7",
         response: {},
-        recipe_name: "null.json",
+        recipe_name: "recipe.json",
+        recipe_json: "",
         env: "qa"
     });
 
@@ -31,6 +33,14 @@ const MQTT = () => {
 
     function renderCommandParameters(id){
         switch(true) {
+            case id === 3:
+                return(
+                    <div className='leftContainer' style={{width: "100%"}}>
+                        <p> Recipe name must include .json at the end. No spaces, use underscores instead</p>
+                        <input type="text" value={command.recipe_name} placeholder="Recipe Name" onChange={(e) => set_command({...command, recipe_name: e.target.value})} />
+                        <textarea placeholder="Recipe JSON" value={command.recipe_json} onChange={(e) => set_command({...command, recipe_json: e.target.value})} rows="10"></textarea>
+                    </div>
+                )
             case id === 7:
                 return(
                     <div>
@@ -97,7 +107,8 @@ const MQTT = () => {
             case id === 16:
                 return(
                     <div>
-                        <input type="text" value={command.recipe_name} placeholder="Recipe name (spelling, capitalization must be exact. must include .json at the end)" onChange={(e) => set_command({...command, recipe_name: e.target.value})} />
+                        <p>Recipe name (spelling, capitalization must be exact. must include .json at the end)</p>
+                        <input type="text" value={command.recipe_name} placeholder="Recipe Name" onChange={(e) => set_command({...command, recipe_name: e.target.value})} />
                     </div>
                 )
             default:
@@ -108,22 +119,19 @@ const MQTT = () => {
 
     function renderCommand(){
         return (
-                <div>
-                    <div className="form_row">
+                <div className="mainContainer">
+                    <div className="leftContainer">
                         <input type="text" value={command.device} placeholder="Device ID" onChange={(e) => set_command({...command, device: e.target.value})} />
-                    </div>
-                    <div className="form_row">
                         <select value={command.env} onChange={(e) => set_command({...command, env: e.target.value})} >
                             <option value="qa">QA</option>
                             <option value="prod">Prod</option>
                             <option value="dev">Dev</option>
                             <option value="roots">Roots</option>
                         </select>
-                    </div>
-                    <div className="form_row">
                         <select value={command.id} onChange={(e) => set_command({...command, id: parseInt(e.target.value)})} >
                             <option value="0">Get Device State</option>
                             {/* <option value="1">Get Device Logs</option> */}
+                            <option value="3">Add Recipe</option>
                             <option value="7">Change Timezone</option>
                             <option value="11">Change Start Time</option>
                             <option value="12">Trigger OTA</option>
@@ -131,12 +139,12 @@ const MQTT = () => {
                             <option value="15">Get Recipe List</option>
                             <option value="16">Trigger Recipe by Name</option>
                         </select>
-                    </div>
+                    {renderCommandParameters(command.id)}
                     <button className='save' onClick={(e) => {
                         send_command(e)
                     }}>Send Command</button>
-                    {renderCommandParameters(command.id)}
-                    <div className='form-row'>
+                    </div>
+                    <div className='rightContainer'>
                         Response: 
                         <pre>{JSON.stringify(command.response, null, 2) }</pre>
                         {/* <button className='save' onClick={() => {navigator.clipboard.writeText(JSON.stringify(command.response))}}>COPY RESPONSE</button> */}

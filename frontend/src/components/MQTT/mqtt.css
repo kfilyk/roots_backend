@@ -1,0 +1,30 @@
+.mainContainer {
+    display: flex;
+    justify-content: center;
+}
+
+.leftContainer{
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+}
+
+.leftContainer > * {
+    margin-bottom: 8%;    
+}
+
+.leftContainer textarea {
+    height: auto;
+}
+
+.rightContainer{
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+    margin-left: 5%
+}
+
+.rightContainer > pre {
+    margin-top: 0%;
+}
+
