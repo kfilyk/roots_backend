@@ -186,15 +186,39 @@ class Recipe(models.Model):
         db_table = 'recipe'
 
 class Plant(models.Model): # types: basil, 
-    id = models.AutoField(db_column='pl_id', primary_key=True)  
-    name = models.CharField(db_column='pl_name', max_length=45)  
-    supplier = models.CharField(db_column = 'pl_supplier', max_length=45, blank=True, null=True)
-    germination_rate = models.IntegerField(db_column='pl_germination_rate', blank=True, null=True, validators=PERCENTAGE_VALIDATOR) # this is a percentage
-    days_to_germinate_min = models.IntegerField(db_column='pl_days_to_germinate_min', blank=True, null=True) 
-    days_to_germinate_max = models.IntegerField(db_column='pl_days_to_germinate_max', blank=True, null=True) 
+    id = models.CharField(db_column='pl_id', max_length=255, primary_key=True)
+    name = models.CharField(db_column='pl_name', max_length=45, blank=True, null=True)  
+    scientific_name = models.CharField(db_column='pl_scientific_name', max_length=60, blank=True, null=True)  
+    profile = models.CharField(db_column='pl_profile', max_length=1024, blank=True, null=True)
+    growing_tips = models.CharField(db_column='pl_growing_tips', max_length=1024, blank=True, null=True)
+    harvesting_tips = models.CharField(db_column='pl_harvesting_tips', max_length=1024, blank=True, null=True)
+    nutritional_benefits =  models.CharField(db_column='pl_nutritional_benefits', max_length=1024, blank=True, null=True)
+    medical_uses = models.CharField(db_column='pl_medical_uses', max_length=1024, blank=True, null=True)
+    fun_facts = models.CharField(db_column='pl_fun_facts', max_length=1024, blank=True, null=True)
+    storage = models.CharField(db_column='pl_storage', max_length=1024, blank=True, null=True)
+    culinary = models.CharField(db_column='pl_culinary', max_length=1024, blank=True, null=True)
+
+    ideal_ph_min = models.DecimalField(db_column='pl_ideal_ph_min', max_digits=2, decimal_places=2,  blank=True, null=True) 
+    ideal_ph_max = models.DecimalField(db_column='pl_ideal_ph_max',  max_digits=2, decimal_places=2, blank=True, null=True) 
+    ideal_ec_min = models.DecimalField(db_column='pl_ideal_ec_min', max_digits=2, decimal_places=2,  blank=True, null=True) 
+    ideal_ec_max = models.DecimalField(db_column='pl_ideal_ec_max', max_digits=2, decimal_places=2,  blank=True, null=True) 
+    ideal_water_temp_min = models.IntegerField(db_column='pl_ideal_water_temp_min', blank=True, null=True) 
+    ideal_water_temp_max = models.IntegerField(db_column='pl_ideal_water_temp_max', blank=True, null=True) 
+    ideal_temp_min = models.IntegerField(db_column='pl_ideal_temp_min', blank=True, null=True) 
+    ideal_temp_max = models.IntegerField(db_column='pl_ideal_temp_max', blank=True, null=True) 
+    ideal_humidity_min = models.IntegerField(db_column='pl_ideal_humidity_min', validators=PERCENTAGE_VALIDATOR, blank=True, null=True) 
+    ideal_humidity_max = models.IntegerField(db_column='pl_ideal_humidity_max', validators=PERCENTAGE_VALIDATOR, blank=True, null=True) 
+    ideal_days_to_sprout_min = models.IntegerField(db_column='pl_ideal_days_to_sprout_min', blank=True, null=True) 
+    ideal_days_to_sprout_max = models.IntegerField(db_column='pl_ideal_days_to_sprout_max', blank=True, null=True) 
+    ideal_days_to_harvest = models.IntegerField(db_column='pl_ideal_days_to_harvest', blank=True, null=True) 
+
+    days_to_sprout_min = models.IntegerField(db_column='pl_days_to_sprout_min', blank=True, null=True) 
+    days_to_sprout_max = models.IntegerField(db_column='pl_days_to_sprout_max', blank=True, null=True) 
 
     days_to_harvest_min = models.IntegerField(db_column='pl_days_to_harvest_min', blank=True, null=True) #how many days passed until first harvest occurred
     days_to_harvest_max = models.IntegerField(db_column='pl_days_to_harvest_max', blank=True, null=True) #how many days passed until first harvest occurred
+
+    germination_rate = models.IntegerField(db_column='pl_germination_rate', blank=True, null=True, validators=PERCENTAGE_VALIDATOR) # this is a percentage
 
     bgp_distance_min = models.IntegerField(db_column='pl_bgp_distance_min', blank=True, null=True) 
     bgp_distance_max = models.IntegerField(db_column='pl_bgp_distance_max', blank=True, null=True) 

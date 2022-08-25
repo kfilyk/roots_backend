@@ -1,4 +1,4 @@
-from .models import Experiment, Pod, Recipe, Device
+from .models import Experiment, Pod, Recipe, Device, Plant
 from django.contrib.auth.models import User
 from django.db.models import F
 from datetime import datetime, timedelta
@@ -108,13 +108,8 @@ def check_devices():
                 broker.trigger_recipe(d.deviceId, r.recipe_json, e[0]['recipe_name']+ ".json")
                 broker.change_stage_cycle(d.deviceId, e[0]['phase_day'], e[0]['phase_number'])
 
-
-
-
-
-
 url = "https://data.mongodb-api.com/app/data-ldetp/endpoint/data/v1/action/find"
-payload = json.dumps({
+payload_gardens = json.dumps({
     "collection": "gardens",
     "database": "roots",
     "dataSource": "Cluster0",
@@ -123,6 +118,17 @@ payload = json.dumps({
     #    "_id": 1
     #}
 })
+
+payload_plants = json.dumps({
+    "collection": "plants",
+    "database": "roots",
+    "dataSource": "Cluster0",
+    
+    #"projection": {
+    #    "_id": 1
+    #}
+})
+
 headers = {
   'Content-Type': 'application/json',
   'Access-Control-Request-Headers': '*',
@@ -138,10 +144,10 @@ Purpose: Polls devices from the Roots MongoDB database into the Roots SQL databa
 """
 # used to pull new devices, experiments, etc from the mobile app
 def poll_mongo_db():
-    print("CRON POLLING MONGO DB")
-    response = requests.request("POST", url, headers=headers, data=payload)
+   
+    print("CRON POLLING MONGO DB: DEVICES")
+    response = requests.request("POST", url, headers=headers, data=payload_gardens)
     gardens = json.loads(response.text) # use .keys() function to determine whats stored in object
-    i = 1
     for g in gardens['documents']:
         # note: g['_id'] is the id of the USER, not the garden object
         #print(g.keys())
@@ -151,5 +157,14 @@ def poll_mongo_db():
         if g_device_state and Device.objects.filter(id=g_device_state['deviceId']).first() == None:
             d = Device.objects.create(id = str(g_device_state['deviceId']), name=g['name'], user= User.objects.filter(id=61)[0], registration_date=g['createdAt'], last_update=g['updatedAt'], mac_address= g_device_state['macAddress'])
             d.save()
-        i= i+1
 
+    print("CRON POLLING MONGO DB: PLANTS")
+    response = requests.request("POST", url, headers=headers, data=payload_plants)
+    plants = json.loads(response.text) # use .keys() function to determine whats stored in object
+    for p in plants['documents']:
+        # note: g['_id'] is the id of the USER, not the garden object
+        #print(p.keys())
+        #print(str(p['idealPHrange'][0]) + ", "+ str(p['idealPHrange'][1]))
+        if Plant.objects.filter(id=p['_id']).first() == None:
+            pl = Plant.objects.create(id = str(p['_id']), name=p['name'], scientific_name= p['scientificName'], profile=p['profile'], growing_tips=p['growingTips'], harvesting_tips=p['harvestingTips'], nutritional_benefits= p['nutritionalBenefits'], medical_uses = p['medicalUses'], fun_facts = p['funFacts'], storage = p['storage'], culinary= p['culinary'], ideal_ph_min = p['idealPHrange'][0], ideal_ph_max= p['idealPHrange'][1], ideal_ec_min = p['idealECrange'][0], ideal_ec_max = p['idealECrange'][1], ideal_water_temp_min = p['idealWaterTempRange'][0], ideal_water_temp_max = p['idealWaterTempRange'][1], ideal_temp_min = p['tempRange'][0], ideal_temp_max = p['tempRange'][1], ideal_humidity_min = p['idealHumidityPercentageRange'][0], ideal_humidity_max = p['idealHumidityPercentageRange'][1], ideal_days_to_sprout_min = p['sproutsMinDays'], ideal_days_to_sprout_max = p['sproutsMaxDays'], ideal_days_to_harvest = p['growthDurationDays'] )
+            pl.save()

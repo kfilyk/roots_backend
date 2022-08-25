@@ -170,6 +170,8 @@ REST_FRAMEWORK = {
     Last Edit: Kelvin Filyk 08/19/2022
     Purpose: Lists out all the cronjobs with their cron expression
 """
+CRONTAB_LOCK_JOBS = True
+
 CRONJOBS = [
     ('0 1 * * *', 'dashboard.cron.update_experiments_daily'),
     ('* * * * *', 'dashboard.cron.check_devices'), 
