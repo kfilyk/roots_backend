@@ -83,9 +83,13 @@ OBJECT CONTAINERS (DEVICE, EXPERIMENT, ETC)
   min-width: 30%;
 }
 
-.object_name {
+.bold_font {
   font-family: "Brandon Grotesque Black";
 }
+.normal_font {
+  font-family: "Brandon Grotesque";
+}
+
 
 .object_content {
   display:flex;

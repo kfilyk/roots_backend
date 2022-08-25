@@ -1,12 +1,11 @@
 .blink_me {
-    animation: blinker 1s linear infinite;
-    display: inline;
-    font-size: 1em;
-    padding-left: 5px;
+  animation: blinker 1s linear infinite;
+  font-size: 1em;
+  padding-left: 5px;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
   }
-  
-  @keyframes blinker {
-    50% {
-      opacity: 0;
-    }
-  }
+}

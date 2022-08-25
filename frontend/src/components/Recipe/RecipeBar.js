@@ -227,7 +227,7 @@ const RecipeBar = (props) => {
               if(props.is_object) {
                 phases.push(<div key={`${props.experiment}_${i}`} className="recipe_bar_phase" style={s} > 
                   <span className="recipe_bar_phase_days">{ph.days}</span> 
-                  <span className= "recipe_bar_phase_name object_name">{ph.name}<br></br></span>
+                  <span className= "recipe_bar_phase_name bold_font">{ph.name}<br></br></span>
                   <span className="recipe_bar_phase_type"> {ph.type} </span>
                 </div>)
               } else {

@@ -297,7 +297,7 @@ const RecipeList = () => {
           <div className="object_container">
             <div className="object_top">
               <div className="object_description">
-                <div className="object_name">{item.name}</div><div>{item.days} Days</div>
+                <div className="bold_font">{item.name}</div><div>{item.days} Days</div>
               </div>
 
               

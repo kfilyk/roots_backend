@@ -277,7 +277,7 @@ const Phase = () => {
           <div className="object_container" >
             <div className="object_top">
               <div className="object_description" style={PhaseStyle(item.type)}>
-                <div className="phase_type object_name"> { item.type.toUpperCase() } | { item.name } </div>
+                <div className="phase_type bold_font"> { item.type.toUpperCase() } | { item.name } </div>
                 <div>Author: { item.user_name } </div>
                 <div> { item.days } Days</div>
                 {/*<div> { item.score } </div>*/}

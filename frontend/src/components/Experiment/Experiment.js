@@ -318,8 +318,8 @@ const ExperimentList = () => {
                   <div className="object_top">
 
                     <div className="object_description">
-                        <div className="object_name">
-                            {item.device_name + " | " + item.name + ": "} 
+                        <div className="bold_font">
+                            {item.device_name} <span className="normal_font">{ " | " + item.name + ": "} </span>
                             <div style={{display:'inline', color: item.end_date === null ? 'gold':'green'}}>{item.end_date === null ? "ACTIVE":"CONCLUDED"}</div>
                         </div>
                         {item.score !== null ? <div>Score: { item.score } </div> : <></>}
