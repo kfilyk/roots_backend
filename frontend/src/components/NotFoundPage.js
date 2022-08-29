@@ -1,8 +1,10 @@
-// src/components/Home.js
-
 import React from 'react';
 import { View } from 'react-native';
 
+/*
+OVERALL FILE PURPOSE: 
+If url does not exist, this page is shown. 
+*/
 
 const NotFoundPage = () => {
   return (
