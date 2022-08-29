@@ -14,6 +14,12 @@ const ExperimentReading = (props) => {
         reservoir_ph: null,
         temperature: null,
         humidity: null,
+        flushed_reservoir: 0,
+        raised_light: 0,
+        failed_pump: 0,
+        went_offline: 0,
+        lost_power: 0,
+
         exp_id: null,
         exp_phase: null,
         pods: [], // 
@@ -96,7 +102,12 @@ const ExperimentReading = (props) => {
                 reservoir_ph: experiment_reading.reservoir_ph,
                 temperature: experiment_reading.temperature,
                 humidity: experiment_reading.humidity,
-                pod_readings: pod_readings
+                flushed_reservoir: experiment_reading.flushed_reservoir,
+                raised_light: experiment_reading.raised_light,
+                failed_pump: experiment_reading.failed_pump, 
+                went_offline: experiment_reading.went_offline,
+                lost_power: experiment_reading.lost_power,
+                pod_readings: pod_readings,
             })
             .catch((err) => console.log(err));
         if (result.status === 200){
@@ -263,11 +274,33 @@ const ExperimentReading = (props) => {
                         <input className="exp_r_input" placeholder="Media to BGP" type="number" value={find_value_selected_pod('media_to_bgp') || ""} name={"media_to_bgp"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
                     </div>
                     <div className="exp_r_form_row">
-                        <label>
-                            <input className="exp_r_input" type="checkbox" name={"dome"} onChange={(e) => {set_value_selected_pod(e); console.log(e)}} />
-                            Dome
-                        </label>
+                        <label><input className="exp_r_input" type="checkbox" name="removed_dome" onChange={(e) => {set_value_selected_pod(e); console.log(e)}} />Removed Dome</label>
                     </div>
+                    <div className="exp_r_form_row">
+                        <label><input className="exp_r_input" type="checkbox" name="pollinated" onChange={(e) => {set_value_selected_pod(e); console.log(e)}} />Pollinated</label>
+                    </div>
+                    <div className="exp_r_form_row">
+                        <label><input className="exp_r_input" type="checkbox" name="trellis_adjustment" onChange={(e) => {set_value_selected_pod(e); console.log(e)}} />Trellis Adjustment</label>
+                    </div>
+                    <div className="exp_r_form_row">
+                        <label><input className="exp_r_input" type="checkbox" name="pest_removal" onChange={(e) => {set_value_selected_pod(e); console.log(e)}} />Pest Removal</label>
+                    </div>
+                    <div className="exp_r_form_row">
+                        <label><input className="exp_r_input" type="checkbox" name="prune_thinned" onChange={(e) => {set_value_selected_pod(e); console.log(e)}} />Thinned</label>
+                    </div>
+                    <div className="exp_r_form_row">
+                        <label><input className="exp_r_input" type="checkbox" name="prune_topped" onChange={(e) => {set_value_selected_pod(e); console.log(e)}} />Topped</label>
+                    </div>
+                    <div className="exp_r_form_row">
+                        <label><input className="exp_r_input" type="checkbox" name="prune_dead_foliage" onChange={(e) => {set_value_selected_pod(e); console.log(e)}} />Removed Dead Foliage</label>
+                    </div>
+                    <div className="exp_r_form_row">
+                        <label><input className="exp_r_input" type="checkbox" name="prune_living_foliage" onChange={(e) => {set_value_selected_pod(e); console.log(e)}} />Removed Living Foliage</label>
+                    </div>
+                    <div className="exp_r_form_row">
+                        <label><input className="exp_r_input" type="checkbox" name="prune_dead_heading" onChange={(e) => {set_value_selected_pod(e); console.log(e)}} />Dead Headed</label>
+                    </div>
+
                     <div className="exp_r_form_row">
                         <input type="file" accept="image/*" name="photos" capture="camera" onChange={(e) => {set_value_selected_pod(e)}}/>
                     </div>
@@ -290,6 +323,11 @@ const ExperimentReading = (props) => {
                     reservoir_ph: result.data.latest_reading.reservoir_ph,
                     temperature: result.data.latest_reading.temperature,
                     humidity: result.data.latest_reading.humidity,
+                    flushed_reservoir: result.data.latest_reading.flushed_reservoir,
+                    raised_light: result.data.latest_reading.raised_light,
+                    failed_pump: result.data.latest_reading.failed_pump, 
+                    went_offline: result.data.latest_reading.went_offline,
+                    lost_power: result.data.latest_reading.lost_power,
                     exp_id: result.data.latest_reading.experiment,
                     exp_phase: result.data.latest_reading.experiment_phase,
                     first_reading: false,
@@ -306,7 +344,7 @@ const ExperimentReading = (props) => {
         }
     }
 
-
+    // whenever experiment id changes, refetch
     useEffect(() => {
         fetchData(props.exp_id)
     }, [props.exp_id])
@@ -370,6 +408,22 @@ const ExperimentReading = (props) => {
                             <div className="exp_r_form_row">
                                     <input className="exp_r_input" placeholder="Humidity (%)" type="number" value= {experiment_reading.humidity || null} onChange= {(e) => set_experiment_reading({...experiment_reading, humidity: e.target.value})}></input>
                             </div>
+                            <div className="exp_r_form_row">
+                                <label> <input className="exp_r_input" type="checkbox" value= {experiment_reading.flushed_reservoir} onChange={(e) => set_experiment_reading({...experiment_reading, flushed_reservoir: e.target.value})}/> Flushed Reservoir </label>
+                            </div>
+                            <div className="exp_r_form_row">
+                                <label> <input className="exp_r_input" type="checkbox" value= {experiment_reading.raised_light} onChange={(e) => set_experiment_reading({...experiment_reading, raised_light: e.target.value})}/> Raised Light </label>
+                            </div>
+                            <div className="exp_r_form_row">
+                                <label> <input className="exp_r_input" type="checkbox" value= {experiment_reading.failed_pump} onChange={(e) => set_experiment_reading({...experiment_reading, failed_pump: e.target.value})}/> Failed Pump </label>
+                            </div>
+                            <div className="exp_r_form_row">
+                                <label> <input className="exp_r_input" type="checkbox" value= {experiment_reading.went_offline} onChange={(e) => set_experiment_reading({...experiment_reading, went_offline: e.target.value})}/> Went Offline </label>
+                            </div>
+                            <div className="exp_r_form_row">
+                                <label> <input className="exp_r_input" type="checkbox" value= {experiment_reading.lost_power} onChange={(e) => set_experiment_reading({...experiment_reading, lost_power: e.target.value})}/> Lost Power </label>
+                            </div>
+
                         </div>
                         <div className='pod_r_modal_2'>
                             {renderPodSelection()}

@@ -33,7 +33,7 @@ const RecipeBar = (props) => {
     { 
       exp_id: id
     }).catch((err) => console.log(err))
-    if (result.status === 200){
+    if (result && result.status === 200){
       set_exp_reading_dates(result.data)
     }
   }

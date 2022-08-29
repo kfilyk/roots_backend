@@ -80,6 +80,13 @@ class ExperimentReading(models.Model):
     humidity = models.IntegerField(db_column='er_humidity', blank=True, null=True, validators=PERCENTAGE_VALIDATOR)
     photo_link = models.CharField(db_column='er_photo_link', max_length=100, blank=True, null=True)
 
+    # Event Bools
+    flushed_reservoir = models.BooleanField(db_column='er_flushed_reservoir', default = 0)
+    raised_light = models.BooleanField(db_column='er_raised_light', default = 0)
+    failed_pump = models.BooleanField(db_column='er_failed_pump', default = 0)
+    went_offline = models.BooleanField(db_column='er_went_offline', default = 0)
+    lost_power = models.BooleanField(db_column='er_lost_power', default = 0)
+
     class Meta:
         managed = True
         db_table = 'experiment_reading'
@@ -95,8 +102,23 @@ class PodReading(models.Model):
     experiment = models.ForeignKey("Experiment", models.DO_NOTHING, db_column='pr_experiment_id', blank=True, null=True)  # delete experiment readings if experiment is deleted
     pod = models.ForeignKey("Pod", models.DO_NOTHING, db_column='pr_pod_id', blank=True, null=True)
     experiment_reading = models.ForeignKey("ExperimentReading", models.DO_NOTHING, db_column='pr_experiment_reading_id', blank=True, null=True)  # delete experiment readings if experiment is deleted
+    comment = models.CharField(db_column='pr_comment', max_length=255, blank=True, null=True)
+    score = models.DecimalField(db_column='pr_score', max_digits=5, decimal_places=2, blank=True, null=True)
 
-    dome = models.BooleanField(default= 0, db_column='pr_dome', null=True)
+    # Event Bools
+    removed_dome = models.BooleanField(db_column='pr_removed_dome', default = 0)
+    pollinated = models.BooleanField(db_column='pr_pollinated', default = 0)
+    trellis_adjustment = models.BooleanField(db_column='pr_trellis_adjustment', default = 0)
+    pest_removal = models.BooleanField(db_column='pr_pest_removal', default = 0)
+
+    # Pruning Bools
+    prune_thinned = models.BooleanField(db_column='pr_prune_thinned', default = 0)
+    prune_topped = models.BooleanField(db_column='pr_prune_topped', default = 0)
+    prune_dead_foliage = models.BooleanField(db_column='pr_prune_dead_foliage', default = 0)
+    prune_living_foliage = models.BooleanField(db_column='pr_prune_living_foliage', default = 0)
+    prune_dead_heading = models.BooleanField(db_column='pr_prune_dead_heading', default = 0)
+
+    # Stats
     node_count = models.IntegerField(db_column='pr_node_count', blank=True, null=True) 
     internode_distance = models.DecimalField(db_column='pr_internode_distance', max_digits=5, decimal_places=2, blank=True, null=True) 
     leaf_count = models.IntegerField(db_column='pr_leaf_count', blank=True, null=True) 
@@ -121,9 +143,6 @@ class PodReading(models.Model):
     harvest_count = models.IntegerField(db_column='pr_harvest_count',  blank=True, null=True,)  
     harvest_weight = models.DecimalField(db_column='pr_harvest_weight', max_digits=5, decimal_places=2, blank=True, null=True)
     harvest_quality = models.IntegerField(db_column='pr_harvest_quality',blank=True, null=True, validators=PERCENTAGE_VALIDATOR)  
-
-    comment = models.CharField(db_column='pr_comment', max_length=255, blank=True, null=True)
-    score = models.DecimalField(db_column='pr_score', max_digits=5, decimal_places=2, blank=True, null=True)
 
     class Meta:
         managed = True
