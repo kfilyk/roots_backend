@@ -205,12 +205,12 @@ const RecipeBar = (props) => {
 
   /* controls the width and flex of the phase elements in the recipe bar*/
   function render() {
-    if(recipe === null ||  props.phase_list.length === 0 || typeof recipe === 'undefined') {
+    if(recipe === null ||  props.phaseList.length === 0 || typeof recipe === 'undefined') {
       return <div className="empty_object"> NO RECIPE ALLOCATED </div>;
     } else {
       let phases = []
       for(let i = 1; i <= 10; i++) {
-          let ph = props.phase_list.filter(phase => phase.id === recipe["phase"+i])[0] ?? null
+          let ph = props.phaseList.filter(phase => phase.id === recipe["phase"+i])[0] ?? null
           if(ph !== null) {
               // allocate  size proportional to number of phase days
               let s = PhaseStyle(ph.type)
