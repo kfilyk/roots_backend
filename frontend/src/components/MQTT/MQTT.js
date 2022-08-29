@@ -2,10 +2,16 @@ import React, { useState, } from 'react';
 import axios from "axios";
 import "./mqtt.css"
 
+/*
+OVERALL FILE PURPOSE: 
+Renders module for the generic MQTT Client
+*/
+
 const MQTT = () => {
+    //Sets the default command parameters
     const [command, set_command] = useState({
         show: false,
-        id: 0,
+        id: 0, // COMMAND ID, NOT DEVICE ID. 
         device: "6372",
         // device: -1,
         hour: 0,
@@ -19,6 +25,13 @@ const MQTT = () => {
         env: "qa"
     });
 
+    /*
+    Input from: command, renderCommandParameters(), renderCommand()
+    Outputs to: command
+    Created by: Stella T 08/29/2022
+    Last Edit: Stella T 08/29/2022
+    Purpose: Makes API call to backend to send command to device
+    */
     async function send_command(e){
         const result = await axios
           .post(`/mqtt/`, 
@@ -31,6 +44,14 @@ const MQTT = () => {
         set_command({...command, response: result.data})
     }
 
+    /*
+    Input from: renderCommand()
+    Outputs to: command
+    Created by: Stella T 08/29/2022
+    Last Edit: Stella T 08/29/2022
+    Purpose: Based on which command is selected, the appropriate inputs are shown. 
+    For example, command 0 (Get Device State) doesn't need any parameters but command 7 (change timezone) does.
+    */
     function renderCommandParameters(id){
         switch(true) {
             case id === 3:
@@ -117,6 +138,13 @@ const MQTT = () => {
         
     }
 
+    /*
+    Input from: return()
+    Outputs to: command
+    Created by: Stella T 08/29/2022
+    Last Edit: Stella T 08/29/2022
+    Purpose: Renders MQTT client module where device Id, command id, environment are entered.
+    */
     function renderCommand(){
         return (
                 <div className="mainContainer">
@@ -153,6 +181,13 @@ const MQTT = () => {
         )
     }
 
+    /*
+    Input from: renderCommand()
+    Outputs to: Screen
+    Created by: Stella T 08/29/2022
+    Last Edit: Stella T 08/29/2022
+    Purpose: Renders the entire generic MQTT Client module
+    */
     return (
         <div>
             {renderCommand()}

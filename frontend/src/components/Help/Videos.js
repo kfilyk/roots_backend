@@ -2,7 +2,18 @@ import React, { useState, useEffect, useRef } from 'react';
 import "./help.css"
 import QRCode from 'react-qr-code';
 
+/*
+OVERALL FILE PURPOSE: 
+Renders the Video sub-page under Help.
+*/
 const Videos = () => {
+    /*
+    Input from: None
+    Outputs to: return()
+    Created by: Stella T 08/29/2022
+    Last Edit: Stella T 08/29/2022
+    Purpose: Renders video page
+    */
     function renderVideos(){
         return (
             <div>
@@ -282,17 +293,16 @@ const Videos = () => {
         )
     }
 
-    function renderGlossary() {
-        return (
-            <div>
-            {renderVideos()}
-            </div>
-        )
-    }
-
+    /*
+    Input from: None
+    Outputs to: Screen
+    Created by: Stella T 08/29/2022
+    Last Edit: Stella T 08/29/2022
+    Purpose: The container rendering all the components on the page. 
+    */
     return (
         <div>
-            {renderGlossary()}
+            {renderVideos()}
         </div>
     );
 }

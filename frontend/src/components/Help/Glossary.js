@@ -1,7 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 import "./help.css"
 
+/*
+OVERALL FILE PURPOSE: 
+Renders the Glossary sub-page under Help.
+*/
 const Glossary = () => {
+
+    /*
+    Input from: None
+    Outputs to: renderGlossary()
+    Created by: Stella T 08/29/2022
+    Last Edit: Stella T 08/29/2022
+    Purpose: Renders info about plant anatomy: plant part, photo & definition
+    */
     function renderPlantAnatomy(){
       return (
         <div id="gl-plant-anatomy">
@@ -79,6 +91,13 @@ const Glossary = () => {
       )
     }
 
+    /*
+    Input from: None
+    Outputs to: renderGlossary()
+    Created by: Stella T 08/29/2022
+    Last Edit: Stella T 08/29/2022
+    Purpose: Renders info about plant care
+    */
     function renderPlantCare() {
         return (
             <div id="gl-plant-care">
@@ -179,6 +198,13 @@ const Glossary = () => {
         )
     }
 
+    /*
+    Input from: None
+    Outputs to: renderGlossary()
+    Created by: Stella T 08/29/2022
+    Last Edit: Stella T 08/29/2022
+    Purpose: Renders info about optimal plant growth
+    */
     function renderOptimalPlantGrowth() {
         return (
             <div id="gl-optimal">
@@ -395,6 +421,13 @@ const Glossary = () => {
         )
     }
 
+    /*
+    Input from: None
+    Outputs to: renderGlossary()
+    Created by: Stella T 08/29/2022
+    Last Edit: Stella T 08/29/2022
+    Purpose: Renders info about plant tools
+    */
     function renderTools(){
         return (
             <div id="gl-tools">
@@ -422,6 +455,13 @@ const Glossary = () => {
         )
     }
 
+    /*
+    Input from: None
+    Outputs to: renderGlossary()
+    Created by: Stella T 08/29/2022
+    Last Edit: Stella T 08/29/2022
+    Purpose: Renders info about plant issues 
+    */
     function renderPlantIssues(){
         return (
             <div id="gl-plant-issues">
@@ -456,6 +496,13 @@ const Glossary = () => {
         )
     }
 
+    /*
+    Input from: None
+    Outputs to: renderGlossary()
+    Created by: Stella T 08/29/2022
+    Last Edit: Stella T 08/29/2022
+    Purpose: Renders info about plant recipes
+    */
     function renderPlantRecipes(){
         return (
             <div id="gl-plant-recipes">
@@ -533,6 +580,13 @@ const Glossary = () => {
         )
     }
 
+    /*
+    Input from: None
+    Outputs to: renderGlossary()
+    Created by: Stella T 08/29/2022
+    Last Edit: Stella T 08/29/2022
+    Purpose: Renders info about accessories
+    */
     function renderAccessories(){
         return (
             <div id="gl-accessories">
@@ -583,6 +637,13 @@ const Glossary = () => {
         )
     }
 
+    /*
+    Input from: None
+    Outputs to: return()
+    Created by: Stella T 08/29/2022
+    Last Edit: Stella T 08/29/2022
+    Purpose: Renders glossary sections according to Help.js/renderNav()
+    */
     function renderGlossary() {
         return (
             <div>
@@ -597,6 +658,13 @@ const Glossary = () => {
         )
     }
 
+    /*
+    Input from: None
+    Outputs to: Screen
+    Created by: Stella T 08/29/2022
+    Last Edit: Stella T 08/29/2022
+    Purpose: The container rendering all the components on the page. 
+    */
     return (
         <div>
             {renderGlossary()}
