@@ -10,14 +10,30 @@ import Device from './Device/Device';
 import Help from './Help/Help';
 import MQTT from './MQTT/MQTT';
 
+/*
+OVERALL FILE PURPOSE: 
+Homepage of the application;
+Contains navigation and logout logic
+*/
 const Dashboard = () => {
-  const [selected_tab, set_selected_tab] = useState('loading'); // in the future: loading state shows a spinning wheel
+  //Active tab the user is on.
+  const [selectedTab, setSelectedTab] = useState('loading'); // in the future: loading state shows a spinning wheel
+  //Whether the user is logged in or not.
   const [auth, set_auth] = useState({
     user: -1
   });
 
+  //Upon page load, run this function once to verify user creds
   useEffect(authenicate_user, []);
 
+  /*
+  Input from: window.localStorage.getItem("token")
+  Outputs to: auth, selectedTab
+  Created by: Kelvin F 08/29/2022
+  Last Edit: Kelvin F 08/29/2022
+  Purpose: Gets user token from local storage and verifies it with an API call.
+  If user creds are not valid, user is taken back to login page. 
+  */
   function authenicate_user() {
     if (window.localStorage.getItem("token")) {
 
@@ -29,9 +45,7 @@ const Dashboard = () => {
         .then((res) => {
           set_auth({...auth, user: res.data.username})
           //default tab
-          set_selected_tab("device" )
-          // set_selected_tab("mqtt" )
-
+          setSelectedTab("device" )
         })
         .catch(res => {
           return logout()
@@ -42,6 +56,14 @@ const Dashboard = () => {
     }
   }
 
+
+  /*
+  Input from: window.localStorage.getItem("token")
+  Outputs to: window.localStorage
+  Created by: Kelvin F 08/29/2022
+  Last Edit: Kelvin F 08/29/2022
+  Purpose: When user clicks logout, their token is deleted and they're redirected to the login page. 
+  */
   function logout(){
     console.log("LOGOUT FLAG1")
 
@@ -57,43 +79,65 @@ const Dashboard = () => {
     }
   }
 
+
+  /*
+  Input from: None
+  Outputs to: return()
+  Created by: Kelvin F 08/29/2022
+  Last Edit: Kelvin F 08/29/2022
+  Purpose: Determines the layout of the nav bar and the logic for changing the selected tab
+  */
   function renderNav() {
     return (
       <div className="nav">
-        <span className={selected_tab === "device" ? "nav-link active" : "nav-link"} onClick={() => set_selected_tab("device" )}>
+        <span className={selectedTab === "device" ? "nav-link active" : "nav-link"} onClick={() => setSelectedTab("device" )}>
           DEVICES
         </span>
-        <span className={selected_tab === "experiment" ? "nav-link active" : "nav-link"} onClick={() => set_selected_tab("experiment" )}>
+        <span className={selectedTab === "experiment" ? "nav-link active" : "nav-link"} onClick={() => setSelectedTab("experiment" )}>
           EXPERIMENTS
         </span>
-        <span className={selected_tab === "recipe" ? "nav-link active" : "nav-link"} onClick={() => set_selected_tab("recipe" )}>
+        <span className={selectedTab === "recipe" ? "nav-link active" : "nav-link"} onClick={() => setSelectedTab("recipe" )}>
           RECIPES
         </span>
-        <span className={selected_tab === "phase" ? "nav-link active" : "nav-link"} onClick={() => set_selected_tab("phase" )}>
+        <span className={selectedTab === "phase" ? "nav-link active" : "nav-link"} onClick={() => setSelectedTab("phase" )}>
           PHASES
         </span>
-        <span className={selected_tab === "plant" ? "nav-link active" : "nav-link"} onClick={() => set_selected_tab("plant" )}>
+        <span className={selectedTab === "plant" ? "nav-link active" : "nav-link"} onClick={() => setSelectedTab("plant" )}>
           PLANTS
         </span>
-        <span className={selected_tab === "help" ? "nav-link active" : "nav-link"} onClick={() => set_selected_tab("help" )}>
+        <span className={selectedTab === "help" ? "nav-link active" : "nav-link"} onClick={() => setSelectedTab("help" )}>
           HELP
         </span>
-        <span className={selected_tab === "mqtt" ? "nav-link active" : "nav-link"} onClick={() => set_selected_tab("mqtt" )}>
+        <span className={selectedTab === "mqtt" ? "nav-link active" : "nav-link"} onClick={() => setSelectedTab("mqtt" )}>
           MQTT
         </span>
       </div>
     );
   };
 
+  /*
+  Input from: None
+  Outputs to: return()
+  Created by: Stella T 08/29/2022
+  Last Edit: Stella T 08/29/2022
+  Purpose: Creates a button in the bottom right corner that scrolls back to the top of the page.
+  */
   function renderScrollUp(){
     return (
       <button className="scrollUp" onClick={() => window.scroll({top: 0, behavior: 'smooth'})}>⬆</button>
     )
   }
 
+  /*
+  Input from: selectedTab
+  Outputs to: return()
+  Created by: Kelvin F 08/29/2022
+  Last Edit: Kelvin F 08/29/2022
+  Purpose: Upon selectedTab changing, a different page is loaded
+  */
   function renderPage() {
     if(auth.user !== -1) {
-      switch(selected_tab) {
+      switch(selectedTab) {
         case 'device':
           return <Device></Device>
         case 'experiment':
@@ -114,6 +158,13 @@ const Dashboard = () => {
     }
   }
 
+  /*
+  Input from: None
+  Outputs to: Screen
+  Created by: Kelvin F 08/29/2022
+  Last Edit: Kelvin F 08/29/2022
+  Purpose: The container rendering all the components on the page. 
+  */
   return (
     <main className="container">
       <div className="header">
