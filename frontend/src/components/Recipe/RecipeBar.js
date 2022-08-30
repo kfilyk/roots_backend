@@ -10,14 +10,19 @@ const RecipeBar = (props) => {
   const [start_date, setStartDate] = useState(null);
   const [completion_percentage, setCompletionPercentage] = useState(0);
   const [exp_reading_dates, set_exp_reading_dates] = useState([])
-  const [show_modal, set_show_modal] = useState(false)
-  const [exp_r, set_exp_r] = useState({
+  const [modal, setModal] = useState(false)
+  const [experiment_reading, setExperimentReading] = useState({
     id: -1,
     reading_date: null, 
     electrical_conductance: null,
     reservoir_ph: null,
     temperature: null,
     humidity: null,
+    failed_pump: null,
+    lost_power: null,
+    flushed_reservoir: null,
+    went_offline: null,
+    raised_light: null,
   });
 
   async function getRecipe(id) {
@@ -43,15 +48,7 @@ const RecipeBar = (props) => {
       `/api/experimentreadings/${id}`
     )
     .catch((err) => console.log(err))
-    set_exp_r({
-      ...exp_r, 
-      id: id,
-      reading_date: result.data.reading_date,
-      electrical_conductance: result.data.electrical_conductance, 
-      reservoir_ph: result.data.reservoir_ph,
-      temperature: result.data.temperature,
-      humidity: result.data.humidity
-    })
+    setExperimentReading(result.data)
   }
 
   useEffect(() => {
@@ -117,7 +114,7 @@ const RecipeBar = (props) => {
 
   async function show_exp_reading(id){
     await getSingleReading(id)
-    set_show_modal(true)
+    setModal(true)
   }
 
 
@@ -168,29 +165,25 @@ const RecipeBar = (props) => {
   }
 
   function renderModal(){
+    console.log(experiment_reading)
     return (
-        <Popup open={show_modal} onClose={() => set_show_modal(false)} modal nested>
+        <Popup open={modal} onClose={() => setModal(false)} modal nested>
             {(close) => (
             <div className="modal" onClick={close}>
-                <div className="modal_body"  onClick={e => e.stopPropagation()}>
+                <div className="modal_body_2"  onClick={e => e.stopPropagation()}>
                     <div className="modal_content">
                         <div className="exp_general">
-                            <div className="exp_r_form_row">
-                              Experiment Reading ID: {exp_r.id || "N/A"}
-                            </div>
-                            <div className="exp_r_form_row">
-                              Reading Date: {exp_r.reading_date || "N/A"}
-                            </div>
-                            <div className="exp_r_form_row">
-                              Electrical Conductance: {exp_r.electrical_conductance || "N/A"}
-                            </div>
-                            <div className="exp_r_form_row">
-                              Reservoir PH: {exp_r.reservoir_ph || "N/A"}
-                            </div>
-                            <div className="exp_r_form_row">
-                              Temperature: {exp_r.temperature || "N/A"}
-                            </div>
-                            <div className="exp_r_form_row"> Humidity: {exp_r.humidity || "N/A"}</div>
+                            <div className="exp_r_form_row">Reading Date: {experiment_reading.reading_date || "N/A"} </div>
+                            <div className="exp_r_form_row">Electrical Conductance: {experiment_reading.electrical_conductance || "N/A"}</div>
+                            <div className="exp_r_form_row">Reservoir PH: {experiment_reading.reservoir_ph || "N/A"}</div>
+                            <div className="exp_r_form_row">Temperature: {experiment_reading.temperature || "N/A"}</div>
+                            <div className="exp_r_form_row">Humidity: {experiment_reading.humidity || "N/A"}</div>
+                            {experiment_reading.failed_pump ? <div className="experiment_reading_indicator">Failed Pump </div> : <></>}
+                            {experiment_reading.flushed_reservoir ? <div className="experiment_reading_indicator">Flushed Reservoir</div>: <></>}
+                            {experiment_reading.lost_power ? <div className="experiment_reading_indicator">Lost Power</div>: <></>}
+                            {experiment_reading.raised_light ? <div className="experiment_reading_indicator">Raised Light</div>: <></>}
+                            {experiment_reading.went_offline ? <div className="experiment_reading_indicator">Went Offline</div>: <></>}
+
                           </div>
                         <button className='save' onClick={() => {
                             close();
