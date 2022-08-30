@@ -35,9 +35,24 @@ class DeviceView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
     serializer_class = DeviceSerializer
 
+    """
+    Input from: Not currently in use. 
+    Outputs to: 
+    Created by: Stella T 08/30/2022
+    Last Edit: Stella T 08/30/2022
+    Purpose: Creates a Device object and save to database. 
+    """
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
+    """
+    Input from: Device.js/sendCommand()
+    Outputs to: Device.js/sendCommand()
+    Created by: Stella T 08/30/2022
+    Last Edit: Stella T 08/30/2022
+    Purpose: Takes all parameters from frontend and sends commands to devices
+    based on parameters given. Will always return a response, see v2_mqtt.py 
+    """
     @action(detail=False, methods=['POST'], name='send_command')
     def send_command(self, request):
         command = int(request.data['parameters']['id'])
@@ -68,44 +83,15 @@ class DeviceView(viewsets.ModelViewSet):
         else: 
             data = {"error": "wrong command id"}
         return JsonResponse(data, safe=False)
-        
 
-    @action(detail=False, methods=['GET'], name='tester_call')
-    def tester_call(self, request):
 
-        recipe = Recipe.objects.filter(id=1) \
-                               .select_related('phase1', 'phase2', 'phase3', 'phase4', 'phase5', 'phase6', 'phase7', 'phase8', 'phase9', 'phase10')
-
-        stages = []
-        if recipe[0].phase1 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase1))
-        if recipe[0].phase2 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase2))
-        if recipe[0].phase3 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase3))
-        if recipe[0].phase4 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase4))
-        if recipe[0].phase5 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase5))
-        if recipe[0].phase6 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase6))
-        if recipe[0].phase7 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase7))
-        if recipe[0].phase8 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase8))
-        if recipe[0].phase9 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase9))
-        if recipe[0].phase10 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase10))
-
-        recipe_json = {
-            "name": recipe[0].name.replace(" ", "_") + ".json",
-            "recipeFormatVersion":1,
-            "pod1GrowthRate":1.2,
-            "pod2GrowthRate":1.2,
-            "pod3GrowthRate":1.2,
-            "pod4GrowthRate":1.2,
-            "pod5GrowthRate":1.2,
-            "luxThresholdArray":"",
-            "totalLuxZones":"",
-            "waterConsumptionRate":1001.5,
-            "transitionRandomness":15,
-            "stages": stages,
-        }
-
-        return JsonResponse(recipe_json, status=200)
-        # return Response(status=200)
-
+    """
+    Input from: Device.js/changeRecipe()
+    Outputs to: Device.js/changeRecipe()
+    Created by: Stella T 08/30/2022
+    Last Edit: Stella T 08/30/2022
+    Purpose: Given device id and recipe id, takes recipe id and generates JSON then sends JSON to device.
+    """
     # this generates a recipe during "AddExperiment"
     @action(detail=False, methods=['POST'], name='change_recipe')
     def change_recipe(self, request):
@@ -147,6 +133,13 @@ class DeviceView(viewsets.ModelViewSet):
         print("DATA: ", data)
         return JsonResponse(data, safe=False)
 
+    """
+    Input from: Device.js/checkDevicesOnline()
+    Outputs to: Device.js/checkDevicesOnline()
+    Created by: Stella T 08/30/2022
+    Last Edit: Stella T 08/30/2022
+    Purpose: Returns list of device ids of devices online according to the database
+    """
     @action(detail=False, methods=['POST'], name='check_devices_online')
     def check_devices_online(self, request):
         #query = Device.objects.filter(id__in=request.data['devices'])
@@ -154,6 +147,13 @@ class DeviceView(viewsets.ModelViewSet):
         data = list(Device.objects.all().values('id', 'is_online'))
         return JsonResponse(data, safe=False)
 
+    """
+    Input from: Not in use
+    Outputs to: Not in use
+    Created by: Stella T 08/30/2022
+    Last Edit: Stella T 08/30/2022
+    Purpose: Returns list of devices belonging to the user who sent the request
+    """
     def get_queryset(self):
         user = self.request.user
         return Device.objects.filter(user = user.id)
@@ -165,6 +165,14 @@ class ExperimentReadingView(viewsets.ModelViewSet):
     filter_backends = [filters.DjangoFilterBackend,]
     filterset_fields = ['experiment']
 
+    """
+    Input from: ExperimentReading.js/create_readings()
+    Outputs to: ExperimentReading.js/create_readings()
+    Created by: Stella T 08/30/2022
+    Last Edit: Stella T 08/30/2022
+    Purpose: Not only records Experiment Reading values but pod reading values as well. 
+    Pod readings cannot exist without an experiment reading even if the experiment reading is blank. 
+    """
     def create(self, request, *args, **kwargs):
         try:
             print("FLAG R DATA: ", request.data)
@@ -181,15 +189,29 @@ class ExperimentReadingView(viewsets.ModelViewSet):
                 pod_id = pr_values[i].pop('pod', None)
                 pod_readings.append(PodReading(experiment=Experiment.objects.get(id=exp_id), experiment_reading=ExperimentReading.objects.get(id=exp_r.id), pod=Pod.objects.get(id=pod_id), **pr_values[i]))
             PodReading.objects.bulk_create(pod_readings)
-            return Response("HELLO WORLD", status=200)
+            return Response("Reading created", status=200)
         except Exception as e: 
             print("ERROR IN EXPERIMENT_READING_VIEW: create ", e)
             return Response(status=500)
 
+    """
+    Input from: Not in use.
+    Outputs to: Not in use.
+    Created by: Stella T 08/30/2022
+    Last Edit: Stella T 08/30/2022
+    Purpose: Returns all experiment readings
+    """
     def get_queryset(self):
         user = self.request.user
         return ExperimentReading.objects.all()
     
+    """
+    Input from: ExperimentReading.js/fetchData()
+    Outputs to: ExperimentReading.js/fetchData()
+    Created by: Stella T 08/30/2022
+    Last Edit: Stella T 08/30/2022
+    Purpose: Gets last reading of experiment if one exists then will update the frontend code accordingly
+    """
     @action(detail=False, methods=['POST'], name='get_last_reading')
     def get_last_reading(self, request):
         exp_id = request.data['exp_id']
@@ -204,6 +226,13 @@ class ExperimentReadingView(viewsets.ModelViewSet):
             return JsonResponse({"latest_reading": latest, "pods": pods, "capacity": capacity}, safe=False)
 
 
+    """
+    Input from: RecipeBar.js/getReadings()
+    Outputs to: RecipeBar.js/getReadings()
+    Created by: Stella T 08/30/2022
+    Last Edit: Stella T 08/30/2022
+    Purpose: Gets all reading dates of an experiment
+    """
     @action(detail=False, methods=['POST'], name='exp_reading_dates')
     def exp_reading_dates(self, request):
         qs = ExperimentReading.objects.filter(experiment=request.data['exp_id']).order_by('reading_date')
@@ -214,9 +243,23 @@ class ExperimentView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
     serializer_class = ExperimentSerializer
 
+    """
+    Input from: ExperimentView.py/create()
+    Outputs to: ExperimentView.py/create()
+    Created by: Stella T 08/30/2022
+    Last Edit: Stella T 08/30/2022
+    Purpose: perform_create is called within the create method to call the serializer for creation once it's known the serialization is valid
+    """
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
+    """
+    Input from: Experiment.js/addExperiment()
+    Outputs to: Experiment.js/addExperiment()
+    Created by: Stella T 08/30/2022
+    Last Edit: Stella T 08/30/2022
+    Purpose: Creates an experiment object in the database, including the user who created it
+    """
     def create(self, request, *args, **kwargs):
         exp_id = super().create(request, *args, **kwargs).data['id']
         exp = Experiment.objects.get(id=exp_id)
@@ -232,33 +275,28 @@ class ExperimentView(viewsets.ModelViewSet):
             Pod.objects.create(start_date=start_date, phase=phase, position=p, plant=Plant.objects.get(id=pod_selection[p]), experiment=exp)
         return JsonResponse(model_to_dict(exp), safe=False) # should this be list?
 
-    '''
-    @action(detail=False, methods=['POST'], name='set_device')
-    def set_device(self, request):
-        device_id = request.data['device_id']
-        exp_id = request.data['exp_id']
-        exp = Experiment.objects.get(id=exp_id)
-        exp.device = Device.objects.get(id=device_id)
-        exp.save()
-        return Response(status=200)
-    '''
-    
-    @action(detail=False, methods=['GET'], name='available_experiments')
-    def available_experiments(self, request):
-        query = Experiment.objects.filter(device__isnull=True).values('device')
-        data = list(query.values('id', 'name'))
-        return JsonResponse(data, safe=False)
-
-    # available devices: those with no active experi
+    """
+    Input from: Device.js/fetchAvailableDevices(); Experiment.js/fetchAvailableDevices();
+    Outputs to: Device.js/fetchAvailableDevices(); Experiment.js/fetchAvailableDevices();
+    Created by: Stella T 08/30/2022
+    Last Edit: Stella T 08/30/2022
+    Purpose: Retrieve a list of devices with no experiments running on them
+    """    
     @action(detail=False, methods=['GET'], name='available_devices')
     def available_devices(self, request):
         excluded = Experiment.objects.filter(end_date__isnull=True).filter(device__isnull=False).values('device') # list of all devices referenced by currently active experiments
         query = Device.objects.exclude(id__in=excluded).order_by(Length('name').asc(), 'name') # exclude from device list all devices which an active experiment references
-        #data = list(query.values('id', 'name', 'capacity', 'mac_address', 'is_online').order_by('name')) # filter devices by user #.filter(user_id = self.request.user.id)
         data = list(query.values('id', 'name', 'capacity', 'mac_address', 'is_online'))
         return JsonResponse(data, safe=False)
 
-    # need to filter: loaded devices exclude those with a non-null "end_date"
+    """
+    Input from: Device.js/fetchLoadedDevices(); 
+    Outputs to: Device.js/fetchLoadedDevices(); 
+    Created by: Stella T 08/30/2022
+    Last Edit: Stella T 08/30/2022
+    Purpose: Retrieve a list of devices with an active experiment running on them
+    TO-DO: need to filter: loaded devices exclude those with a non-null "end_date"
+    """  
     @action(detail=False, methods=['GET'], name='loaded_devices')
     def loaded_devices(self, request):
         devices = Experiment.objects.filter(end_date__isnull=True)
@@ -266,9 +304,16 @@ class ExperimentView(viewsets.ModelViewSet):
         data = list(devices.values().annotate(device_name=F('device__name')).annotate(is_online=F('device__is_online')).annotate(mac_address=F('device__mac_address')).annotate(current_recipe=F('recipe__name'))) # 
         return JsonResponse(data, safe=False)
 
+
+    """
+    Input from: Experiment.js/fetchExperiments(); 
+    Outputs to: Experiment.js/fetchExperiments(); 
+    Created by: Stella T 08/30/2022
+    Last Edit: Stella T 08/30/2022
+    Purpose: Retrieves all experiments including the device's name running the exp and the recipe they're on.
+    """  
     def get_queryset(self):
         user = self.request.user
-        #.filter(user = user.id)
         return Experiment.objects.annotate(device_name=F('device__name')).annotate(recipe_name=F('recipe__name'))  # joins name value from device table to returned results
 
 
@@ -277,6 +322,13 @@ class PhaseView(viewsets.ModelViewSet):
     serializer_class = PhaseSerializer
     filter_backends = [filters.DjangoFilterBackend,]
 
+    """
+    Input from: Device.js/fetchPhases(); Phase.js/fetchPhases(); Recipe.js/fetchPhases(); 
+    Outputs to: Device.js/fetchPhases(); Phase.js/fetchPhases(); Recipe.js/fetchPhases(); 
+    Created by: Kelvin F 08/30/2022
+    Last Edit: Kelvin F 08/30/2022
+    Purpose: Retrieves all phases including the user who created them
+    """  
     def get_queryset(self):
         return Phase.objects.all().annotate(user_name=F('user__username'))
 
@@ -286,9 +338,23 @@ class PodView(viewsets.ModelViewSet):
     filter_backends = [filters.DjangoFilterBackend,]
     filterset_fields = ['experiment', 'end_date']
 
+    """
+    Input from: Experiment.js/editExperiment(); 
+    Outputs to: Experiment.js/editExperiment(); 
+    Created by: Kelvin F 08/30/2022
+    Last Edit: Kelvin F 08/30/2022
+    Purpose: Retrieves all pods including their plant name
+    """  
     def get_queryset(self):
         return Pod.objects.all().annotate(plant_name=F('plant__name')) # return joined plant.name
 
+    """
+    Input from: PodCarousel.js/fetchData(); 
+    Outputs to: PodCarousel.js/fetchData(); 
+    Created by: Kelvin F 08/30/2022
+    Last Edit: Kelvin F 08/30/2022
+    Purpose: Given an experiment id, retrieves its device's capacity and info about its pods including plant name
+    """  
     @action(detail=False, methods=["post"], name='populate_pod_carousel')
     def populate_pod_carousel(self, request):
         exp_id=json.loads(request.body)["id"]
@@ -301,6 +367,13 @@ class RecipeView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
     serializer_class = RecipeSerializer
 
+    """
+    Input from: Recipe.js/addRecipe(); 
+    Outputs to: Recipe.js/addRecipe(); 
+    Created by: Stella T 08/30/2022
+    Last Edit: Stella T 08/30/2022
+    Purpose: Creates a recipe object in the database including the recipe json data based on the phases passed in.
+    """  
     def create(self, request, *args, **kwargs):
         recipe_id = super().create(request, *args, **kwargs).data['id']
         recipe = Recipe.objects.get(id=recipe_id)
@@ -309,6 +382,13 @@ class RecipeView(viewsets.ModelViewSet):
         recipe.save()
         return JsonResponse(model_to_dict(recipe), safe=False) 
 
+    """
+    Input from: Recipe.js/editRecipe(); 
+    Outputs to: Recipe.js/editRecipe(); 
+    Created by: Stella T 08/30/2022
+    Last Edit: Stella T 08/30/2022
+    Purpose: Updates a recipe object in the database including the recipe json data based on the phases passed in.
+    """  
     def perform_update(self, serializer):
         # Save with the new value for the target model fields
         serializer.save()
@@ -318,6 +398,14 @@ class RecipeView(viewsets.ModelViewSet):
         days = RecipeView.calculate_days(recipe_id)
         serializer.save(recipe_json=recipe_json, days=days, name = recipe_name.replace(" ", "_"))
 
+
+    """
+    Input from: Not in use.
+    Outputs to: Not in use.
+    Created by: Stella T 08/30/2022
+    Last Edit: Stella T 08/30/2022
+    Purpose: Retrieves only the recipes of the user who sent the request.
+    """  
     @action(detail=False, methods=['GET'], name='recipe_user_specific')
     def recipe_user_specific(self, request):
         user = self.request.user
@@ -325,6 +413,13 @@ class RecipeView(viewsets.ModelViewSet):
         data = list(query.values())
         return JsonResponse(data, safe=False)
 
+    """
+    Input from: RecipeView.generateJSON()
+    Outputs to: RecipeView.generateJSON()
+    Created by: Stella T 08/30/2022
+    Last Edit: Stella T 08/30/2022
+    Purpose: Converts the phase variables into python dictionary
+    """  
     @staticmethod
     def create_individual_stage(phase):
         stage = {}
@@ -342,11 +437,25 @@ class RecipeView(viewsets.ModelViewSet):
         stage["blueLedBrightness"] = round(phase.blue_intensity / 100, 2)
         return stage
 
+    """
+    Input from: Recipe.getRecipeJSON()
+    Outputs to: Recipe.getRecipeJSON()
+    Created by: Stella T 08/30/2022
+    Last Edit: Stella T 08/30/2022
+    Purpose: Given a recipe id, returns the JSON format of recipe.
+    """  
     @action(detail=False, methods=['POST'], name='get_JSON')
     def get_JSON(self, request):
         recipe = Recipe.objects.get(id=request.data['recipe_id'])
         return Response(data=recipe.recipe_json, status=200)
 
+    """
+    Input from: RecipeView.create(); RecipeView.perform_update();
+    Outputs to: RecipeView.create(); RecipeView.perform_update();
+    Created by: Stella T 08/30/2022
+    Last Edit: Stella T 08/30/2022
+    Purpose: Generates the JSON format of a recipe given a recipe id
+    """  
     @staticmethod
     def generate_JSON(recipe_id):
         recipe = Recipe.objects.filter(id=recipe_id) \
@@ -381,6 +490,13 @@ class RecipeView(viewsets.ModelViewSet):
 
         return recipe_json
 
+    """
+    Input from: RecipeView.perform_update();
+    Outputs to: RecipeView.perform_update();
+    Created by: Stella T 08/30/2022
+    Last Edit: Stella T 08/30/2022
+    Purpose: Calculates the total number of days a recipe will last
+    """  
     @staticmethod
     @action(detail=False, methods=['POST'], name='calculate_days')
     def calculate_days(recipe_id):
@@ -402,7 +518,13 @@ class RecipeView(viewsets.ModelViewSet):
 
         return days
 
-
+    """
+    Input from: Device.js/fetchRecipes(); Phase.js/fetchRecipes(); Recipe.js/fetchRecipes(); 
+    Outputs to: Device.js/fetchRecipes(); Phase.js/fetchRecipes(); Recipe.js/fetchRecipes(); 
+    Created by: Kelvin F 08/30/2022
+    Last Edit: Kelvin F 08/30/2022
+    Purpose: Retrieves all recipes
+    """ 
     def get_queryset(self):
         return Recipe.objects.all()
 
@@ -412,6 +534,13 @@ class PlantView(viewsets.ModelViewSet):
     filter_backends = (OrderingFilter,)
     ordering_fields = ['name']
 
+    """
+    Input from: Device.js/fetchPlants(); Phase.js/fetchPlants(); Recipe.js/fetchPlants(); 
+    Outputs to: Device.js/fetchPlants(); Phase.js/fetchPlants(); Recipe.js/fetchPlants(); 
+    Created by: Kelvin F 08/30/2022
+    Last Edit: Kelvin F 08/30/2022
+    Purpose: Retrieves all plants ordered by their name
+    """ 
     def get_queryset(self):
         return Plant.objects.all().order_by('name')
 
@@ -419,6 +548,13 @@ class CreateUserAPIView(CreateAPIView):
     serializer_class = CreateUserSerializer
     permission_classes = [AllowAny]
 
+    """
+    Input from: LoginOrCreateForm.js/login()
+    Outputs to: LoginOrCreateForm.js/login()
+    Created by: Kelvin F 08/30/2022
+    Last Edit: Kelvin F 08/30/2022
+    Purpose: Creates a new user in database and creates a token for keeping users logged in for a session.
+    """ 
     def create(self, request, *args, **kwargs):
         try:
             serializer = self.get_serializer(data=request.data)
@@ -443,6 +579,13 @@ class CreateUserAPIView(CreateAPIView):
 class LogoutUserAPIView(APIView):
     queryset = get_user_model().objects.all() # django specific user type
 
+    """
+    Input from: Dashboard.js/logout()
+    Outputs to: Dashboard.js/logout()
+    Created by: Kelvin F 08/30/2022
+    Last Edit: Kelvin F 08/30/2022
+    Purpose: Deletes user token from database???
+    """ 
     def get(self, request, format=None):
         # simply delete the token to force a login
         # request.user.auth_token.delete()
@@ -454,6 +597,13 @@ class VerifyUserView(APIView):
     serializer_class = UserSerializer
     permission_classes = (IsAuthenticated,) 
 
+    """
+    Input from: LoginOrCreateForm.js/login()
+    Outputs to: LoginOrCreateForm.js/login()
+    Created by: Kelvin F 08/30/2022
+    Last Edit: Kelvin F 08/30/2022
+    Purpose: Verifies if user credentials are valid
+    """ 
     def post(self, request, *args, **kwargs):
         if request.user:
             return Response(UserSerializer(request.user).data)
@@ -462,6 +612,14 @@ class VerifyUserView(APIView):
 class MQTTView(APIView):
     permission_classes = (IsAuthenticated,) 
 
+    """
+    Input from: MQTT.js/send_command()
+    Outputs to: MQTT.js/send_command()
+    Created by: Stella T 08/30/2022
+    Last Edit: Stella T 08/30/2022
+    Purpose: Takes all parameters from frontend and sends commands to devices
+    based on parameters given. Will always return a response, see generic_mqtt_client.py 
+    """
     def post(self, request, *args, **kwargs):
         env = request.data['env']
         device = request.data['device']
