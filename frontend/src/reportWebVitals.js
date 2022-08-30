@@ -1,3 +1,21 @@
+/*
+OVERALL FILE PURPOSE: 
+Not currently in use...
+*/
+
+
+
+  /*
+  Input from: 
+  Outputs to: index.js
+  Created by: Kelvin F 08/29/2022
+  Last Edit: Kelvin F 08/29/2022
+  Purpose: If you want to start measuring performance in your app, pass a function
+  to log results (for example: reportWebVitals(console.log))
+  or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+
+  See file index.js
+  */
 const reportWebVitals = onPerfEntry => {
   if (onPerfEntry && onPerfEntry instanceof Function) {
     import('web-vitals').then(({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {

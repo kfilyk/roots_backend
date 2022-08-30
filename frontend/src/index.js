@@ -6,7 +6,11 @@ import './css/main.css';
 import './css/modal.css';
 import './css/nav.css';
 
-//import 'bootstrap/dist/css/bootstrap.css';
+/*
+OVERALL FILE PURPOSE: 
+Renders application.
+See App.js
+*/
 
 ReactDOM.render(
   <React.StrictMode>
