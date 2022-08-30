@@ -182,7 +182,7 @@ class ExperimentReadingView(viewsets.ModelViewSet):
             temp = None if request.data.get('temperature') == '' else request.data.get('temperature')
             hum = None if request.data.get('humidity')  == '' else request.data.get('humidity')
             #exp_r = ExperimentReading.objects.create(experiment=Experiment.objects.get(id=request.data.get('experiment')), electrical_conductance= request.data.get('electrical_conductance'), reservoir_ph=request.data.get('reservoir_ph'), temperature=request.data.get('temperature'), humidity=request.data.get('humidity'))
-            exp_r = ExperimentReading.objects.create(experiment=Experiment.objects.get(id=request.data.get('experiment')), electrical_conductance= ec, reservoir_ph=ph, temperature=temp, humidity=hum)
+            exp_r = ExperimentReading.objects.create(experiment=Experiment.objects.get(id=request.data.get('experiment')), electrical_conductance= ec, reservoir_ph=ph, temperature=temp, humidity=hum, flushed_reservoir=request.data.get('flushed_reservoir'), raised_light = request.data.get('raised_light'), failed_pump=request.data.get('failed_pump'), went_offline= request.data.get('went_offline'), lost_power = request.data.get('lost_power'))
             exp_id = exp_r.experiment_id
             pod_readings = []
             for i in range(len(pr_values)):

@@ -40,7 +40,7 @@ class PodReadingSerializer(serializers.ModelSerializer):
 class ExperimentReadingSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExperimentReading
-        fields = ("experiment", "electrical_conductance", "reservoir_ph", "temperature", "humidity", 'reading_date')
+        fields = '__all__'
 
 class RecipeSerializer(serializers.ModelSerializer):
     author = serializers.HiddenField(default=serializers.CurrentUserDefault())

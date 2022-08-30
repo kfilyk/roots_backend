@@ -21,6 +21,13 @@ POPUP MODAL
   width: min-content; /* dont change this!!! */
   z-index: 2;
 }
+.modal_body_2 {
+  background-color: #fefefe;
+  margin: 10% auto; /* 15% from the top and centered */
+  padding: 20px;
+  width: 80%; /* dont change this!!! */
+  z-index: 2;
+}
 
 .modal_body_reading {
   background-color: #fefefe;
@@ -226,10 +233,21 @@ input:valid+span:after {
 
 .exp_r_form_row {
   display: flex;
-  flex-flow: column wrap;
+  flex-direction:row;
   margin-right: 5px;
   margin-left: 5px;
 } 
+
+.experiment_reading_indicator {
+  background-color: #1b372a;
+  color:#ffffff;
+  padding-left:10px;
+  padding-right:10px;
+  border-radius: 20px;
+  margin-left: 5px;
+  margin-right: 5px;
+
+}
 
 .exp_pr_modal_content{
   display: flex;
