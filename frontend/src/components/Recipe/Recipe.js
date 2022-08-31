@@ -5,8 +5,13 @@ import vertical_menu_icon from "../../img/vertical_menu_icon.png"
 import RecipeBar from "./RecipeBar"
 
 const RecipeList = () => {
+  //List of all recipes
   const [recipeList, setRecipeList] = useState([]);
+
+  //List of all phases
   const [phaseList, setPhaseList] = useState([]);
+
+  //Used to show a recipe JSON given a recipe id
   const [recipeJSON, setRecipeJSON] = useState({
     show: false,
     name: null,
@@ -14,11 +19,14 @@ const RecipeList = () => {
     json: {}
   })
 
+  //Used to switch between editing and adding a recipe;
+  //Used to show and hide the add/edit recipe modal
   const [modal, setModal] = useState({
     show: false,
     add: true,
   })
 
+  //Used to add and edit a recipe
   const [recipe, setRecipe] = useState(
     {
       name: null,
@@ -35,6 +43,7 @@ const RecipeList = () => {
     }
   );
 
+  //Used to create a new phase on the fly
   const [phase, setPhase] = useState(
     {
       show: true,
@@ -53,6 +62,14 @@ const RecipeList = () => {
     }
   );
 
+
+  /*
+  Input from: phase
+  Outputs to: renderCreatePhase()
+  Created by: Stella T 08/31/2022
+  Last Edit: Stella T 08/31/2022
+  Purpose: Makes an API call to create a new phase according to phase variable
+  */
   async function addPhase(e) {
     console.log("DD: ", phase)
     const result = await axios
@@ -73,27 +90,39 @@ const RecipeList = () => {
     }
   };
 
+  /*
+  Input from: None
+  Outputs to: recipeList
+  Created by: Kelvin F @ 08/26/2022
+  Last Edit: Kelvin F @ 08/26/2022
+  Purpose: Fetches all recipe objects
+  */
   async function fetchRecipes() {
     const result = await axios(
       '/api/recipes/',
-      // '/api/recipes/recipe_user_specific/',
     );
-    // console.log("FR: ", result.data)
     setRecipeList(result.data)
-
-    /*
-    const result2 = await axios(
-      '/api/phases/',
-    );
-    setPhaseList(result2.data)
-    */
   } 
 
+  /*
+  Input from: None
+  Outputs to: phaseList; recipeList
+  Created by: Kelvin F @ 08/31/2022
+  Last Edit: Kelvin F @ 08/31/2022
+  Purpose: Upon page load, it runs once and gets all phases and recipes
+  */
   useEffect(() => {
     fetchPhases();
     fetchRecipes();
   }, []);
 
+  /*
+  Input from: None
+  Outputs to: phaseList
+  Created by: Kelvin F @ 08/31/2022
+  Last Edit: Kelvin F @ 08/31/2022
+  Purpose: Fetches all phase objects
+  */
   async function fetchPhases() {
     const result = await axios(
       '/api/phases/',
@@ -101,11 +130,26 @@ const RecipeList = () => {
     setPhaseList(result.data)
   } 
 
+  /*
+  Input from: recipeList's item.id in return()
+  Outputs to: return()
+  Created by: Kelvin F @ 08/31/2022
+  Last Edit: Kelvin F @ 08/31/2022
+  Purpose: Makes an API call to delete a recipe from the database.
+  At the moment, this does not work as intended because of foreign key restraints to the Phase Table. See models.py
+  */
   async function deleteEntry(id) {
     await axios.delete(`/api/recipes/${id}/`);
     setRecipeList(recipeList.filter(recipe => recipe.id !== id))
   }
 
+  /*
+  Input from: recipe
+  Outputs to: submitModal()
+  Created by: Kelvin F @ 08/31/2022
+  Last Edit: Kelvin F @ 08/31/2022
+  Purpose: Calculates the total days of recipe based on summation of phase days
+  */
   function countDays() {
     let days = 0;
     for(let i = 1; i<=10; i++) {
@@ -116,12 +160,26 @@ const RecipeList = () => {
     recipe.days = days;
   }
 
+  /*
+  Input from: submitModal()
+  Outputs to: recipeList
+  Created by: Kelvin F @ 08/31/2022
+  Last Edit: Kelvin F @ 08/31/2022
+  Purpose: Makes an API call to create a recipe in the database.
+  */
   async function addRecipe(e) {
     const result = await axios
       .post(`/api/recipes/`, recipe);
       setRecipeList(recipeList => [...recipeList, result.data])
   };
 
+  /*
+  Input from: submitModal()
+  Outputs to: recipeList
+  Created by: Kelvin F @ 08/31/2022
+  Last Edit: Kelvin F @ 08/31/2022
+  Purpose: Makes an API call to edit a recipe in the database.
+  */
   async function editRecipe(e) {
     const result = await axios
       .patch(`/api/recipes/${recipe.id}/`, recipe)
@@ -136,12 +194,26 @@ const RecipeList = () => {
     ])
   };
 
+  /*
+  Input from: showJSON()
+  Outputs to: recipeJSON
+  Created by: Kelvin F @ 08/31/2022
+  Last Edit: Kelvin F @ 08/31/2022
+  Purpose: Makes an API call to create a recipe in the database.
+  */
   async function getRecipeJSON(id) {
     const result = await axios
       .post(`/api/recipes/get_JSON/`, {recipe_id: id});
       setRecipeJSON({recipe_id: id, show: true, json: result.data})
   };
 
+  /*
+  Input from: return()
+  Outputs to: modal, recipe
+  Created by: Kelvin F @ 08/31/2022
+  Last Edit: Kelvin F @ 08/31/2022
+  Purpose: Determines whether modal to be opened is for adding or editing a recipe
+  */
   function openModal(r){
     // if no item passed, we are adding a new one
     if (r === null){
@@ -152,6 +224,13 @@ const RecipeList = () => {
     }
   }
   
+  /*
+  Input from: return()
+  Outputs to: modal, recipe
+  Created by: Kelvin F @ 08/31/2022
+  Last Edit: Kelvin F @ 08/31/2022
+  Purpose: Verifies recipe constraints (need recipe name + min. 1 phase); calculates total recipe day then makes API call to create recipe
+  */
   function submitModal(close){
     if(recipe.name === null || recipe.name === ""){
       alert("Please provide a recipe name.")
@@ -177,6 +256,13 @@ const RecipeList = () => {
     close();
   }
 
+  /*
+  Input from: return()
+  Outputs to: modal, recipe
+  Created by: Kelvin F @ 08/31/2022
+  Last Edit: Kelvin F @ 08/31/2022
+  Purpose: Upon closing the modal, modal is hidden and recipe state is reset. 
+  */
   function closeModal(){
     setModal({...modal, show: false}) 
     setRecipe({
@@ -195,18 +281,33 @@ const RecipeList = () => {
     })
   }
 
-  function update_recipe(e){
+
+  /*
+  Input from: renderPhaseSelection()
+  Outputs to: recipe
+  Created by: Kelvin F @ 08/31/2022
+  Last Edit: Kelvin F @ 08/31/2022
+  Purpose: For a recipe, updates the phase in a particular spot.
+  */
+  function updateRecipe(e){
     setRecipe({...recipe,  [e.target.name]: (e.target.value.length === 0 ? null: e.target.value)})
   }
 
-  function render_phase_selection(){
+  /*
+  Input from: recipe
+  Outputs to: renderModal()
+  Created by: Kelvin F @ 08/31/2022
+  Last Edit: Kelvin F @ 08/31/2022
+  Purpose: Generates a dropdown of all phases to select from to build/edit a recipe
+  */
+  function renderPhaseSelection(){
     let phase_selection = [];
     for(let i = 1; i<=10; i++) {
 
       if(i===1 || recipe['phase'+(i-1)]!== null) {
         phase_selection.push(
           <div key={i} className='form-row'>
-            <select name={"phase"+i} defaultValue={recipe["phase"+i]} onChange={(e)=>update_recipe(e)}>
+            <select name={"phase"+i} defaultValue={recipe["phase"+i]} onChange={(e)=>updateRecipe(e)}>
               <option key={-1} value={null}></option>
               {/* {phaseList.map((phase) => ( <option key={`${i}_${phase.id}`} value={phase.id}>{phase.name} | ({phase.type})</option>))} */}
               {phaseList.map((phase) => ( <option key={phase.id} value={phase.id}>{phase.name} | ({phase.type})</option>))}
@@ -218,6 +319,13 @@ const RecipeList = () => {
     return <div>{phase_selection}</div>;
   }
 
+  /*
+  Input from: phase
+  Outputs to: renderModal()
+  Created by: Kelvin F @ 08/31/2022
+  Last Edit: Kelvin F @ 08/31/2022
+  Purpose: Generates input fields to create a new phase on the fly
+  */
   function renderCreatePhase(){
     return (
       <div style={{ visibility: phase.show ? 'visible': 'hidden'}}>
@@ -263,13 +371,20 @@ const RecipeList = () => {
     )
   }
 
+  /*
+  Input from: renderPhaseSelection(); renderCreatePhase()
+  Outputs to: return()
+  Created by: Kelvin F @ 08/31/2022
+  Last Edit: Kelvin F @ 08/31/2022
+  Purpose: Generates modal for add/edit recipe
+  */
   function renderModal(){
     return (
       <>
         <div className="form_row">
           <div>
             <input name="name" value={recipe.name || ""} placeholder="Name" onChange={(e) => setRecipe({...recipe, name: e.target.value})} />
-            {render_phase_selection()}
+            {renderPhaseSelection()}
           </div>
           {renderCreatePhase()}
         </div>
@@ -282,12 +397,24 @@ const RecipeList = () => {
   }
 
   
-
+  /*
+  Input from: return()
+  Outputs to: return()
+  Created by: Kelvin F @ 08/31/2022
+  Last Edit: Kelvin F @ 08/31/2022
+  Purpose: Calls method that makes API call to get JSON form of recipe
+  */
   function showJSON(id){
     getRecipeJSON(id)
   }
 
-
+  /*
+  Input from: recipeList; modal; recipeJSON
+  Outputs to: Screen
+  Created by: Stella T 08/29/2022
+  Last Edit: Stella T 08/29/2022
+  Purpose: Renders the entire Recipe modal
+  */
   return (
     <div>
       <button onClick={() => openModal(null)}>+</button>

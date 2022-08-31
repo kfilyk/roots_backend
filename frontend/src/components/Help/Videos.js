@@ -294,7 +294,7 @@ const Videos = () => {
     }
 
     /*
-    Input from: None
+    Input from: renderVideos()
     Outputs to: Screen
     Created by: Stella T 08/29/2022
     Last Edit: Stella T 08/29/2022

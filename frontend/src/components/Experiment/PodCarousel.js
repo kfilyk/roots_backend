@@ -3,19 +3,42 @@ import axios from 'axios';
 import "./pod_carousel.css";
 
 const PodCarousel = (props) => {
-  const [pod_list, setPodList] = useState([]);
+  //List of pods for a particular exp
+  const [podList, setPodList] = useState([]);
+  //Capacity of device for a particular exp
   const [capacity, setCapacity] = useState(-1);
 
+  /*
+  Input from: props.experimentID
+  Outputs to: podList, capacity
+  Created by: Kelvin F 08/31/2022
+  Last Edit: Kelvin F 08/31/2022
+  Purpose: Given an experiment id, retrieves its device's capacity and info about its pods including plant name
+  */
   async function fetchData(id) {
     const result = await axios.post(`/api/pods/populate_pod_carousel/`, {"id":id});
     setPodList(result.data.pods)
     setCapacity(result.data.capacity)
   } 
 
+  /*
+  Input from: None
+  Outputs to: fetchData()
+  Created by: Kelvin F 08/31/2022
+  Last Edit: Kelvin F 08/31/2022
+  Purpose: Upon page load, grabs the device capacity and pods for a particular experiment
+  */
   useEffect(() => {
     fetchData(props?.experimentID);
   }, [props?.experimentID]);
 
+  /*
+  Input from: podList
+  Outputs to: render()
+  Created by: Stella T 08/31/2022
+  Last Edit: Stella T 08/31/2022
+  Purpose: Renders the progress circle for a plant, the colour of the wheel changes based on plant's score.
+  */
   function renderProgressCircle(pod, pos){
     //console.log(pod)
     if (pod === null || pod.end_date !== null) {
@@ -69,11 +92,18 @@ const PodCarousel = (props) => {
   )
   }
 
+  /*
+  Input from: renderProgressCircle
+  Outputs to: return()
+  Created by: Stella T 08/29/2022
+  Last Edit: Stella T 08/29/2022
+  Purpose: Based on the capacity, renders a collection of progress circles (each presents a different pod)
+  */
   function render(){
     let progress_circle_container = []
     if (capacity !== -1) { // if pod list is straight up empty, we still need to render 5 "empty" pods
       for(let i = 0; i < capacity; i++) {
-        let pod = pod_list.filter(pod => pod.position === (i+1))[0] ?? null;      
+        let pod = podList.filter(pod => pod.position === (i+1))[0] ?? null;      
         let pos = i+1  
         progress_circle_container.push(renderProgressCircle(pod, pos)) 
       }
@@ -82,6 +112,13 @@ const PodCarousel = (props) => {
     return <></>;
   };
 
+  /*
+  Input from: render()
+  Outputs to: Screen
+  Created by: Stella T 08/29/2022
+  Last Edit: Stella T 08/29/2022
+  Purpose: The container rendering all the components on the page. 
+  */
   return (
     render()
   );

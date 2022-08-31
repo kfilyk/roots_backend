@@ -159,7 +159,7 @@ const Dashboard = () => {
   }
 
   /*
-  Input from: None
+  Input from: renderNav(); renderScrollUp; renderPage();
   Outputs to: Screen
   Created by: Kelvin F 08/29/2022
   Last Edit: Kelvin F 08/29/2022
