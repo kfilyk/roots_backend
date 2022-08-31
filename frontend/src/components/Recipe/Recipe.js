@@ -5,8 +5,8 @@ import vertical_menu_icon from "../../img/vertical_menu_icon.png"
 import RecipeBar from "./RecipeBar"
 
 const RecipeList = () => {
-  const [recipe_list, setRecipeList] = useState([]);
-  const [phase_list, setPhaseList] = useState([]);
+  const [recipeList, setRecipeList] = useState([]);
+  const [phaseList, setPhaseList] = useState([]);
   const [recipeJSON, setRecipeJSON] = useState({
     show: false,
     name: null,
@@ -69,7 +69,7 @@ const RecipeList = () => {
             lights_on_hours: phase.lights_on_hours
         });
     if(result.status === 201 || result.status === 200){
-      setPhaseList([...phase_list, result.data])
+      setPhaseList([...phaseList, result.data])
     }
   };
 
@@ -103,14 +103,14 @@ const RecipeList = () => {
 
   async function deleteEntry(id) {
     await axios.delete(`/api/recipes/${id}/`);
-    setRecipeList(recipe_list.filter(recipe => recipe.id !== id))
+    setRecipeList(recipeList.filter(recipe => recipe.id !== id))
   }
 
   function countDays() {
     let days = 0;
     for(let i = 1; i<=10; i++) {
       if (recipe["phase"+i] !== null) {
-        days += phase_list.find(phase => phase.id === parseInt(recipe["phase"+i])).days
+        days += phaseList.find(phase => phase.id === parseInt(recipe["phase"+i])).days
       }
     }
     recipe.days = days;
@@ -119,7 +119,7 @@ const RecipeList = () => {
   async function addRecipe(e) {
     const result = await axios
       .post(`/api/recipes/`, recipe);
-      setRecipeList(recipe_list => [...recipe_list, result.data])
+      setRecipeList(recipeList => [...recipeList, result.data])
   };
 
   async function editRecipe(e) {
@@ -127,12 +127,12 @@ const RecipeList = () => {
       .patch(`/api/recipes/${recipe.id}/`, recipe)
       .catch((err) => console.log("Error during edit recipe: ", err))
 
-    const index = recipe_list.findIndex(r => r.id === recipe.id);
+    const index = recipeList.findIndex(r => r.id === recipe.id);
     const updatedItem = result.data
     setRecipeList([
-      ...recipe_list.slice(0, index),
+      ...recipeList.slice(0, index),
       updatedItem,
-      ...recipe_list.slice(index + 1)
+      ...recipeList.slice(index + 1)
     ])
   };
 
@@ -208,8 +208,8 @@ const RecipeList = () => {
           <div key={i} className='form-row'>
             <select name={"phase"+i} defaultValue={recipe["phase"+i]} onChange={(e)=>update_recipe(e)}>
               <option key={-1} value={null}></option>
-              {/* {phase_list.map((phase) => ( <option key={`${i}_${phase.id}`} value={phase.id}>{phase.name} | ({phase.type})</option>))} */}
-              {phase_list.map((phase) => ( <option key={phase.id} value={phase.id}>{phase.name} | ({phase.type})</option>))}
+              {/* {phaseList.map((phase) => ( <option key={`${i}_${phase.id}`} value={phase.id}>{phase.name} | ({phase.type})</option>))} */}
+              {phaseList.map((phase) => ( <option key={phase.id} value={phase.id}>{phase.name} | ({phase.type})</option>))}
             </select>
           </div>
         )
@@ -291,7 +291,7 @@ const RecipeList = () => {
   return (
     <div>
       <button onClick={() => openModal(null)}>+</button>
-      {recipe_list.map(item => (
+      {recipeList.map(item => (
 
         <div key={ item.id } className="item" >
           <div className="object_container">
@@ -308,7 +308,7 @@ const RecipeList = () => {
                 <button onClick={() => showJSON(item.id)}>SHOW JSON</button>
               </div>
             </div>
-            <RecipeBar phase_list = {phase_list} recipe = {item} experiment={undefined} is_object={true}></RecipeBar> 
+            <RecipeBar phaseList = {phaseList} recipe = {item} experiment={undefined} is_object={true}></RecipeBar> 
           </div>
         </div>
       ))}
