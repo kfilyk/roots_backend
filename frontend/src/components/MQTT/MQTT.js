@@ -9,7 +9,7 @@ Renders module for the generic MQTT Client
 
 const MQTT = () => {
     //Sets the default command parameters
-    const [command, set_command] = useState({
+    const [command, setCommand] = useState({
         show: false,
         id: 0, // COMMAND ID, NOT DEVICE ID. 
         device: "6372",
@@ -41,7 +41,7 @@ const MQTT = () => {
                 env: command.env,
                 parameters: command
             });
-        set_command({...command, response: result.data})
+        setCommand({...command, response: result.data})
     }
 
     /*
@@ -58,8 +58,8 @@ const MQTT = () => {
                 return(
                     <div className='leftContainer' style={{width: "100%"}}>
                         <p> Recipe name must include .json at the end. No spaces, use underscores instead</p>
-                        <input type="text" value={command.recipe_name} placeholder="Recipe Name" onChange={(e) => set_command({...command, recipe_name: e.target.value})} />
-                        <textarea placeholder="Recipe JSON" value={command.recipe_json} onChange={(e) => set_command({...command, recipe_json: e.target.value})} rows="10"></textarea>
+                        <input type="text" value={command.recipe_name} placeholder="Recipe Name" onChange={(e) => setCommand({...command, recipe_name: e.target.value})} />
+                        <textarea placeholder="Recipe JSON" value={command.recipe_json} onChange={(e) => setCommand({...command, recipe_json: e.target.value})} rows="10"></textarea>
                     </div>
                 )
             case id === 7:
@@ -67,7 +67,7 @@ const MQTT = () => {
                     <div>
                         <div>
                             Select Timezone
-                            <select value={command.timezone} onChange={(e) => set_command({...command, timezone: e.target.value})} >
+                            <select value={command.timezone} onChange={(e) => setCommand({...command, timezone: e.target.value})} >
                                 <option value="Etc/GMT-12">Etc/GMT+12</option>
                                 <option value="Etc/GMT-11">Etc/GMT+11</option>
                                 <option value="Etc/GMT-10">Etc/GMT+10</option>
@@ -104,11 +104,11 @@ const MQTT = () => {
                     <div>
                         <div>
                             Hour (0 to 23):
-                            <input type="number" value={command.hour} min={0} max={23} onChange={(e) => {set_command({...command, hour: e.target.value})}} />
+                            <input type="number" value={command.hour} min={0} max={23} onChange={(e) => {setCommand({...command, hour: e.target.value})}} />
                         </div>
                         <div>
                             Minute (0 to 59):
-                            <input type="number" value={command.minute} min={0} max={59} onChange={(e) => {set_command({...command, minute: e.target.value})}} />
+                            <input type="number" value={command.minute} min={0} max={59} onChange={(e) => {setCommand({...command, minute: e.target.value})}} />
                         </div>
                     </div>
                 )
@@ -117,11 +117,11 @@ const MQTT = () => {
                     <div>
                         <div>
                             Stage:
-                            <input type="number" value={command.stage} min={0} onChange={(e) => {set_command({...command, stage: e.target.value})}} />
+                            <input type="number" value={command.stage} min={0} onChange={(e) => {setCommand({...command, stage: e.target.value})}} />
                         </div>
                         <div>
                             Cycle:
-                            <input type="number" value={command.cycle} min={0} onChange={(e) => {set_command({...command, cycle: e.target.value})}} />
+                            <input type="number" value={command.cycle} min={0} onChange={(e) => {setCommand({...command, cycle: e.target.value})}} />
                         </div>
                     </div>
             )
@@ -129,7 +129,7 @@ const MQTT = () => {
                 return(
                     <div>
                         <p>Recipe name (spelling, capitalization must be exact. must include .json at the end)</p>
-                        <input type="text" value={command.recipe_name} placeholder="Recipe Name" onChange={(e) => set_command({...command, recipe_name: e.target.value})} />
+                        <input type="text" value={command.recipe_name} placeholder="Recipe Name" onChange={(e) => setCommand({...command, recipe_name: e.target.value})} />
                     </div>
                 )
             default:
@@ -149,14 +149,14 @@ const MQTT = () => {
         return (
                 <div className="mainContainer">
                     <div className="leftContainer">
-                        <input type="text" value={command.device} placeholder="Device ID" onChange={(e) => set_command({...command, device: e.target.value})} />
-                        <select value={command.env} onChange={(e) => set_command({...command, env: e.target.value})} >
+                        <input type="text" value={command.device} placeholder="Device ID" onChange={(e) => setCommand({...command, device: e.target.value})} />
+                        <select value={command.env} onChange={(e) => setCommand({...command, env: e.target.value})} >
                             <option value="qa">QA</option>
                             <option value="prod">Prod</option>
                             <option value="dev">Dev</option>
                             <option value="roots">Roots</option>
                         </select>
-                        <select value={command.id} onChange={(e) => set_command({...command, id: parseInt(e.target.value)})} >
+                        <select value={command.id} onChange={(e) => setCommand({...command, id: parseInt(e.target.value)})} >
                             <option value="0">Get Device State</option>
                             {/* <option value="1">Get Device Logs</option> */}
                             <option value="3">Add Recipe</option>

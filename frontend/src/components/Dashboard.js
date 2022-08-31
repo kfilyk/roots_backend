@@ -19,7 +19,7 @@ const Dashboard = () => {
   //Active tab the user is on.
   const [selectedTab, setSelectedTab] = useState('loading'); // in the future: loading state shows a spinning wheel
   //Whether the user is logged in or not.
-  const [auth, set_auth] = useState({
+  const [auth, setAuth] = useState({
     user: -1
   });
 
@@ -43,7 +43,7 @@ const Dashboard = () => {
       axios
         .post("/auth/token/")
         .then((res) => {
-          set_auth({...auth, user: res.data.username})
+          setAuth({...auth, user: res.data.username})
           //default tab
           setSelectedTab("device" )
         })
