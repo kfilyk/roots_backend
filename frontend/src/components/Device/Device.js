@@ -30,7 +30,7 @@ const Device = () => {
     const [availableDevices, setAvailableDevices] = useState([]); // list of device objects
     const [selectedDeviceStatus, setSelectedDeviceStatus] = useState("all");
     
-    //List of all phase, recipe, plants
+    //LISTS OF ALL PHASES, RECIPES, PLANTS
     const [phaseList, setPhaseList] = useState([])
     const [recipeList, setRecipeList] = useState([])
     const [plantList, setPlantList] = useState([]);

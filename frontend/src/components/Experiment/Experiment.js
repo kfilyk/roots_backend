@@ -6,7 +6,10 @@ import vertical_menu_icon from "../../img/vertical_menu_icon.png"
 import ExperimentReading from "../Experiment/ExperimentReading"
 import RecipeBar from '../Recipe/RecipeBar';
 
-
+/*
+Date Variables used in:
+setExperiment()
+*/
 let today_date = new Date();
 console.log("CURRENT DATE: ", today_date)
 let year = today_date.getUTCFullYear();
@@ -15,18 +18,23 @@ month = month > 9 ? month : '0'+month;
 let day = today_date.getUTCDate();
 day = day > 9 ? day : '0'+day;
 
+
 const ExperimentList = () => {
-  const [experiment_list, setExperimentList] = useState([]);
-  const [plant_list, setPlantList] = useState([]);
-  const [recipe_list, setRecipeList] = useState([]);
-  const [phase_list, setPhaseList] = useState([])
+
+  // Store all experiments, plants, recipes, phases for future use by the Experiment tab
+  const [experimentList, setExperimentList] = useState([]);
+  const [plantList, setPlantList] = useState([]);
+  const [recipeList, setRecipeList] = useState([]);
+  const [phaseList, setPhaseList] = useState([])
   const [modal, setModal] = useState({
     show: false,
     add: false
   })
 
+  // store available devices able to be allocated an experiment
   const [available_devices, setAvailableDevices] = useState([])
 
+  // store experiment currently being created/edited via pop-up modal 
   const [experiment, setExperiment] = useState({
     id: null,
     name: null,
@@ -39,6 +47,13 @@ const ExperimentList = () => {
     recipe: null
   })
 
+    /*
+    Input from: None
+    Outputs to: experimentList
+    Created by: Kelvin F @ 08/26/2022
+    Last Edit: Kelvin F @ 08/26/2022
+    Purpose: Fetches all experiment objects (active or completed)
+    */
   async function fetchExperiments() {
     const result = await axios(
       '/api/experiments/',
@@ -46,6 +61,13 @@ const ExperimentList = () => {
     setExperimentList(result.data)
   } 
 
+  /*
+  Input from: None
+  Outputs to: phaseList
+  Created by: Kelvin F @ 08/26/2022
+  Last Edit: Kelvin F @ 08/26/2022
+  Purpose: Fetches all phase objects
+  */
   async function fetchPhases() {
     const result = await axios(
       '/api/phases/',
@@ -53,6 +75,13 @@ const ExperimentList = () => {
     setPhaseList(result.data)
   } 
 
+  /*
+  Input from: None
+  Outputs to: recipeList
+  Created by: Kelvin F @ 08/26/2022
+  Last Edit: Kelvin F @ 08/26/2022
+  Purpose: Fetches all recipe objects
+  */
   async function fetchRecipes() {
     const result = await axios(
       '/api/recipes/',
@@ -60,6 +89,13 @@ const ExperimentList = () => {
     setRecipeList(result.data)
   } 
 
+  /*
+  Input from: None
+  Outputs to: plantList
+  Created by: Kelvin F @ 08/26/2022
+  Last Edit: Kelvin F @ 08/26/2022
+  Purpose: Fetches all plant objects
+  */
   async function fetchPlants() {
     const result = await axios(
       '/api/plants/',
@@ -67,6 +103,13 @@ const ExperimentList = () => {
     setPlantList(result.data)
   }
   
+  /*
+  Input from: None
+  Outputs to: availableDevices
+  Created by: Kelvin F @ 08/26/2022
+  Last Edit: Kelvin F @ 08/26/2022
+  Purpose: Fetches all available devices without a currently running experiment
+  */
   async function fetchAvailableDevices() {
     const result = await axios(
       '/api/experiments/available_devices/',
@@ -74,6 +117,13 @@ const ExperimentList = () => {
     setAvailableDevices(result.data)
   }
 
+  /*
+  Input from: None
+  Outputs to: None
+  Created by: Kelvin F @ 08/26/2022
+  Last Edit: Kelvin F @ 08/26/2022
+  Purpose: Runs once (denoted by '[]') at the start to load content by calling various fetch functions
+  */
   useEffect(() => {
     fetchExperiments();
     fetchPhases();
@@ -82,16 +132,24 @@ const ExperimentList = () => {
   }, []);
 
   /*
-  useEffect(() => {
-    console.log(experiment_list);
-  }, [experiment_list]);
-*/
-
+  Input from: React frontend (modal)
+  Outputs to: Database (target experiment object)
+  Created by: Kelvin F @ 08/26/2022
+  Last Edit: Kelvin F @ 08/26/2022
+  Purpose: Concludes an experiment and updates it accordingly in the backend. 
+  */
   async function concludeExperiment(id) {
     await axios.patch(`/api/experiments/${id}/`, { end_date: year+"-"+month+"-"+day});
     fetchExperiments()
   }
 
+  /*
+  Input from: Modal react object
+  Outputs to: openModal()
+  Created by: Kelvin F @ 08/26/2022
+  Last Edit: Kelvin F @ 08/26/2022
+  Purpose: Passes the list of active pods from a given experiment to the frontend Modal editor
+  */
   async function getPods(id) {
     let result = await axios(
       `/api/pods/?experiment=${id}`
@@ -101,6 +159,13 @@ const ExperimentList = () => {
     return result
   }
 
+  /*
+  Input from: Modal react object
+  Outputs to: openModal()
+  Created by: Kelvin F @ 08/26/2022
+  Last Edit: Kelvin F @ 08/26/2022
+  Purpose: Passes the device object associated with the experiment to the frontend Modal editor
+  */
   async function getDevice(id){
     const device = await axios(
       `/api/devices/${id}/`
@@ -109,6 +174,13 @@ const ExperimentList = () => {
     return device.data
   }
 
+  /*
+  Input from: Frontend button click (React)
+  Outputs to: Frontend modal experiment editor
+  Created by: Kelvin F @ 08/26/2022
+  Last Edit: Kelvin F @ 08/26/2022
+  Purpose: Upon experiment add/edit button click, modal is opened for making changes to experiment form
+  */
   function openModal(exp){
     if (exp === null ){
       fetchAvailableDevices()
@@ -127,6 +199,14 @@ const ExperimentList = () => {
     }
   }
 
+  /*
+  Input from: Frontend modal editor (react)
+  Outputs to: addExperiment(), editExperiment()
+  Created by: Kelvin F @ 08/26/2022
+  Last Edit: Kelvin F @ 08/26/2022
+  Purpose: Verifies integrity of created/edited experiment object, closes modal editor
+  Issues: Add more integrity checks
+  */   
   function submitModal(close){
     if (experiment.name === null || experiment.name === ""){
       alert("Experiment name cannot be null.")
@@ -146,6 +226,13 @@ const ExperimentList = () => {
     close();
   }
 
+  /*
+  Input from: submitModal()
+  Outputs to: API -> database (backend)
+  Created by: Kelvin F @ 08/26/2022
+  Last Edit: Kelvin F @ 08/26/2022
+  Purpose: Pushes newly created 'experiment' object to backend
+  */   
   async function addExperiment(e) {
     console.log("POD SELECTION: ", experiment.pod_selection)
     await axios
@@ -161,6 +248,13 @@ const ExperimentList = () => {
     fetchExperiments();
   };
 
+  /*
+  Input from: submitModal()
+  Outputs to: API -> database (backend)
+  Created by: Kelvin F @ 08/26/2022
+  Last Edit: Kelvin F @ 08/26/2022
+  Purpose: Pushes edited 'experiment' object changes to backend. Also patches pod changes
+  */   
   async function editExperiment(e) {
     await axios
       .patch(`/api/experiments/${experiment.id}/`, 
@@ -212,8 +306,14 @@ const ExperimentList = () => {
     fetchExperiments();
   };
 
+  /*
+  Input from: renderAvailableDevices()
+  Outputs to: Experiment object
+  Created by: Kelvin F @ 08/26/2022
+  Last Edit: Kelvin F @ 08/26/2022
+  Purpose: Sets the device to be used during experiment selection in modal
+  */   
   function setDevice(e){
-
     let selected_device = available_devices.find(device => device.id.toString() === e.target.value)
     //console.log("SELECTED DEVICE ID: ", selected_device)
     if(selected_device === undefined) {
@@ -223,9 +323,15 @@ const ExperimentList = () => {
     }
   }
 
+  /*
+  Input from: renderModal()
+  Outputs to: Experiment object
+  Created by: Kelvin F @ 08/26/2022
+  Last Edit: Kelvin F @ 08/26/2022
+  Purpose: Sets the device currently being used by a selected experiment object
+  */   
   function renderAvailableDevices(){
     return (
-
       <select className="device_selection" defaultValue={experiment.device} name="device" onChange={(e) => setDevice(e)}>
         { modal.add ? <option key={null} value={null}>SELECT DEVICE</option> : <option key={experiment.device} value={experiment.device}> {experiment.device_name ?? null} </option>  }
         {available_devices.map(item => (
@@ -264,7 +370,7 @@ const ExperimentList = () => {
         pod_container.push(
           <select className="pod" name={"pod_"+(i+1)} defaultValue={plant} onChange={(e) => setPod(e)}>
               <option value={null}></option>
-              {plant_list.map(item => (
+              {plantList.map(item => (
                   <option key={item.id} value={item.id}> {item.name} </option>
               ))}
           </select>
@@ -278,7 +384,7 @@ const ExperimentList = () => {
     return (
       <select className="experiment_recipe_selection" name="experiment_recipe_selection" default_value="null" onChange={(e) => setRecipe(e)}>
         <option value={null}></option>
-        {recipe_list.map(item => (
+        {recipeList.map(item => (
           <option key={item.id} value={item.id}> {item.name} </option>
         ))}
       </select>
@@ -312,7 +418,7 @@ const ExperimentList = () => {
   return (
     <div>
         <button onClick={() => openModal(null)}>+</button>
-        {experiment_list.map(item => (
+        {experimentList.map(item => (
             <div key={item.id} className="item">
                 <div className="object_container">
                   <div className="object_top">
@@ -334,7 +440,7 @@ const ExperimentList = () => {
                         {item.end_date === null ? <li key="add_reading"><ExperimentReading exp_id={item.id}></ExperimentReading></li> : <></> }
                     </div>
                   </div>
-                  <RecipeBar recipe={item.recipe} phase_list={phase_list} recipe_name = {item.recipe_name} experiment={item}></RecipeBar>
+                  <RecipeBar recipe={item.recipe} phaseList={phaseList} recipe_name = {item.recipe_name} experiment={item}></RecipeBar>
               </div>
             </div>
         ))}
