@@ -156,7 +156,7 @@ class DeviceView(viewsets.ModelViewSet):
     """
     def get_queryset(self):
         user = self.request.user
-        return Device.objects.filter(user = user.id)
+        return Device.objects.all() #filter(user = user.id)
 
 
 class ExperimentReadingView(viewsets.ModelViewSet):

@@ -6,7 +6,8 @@ import AWS from 'aws-sdk';
 const ExperimentReading = (props) => {
     const [modal, setModal] = useState(false);
 
-    const [experiment_reading, set_experiment_reading] = useState({
+    // store experiment reading form to be edited by frontend experiment reading modal
+    const [experimentReading, setExperimentReading] = useState({
         // To be done automatically
         // water_level: -1,
         // reading_date: -1,
@@ -22,26 +23,26 @@ const ExperimentReading = (props) => {
 
         exp_id: null,
         exp_phase: null,
-        pods: [], // 
+        pods: [], 
         first_reading: true,
     });
 
-    /*
-        Is an array of pod reading objects
-    */
-    const [pod_readings, set_pod_readings] = useState([]);
-    /*
-        The selected pod id that the pod reading form is on
-    */
-    const [selected_pod, set_selected_pod] = useState(-1)
+    // An array of pod reading objects
+    const [podReadings, setPodReadings] = useState([]);
 
+    // The selected pod id that the pod reading form is on
+    const [selectedPod, setSelectedPod] = useState(-1)
 
-    /*
-        For a particular pod reading field, this function finds the value of that field if it already exists given a pod_id
-    */
-    function find_value_selected_pod(field){
+     /*
+    Input/Called from: renderPodReading()
+    Outputs to: renderPodReading() 
+    Created by: Kelvin F @ 08/26/2022
+    Last Edit: Kelvin F @ 08/26/2022
+    Purpose:  Return a form value for a field associated with a particular pod reading (during the creation of an experiment reading; note the value is stored client side, not pulled from the backend)
+    */  
+    function findSelectedPodValue(field){
         if(field === 'pod_phase') {
-            let ph = experiment_reading.pods[selected_pod].phase
+            let ph = experimentReading.pods[selectedPod].phase
             if (ph === 0) {
                 return "germination"
             } else if(ph === 1) {
@@ -56,7 +57,7 @@ const ExperimentReading = (props) => {
                 return "other"
             }
         }
-        let reading = pod_readings.filter(reading => reading.pod === selected_pod)[0] ?? null
+        let reading = podReadings.filter(reading => reading.pod === selectedPod)[0] ?? null
             if(reading === null){
                 return ""
             } else {
@@ -65,9 +66,14 @@ const ExperimentReading = (props) => {
     }
 
     /*
-        this function accesses the api and pushes the experiment reading object (including pods)
-    */
-    async function create_readings(){
+    Input/Called from: submitReadings()
+    Outputs to: Database (backend, post to experimentReadings and podReadings tables) 
+    Created by: Kelvin F @ 08/26/2022
+    Last Edit: Kelvin F @ 08/26/2022
+    Purpose: This function accesses the api and pushes the experiment reading and pod reading objects
+    Issues: S3 bucket access needs to be implemented for photo transfer
+    */  
+    async function createReadings(){
         /*
         const s3 = new AWS.S3({
             //accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID,
@@ -80,11 +86,11 @@ const ExperimentReading = (props) => {
         */
 
         // include the phases of the pods at the time of reading
-        for(let p in pod_readings) {
-            pod_readings[p]['pod_phase'] = experiment_reading.pods[p].phase
+        for(let p in podReadings) {
+            podReadings[p]['pod_phase'] = experimentReading.pods[p].phase
 
             // upload photos to AWS in a seperate process
-            //console.log(pod_readings[p]['photos'][0])
+            //console.log(podReadings[p]['photos'][0])
             /*
             const uploadedImage = await s3.upload({
                 Bucket: process.env.AWS_S3_BUCKET_NAME,
@@ -97,21 +103,19 @@ const ExperimentReading = (props) => {
         const result = await axios
             .post(`/api/experimentreadings/`, 
             { 
-                experiment: experiment_reading.exp_id,
-                electrical_conductance : experiment_reading.electrical_conductance,
-                reservoir_ph: experiment_reading.reservoir_ph,
-                temperature: experiment_reading.temperature,
-                humidity: experiment_reading.humidity,
-                flushed_reservoir: experiment_reading.flushed_reservoir,
-                raised_light: experiment_reading.raised_light,
-                failed_pump: experiment_reading.failed_pump, 
-                went_offline: experiment_reading.went_offline,
-                lost_power: experiment_reading.lost_power,
-                pod_readings: pod_readings,
+                experiment: experimentReading.exp_id,
+                electrical_conductance : experimentReading.electrical_conductance,
+                reservoir_ph: experimentReading.reservoir_ph,
+                temperature: experimentReading.temperature,
+                humidity: experimentReading.humidity,
+                flushed_reservoir: experimentReading.flushed_reservoir,
+                raised_light: experimentReading.raised_light,
+                failed_pump: experimentReading.failed_pump, 
+                went_offline: experimentReading.went_offline,
+                lost_power: experimentReading.lost_power,
+                pod_readings: podReadings,
             })
             .catch((err) => console.log(err));
-        console.log(experiment_reading)
-        console.log(result)
 
         if (result){
             console.log("Experiment readings and pod readings uploaded successfully")
@@ -122,9 +126,13 @@ const ExperimentReading = (props) => {
      }
 
     /*
-        For a particular pod reading field, this function sets the value of that field. If value is null, assumption is not to record that pod reading field.
+    Input/Called from: renderPodReading()
+    Outputs to: podReadings form object
+    Created by: Kelvin F @ 08/26/2022
+    Last Edit: Kelvin F @ 08/26/2022
+    Purpose: For a particular pod reading field, this function sets the value of that field. If value is null, assumption is not to record that pod reading field.
     */
-    function set_value_selected_pod(e){
+    function setSelectedPodValue(e){
         let field = e.target.name
         let value = null;
         if(e.target.type === "checkbox") {
@@ -137,11 +145,11 @@ const ExperimentReading = (props) => {
             value = parseInt(e.target.value)
         }
 
-        let index = pod_readings.findIndex(reading => reading.pod === selected_pod)
+        let index = podReadings.findIndex(reading => reading.pod === selectedPod)
         console.log("FIELD/VALUE: "+ field +"/"+value)
         // if a pod reading has not been created yet
          if(index !== -1){
-            let updated_pod = pod_readings[index]
+            let updated_pod = podReadings[index]
 
             if(field === 'photos') {
                 let images = []
@@ -153,37 +161,37 @@ const ExperimentReading = (props) => {
                 }
                 updated_pod[field] = images
 
-                set_pod_readings([
-                    ...pod_readings.slice(0, index),
+                setPodReadings([
+                    ...podReadings.slice(0, index),
                     updated_pod,
-                    ...pod_readings.slice(index + 1)
+                    ...podReadings.slice(index + 1)
                 ])
 
             } else if(value !== "") {
                 updated_pod[field] = value
                 // insert copy of updated pod into index 
-                set_pod_readings([
-                    ...pod_readings.slice(0, index),
+                setPodReadings([
+                    ...podReadings.slice(0, index),
                     updated_pod,
-                    ...pod_readings.slice(index + 1)
+                    ...podReadings.slice(index + 1)
                 ])
             } else {
                 //Deleting field from pod reading if value is ""
                 delete updated_pod[field]
                 //If deleting this field means there are no other fields to record, delete this singular pod reading
                 if((Object.keys(updated_pod).length) === 1){
-                    set_pod_readings(pod_readings.filter(reading => reading.pod !== selected_pod))
+                    setPodReadings(podReadings.filter(reading => reading.pod !== selectedPod))
                 } else {
-                    set_pod_readings([
-                        ...pod_readings.slice(0, index),
+                    setPodReadings([
+                        ...podReadings.slice(0, index),
                         updated_pod,
-                        ...pod_readings.slice(index + 1)
+                        ...podReadings.slice(index + 1)
                     ])
                 }
             }
         //Otherwise, add a new field in
         } else {
-            let reading = {pod: selected_pod, [field]: value}
+            let reading = {pod: selectedPod, [field]: value}
 
             if(field === 'photos') {
                 let images = []
@@ -193,116 +201,129 @@ const ExperimentReading = (props) => {
                         images.push(files[i])            
                     }
                 }
-                reading = {pod: selected_pod, [field]: images}
+                reading = {pod: selectedPod, [field]: images}
             }
-            set_pod_readings([...pod_readings, reading])
+            setPodReadings([...podReadings, reading])
         }
      }
 
+    /*
+    Input/Called from: renderModal()
+    Outputs to: Frontend form modal (renderModal()), setSelectedPodValue()
+    Created by: Kelvin F @ 08/26/2022
+    Last Edit: Kelvin F @ 08/26/2022
+    Purpose: Renders all form field inputs for a selected pod reading, calls auxillary setSelectedPodValue() function to store form inputs before submission to backend
+    */
     function renderPodReading(){
-        if (selected_pod !== -1){
+        if (selectedPod !== -1){
             return (
                 <div className='pod_r_modal'>
                     <div className="exp_r_form_row">
-                        <input className="exp_r_input" placeholder="Node Count" type="number" value={find_value_selected_pod('node_count') || ""} name={"node_count"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                        <input className="exp_r_input" placeholder="Node Count" type="number" value={findSelectedPodValue('node_count') || ""} name={"node_count"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
                     </div>
                     <div className="exp_r_form_row">
-                        <input className="exp_r_input" placeholder="Mean Internode Distance" type="number" value={find_value_selected_pod('internode_distance') || ""} name={"internode_distance"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                        <input className="exp_r_input" placeholder="Mean Internode Distance" type="number" value={findSelectedPodValue('internode_distance') || ""} name={"internode_distance"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
                     </div>
                     <div className="exp_r_form_row">
-                        <input className="exp_r_input" placeholder="Leaf Count" type="number" value={find_value_selected_pod('leaf_count') || ""} name={"leaf_count"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                        <input className="exp_r_input" placeholder="Leaf Count" type="number" value={findSelectedPodValue('leaf_count') || ""} name={"leaf_count"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
                     </div>
                     <div className="exp_r_form_row">
-                        <input className="exp_r_input" placeholder="Germination Rate" type="number" value={find_value_selected_pod('germination_rate') || ""} name={"germination_rate"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                        <input className="exp_r_input" placeholder="Germination Rate" type="number" value={findSelectedPodValue('germination_rate') || ""} name={"germination_rate"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
                     </div>
                     <div className='pr_coverage'>
-                        <label> Pest Coverage: {find_value_selected_pod('pest_coverage') || 0}% </label>
-                        <input className="exp_r_input" name="pest_coverage" value={find_value_selected_pod('pest_coverage') || 0} type="range" min={0} max={100} onChange={(e) => {set_value_selected_pod(e)}} />
+                        <label> Pest Coverage: {findSelectedPodValue('pest_coverage') || 0}% </label>
+                        <input className="exp_r_input" name="pest_coverage" value={findSelectedPodValue('pest_coverage') || 0} type="range" min={0} max={100} onChange={(e) => {setSelectedPodValue(e)}} />
                     </div>
                     <div className='pr_coverage'>
-                        <label> Algae Coverage: {find_value_selected_pod('algae_coverage') || 0}% </label>
-                        <input className="exp_r_input" name="algae_coverage" value={find_value_selected_pod('algae_coverage') || 0} type="range" min={0} max={100} onChange={(e) => {set_value_selected_pod(e)}} />
+                        <label> Algae Coverage: {findSelectedPodValue('algae_coverage') || 0}% </label>
+                        <input className="exp_r_input" name="algae_coverage" value={findSelectedPodValue('algae_coverage') || 0} type="range" min={0} max={100} onChange={(e) => {setSelectedPodValue(e)}} />
                     </div>
                     <div className='pr_coverage'>
-                        <label> Blight Coverage: {find_value_selected_pod('blight_coverage') || 0}% </label>
-                        <input className="exp_r_input" name="blight_coverage" value={find_value_selected_pod('blight_coverage') || 0} type="range" min={0} max={100} onChange={(e) => {set_value_selected_pod(e)}} />
+                        <label> Blight Coverage: {findSelectedPodValue('blight_coverage') || 0}% </label>
+                        <input className="exp_r_input" name="blight_coverage" value={findSelectedPodValue('blight_coverage') || 0} type="range" min={0} max={100} onChange={(e) => {setSelectedPodValue(e)}} />
                     </div>
                     <div className="exp_r_form_row">
-                        <input className="exp_r_input" placeholder="Harvest Weight" type="number" value={find_value_selected_pod('harvest_weight') || ""} name={"harvest_weight"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                        <input className="exp_r_input" placeholder="Harvest Weight" type="number" value={findSelectedPodValue('harvest_weight') || ""} name={"harvest_weight"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
                     </div>
                     <div className="exp_r_form_row">
-                        <input className="exp_r_input" placeholder="Harvest Count" type="number" value={find_value_selected_pod('harvest_count') || ""} name={"harvest_count"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                        <input className="exp_r_input" placeholder="Harvest Count" type="number" value={findSelectedPodValue('harvest_count') || ""} name={"harvest_count"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
                     </div>
                     <div className="exp_r_form_row">
-                        <input className="exp_r_input" placeholder="Harvest Quality" type="number" value={find_value_selected_pod('harvest_quality') || ""} name={"harvest_quality"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                        <input className="exp_r_input" placeholder="Harvest Quality" type="number" value={findSelectedPodValue('harvest_quality') || ""} name={"harvest_quality"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
                     </div>
                     <div className="exp_r_form_row">
-                        <input className="exp_r_input" placeholder="Flower Quality" type="number" value={find_value_selected_pod('flower_quality') || ""} name={"flower_quality"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                        <input className="exp_r_input" placeholder="Flower Quality" type="number" value={findSelectedPodValue('flower_quality') || ""} name={"flower_quality"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
                     </div>
                     <div className='pr_comment'>
-                        <textarea name={"comment"} placeholder="[comment]" value={find_value_selected_pod('comment') || ""} onChange={(e) => {set_value_selected_pod(e)} } cols="40" rows="5"></textarea>
+                        <textarea name={"comment"} placeholder="[comment]" value={findSelectedPodValue('comment') || ""} onChange={(e) => {setSelectedPodValue(e)} } cols="40" rows="5"></textarea>
                     </div>
                     <div className="exp_r_form_row">
-                        <input className="exp_r_input" placeholder="Bud Count" type="number" value={find_value_selected_pod('bud_count') || ""} name={"bud_count"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                        <input className="exp_r_input" placeholder="Bud Count" type="number" value={findSelectedPodValue('bud_count') || ""} name={"bud_count"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
                     </div>
                     <div className="exp_r_form_row">
-                        <input className="exp_r_input"  placeholder="Flower Count" type="number" value={find_value_selected_pod('flower_count') || ""} name={"flower_count"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                        <input className="exp_r_input"  placeholder="Flower Count" type="number" value={findSelectedPodValue('flower_count') || ""} name={"flower_count"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
                     </div>
                     <div className="exp_r_form_row">
-                        <input className="exp_r_input"  placeholder="Fruit Ripe #" type="number" value={find_value_selected_pod('fruit_ripe_count') || ""} name={"fruit_ripe_count"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                        <input className="exp_r_input"  placeholder="Fruit Ripe #" type="number" value={findSelectedPodValue('fruit_ripe_count') || ""} name={"fruit_ripe_count"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
                     </div>
                     <div className="exp_r_form_row">
-                        <input className="exp_r_input" placeholder="Fruit Unripe" type="number" value={find_value_selected_pod('fruit_unripe_count') || ""} name={"fruit_unripe_count"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                        <input className="exp_r_input" placeholder="Fruit Unripe" type="number" value={findSelectedPodValue('fruit_unripe_count') || ""} name={"fruit_unripe_count"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
                     </div>
                     <div className="exp_r_form_row">
-                        <input className="exp_r_input" placeholder="Mean Leaf Area" type="number" value={find_value_selected_pod('leaf_area_avg') || ""} name={"leaf_area_avg"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                        <input className="exp_r_input" placeholder="Mean Leaf Area" type="number" value={findSelectedPodValue('leaf_area_avg') || ""} name={"leaf_area_avg"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
                     </div>
                     <div className="exp_r_form_row">
-                        <input className="exp_r_input" placeholder="Max Height" type="number" value={find_value_selected_pod('max_height') || ""} name={"max_height"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                        <input className="exp_r_input" placeholder="Max Height" type="number" value={findSelectedPodValue('max_height') || ""} name={"max_height"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
                     </div>
                     <div className="exp_r_form_row">
-                        <input className="exp_r_input"  placeholder="Min Height" type="number" value={find_value_selected_pod('min_height') || ""} name={"min_height"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                        <input className="exp_r_input"  placeholder="Min Height" type="number" value={findSelectedPodValue('min_height') || ""} name={"min_height"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
                     </div>
                     <div className="exp_r_form_row">
-                        <input className="exp_r_input" placeholder="Media to BGP" type="number" value={find_value_selected_pod('media_to_bgp') || ""} name={"media_to_bgp"} min={0} onChange={(e) => {set_value_selected_pod(e)}} />
+                        <input className="exp_r_input" placeholder="Media to BGP" type="number" value={findSelectedPodValue('media_to_bgp') || ""} name={"media_to_bgp"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
                     </div>
                     <div className="exp_r_form_row">
-                        <label><input className="exp_r_input" type="checkbox" name="removed_dome" onChange={(e) => {set_value_selected_pod(e)}} />Removed Dome</label>
+                        <label><input className="exp_r_input" type="checkbox" name="removed_dome" onChange={(e) => {setSelectedPodValue(e)}} />Removed Dome</label>
                     </div>
                     <div className="exp_r_form_row">
-                        <label><input className="exp_r_input" type="checkbox" name="pollinated" onChange={(e) => {set_value_selected_pod(e)}} />Pollinated</label>
+                        <label><input className="exp_r_input" type="checkbox" name="pollinated" onChange={(e) => {setSelectedPodValue(e)}} />Pollinated</label>
                     </div>
                     <div className="exp_r_form_row">
-                        <label><input className="exp_r_input" type="checkbox" name="trellis_adjustment" onChange={(e) => {set_value_selected_pod(e)}} />Trellis Adjustment</label>
+                        <label><input className="exp_r_input" type="checkbox" name="trellis_adjustment" onChange={(e) => {setSelectedPodValue(e)}} />Trellis Adjustment</label>
                     </div>
                     <div className="exp_r_form_row">
-                        <label><input className="exp_r_input" type="checkbox" name="pest_removal" onChange={(e) => {set_value_selected_pod(e)}} />Pest Removal</label>
+                        <label><input className="exp_r_input" type="checkbox" name="pest_removal" onChange={(e) => {setSelectedPodValue(e)}} />Pest Removal</label>
                     </div>
                     <div className="exp_r_form_row">
-                        <label><input className="exp_r_input" type="checkbox" name="prune_thinned" onChange={(e) => {set_value_selected_pod(e)}} />Thinned</label>
+                        <label><input className="exp_r_input" type="checkbox" name="prune_thinned" onChange={(e) => {setSelectedPodValue(e)}} />Thinned</label>
                     </div>
                     <div className="exp_r_form_row">
-                        <label><input className="exp_r_input" type="checkbox" name="prune_topped" onChange={(e) => {set_value_selected_pod(e)}} />Topped</label>
+                        <label><input className="exp_r_input" type="checkbox" name="prune_topped" onChange={(e) => {setSelectedPodValue(e)}} />Topped</label>
                     </div>
                     <div className="exp_r_form_row">
-                        <label><input className="exp_r_input" type="checkbox" name="prune_dead_foliage" onChange={(e) => {set_value_selected_pod(e)}} />Removed Dead Foliage</label>
+                        <label><input className="exp_r_input" type="checkbox" name="prune_dead_foliage" onChange={(e) => {setSelectedPodValue(e)}} />Removed Dead Foliage</label>
                     </div>
                     <div className="exp_r_form_row">
-                        <label><input className="exp_r_input" type="checkbox" name="prune_living_foliage" onChange={(e) => {set_value_selected_pod(e)}} />Removed Living Foliage</label>
+                        <label><input className="exp_r_input" type="checkbox" name="prune_living_foliage" onChange={(e) => {setSelectedPodValue(e)}} />Removed Living Foliage</label>
                     </div>
                     <div className="exp_r_form_row">
-                        <label><input className="exp_r_input" type="checkbox" name="prune_dead_heading" onChange={(e) => {set_value_selected_pod(e); console.log(e)}} />Dead Headed</label>
+                        <label><input className="exp_r_input" type="checkbox" name="prune_dead_heading" onChange={(e) => {setSelectedPodValue(e); console.log(e)}} />Dead Headed</label>
                     </div>
 
                     <div className="exp_r_form_row">
-                        <input type="file" accept="image/*" name="photos" capture="camera" onChange={(e) => {set_value_selected_pod(e)}}/>
+                        <input type="file" accept="image/*" name="photos" capture="camera" onChange={(e) => {setSelectedPodValue(e)}}/>
                     </div>
                 </div>
             )
         }
     }
 
-    // Sends get request to populate experiment reading object with previous reading data if possible
+    /*
+    Input/Called from: useEffect()
+    Outputs to: experimentReading form object
+    Created by: Kelvin F @ 08/26/2022
+    Last Edit: Kelvin F @ 08/26/2022
+    Purpose: Sends GET request to populate experiment reading object with previous reading data (if possible)
+    */
     async function fetchData(exp_id){
         const result = await axios
           .post(`/api/experimentreadings/get_last_reading/`, 
@@ -312,7 +333,7 @@ const ExperimentReading = (props) => {
         if (result.status === 200) {
             if (result.data.latest_reading.exp_id !== -1 ){
                 // note: dont carry forward the booleans
-                set_experiment_reading({...experiment_reading, 
+                setExperimentReading({...experimentReading, 
                     electrical_conductance: result.data.latest_reading.electrical_conductance,
                     reservoir_ph: result.data.latest_reading.reservoir_ph,
                     temperature: result.data.latest_reading.temperature,
@@ -324,7 +345,7 @@ const ExperimentReading = (props) => {
                     pods: result.data.pods
                 })
             } else {
-                set_experiment_reading({...experiment_reading, 
+                setExperimentReading({...experimentReading, 
                     exp_id: props.exp_id,
                     capacity: result.data.capacity,
                     pods: result.data.pods
@@ -333,38 +354,51 @@ const ExperimentReading = (props) => {
         }
     }
 
-    // whenever experiment id changes, refetch
+    /*
+    Input/Called from: useEffect()
+    Outputs to: experimentReading form object
+    Created by: Kelvin F @ 08/26/2022
+    Last Edit: Kelvin F @ 08/26/2022
+    Purpose: Whenever experiment ID (target of a new experiment reading addition) changes, refetch
+    */
     useEffect(() => {
         fetchData(props.exp_id)
     }, [props.exp_id])
 
-    function submit_reading(){
-        set_pod_readings(pod_readings.filter(reading => (Object.keys(reading).length !== 1)))
-        create_readings()
+    /*
+    Input/Called from: Frontend save() button
+    Outputs to: Backend API -> Database
+    Created by: Kelvin F @ 08/26/2022
+    Last Edit: Kelvin F @ 08/26/2022
+    Purpose: ...
+    */
+    function submitReading(){
+        setPodReadings(podReadings.filter(reading => (Object.keys(reading).length !== 1))) // shortens pod readings array to just those which are actaully filled out
+        createReadings()
     }
 
-    function change_selected_pod(e, pod){
-        if (selected_pod !== pod){
+    function changeSelectedPod(e, pod){
+        if (selectedPod !== pod){
             Array.from(document.querySelectorAll('.pod_selection')).forEach((el) => el.classList.remove('pod_selection_active'));
             e.currentTarget.classList.toggle('pod_selection_active');
-            set_selected_pod(pod)
+            setSelectedPod(pod)
         } else {
             //To remove the pod reading form
             e.currentTarget.classList.remove('pod_selection_active');
-            set_selected_pod(-1)
+            setSelectedPod(-1)
 
         }
     }
 
     function renderPodSelection(){
         let pod_container = []
-        //console.log(experiment_reading.pods)
-        if (experiment_reading.pods !== []){
-            for(let i = 0; i < experiment_reading.capacity; i++) {
-                let curr_pod = experiment_reading.pods.filter(pod => pod.position === (i+1))[0] ?? null
+        //console.log(experimentReading.pods)
+        if (experimentReading.pods !== []){
+            for(let i = 0; i < experimentReading.capacity; i++) {
+                let curr_pod = experimentReading.pods.filter(pod => pod.position === (i+1))[0] ?? null
                 if(curr_pod !== null){
                     pod_container.push(
-                        <button key={i} className="pod_selection" onClick={(e) => change_selected_pod(e, curr_pod.id)}>{curr_pod.plant_name}</button> 
+                        <button key={i} className="pod_selection" onClick={(e) => changeSelectedPod(e, curr_pod.id)}>{curr_pod.plant_name}</button> 
                     )
                 } else {
                     pod_container.push(
@@ -376,9 +410,9 @@ const ExperimentReading = (props) => {
         return pod_container
       }
 
-    function renderAddModal(){
+    function renderModal(){
         return (
-            <Popup open={modal} onClose={() => {setModal({show: false}); set_pod_readings([]); set_selected_pod(-1);}} modal nested>
+            <Popup open={modal} onClose={() => {setModal({show: false}); setPodReadings([]); setSelectedPod(-1);}} modal nested>
                 {(close) => (
                 <div className="modal" onClick={close}>
                     <div className="modal_body_reading"  onClick={e => e.stopPropagation()}>
@@ -386,32 +420,32 @@ const ExperimentReading = (props) => {
                     <div className="exp_pr_modal_content">
                         <div className="exp_general">
                             <div className="exp_r_form_row">
-                                    <input className="exp_r_input"  placeholder="Electrical Conductance" type="number" value={experiment_reading.electrical_conductance} onChange={(e) => set_experiment_reading({...experiment_reading, electrical_conductance: e.target.value})} />
+                                    <input className="exp_r_input"  placeholder="Electrical Conductance" type="number" value={experimentReading.electrical_conductance} onChange={(e) => setExperimentReading({...experimentReading, electrical_conductance: e.target.value})} />
                             </div>
                             <div className="exp_r_form_row">
-                                    <input className="exp_r_input" placeholder="PH" type="number" value={experiment_reading.reservoir_ph} onChange={(e) => set_experiment_reading({...experiment_reading, reservoir_ph: e.target.value})} min={0} max={14}/>
+                                    <input className="exp_r_input" placeholder="PH" type="number" value={experimentReading.reservoir_ph} onChange={(e) => setExperimentReading({...experimentReading, reservoir_ph: e.target.value})} min={0} max={14}/>
                             </div>
                             <div className="exp_r_form_row">
-                                    <input className="exp_r_input"  placeholder="Temperature" type="number" value= {experiment_reading.temperature} onChange= {(e) => set_experiment_reading({...experiment_reading, temperature: e.target.value})} min={-100} max={100}></input>ºC
+                                    <input className="exp_r_input"  placeholder="Temperature" type="number" value= {experimentReading.temperature} onChange= {(e) => setExperimentReading({...experimentReading, temperature: e.target.value})} min={-100} max={100}></input>ºC
                             </div>
                             <div className="exp_r_form_row">
-                                    <input className="exp_r_input" placeholder="Humidity" type="number" value= {experiment_reading.humidity} onChange= {(e) => set_experiment_reading({...experiment_reading, humidity: e.target.value})} min={0} max={100}></input>%
+                                    <input className="exp_r_input" placeholder="Humidity" type="number" value= {experimentReading.humidity} onChange= {(e) => setExperimentReading({...experimentReading, humidity: e.target.value})} min={0} max={100}></input>%
                             </div>
                             <div className="exp_r_form_row">
 
-                                <label> <input className="exp_r_input" type="checkbox" value= {experiment_reading.flushed_reservoir} onChange={(e) => {set_experiment_reading({...experiment_reading, flushed_reservoir: e.target.checked})}}/> Flushed Reservoir </label>
+                                <label> <input className="exp_r_input" type="checkbox" value= {experimentReading.flushed_reservoir} onChange={(e) => {setExperimentReading({...experimentReading, flushed_reservoir: e.target.checked})}}/> Flushed Reservoir </label>
                             </div>
                             <div className="exp_r_form_row">
-                                <label> <input className="exp_r_input" type="checkbox" value= {experiment_reading.raised_light} onChange={(e) => set_experiment_reading({...experiment_reading, raised_light: e.target.checked})}/> Raised Light </label>
+                                <label> <input className="exp_r_input" type="checkbox" value= {experimentReading.raised_light} onChange={(e) => setExperimentReading({...experimentReading, raised_light: e.target.checked})}/> Raised Light </label>
                             </div>
                             <div className="exp_r_form_row">
-                                <label> <input className="exp_r_input" type="checkbox" value= {experiment_reading.failed_pump} onChange={(e) => set_experiment_reading({...experiment_reading, failed_pump: e.target.checked})}/> Failed Pump </label>
+                                <label> <input className="exp_r_input" type="checkbox" value= {experimentReading.failed_pump} onChange={(e) => setExperimentReading({...experimentReading, failed_pump: e.target.checked})}/> Failed Pump </label>
                             </div>
                             <div className="exp_r_form_row">
-                                <label> <input className="exp_r_input" type="checkbox" value= {experiment_reading.went_offline} onChange={(e) => set_experiment_reading({...experiment_reading, went_offline: e.target.checked})}/> Went Offline </label>
+                                <label> <input className="exp_r_input" type="checkbox" value= {experimentReading.went_offline} onChange={(e) => setExperimentReading({...experimentReading, went_offline: e.target.checked})}/> Went Offline </label>
                             </div>
                             <div className="exp_r_form_row">
-                                <label> <input className="exp_r_input" type="checkbox" value= {experiment_reading.lost_power} onChange={(e) => set_experiment_reading({...experiment_reading, lost_power: e.target.checked})}/> Lost Power </label>
+                                <label> <input className="exp_r_input" type="checkbox" value= {experimentReading.lost_power} onChange={(e) => setExperimentReading({...experimentReading, lost_power: e.target.checked})}/> Lost Power </label>
                             </div>
 
                         </div>
@@ -421,7 +455,7 @@ const ExperimentReading = (props) => {
                         </div>
                     </div>
                     <button className='save' onClick={() => {
-                        submit_reading()
+                        submitReading()
                         close();
                     }}>Save</button>
                     </div>
@@ -434,7 +468,7 @@ const ExperimentReading = (props) => {
     return (
         <div>
             <button onClick={() => setModal(true)}>ADD READING</button>
-            {renderAddModal()}
+            {renderModal()}
         </div>
     )
 }

@@ -167,6 +167,7 @@ const ExperimentList = () => {
   Purpose: Passes the device object associated with the experiment to the frontend Modal editor
   */
   async function getDevice(id){
+    console.log(id)
     const device = await axios(
       `/api/devices/${id}/`
       )
@@ -325,10 +326,10 @@ const ExperimentList = () => {
 
   /*
   Input from: renderModal()
-  Outputs to: Experiment object
+  Outputs to: Frontend experiment form
   Created by: Kelvin F @ 08/26/2022
   Last Edit: Kelvin F @ 08/26/2022
-  Purpose: Sets the device currently being used by a selected experiment object
+  Purpose: Render a list of available devices an experiment can be allocated to
   */   
   function renderAvailableDevices(){
     return (
@@ -342,6 +343,13 @@ const ExperimentList = () => {
     )
   }
 
+  /*
+  Input from: renderPodSelection()
+  Outputs to: setExperiment()
+  Created by: Kelvin F @ 08/26/2022
+  Last Edit: Kelvin F @ 08/26/2022
+  Purpose: Save a pod object into the experiment creation form upon pod selection 
+  */   
   function setPod(e){
     let position = e.target.name.substring(4); 
     let temp = experiment.pod_selection
@@ -350,11 +358,13 @@ const ExperimentList = () => {
     //console.log(experiment.pod_selection)
   }
 
-  function setRecipe(e){
-    setExperiment({...experiment, recipe: e.target.value})
-    //console.log("RECIPE:", experiment.recipe)
-  }
-
+  /*
+  Input from: renderModal()
+  Outputs to: experiment form object
+  Created by: Kelvin F @ 08/26/2022
+  Last Edit: Kelvin F @ 08/26/2022
+  Purpose: Render numerous pod selection lists to a frontend experiment creation form
+  */  
   function renderPodSelection(){
     let pod_container = []
     // so long as pods is loaded
@@ -380,9 +390,16 @@ const ExperimentList = () => {
     return pod_container
   }
 
+    /*
+  Input from: renderModal()
+  Outputs to: experiment form object
+  Created by: Kelvin F @ 08/26/2022
+  Last Edit: Kelvin F @ 08/26/2022
+  Purpose: Render a recipe selection list to a frontend experiment creation form
+  */  
   function renderRecipeSelection(){
     return (
-      <select className="experiment_recipe_selection" name="experiment_recipe_selection" default_value="null" onChange={(e) => setRecipe(e)}>
+      <select className="experiment_recipe_selection" name="experiment_recipe_selection" default_value="null" onChange={(e) => setExperiment({...experiment, recipe: e.target.value})}>
         <option value={null}></option>
         {recipeList.map(item => (
           <option key={item.id} value={item.id}> {item.name} </option>
@@ -391,30 +408,63 @@ const ExperimentList = () => {
     )
   }
  
+  /*
+  Input/Called from: Main render (return) function
+  Outputs to: experiment form object
+  Created by: Kelvin F @ 08/26/2022
+  Last Edit: Kelvin F @ 08/26/2022
+  Purpose: Render selection lists for an experiment name, pods and recipes to a frontend experiment creation form 
+  */  
   function renderModal(){
     return (
-      <div>
-          <div className="form_row">
-            <input name="name" value={experiment.name} placeholder = {"Experiment Name"} onChange={(e) => setExperiment({...experiment, name: e.target.value})} />
-          </div>
-          <div className="form_row">
-            {renderAvailableDevices()}
-          </div>
-          <div className="form_row">
-            <input className="date_selection" type="date" name="start_date" value={experiment.start_date} onChange={(e) => setExperiment({...experiment, start_date: e.target.value})} />
-          </div>
-          <div className="form_row">{renderPodSelection()}</div>
-          <div className="form_row">{renderRecipeSelection()}</div>
+      <Popup open={modal.show} onClose={() => closeModal()} modal nested>
+      {(close) => (
+        <div className="modal" onClick={close}>
+          <div className="modal_body" onClick={e => e.stopPropagation()}>
+            <div className="modal_type"> { modal.add === true ? "Add Experiment" : "Edit Experiment" } </div>
+            <div className="modal_content">
+              <div className="form_row">
+                <input name="name" value={experiment.name} placeholder = {"Experiment Name"} onChange={(e) => setExperiment({...experiment, name: e.target.value})} />
+              </div>
+              <div className="form_row">
+                {renderAvailableDevices()}
+              </div>
+              <div className="form_row">
+                <input className="date_selection" type="date" name="start_date" value={experiment.start_date} onChange={(e) => setExperiment({...experiment, start_date: e.target.value})} />
+              </div>
+              <div className="form_row">{renderPodSelection()}</div>
+              <div className="form_row">{renderRecipeSelection()}</div>
 
-      </div>
+              <button className='save' onClick={() => {submitModal(close);}}>Save</button>
+            </div>
+          </div>
+         </div>
+      )}
+      </Popup>
+
+
     )
   }
 
+  /*
+  Input/Called from: Main render (return) function
+  Outputs to: None
+  Created by: Kelvin F @ 08/26/2022
+  Last Edit: Kelvin F @ 08/26/2022
+  Purpose: Close and reset the modal/experiment form
+  */  
   function closeModal(){
     setModal({...modal, show: false}) 
     setExperiment({name: null, device: null, device_name: null, pods: [], start_date: year+"-"+month+"-"+day, pod_selection: {}})
   }
 
+  /*
+  Input/Called from: Dashboard.js
+  Outputs to: Frontend
+  Created by: Kelvin F @ 08/26/2022
+  Last Edit: Kelvin F @ 08/26/2022
+  Purpose: Display experiments tab, experiment edit modal
+  */  
   return (
     <div>
         <button onClick={() => openModal(null)}>+</button>
@@ -444,26 +494,8 @@ const ExperimentList = () => {
               </div>
             </div>
         ))}
-        <div>
-            <Popup open={modal.show} onClose={() => closeModal()} modal nested>
-              {(close) => (
-                <div className="modal" onClick={close}>
-                  <div className="modal_body" onClick={e => e.stopPropagation()}>
-                    <div className="modal_type"> { modal.add === true ? "Add Experiment" : "Edit Experiment" } </div>
-                    <div className="modal_content">
-                      { 
-                        renderModal()
-                      }
+        {renderModal()}
 
-                      <button className='save' onClick={() => {
-                        submitModal(close);
-                      }}>Save</button>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </Popup>
-        </div>
     </div>
 
   );

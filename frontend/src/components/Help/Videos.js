@@ -31,7 +31,7 @@ const Videos = () => {
                             <td>Growing Tips</td>
                             <td><a href="https://www.youtube.com/watch?v=AMdcnrt_Oc8">How to with AVA: Dome Removal</a></td>
                             <td></td>
-                            <QRCode  style={{display: "none"}} value="https://www.youtube.com/watch?v=AMdcnrt_Oc8" />
+                            <QRCode value="https://www.youtube.com/watch?v=AMdcnrt_Oc8" />
                             <td>x</td>
                         </tr>
                         <tr>
@@ -219,7 +219,7 @@ const Videos = () => {
                         </tbody>
                     </table>
                     
-                <div style={{display: "none"}}>
+                <div>
                     <div style={{ background: 'white', padding: '16px' }}>
                         <div>How to with AVA: Unboxing & Putting Water Float Back into Place</div>
                         <br></br>

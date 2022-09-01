@@ -165,7 +165,6 @@ const RecipeBar = (props) => {
   }
 
   function renderModal(){
-    console.log(experiment_reading)
     return (
         <Popup open={modal} onClose={() => setModal(false)} modal nested>
             {(close) => (
