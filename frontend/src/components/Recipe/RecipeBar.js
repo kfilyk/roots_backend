@@ -5,13 +5,26 @@ import Popup from "reactjs-popup";
 
 const RecipeBar = (props) => {
   // we NEED this recipe state object, because the props is variably a recipe id OR a recipe object
+  // Recipe we're creating the progress bar for
   const [recipe, setRecipe] = useState(null);
+
+  //end date of recipe
   const [end_date, setEndDate] = useState(null);
+
+   //start date of recipe
   const [start_date, setStartDate] = useState(null);
-  const [completion_percentage, setCompletionPercentage] = useState(0);
-  const [exp_reading_dates, set_exp_reading_dates] = useState([])
+
+   //based on today's date and the recipe's start + end date, calculate completion as a percentage
+  const [completionPercentage, setCompletionPercentage] = useState(0);
+
+  //List of all dates where readings were taken
+  const [expReadingDates, setExpReadingDates] = useState([])
+
+   //Variable controlling whether modal should be shown or hidden
   const [modal, setModal] = useState(false)
-  const [experiment_reading, setExperimentReading] = useState({
+
+  //Saves state as we record a new experiment reading
+  const [experimentReading, setExperimentReading] = useState({
     id: -1,
     reading_date: null, 
     electrical_conductance: null,
@@ -25,6 +38,13 @@ const RecipeBar = (props) => {
     raised_light: null,
   });
 
+  /*
+  Input from: None
+  Outputs to: recipe
+  Created by: Kelvin F @ 08/31/2022
+  Last Edit: Kelvin F @ 08/31/2022
+  Purpose: Fetches a recipe given a recipe id
+  */
   async function getRecipe(id) {
     const result = await axios(
       `/api/recipes/${id}/`,
@@ -33,16 +53,30 @@ const RecipeBar = (props) => {
     setRecipe(result.data)
   }
 
+  /*
+  Input from: None
+  Outputs to: expReadingDates
+  Created by: Kelvin F @ 08/31/2022
+  Last Edit: Kelvin F @ 08/31/2022
+  Purpose: Fetches all experiment readings for an experiment given a experiment id
+  */
   async function getReadings(id) {
     const result = await axios.post(`/api/experimentreadings/exp_reading_dates/`,
     { 
       exp_id: id
     }).catch((err) => console.log(err))
     if (result && result.status === 200){
-      set_exp_reading_dates(result.data)
+      setExpReadingDates(result.data)
     }
   }
 
+  /*
+  Input from: None
+  Outputs to: experimentReading
+  Created by: Kelvin F @ 08/31/2022
+  Last Edit: Kelvin F @ 08/31/2022
+  Purpose: Fetches a specific experiment reading given a experiment reading id
+  */
   async function getSingleReading(id) {
     const result = await axios(
       `/api/experimentreadings/${id}`
@@ -51,6 +85,13 @@ const RecipeBar = (props) => {
     setExperimentReading(result.data)
   }
 
+  /*
+  Input from: props.recipe
+  Outputs to: recipe
+  Created by: Kelvin F @ 08/31/2022
+  Last Edit: Kelvin F @ 08/31/2022
+  Purpose: Upon page load, sets the recipe object and experiment id given from props
+  */
   useEffect(() => {
     // can either send a recipe object OR the id of a recipe to this function
     if(typeof props.recipe === 'number') {
@@ -66,6 +107,13 @@ const RecipeBar = (props) => {
     }
   }, []); // [] causes useEffect to only happen ONCE after initial render - will not be called as a result of any other change
 
+  /*
+  Input from: props.recipe
+  Outputs to: recipe
+  Created by: Kelvin F @ 08/31/2022
+  Last Edit: Kelvin F @ 08/31/2022
+  Purpose: Upon props.recipe change, updates the recipe object
+  */
   useEffect(() => {
     if(typeof props.recipe === 'number') {
       getRecipe(props.recipe)
@@ -74,16 +122,30 @@ const RecipeBar = (props) => {
     }  
   }, [props.recipe])
   
+  /*
+  Input from: props, recipe
+  Outputs to: endDate, completionPercentage
+  Created by: Kelvin F @ 08/31/2022
+  Last Edit: Kelvin F @ 08/31/2022
+  Purpose: Upon props or recipe change, updates the completion percentage, start date and end date.
+  */
   useEffect(() => {
     if(recipe !== null && (typeof props.experiment !== 'undefined')) {
       let sd = new Date(props.experiment.start_date)
       sd.setDate(sd.getDate()+recipe.days)
       setEndDate(sd.getFullYear()+ "-"+(sd.getMonth()+1)+"-"+sd.getDate())
-      calc_completion_percentage(props.experiment.day, recipe.days)
+      calcCompletionPercentage(props.experiment.day, recipe.days)
     }
   }, [props, recipe]); // useEffect runs when props OR recipe changes
 
-  function PhaseStyle(type)  {
+  /*
+  Input from: render()
+  Outputs to: render()
+  Created by: Kelvin F @ 08/31/2022
+  Last Edit: Kelvin F @ 08/31/2022
+  Purpose: Based on type of phase, returns a specific background and text colour
+  */
+  function phaseStyle(type)  {
     let colour = '';
     let font_colour = '';
     if(type === "Germination" ) {
@@ -112,16 +174,30 @@ const RecipeBar = (props) => {
     return style;
   };
 
+  /*
+  Input from: renderExpReadingTags()
+  Outputs to: expReadingDates
+  Created by: Kelvin F @ 08/31/2022
+  Last Edit: Kelvin F @ 08/31/2022
+  Purpose: Given an exp reading id, sends an API call to get details of exp reading
+  */
   async function show_exp_reading(id){
     await getSingleReading(id)
     setModal(true)
   }
 
 
-  function render_exp_reading_tags(){
-    if (exp_reading_dates !== undefined){
+  /*
+  Input from: expReadingDates
+  Outputs to: render()
+  Created by: Kelvin F @ 08/31/2022
+  Last Edit: Kelvin F @ 08/31/2022
+  Purpose: Given a list of exp reading dates, calculates where it should be placed on timeline.
+  */
+  function renderExpReadingTags(){
+    if (expReadingDates !== undefined){
       let bars = []
-      exp_reading_dates.map((er, index) => {
+      expReadingDates.map((er, index) => {
         let mid = new Date(er.reading_date)
         let mid_string = mid.toISOString().substring(5,10)
         let start = new Date(start_date)
@@ -138,7 +214,14 @@ const RecipeBar = (props) => {
     }
   }
 
-  function render_timestamps() {
+  /*
+  Input from: props.experiment, completionPercentage
+  Outputs to: render()
+  Created by: Kelvin F @ 08/31/2022
+  Last Edit: Kelvin F @ 08/31/2022
+  Purpose: Given a list of exp reading dates, calculates where it should be placed on timeline.
+  */
+  function renderTimestamps() {
     if(props.experiment){
       return (
         <div>
@@ -147,7 +230,7 @@ const RecipeBar = (props) => {
             <div className="recipe_bar_end_date">{end_date} </div>
           </div> 
           <div>
-            <div style={ { width: `${ completion_percentage }%` } } className="recipe_horizontal_line"></div>
+            <div style={ { width: `${ completionPercentage }%` } } className="recipe_horizontal_line"></div>
           </div>
           {/* <div className="recipe_bar_timestamps">  */}
 
@@ -156,7 +239,14 @@ const RecipeBar = (props) => {
     }
   }
 
-  function calc_completion_percentage(exp_days, recipe_days){
+  /*
+  Input from: useEffect()
+  Outputs to: completionPercentage
+  Created by: Kelvin F @ 08/31/2022
+  Last Edit: Kelvin F @ 08/31/2022
+  Purpose: Calculates completion of recipe based on exp_day / total number of recipe days
+  */
+  function calcCompletionPercentage(exp_days, recipe_days){
     let percent = Math.round(exp_days/recipe_days*100)
     if (percent > 100){
       percent = 100
@@ -164,6 +254,13 @@ const RecipeBar = (props) => {
     setCompletionPercentage(percent)
   }
 
+  /*
+  Input from: experimentReading
+  Outputs to: render()
+  Created by: Kelvin F @ 08/31/2022
+  Last Edit: Kelvin F @ 08/31/2022
+  Purpose: Renders modal that display info about a particular experiment reading.
+  */
   function renderModal(){
     return (
         <Popup open={modal} onClose={() => setModal(false)} modal nested>
@@ -172,16 +269,16 @@ const RecipeBar = (props) => {
                 <div className="modal_body_2"  onClick={e => e.stopPropagation()}>
                     <div className="modal_content">
                         <div className="exp_general">
-                            <div className="exp_r_form_row">Reading Date: {experiment_reading.reading_date || "N/A"} </div>
-                            <div className="exp_r_form_row">Electrical Conductance: {experiment_reading.electrical_conductance || "N/A"}</div>
-                            <div className="exp_r_form_row">Reservoir PH: {experiment_reading.reservoir_ph || "N/A"}</div>
-                            <div className="exp_r_form_row">Temperature: {experiment_reading.temperature || "N/A"}</div>
-                            <div className="exp_r_form_row">Humidity: {experiment_reading.humidity || "N/A"}</div>
-                            {experiment_reading.failed_pump ? <div className="experiment_reading_indicator">Failed Pump </div> : <></>}
-                            {experiment_reading.flushed_reservoir ? <div className="experiment_reading_indicator">Flushed Reservoir</div>: <></>}
-                            {experiment_reading.lost_power ? <div className="experiment_reading_indicator">Lost Power</div>: <></>}
-                            {experiment_reading.raised_light ? <div className="experiment_reading_indicator">Raised Light</div>: <></>}
-                            {experiment_reading.went_offline ? <div className="experiment_reading_indicator">Went Offline</div>: <></>}
+                            <div className="exp_r_form_row">Reading Date: {experimentReading.reading_date || "N/A"} </div>
+                            <div className="exp_r_form_row">Electrical Conductance: {experimentReading.electrical_conductance || "N/A"}</div>
+                            <div className="exp_r_form_row">Reservoir PH: {experimentReading.reservoir_ph || "N/A"}</div>
+                            <div className="exp_r_form_row">Temperature: {experimentReading.temperature || "N/A"}</div>
+                            <div className="exp_r_form_row">Humidity: {experimentReading.humidity || "N/A"}</div>
+                            {experimentReading.failed_pump ? <div className="experimentReading_indicator">Failed Pump </div> : <></>}
+                            {experimentReading.flushed_reservoir ? <div className="experimentReading_indicator">Flushed Reservoir</div>: <></>}
+                            {experimentReading.lost_power ? <div className="experimentReading_indicator">Lost Power</div>: <></>}
+                            {experimentReading.raised_light ? <div className="experimentReading_indicator">Raised Light</div>: <></>}
+                            {experimentReading.went_offline ? <div className="experimentReading_indicator">Went Offline</div>: <></>}
 
                           </div>
                         <button className='save' onClick={() => {
@@ -195,7 +292,13 @@ const RecipeBar = (props) => {
     )
   }
 
-  /* controls the width and flex of the phase elements in the recipe bar*/
+  /*
+  Input from: phaseList, renderExpReadingTags(); renderTimestamps(); phases; renderModal();
+  Outputs to: return()
+  Created by: Kelvin F @ 08/31/2022
+  Last Edit: Kelvin F @ 08/31/2022
+  Purpose: Renders all components that make up the RecipeBar
+  */
   function render() {
     if(recipe === null ||  props.phaseList.length === 0 || typeof recipe === 'undefined') {
       return <div className="empty_object"> NO RECIPE ALLOCATED </div>;
@@ -205,7 +308,7 @@ const RecipeBar = (props) => {
           let ph = props.phaseList.filter(phase => phase.id === recipe["phase"+i])[0] ?? null
           if(ph !== null) {
               // allocate  size proportional to number of phase days
-              let s = PhaseStyle(ph.type)
+              let s = phaseStyle(ph.type)
               s['flex']= ph.days + " 1 0"
               if(i === 1) {
                   s['borderBottomLeftRadius'] = '10px'
@@ -232,9 +335,9 @@ const RecipeBar = (props) => {
       }
       return ( 
         <>
-        {render_exp_reading_tags()}
-        {render_timestamps()}
-        {/* <div style={ { width: `${ completion_percentage }%` } } className="recipe_horizontal_line"></div> */}
+        {renderExpReadingTags()}
+        {renderTimestamps()}
+        {/* <div style={ { width: `${ completionPercentage }%` } } className="recipe_horizontal_line"></div> */}
         <div className="recipe_bar"> 
           {phases} 
         </div>
@@ -244,6 +347,13 @@ const RecipeBar = (props) => {
     }
   };
 
+  /*
+  Input from: render()
+  Outputs to: Screen
+  Created by: Kelvin F @ 08/31/2022
+  Last Edit: Kelvin F @ 08/31/2022
+  Purpose: Renders the entire RecipeBar modal
+  */
   return (
     render()
   );
