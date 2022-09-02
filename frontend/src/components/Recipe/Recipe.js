@@ -446,7 +446,7 @@ const RecipeList = () => {
                   <div className='createRecipeLeft'>
                     { modal.add === true ? "Create Recipe" : "Edit Recipe" }
                   </div>
-                  <div className='createPhaseRight'>
+                  <div className='create-phase-right'>
                     Create Phase
                   </div>
                 <div className="modal_content">

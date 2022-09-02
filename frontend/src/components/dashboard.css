@@ -66,6 +66,12 @@ OBJECT CONTAINERS (DEVICE, EXPERIMENT, ETC)
   max-width: calc(100% - 20px);
 }
 
+.object_container:hover .object_dropdown {
+  /*display:block;*/
+  max-height:2000px;
+  transition: max-height 1s ease-out;
+}
+
 .object_top {
   display:flex;
   flex-direction: row;
@@ -104,11 +110,12 @@ OBJECT CONTAINERS (DEVICE, EXPERIMENT, ETC)
   transition: max-height 0.25s ease-out;
 }
 
+/*
 .object_header:hover ~ .object_dropdown {
-  /*display:block;*/
   max-height:2000px;
   transition: max-height 0.25s ease-out;
 }
+*/
 
 
 .object_content {

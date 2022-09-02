@@ -53,7 +53,7 @@ const Help = () => {
                 VIDEOS
               </span>
               <span className={selected_tab === "etc" ? "nav-link active" : "nav-link"} onClick={() => set_selected_tab("etc")}>
-                Etc.
+                ETC.
               </span>
             </div> 
             <div className="nav">
