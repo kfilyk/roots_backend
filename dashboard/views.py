@@ -534,6 +534,20 @@ class PlantView(viewsets.ModelViewSet):
     filter_backends = (OrderingFilter,)
     ordering_fields = ['name']
 
+    def create(self, request, *args, **kwargs):
+        plants = Plant.objects.all()
+        p_id = 1
+        while(plants.filter(id = p_id)):
+            p_id = p_id+1
+        print(dir(request))
+        request.data['id'] = p_id
+        #print(request.data)
+        print(request._full_data)
+
+        plant_id = super().create(request, *args, **kwargs).data['id']
+        plant = Plant.objects.get(id=plant_id)
+        return JsonResponse(model_to_dict(plant), safe=False) 
+
     """
     Input from: Device.js/fetchPlants(); Phase.js/fetchPlants(); Recipe.js/fetchPlants(); 
     Outputs to: Device.js/fetchPlants(); Phase.js/fetchPlants(); Recipe.js/fetchPlants(); 

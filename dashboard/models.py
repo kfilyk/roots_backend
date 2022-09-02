@@ -70,7 +70,7 @@ class Experiment(models.Model):
 # many readings per experiment - is written by a user to the db in reference to an experiment
 class ExperimentReading(models.Model):
     id = models.AutoField(db_column='er_id', primary_key=True)  
-    experiment = models.ForeignKey("Experiment", models.DO_NOTHING, db_column='er_experiment_id', blank=True, null=True)  # delete experiment readings if experiment is deleted
+    experiment = models.ForeignKey("Experiment", on_delete=models.CASCADE, db_column='er_experiment_id', blank=True, null=True)  # delete experiment readings if experiment is deleted
     water_level = models.IntegerField(db_column='er_water_level', blank=True, null=True) 
     reading_date = models.DateTimeField(db_column='er_reading_date', auto_now_add=True)
     electrical_conductance = models.IntegerField(db_column='er_electrical_conductance', blank=True, null=True) 
@@ -99,9 +99,9 @@ class ExperimentReading(models.Model):
 # many readings per experiment - is written by a user to the db in reference to an experiment
 class PodReading(models.Model):
     id = models.AutoField(db_column='pr_id', primary_key=True)  
-    experiment = models.ForeignKey("Experiment", models.DO_NOTHING, db_column='pr_experiment_id', blank=True, null=True)  # delete experiment readings if experiment is deleted
-    pod = models.ForeignKey("Pod", models.DO_NOTHING, db_column='pr_pod_id', blank=True, null=True)
-    experiment_reading = models.ForeignKey("ExperimentReading", models.DO_NOTHING, db_column='pr_experiment_reading_id', blank=True, null=True)  # delete experiment readings if experiment is deleted
+    experiment = models.ForeignKey("Experiment", on_delete=models.CASCADE, db_column='pr_experiment_id', blank=True, null=True)  # delete experiment readings if experiment is deleted
+    pod = models.ForeignKey("Pod", on_delete=models.CASCADE, db_column='pr_pod_id', blank=True, null=True)
+    experiment_reading = models.ForeignKey("ExperimentReading", on_delete=models.CASCADE, db_column='pr_experiment_reading_id', blank=True, null=True)  # delete experiment readings if experiment is deleted
     comment = models.CharField(db_column='pr_comment', max_length=255, blank=True, null=True)
     score = models.DecimalField(db_column='pr_score', max_digits=5, decimal_places=2, blank=True, null=True)
 

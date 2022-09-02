@@ -355,7 +355,7 @@ const Device = () => {
                     <div key={'loaded_' + item.id} className="object_container">
                         <div className="object_top">
                             <div className="object_description">
-                                <div className="bold_font tooltip" data-tooltip={"DEVICE ID: "+item.device_id + " | MAC: " + item.mac_address.toUpperCase()}>
+                                <div className="bold_font tooltip" data-tooltip={"DEVICE ID: "+item.device_id + "\nMAC: " + item.mac_address.toUpperCase()}>
                                     {item.device_name}<span className="blink_me" style={{ color: item.is_online ? 'green': 'red'}}>{"\u00a0"}● {"\u00a0"}</span><span className="normal_font">{item.name}</span> 
                                 </div>
                                 {item.score !== null ? <div>Score: { item.score } </div>: <></>}

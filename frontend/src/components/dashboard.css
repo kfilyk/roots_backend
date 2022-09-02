@@ -85,9 +85,29 @@ OBJECT CONTAINERS (DEVICE, EXPERIMENT, ETC)
 
 .bold_font {
   font-family: "Brandon Grotesque Black";
+  white-space: pre-wrap;
 }
 .normal_font {
   font-family: "Brandon Grotesque";
+}
+
+.object_dropdown {
+  /*display:none;*/
+  max-height:0px;
+  transition: max-height 0.25s ease-out;
+  overflow:hidden;
+}
+
+.object_dropdown:hover {
+  /*display:none;*/
+  max-height:2000px;
+  transition: max-height 0.25s ease-out;
+}
+
+.object_header:hover ~ .object_dropdown {
+  /*display:block;*/
+  max-height:2000px;
+  transition: max-height 0.25s ease-out;
 }
 
 
@@ -175,8 +195,9 @@ TOOLTIP
 /* Base styles for the element that has a tooltip */
 [data-tooltip],
 .tooltip {
-position: relative;
-cursor: pointer;
+  position: relative;
+  cursor: pointer;
+  white-space: pre-wrap;
 }
 
 /* Base styles for the entire tooltip */
@@ -216,10 +237,10 @@ pointer-events: none;
 .tooltip:hover:after,
 .tooltip:focus:before,
 .tooltip:focus:after {
-visibility: visible;
--ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
-opacity: 1;
+  visibility: visible;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+  opacity: 1;
 }
 
 /* Base styles for the tooltip's directional arrow */
@@ -235,7 +256,6 @@ opacity: 1;
 [data-tooltip]:after {
   z-index: 1000;
   padding: 8px;
-  min-width: 60px;
   background-color: #000;
   background-color: hsla(0, 0%, 20%, 0.9);
   color: #fff;
@@ -244,14 +264,11 @@ opacity: 1;
   line-height: 1.2;
 }
 
-/* Directions */
-
-/* Top (default) */
 [data-tooltip]:before,
 [data-tooltip]:after,
 .tooltip:before,
 .tooltip:after {
-  text-align: center;
+  text-align: left;
   bottom: 110%;
   left: 0%;
 }
