@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Popup from "reactjs-popup";
-import vertical_menu_icon from "../../img/vertical_menu_icon.png"
+import menu_icon from "../../img/menu_icon.png"
 
 const PlantList = () => {
   const [plant_list, setPlantList] = useState([]);
@@ -107,7 +107,7 @@ const PlantList = () => {
 
             </div>
             <div className='object_actions'>
-              <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
+              <img className="menu_icon" src={menu_icon} alt="NO IMG!"/>
               <button onClick={() => openModal(item)}>EDIT</button>
               <button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) deleteEntry(item.id) }}> DELETE </button>
             </div>

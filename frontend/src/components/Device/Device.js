@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from "axios";
-import vertical_menu_icon from "../../img/vertical_menu_icon.png"
+import menu_icon from "../../img/menu_icon.png"
 import Popup from "reactjs-popup";
 import PodCarousel from "../Experiment/PodCarousel"
 import ExperimentReading from "../Experiment/ExperimentReading"
@@ -367,7 +367,7 @@ const Device = () => {
                         <RecipeBar phaseList = {phaseList} recipe = {item.recipe_id} recipe_name = {item.current_recipe} experiment = {item}></RecipeBar>
 
                         <div className='object_actions'>
-                            <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
+                            <img className="menu_icon" src={menu_icon} alt="NO IMG!"/>
                             {item.end_date === null && <li key="conclude"><button onClick={() => { if (window.confirm(`Conclude experiment "${item.name}"?`)) concludeExperiment(item.id) }}> CONCLUDE EXPERIMENT</button></li> }
                             <li key="addReading"><ExperimentReading exp_id={item.id} exp_name={item.name}></ExperimentReading></li>
                             <li key="sendCommand"><button onClick={() => set_command({...command, show: true, device: item.device_id})}>SEND COMMAND</button></li>
@@ -392,7 +392,7 @@ const Device = () => {
                         {item.is_online ?  <div className= "empty_object" onClick={() => {setDevice({...device, show:true}); setExperiment({...experiment, device:item.id, device_name:item.name, device_capacity:item.capacity});}}>  ADD EXPERIMENT</div> : <div className= "empty_object">DEVICE OFFLINE</div>}
                        
                         <div className='object_actions'>
-                            <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
+                            <img className="menu_icon" src={menu_icon} alt="NO IMG!"/>
                             <li key="sendCommand"><button onClick={() => set_command({...command, show: true, device: item.id})}>SEND COMMAND</button></li>
                         </div>
                     </div>

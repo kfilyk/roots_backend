@@ -23,7 +23,12 @@ RECIPE BAR (OBJECT BOTTOM CHIN)
   text-align: right;
 }
 
+
 .recipe_bar {
+  position:relative;
+}
+
+.recipe_bar_phases {
   width:100%;
   display: flex;
   margin-top:auto;
@@ -40,6 +45,8 @@ RECIPE BAR (OBJECT BOTTOM CHIN)
   padding: 10px;
   text-align: left;
   overflow: hidden;
+  white-space: nowrap !important;
+
 }
 
 .recipe_bar_phase:hover {
@@ -62,10 +69,10 @@ RECIPE BAR (OBJECT BOTTOM CHIN)
   white-space: nowrap;
 }
 
-.recipe_horizontal_line {
+.recipe_bar_progress_line {
   background-color: #99ff44;
   order: 3;
-  height: 0.5vh;
+  height: 5px;
 }
 
 .experiment_reading_line {
@@ -76,7 +83,9 @@ RECIPE BAR (OBJECT BOTTOM CHIN)
 }
 
 .exp_reading_triangle {
-  bottom: -11px;
   font-size: 0.6em;
   line-height: 15px;
+  position:absolute !important; /* need this for some reason */ 
+  transform: translateX(-50%);
+  top: 14px;
 }

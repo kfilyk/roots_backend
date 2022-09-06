@@ -36,6 +36,7 @@ button {
   font-family: "Brandon Grotesque";
   margin: 10px;
   border: 1px #1b372a solid;
+  color: #1b372a88;
   background-color: #ffffff;
   padding: 6px 12px;
   border-radius: 20px;
@@ -129,15 +130,15 @@ OBJECT CONTAINERS (DEVICE, EXPERIMENT, ETC)
 }
 
 /* HIDDEN start state */
-.object_actions  {
-  background: none;
+.object_actions {
   list-style-type: none;
   position:absolute;
   right:0px;
   top:0px;
-  border:none;
+  border:none;  
+  border-top-right-radius: 10px;
   transition: .5s transform linear;
-  z-index: 3
+  z-index: 3;
 }
 
 .object_actions img {
@@ -145,9 +146,7 @@ OBJECT CONTAINERS (DEVICE, EXPERIMENT, ETC)
   padding:2px;
   width:5px;
 }
-.object_actions button {
-  display: none;
-}
+
 
 .object_actions:hover {
   display: table;
@@ -158,17 +157,21 @@ OBJECT CONTAINERS (DEVICE, EXPERIMENT, ETC)
   display: block;
 }
 
-.object_actions:hover img {
+
+.object_actions:hover .menu_icon {
   display: none;
 }
 
+
 .object_actions button {
+  display:none;
   background-color: #ffffff;
-  border: none;
-  border-bottom: 1px solid #1b372a;
-  border-radius: 0px;
+  border:none;
+  border-radius: 0px; /* cancels out the border radius of the parent "button" object*/
   margin:0px;
   width:100%;
+  box-shadow: 0px 5px 20px -10px #555555;
+
 }
 
 .object_actions button:hover {

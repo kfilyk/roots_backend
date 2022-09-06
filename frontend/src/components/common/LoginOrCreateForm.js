@@ -45,9 +45,9 @@ const LoginOrCreateForm = (props) => {
         axios
           .post("/auth/token/")
           .then(res => {
-  
+            console.log(res)
             if (res.status === 200) {
-              window.location.replace("/dashboard")
+              window.location.replace("/"+res.data.username+"/devices")
             }
           })
           .catch(res => console.log(res));
@@ -130,12 +130,12 @@ const LoginOrCreateForm = (props) => {
       // console.log("PAYLOAD: ", payload)
       axios
         .post(`/auth/${form}/`, payload)
-        .then(response => {
-          const { token } = response.data;       
+        .then(res => {
+          const { token } = res.data;       
           // We set the returned token as the default authorization header
           localStorage.setItem('token', token)
           axios.defaults.headers.common.Authorization = token;
-          window.location.replace("/dashboard")
+          window.location.replace("/"+username+"/devices")
           
         })
         .catch(error => {

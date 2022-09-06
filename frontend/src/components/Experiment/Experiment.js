@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Popup from "reactjs-popup";
 import PodCarousel from "./PodCarousel"
-import vertical_menu_icon from "../../img/vertical_menu_icon.png"
+import menu_icon from "../../img/menu_icon.png"
 import ExperimentReading from "../Experiment/ExperimentReading"
 import RecipeBar from '../Recipe/RecipeBar';
 
@@ -484,10 +484,16 @@ const ExperimentList = () => {
                         <PodCarousel experimentID={item.id} deviceId={item.device}></PodCarousel>
                     </div>
                     <div className='object_actions'>
-                        <img className="vertical_menu_icon" src={vertical_menu_icon} alt="NO IMG!"/>
-                        {item.end_date === null ? <li key="edit"><button onClick={() => openModal(item)}>EDIT</button></li> : <></>}
-                        {item.end_date === null ? <li key="conclude"><button onClick={() => { if (window.confirm(`You are about to conclude experiment ${item.id}, ${item.name}`)) concludeExperiment(item.id) }}>CONCLUDE EXPERIMENT</button></li>: <></> }
-                        {item.end_date === null ? <li key="add_reading"><ExperimentReading exp_id={item.id}></ExperimentReading></li> : <></> }
+                        {item.end_date === null ? 
+                          <>
+                            <img className="menu_icon" src={menu_icon} alt="NO IMG!"/> 
+                            <li key="edit"><button onClick={() => openModal(item)}>EDIT</button></li>
+                            <li key="conclude"><button onClick={() => { if (window.confirm(`You are about to conclude experiment ${item.id}, ${item.name}`)) concludeExperiment(item.id) }}>CONCLUDE EXPERIMENT</button></li>
+                            <li key="add_reading"><ExperimentReading exp_id={item.id}></ExperimentReading></li>
+                          </>
+                        :
+                          <img src={menu_icon} alt="NO IMG!"/> 
+                        }
                     </div>
                   </div>
                   <RecipeBar recipe={item.recipe} phaseList={phaseList} recipe_name = {item.recipe_name} experiment={item}></RecipeBar>

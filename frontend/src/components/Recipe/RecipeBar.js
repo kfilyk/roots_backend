@@ -46,11 +46,17 @@ const RecipeBar = (props) => {
   Purpose: Fetches a recipe given a recipe id
   */
   async function getRecipe(id) {
+    //console.log("RECIPE ID: ", id)
     const result = await axios(
       `/api/recipes/${id}/`,
     )
     .catch((err) => console.log(err))
-    setRecipe(result.data)
+    //console.log("RESULT: ", result)
+
+    if(result.status === 200) {
+      setRecipe(result.data)
+    }
+
   }
 
   /*
@@ -65,7 +71,7 @@ const RecipeBar = (props) => {
     { 
       exp_id: id
     }).catch((err) => console.log(err))
-    if (result && result.status === 200){
+    if (result.status === 200){
       setExpReadingDates(result.data)
     }
   }
@@ -94,6 +100,7 @@ const RecipeBar = (props) => {
   */
   useEffect(() => {
     // can either send a recipe object OR the id of a recipe to this function
+    //console.log("PROPS RECIPE: ", props.recipe)
     if(typeof props.recipe === 'number') {
       getRecipe(props.recipe)
     } else {
@@ -191,26 +198,26 @@ const RecipeBar = (props) => {
   Input from: expReadingDates
   Outputs to: render()
   Created by: Kelvin F @ 08/31/2022
-  Last Edit: Kelvin F @ 08/31/2022
-  Purpose: Given a list of exp reading dates, calculates where it should be placed on timeline.
+  Last Edit: Kelvin F @ 09/03/2022
+  Purpose: Given a list of exp reading dates, calculates where they should be placed on timeline, and returns positions accordingly
   */
   function renderExpReadingTags(){
     if (expReadingDates !== undefined){
-      let bars = []
+      let tags = []
       expReadingDates.map((er, index) => {
-        let mid = new Date(er.reading_date)
-        let mid_string = mid.toISOString().substring(5,10)
+        let date = new Date(er.reading_date)
+        let date_string = date.toISOString().substring(5,10)
         let start = new Date(start_date)
         let end = new Date(end_date)
-        let style = Math.round(( ( mid - start ) / ( end - start ) ) * 100) + "%";
+        let style = Math.floor(( ( date - start ) / ( end - start ) ) * 100) + "%";
 
         // console.log("START DATE: ", start_date)
         // console.log("ADD DATE: ", mid, start, end, style)
-        bars.push(
-            <a key={`${er.id}_${index}`} onClick={() => show_exp_reading(er.id)} style={{left: `calc(${style})`}} className="tooltip exp_reading_triangle" data-tooltip={mid_string}>▼</a>
+        tags.push(
+            <a key={`${er.id}_${index}`} onClick={() => show_exp_reading(er.id)} style={{left: `calc(${style})`}} className="tooltip exp_reading_triangle" data-tooltip={date_string}>▼</a>
         )
       })
-      return bars
+      return tags
     }
   }
 
@@ -224,17 +231,16 @@ const RecipeBar = (props) => {
   function renderTimestamps() {
     if(props.experiment){
       return (
-        <div>
+        <>
+          {renderExpReadingTags()}
           <div className="recipe_bar_timestamps">
             <div className="recipe_bar_start_date" >{props.experiment.start_date.slice(0,10) + " | "+ props.recipe_name} </div>
             <div className="recipe_bar_end_date">{end_date} </div>
           </div> 
           <div>
-            <div style={ { width: `${ completionPercentage }%` } } className="recipe_horizontal_line"></div>
+            <div style={ { width: `${ completionPercentage }%` } } className="recipe_bar_progress_line"></div>
           </div>
-          {/* <div className="recipe_bar_timestamps">  */}
-
-        </div>
+        </>
       )
     }
   }
@@ -334,15 +340,15 @@ const RecipeBar = (props) => {
           }
       }
       return ( 
-        <>
-        {renderExpReadingTags()}
-        {renderTimestamps()}
-        {/* <div style={ { width: `${ completionPercentage }%` } } className="recipe_horizontal_line"></div> */}
-        <div className="recipe_bar"> 
-          {phases} 
+        <div className="recipe_bar">
+          {/*{renderExpReadingTags()}*/}
+          {renderTimestamps()}
+          {/* <div style={ { width: `${ completionPercentage }%` } } className="recipe_bar_progress_line"></div> */}
+          <div className="recipe_bar_phases"> 
+            {phases} 
+          </div>
+          {renderModal()}
         </div>
-        {renderModal()}
-        </>
       )
     }
   };
