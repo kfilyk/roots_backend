@@ -47,8 +47,6 @@ const RecipeList = () => {
   const [phase, setPhase] = useState(
     {
       show: true,
-      user: null,
-      user_name: null,
       days: null,
       waterings_per_day: null,
       watering_duration: null,
@@ -58,7 +56,6 @@ const RecipeList = () => {
       lights_on_hours: null,
       score: null,
       type: "Germination",
-      name: null
     }
   );
 
@@ -75,7 +72,6 @@ const RecipeList = () => {
     const result = await axios
       .post(`/api/phases/`, 
         { 
-            name: phase.name,
             type: phase.type,
             days: phase.days,
             waterings_per_day: phase.waterings_per_day,
@@ -309,8 +305,7 @@ const RecipeList = () => {
           <div key={i} className='form-row'>
             <select name={"phase"+i} defaultValue={recipe["phase"+i]} onChange={(e)=>updateRecipe(e)}>
               <option key={-1} value={null}></option>
-              {/* {phaseList.map((phase) => ( <option key={`${i}_${phase.id}`} value={phase.id}>{phase.name} | ({phase.type})</option>))} */}
-              {phaseList.map((phase) => ( <option key={phase.id} value={phase.id}>{phase.name} | ({phase.type})</option>))}
+              {phaseList.map((phase) => ( <option key={phase.id} value={phase.id}>{phase.id} | ({phase.type})</option>))}
             </select>
           </div>
         )
@@ -329,9 +324,6 @@ const RecipeList = () => {
   function renderCreatePhase(){
     return (
       <div style={{ visibility: phase.show ? 'visible': 'hidden'}}>
-        <div className="form_row">
-          <input value={phase.name} placeholder={"Name"} onChange={(e) => setPhase({...phase, name: e.target.value})} />
-        </div>
         <div className="form_row">
           <select value={phase.type} onChange={(e) => setPhase({...phase, type: e.target.value})} >
             <option value="Germination">Germination</option>
@@ -382,11 +374,15 @@ const RecipeList = () => {
     return (
       <>
         <div className="form_row">
-          <div>
+          <div className='create-recipe-left'>
+            { modal.add === true ? "Create Recipe" : "Edit Recipe" }
             <input name="name" value={recipe.name || ""} placeholder="Name" onChange={(e) => setRecipe({...recipe, name: e.target.value})} />
             {renderPhaseSelection()}
           </div>
-          {renderCreatePhase()}
+          <div className='create-phase-right'>
+            Create Phase
+            {renderCreatePhase()}
+            </div>
         </div>
         <div className="form_row">
           
@@ -435,7 +431,7 @@ const RecipeList = () => {
                 <button onClick={() => showJSON(item.id)}>SHOW JSON</button>
               </div>
             </div>
-            <RecipeBar phaseList = {phaseList} recipe = {item} experiment={undefined} is_object={true}></RecipeBar> 
+            <RecipeBar phaseList = {phaseList} recipe = {item} experiment={undefined} is_object={true} fetchPhases={fetchPhases}></RecipeBar> 
           </div>
         </div>
       ))}
@@ -443,12 +439,14 @@ const RecipeList = () => {
             {(close) => (
             <div className="modal" onClick={close}>
                 <div className="modal_body" onClick={e => e.stopPropagation()}>
-                  <div className='createRecipeLeft'>
+                  {/*
+                  <div className='create-recipe-left'>
                     { modal.add === true ? "Create Recipe" : "Edit Recipe" }
                   </div>
                   <div className='create-phase-right'>
                     Create Phase
                   </div>
+                */}
                 <div className="modal_content">
                   {renderModal()}
                   <button className='save' onClick={() => {

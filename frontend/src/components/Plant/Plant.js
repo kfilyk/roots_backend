@@ -5,11 +5,10 @@ import menu_icon from "../../img/menu_icon.png"
 
 const PlantList = () => {
   const [plant_list, setPlantList] = useState([]);
-  const [modal, setModal] = useState({
+
+  const initPlantModal = {
     show: false,
-    add: false
-  })
-  const initPlant = {
+    add: false,
     name: null,
     scientific_name: null,
     profile: null,
@@ -21,7 +20,7 @@ const PlantList = () => {
     nutritional_benefits: null,
     storage: null,
   }
-  const [plant, setPlant] = useState(initPlant);
+  const [plantModal, setPlantModal] = useState(initPlantModal);
 
   async function fetchData() {
     const result = await axios(
@@ -40,55 +39,46 @@ const PlantList = () => {
     setPlantList(plant_list.filter(plant => plant.id !== id))
   }
 
-  async function addEntry(e) {
-    const result = await axios
-      .post(`/api/plants/`, plant).catch((err) => console.log(err));
-    if(result.status === 200) {
-      setPlantList(plant_list => [result.data, ...plant_list])
-    }
-  };
-
-  async function editEntry(e) {
-    const result = await axios
-      .patch(`/api/plants/${plant.id}/`, plant).catch((err) => console.log(err));
-    
-    // Updates the plant_list on the client without need of new request to backend
-    if(result.status === 200) {
-      const index = plant_list.findIndex(pl => pl.id === plant.id);
-      const updatedItem = result.data
-      setPlantList([
-        ...plant_list.slice(0, index),
-        updatedItem,
-        ...plant_list.slice(index + 1)
-      ])
-    }
-  };
-
-  function openModal(plant){
+  function openPlantModal(plant){
     if (plant === null ){
-      setModal({add: true, show: true})
+      setPlantModal({...plantModal, add: true, show: true})
     } else {
-      setPlant(plant)
-      setModal({add: false, show: true})
+      plant['show'] = true;
+      plant['add'] = false;
+      setPlantModal(plant)      
     }
   }
 
-  function submitModal(){
-      if (plant.name === ""){
+  async function submitPlantModal(e){
+      if (plantModal.name === ""){
         alert("Plant name cannot be null.")
         return
       } else {
-        if(modal.add){
-          addEntry()
+        if(plantModal.add){
+          const result = await axios.post(`/api/plants/`, plantModal).catch((err) => console.log(err));
+          if(result.status === 200) {
+            setPlantList(plant_list => [result.data, ...plant_list])
+          }
         } else {
-          editEntry()
+          const result = await axios.patch(`/api/plants/${plantModal.id}/`, plantModal).catch((err) => console.log(err));
+          
+          // Updates the plant_list on the client without need of new request to backend
+          if(result.status === 200) {
+            const index = plant_list.findIndex(pl => pl.id === plantModal.id);
+            const updatedItem = result.data
+            setPlantList([
+              ...plant_list.slice(0, index),
+              updatedItem,
+              ...plant_list.slice(index + 1)
+            ])
+          }
         }
       }
   }
 
   return (
     <div>
-      <button onClick={() => openModal(null)}>+</button>
+      <button onClick={() => openPlantModal(null)}>+</button>
       {plant_list.map(item => (
         <div key={ item.id } className="item" >
           <div className="object_container">
@@ -108,32 +98,31 @@ const PlantList = () => {
             </div>
             <div className='object_actions'>
               <img className="menu_icon" src={menu_icon} alt="NO IMG!"/>
-              <button onClick={() => openModal(item)}>EDIT</button>
+              <button onClick={() => openPlantModal(item)}>EDIT</button>
               <button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) deleteEntry(item.id) }}> DELETE </button>
             </div>
           </div>
         </div>
       ))}
-      <Popup open={modal.show} onClose={() => {setModal({...modal, show: false}); setPlant(initPlant)}} modal nested>
+      <Popup open={plantModal.show} onClose={() => {setPlantModal(initPlantModal)}} modal nested>
             {(close) => (
             <div className="modal" onClick={close}>
               <div className="modal_body_2"  onClick={e => e.stopPropagation()}>
                 <div className="modal_content">
                   <div className="form_row">
-                    <input name="name" value={plant.name}  placeholder={"Plant Name"} onChange={(e) => setPlant({...plant, name: e.target.value})} />
+                    <input name="name" value={plantModal.name}  placeholder={"Plant Name"} onChange={(e) => setPlantModal({...plantModal, name: e.target.value})} />
                   </div>
-
-                  <input className="form_row" value={plant.scientific_name} placeholder={"Scientific Name"} onChange={(e) => setPlant({...plant, scientific_name: e.target.value})} />
-                  <input className="form_row" value={plant.profile} placeholder={"Profile"} onChange={(e) => setPlant({...plant, profile: e.target.value})} />
-                    <input className="form_row" value={plant.culinary} placeholder={"Culinary"} onChange={(e) => setPlant({...plant, culinary: e.target.value})} />
-                    <input className="form_row" value={plant.fun_facts} placeholder={"Fun Facts"} onChange={(e) => setPlant({...plant, fun_facts: e.target.value})} />
-                    <input className="form_row" value={plant.growing_tips} placeholder={"Growing Tips"} onChange={(e) => setPlant({...plant, growing_tips: e.target.value})} />
-                    <input className="form_row" value={plant.harvesting_tips} placeholder={"Harvesting Tips"} onChange={(e) => setPlant({...plant, harvesting_tips: e.target.value})} />
-                    <input className="form_row" value={plant.medical_uses} placeholder={"Medical Uses"} onChange={(e) => setPlant({...plant, medical_uses: e.target.value})} />
-                    <input className="form_row" value={plant.nutritional_benefits} placeholder={"Nutritional Benefits"} onChange={(e) => setPlant({...plant, nutritional_benefits: e.target.value})} />
-                    <input className="form_row" value={plant.storage} placeholder={"Storage"} onChange={(e) => setPlant({...plant, storage: e.target.value})} />                  
+                  <input className="form_row" value={plantModal.scientific_name} placeholder={"Scientific Name"} onChange={(e) => setPlantModal({...plantModal, scientific_name: e.target.value})} />
+                  <input className="form_row" value={plantModal.profile} placeholder={"Profile"} onChange={(e) => setPlantModal({...plantModal, profile: e.target.value})} />
+                  <input className="form_row" value={plantModal.culinary} placeholder={"Culinary"} onChange={(e) => setPlantModal({...plantModal, culinary: e.target.value})} />
+                  <input className="form_row" value={plantModal.fun_facts} placeholder={"Fun Facts"} onChange={(e) => setPlantModal({...plantModal, fun_facts: e.target.value})} />
+                  <input className="form_row" value={plantModal.growing_tips} placeholder={"Growing Tips"} onChange={(e) => setPlantModal({...plantModal, growing_tips: e.target.value})} />
+                  <input className="form_row" value={plantModal.harvesting_tips} placeholder={"Harvesting Tips"} onChange={(e) => setPlantModal({...plantModal, harvesting_tips: e.target.value})} />
+                  <input className="form_row" value={plantModal.medical_uses} placeholder={"Medical Uses"} onChange={(e) => setPlantModal({...plantModal, medical_uses: e.target.value})} />
+                  <input className="form_row" value={plantModal.nutritional_benefits} placeholder={"Nutritional Benefits"} onChange={(e) => setPlantModal({...plantModal, nutritional_benefits: e.target.value})} />
+                  <input className="form_row" value={plantModal.storage} placeholder={"Storage"} onChange={(e) => setPlantModal({...plantModal, storage: e.target.value})} />                  
                   <button className='save' onClick={() => {
-                      submitModal()
+                      submitPlantModal()
                       close();
                     }}>Save
                   </button>

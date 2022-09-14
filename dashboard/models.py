@@ -167,8 +167,7 @@ class Pod(models.Model):
 # phases can be used by many recipes/experiments
 class Phase(models.Model): # generic periodic phase setting to be used by a recipe 
     id = models.AutoField(db_column='ph_id', primary_key=True)  
-    name = models.CharField(db_column='ph_name', max_length=45) # name of phase - not necessarily a nubmer
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, db_column='ph_user', on_delete=models.CASCADE, blank=True, null=True) # denotes creator
+    #user = models.ForeignKey(settings.AUTH_USER_MODEL, db_column='ph_user', on_delete=models.CASCADE, blank=True, null=True) # denotes creator
     days = models.IntegerField(db_column = 'ph_days')
     type = models.CharField(db_column='ph_type', max_length=45) # germination / seedling / veggie growth/ harvest /... / other
     waterings_per_day = models.IntegerField(db_column = 'ph_waterings_per_day') # number of times per day watered

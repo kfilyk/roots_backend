@@ -262,12 +262,6 @@ input:valid+span:after {
   row-gap: 3vh;
 }
 
-.exp_r_input {
-  border: none;
-  border-bottom: 1px solid;
-  color: #1b372a;
-}
-
 .pod_r_modal_2{
   text-align: center;
   border: 1px solid #1b372a;
@@ -315,10 +309,9 @@ input:valid+span:after {
   margin-left: 0px;
 }
 
-.createRecipeLeft {
+.create-recipe-left {
   width: 50%;
   display: inline;
-  margin-right: 25%;
 }
 
 .create-phase-right {

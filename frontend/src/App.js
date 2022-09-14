@@ -8,7 +8,6 @@ import NotFoundPage from './components/NotFoundPage';
 import Dashboard from './components/Dashboard';
 import Device from './components/Device/Device';
 import Experiment from './components/Experiment/Experiment';
-import Phase from './components/Phase/Phase';
 import Recipe from './components/Recipe/Recipe';
 import Plant from "./components/Plant/Plant";
 import Help from './components/Help/Help';
@@ -74,7 +73,6 @@ const App = () => {
           <Route path={"devices"} element={<Device/>}/>
           <Route path={"experiments"} element={<Experiment/>}/>
           <Route path={"recipes"} element={<Recipe/>}/>
-          <Route path={"phases"} element={<Phase/>}/>
           <Route path={"plants"} element={<Plant/>}/>
           <Route path={"help"} element={<Help/>}/>
           <Route path={"mqtt"} element={<MQTT/>}/>

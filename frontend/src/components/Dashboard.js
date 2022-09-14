@@ -61,9 +61,6 @@ const Dashboard = (props) => {
         <Link to={"recipes"} className={selectedTab === "recipes" ? "nav-link active" : "nav-link"} onClick={() => setSelectedTab("recipes" )}>
           RECIPES
         </Link>
-        <Link to={"phases"} className={selectedTab === "phases" ? "nav-link active" : "nav-link"} onClick={() => setSelectedTab("phases" )}>
-          PHASES
-        </Link>
         <Link to={"plants"} className={selectedTab === "plants" ? "nav-link active" : "nav-link"} onClick={() => setSelectedTab("plants" )}>
           PLANTS
         </Link>

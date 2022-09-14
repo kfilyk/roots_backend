@@ -330,7 +330,7 @@ class PhaseView(viewsets.ModelViewSet):
     Purpose: Retrieves all phases including the user who created them
     """  
     def get_queryset(self):
-        return Phase.objects.all().annotate(user_name=F('user__username'))
+        return Phase.objects.all()
 
 class PodView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
