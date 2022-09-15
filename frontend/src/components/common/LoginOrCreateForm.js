@@ -47,7 +47,7 @@ const LoginOrCreateForm = (props) => {
           .then(res => {
             console.log(res)
             if (res.status === 200) {
-              window.location.replace("/"+res.data.username+"/devices")
+              window.location.replace("/"+res.data.username+"/experiments")
             }
           })
           .catch(res => console.log(res));
@@ -135,7 +135,7 @@ const LoginOrCreateForm = (props) => {
           // We set the returned token as the default authorization header
           localStorage.setItem('token', token)
           axios.defaults.headers.common.Authorization = token;
-          window.location.replace("/"+username+"/devices")
+          window.location.replace("/"+username+"/experiments")
           
         })
         .catch(error => {
