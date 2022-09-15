@@ -58,27 +58,6 @@ const RecipeBar = (props) => {
     raised_light: null,
   });
 
-  
-
-  /*
-  Input from: None
-  Outputs to: recipe
-  Created by: Kelvin F @ 08/31/2022
-  Last Edit: Kelvin F @ 08/31/2022
-  Purpose: Fetches a recipe given a recipe id
-  */
-  async function getRecipe(id) {
-    //console.log("RECIPE ID: ", id)
-    const result = await axios(`/api/recipes/${id}/`)
-    .catch((err) => console.log(err))
-    //console.log("RESULT: ", result)
-    
-    if(result && result.status === 200) {
-      setRecipe(result.data)
-    }
-
-  }
-
   /*
   Input from: None
   Outputs to: expReadingDates
@@ -121,11 +100,7 @@ const RecipeBar = (props) => {
   useEffect(() => {
     // can either send a recipe object OR the id of a recipe to this function
     //console.log("PROPS RECIPE: ", props.recipe)
-    if(typeof props.recipe === 'number') {
-      getRecipe(props.recipe)
-    } else {
-      setRecipe(props.recipe)
-    }
+    setRecipe(props?.recipe)
 
     if(props?.experiment?.id !== undefined){
       getReadings(props.experiment.id)
@@ -133,21 +108,6 @@ const RecipeBar = (props) => {
       setStartDate(props.experiment.start_date)
     }
   }, []); // [] causes useEffect to only happen ONCE after initial render - will not be called as a result of any other change
-
-  /*
-  Input from: props.recipe
-  Outputs to: recipe
-  Created by: Kelvin F @ 08/31/2022
-  Last Edit: Kelvin F @ 08/31/2022
-  Purpose: Upon props.recipe change, updates the recipe object
-  */
-  useEffect(() => {
-    if(typeof props.recipe === 'number') {
-      getRecipe(props.recipe)
-    } else {
-      setRecipe(props.recipe)
-    }  
-  }, [props.recipe])
   
   /*
   Input from: props, recipe
@@ -157,13 +117,15 @@ const RecipeBar = (props) => {
   Purpose: Upon props or recipe change, updates the completion percentage, start date and end date.
   */
   useEffect(() => {
-    if(recipe !== null && (typeof props.experiment !== 'undefined')) {
+    setRecipe(props?.recipe)  
+
+    if(recipe !== null && (typeof props?.experiment !== 'undefined')) {
       let sd = new Date(props.experiment.start_date)
-      sd.setDate(sd.getDate()+recipe.days)
+      sd.setDate(sd.getDate()+recipe?.days)
       setEndDate(sd.getFullYear()+ "-"+(sd.getMonth()+1)+"-"+sd.getDate())
-      calcCompletionPercentage(props.experiment.day, recipe.days)
+      calcCompletionPercentage(props.experiment?.day, recipe?.days)
     }
-  }, [props, recipe]); // useEffect runs when props OR recipe changes
+  }, [props]); // useEffect runs when props OR recipe changes
 
   /*
   Input from: render()

@@ -26,7 +26,7 @@ const Device = () => {
         Available - Devices not running an experiment at the moment
         All - Both active and available
     */
-    const [activeDevices, setActiveDevices] = useState([]); // list of device objects
+    const [activeExperiments, setActiveExperiments] = useState([]); // list of device objects
     const [availableDevices, setAvailableDevices] = useState([]); // list of device objects
     const [completedExperiments, setCompletedExperiments] = useState([]);
     const [selectedDeviceStatus, setSelectedDeviceStatus] = useState("active");
@@ -81,16 +81,16 @@ const Device = () => {
 
     /*
     Input from: None
-    Outputs to: activeDevices
+    Outputs to: activeExperiments
     Created by: Stella T 08/26/2022
     Last Edit: Stella T 08/26/2022
     Purpose: Fetches all the active devices from DB
     */
-    async function fetchActiveDevices() {
+    async function fetchActiveExperiments() {
         const result = await axios(
           '/api/experiments/active/',
         );
-        setActiveDevices(result.data)
+        setActiveExperiments(result.data)
     } 
     
     /*
@@ -147,7 +147,8 @@ const Device = () => {
           '/api/recipes/',
         );
         setRecipeList(result.data)
-    } 
+        console.log(result.data.filter(obj => obj.id === 23)[0])
+      } 
 
     /*
     Input from: None
@@ -165,7 +166,7 @@ const Device = () => {
 
     /*
     Input from: renderDevices
-    Outputs to: activeDevices, availableDevices
+    Outputs to: activeExperiments, availableDevices
     Created by: Kelvin F 08/26/2022
     Last Edit: Kelvin F 08/26/2022
     Purpose: Terminates an experiment by pushing end date, status=1 to DB object
@@ -179,14 +180,14 @@ const Device = () => {
         day = day > 9 ? day : '0'+day;
 
         await axios.post(`/api/experiments/terminate/`, {id: id, end_date: year+"-"+month+"-"+day});
-        fetchActiveDevices()
+        fetchActiveExperiments()
         fetchAvailableDevices()
         fetchCompletedExperiments()
     }
 
     /*
     Input from: renderDevices
-    Outputs to: activeDevices, availableDevices
+    Outputs to: activeExperiments, availableDevices
     Created by: Kelvin F 08/26/2022
     Last Edit: Kelvin F 08/26/2022
     Purpose: Deletes an experiment object and all associated readings and pods
@@ -197,14 +198,15 @@ const Device = () => {
   }
     /*
     Input from: None
-    Outputs to: activeDevices, availableDevices, phaseList, recipeList, plantList
+    Outputs to: activeExperiments, availableDevices, phaseList, recipeList, plantList
     Created by: Kelvin F 08/26/2022
     Last Edit: Kelvin F 08/26/2022
     Purpose: Upon page load, it runs once and gets available + active devices; phases; recipes; and plants
     */
     useEffect(() => {
+        console.log("FLAG!!!!")
         fetchAvailableDevices();
-        fetchActiveDevices();
+        fetchActiveExperiments();
         fetchCompletedExperiments();
         fetchPhases();
         fetchRecipes();
@@ -244,7 +246,7 @@ const Device = () => {
 
     /*
     Input from: None
-    Outputs to: activeDevices
+    Outputs to: activeExperiments
     Created by: Stella T 08/26/2022
     Last Edit: Stella T 08/26/2022
     Purpose: Checks if devices are online according to the DATABASE. NOT THE INDIVIDUAL DEVICES.
@@ -257,7 +259,7 @@ const Device = () => {
 
                 // for each device, determine if online or offline
                 res.data.forEach((device) => {
-                    let index = activeDevices.findIndex(d => d.device_id === device.id)
+                    let index = activeExperiments.findIndex(d => d.device_id === device.id)
                     if(index === -1) {
                         index = availableDevices.findIndex(d => d.id === device.id)
                         if (availableDevices[index].is_online !== device.is_online){
@@ -270,13 +272,13 @@ const Device = () => {
                             ])
                         }
                     } else {
-                        if (activeDevices[index].is_online !== device.is_online){
-                            let updated_device = activeDevices[index]
+                        if (activeExperiments[index].is_online !== device.is_online){
+                            let updated_device = activeExperiments[index]
                             updated_device.is_online = device.is_online
-                            setActiveDevices([
-                            ...activeDevices.slice(0, index),
+                            setActiveExperiments([
+                            ...activeExperiments.slice(0, index),
                             updated_device,
-                            ...activeDevices.slice(index + 1)
+                            ...activeExperiments.slice(index + 1)
                             ])
                         }
                     }
@@ -286,7 +288,7 @@ const Device = () => {
 
     /*
     Input from: None
-    Outputs to: activeDevices, see checkDevicesOnline()
+    Outputs to: activeExperiments, see checkDevicesOnline()
     Created by: Stella T 08/26/2022
     Last Edit: Stella T 08/26/2022
     Purpose:     Checks if devices are offline every minute
@@ -341,7 +343,7 @@ const Device = () => {
 
     /*
     Input from: experiment & renderRecipeSelection()
-    Outputs to: activeDevices
+    Outputs to: activeExperiments
     Created by: Stella T 08/26/2022
     Last Edit: Stella T 08/26/2022
     Purpose: Makes API Call that sends the recipe of an experiment to a device via MQTT
@@ -354,21 +356,21 @@ const Device = () => {
               new_recipe_id: parseInt(experiment.recipe)
 
           });
-        let index = activeDevices.findIndex(d => d.id === device.id)
+        let index = activeExperiments.findIndex(d => d.id === device.id)
         if(index !== -1) {
-            let updated_device = activeDevices[index]
+            let updated_device = activeExperiments[index]
             updated_device['current_recipe'] = result.data.current_recipe
             updated_device['dailyStartTime'] = result.data.dailyStartTime
-            setActiveDevices([
-                ...activeDevices.slice(0, index),
+            setActiveExperiments([
+                ...activeExperiments.slice(0, index),
                 updated_device,
-                ...activeDevices.slice(index + 1)
+                ...activeExperiments.slice(index + 1)
             ])
         }
     }
 
     /*
-    Input from: selectedDeviceStatus, activeDevices, availableDevices
+    Input from: selectedDeviceStatus, activeExperiments, availableDevices
     Outputs to: renderModal
     Created by: Stella T 08/26/2022
     Last Edit: Stella T 08/26/2022
@@ -377,7 +379,7 @@ const Device = () => {
     function renderDevices(){
         const deviceList = []
         if (selectedDeviceStatus === 'active'){   
-            activeDevices.map((item) => {
+            activeExperiments.map((item) => {
                 deviceList.push(
                     <div key={'active_' + item.id} className="object_container">
                         <div className="object_top">
@@ -391,7 +393,7 @@ const Device = () => {
                                 <PodCarousel experimentID={item.id} deviceId={item.device} status={item.status}></PodCarousel>
                             </div>
                         </div>
-                        <RecipeBar phaseList = {phaseList} recipe = {item.recipe_id} recipe_name = {item.current_recipe} experiment = {item}></RecipeBar>
+                        <RecipeBar phaseList = {phaseList} recipe = {recipeList?.filter(obj => obj.id === item.recipe_id)[0]} recipe_name = {item.current_recipe} experiment = {item}></RecipeBar>
 
                         <div className='object_actions'>
                             <img className="menu_icon" src={menu_icon} alt="NO IMG!"/>
@@ -417,7 +419,7 @@ const Device = () => {
                                 <PodCarousel experimentID={item.id} deviceId={item.device} status={item.status}></PodCarousel>
                             </div>
                         </div>
-                        <RecipeBar phaseList = {phaseList} recipe = {item.recipe_id} recipe_name = {item.current_recipe} experiment = {item}></RecipeBar>
+                        <RecipeBar phaseList = {phaseList} recipe = {recipeList?.filter(obj => obj.id === item.recipe_id)[0]} recipe_name = {item.current_recipe} experiment = {item}></RecipeBar>
                         <div className='object_actions'>
                             <img className="menu_icon" src={menu_icon} alt="NO IMG!"/>
                             {<li key="delete"><button onClick={() => { if (window.confirm(`Delete experiment "${item.name}"?`)) deleteExperiment(item.id) }}>DELETE EXPERIMENT</button></li> }
@@ -515,7 +517,7 @@ const Device = () => {
 
     /*
     Input from: experiment
-    Outputs to: availableDevices, activeDevices, experiment
+    Outputs to: availableDevices, activeExperiments, experiment
     Created by: Stella T 08/26/2022
     Last Edit: Stella T 08/26/2022
     Purpose: Makes API call to create another experiment and change the recipe on the device running the experiment
@@ -537,7 +539,7 @@ const Device = () => {
         .then(res =>{
             changeRecipe()
             fetchAvailableDevices();
-            fetchActiveDevices();
+            fetchActiveExperiments();
         })
         .catch((err) => console.log(err));
         
