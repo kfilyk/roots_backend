@@ -6,7 +6,6 @@ import { BrowserRouter, Routes, Route, Redirect } from "react-router-dom";
 import Login from './components/Login';
 import NotFoundPage from './components/NotFoundPage';
 import Dashboard from './components/Dashboard';
-import Device from './components/Device/Device';
 import Experiment from './components/Experiment/Experiment';
 import Recipe from './components/Recipe/Recipe';
 import Plant from "./components/Plant/Plant";
@@ -70,7 +69,6 @@ const App = () => {
     <BrowserRouter>
       <Routes>
         <Route path={"/"+auth} element={<Dashboard user = {auth}/>} >
-          <Route path={"devices"} element={<Device/>}/>
           <Route path={"experiments"} element={<Experiment/>}/>
           <Route path={"recipes"} element={<Recipe/>}/>
           <Route path={"plants"} element={<Plant/>}/>

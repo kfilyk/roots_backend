@@ -62,6 +62,7 @@ class Experiment(models.Model):
     start_date = models.DateTimeField(db_column='e_start_date', blank=True, null=True) 
     end_date = models.DateTimeField(db_column='e_end_date', blank=True, null=True)  
     recipe = models.ForeignKey("Recipe", models.DO_NOTHING, related_name='+', db_column='e_recipe_id',blank=True, null=True)
+    status = models.IntegerField(db_column='e_status', default = 0) # 0 = active, 1 = terminated, 2 = concluded
 
     class Meta:
         managed = True
@@ -159,6 +160,7 @@ class Pod(models.Model):
     score = models.DecimalField(db_column='po_score', max_digits=2, decimal_places=2, blank=True, null=True) # Averaged score of Experiment Readings for a specific pod
     start_date = models.DateTimeField(db_column='po_start_date', blank=True, null=True) # start date is 
     end_date = models.DateTimeField(db_column='po_end_date', blank=True, null=True)  
+    status = models.IntegerField(db_column='po_status', default = 0) # 0 = active, 1 = terminated, 2 = concluded
     
     class Meta:
         managed = True

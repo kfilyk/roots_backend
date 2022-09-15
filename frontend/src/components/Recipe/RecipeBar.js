@@ -69,13 +69,11 @@ const RecipeBar = (props) => {
   */
   async function getRecipe(id) {
     //console.log("RECIPE ID: ", id)
-    const result = await axios(
-      `/api/recipes/${id}/`,
-    )
+    const result = await axios(`/api/recipes/${id}/`)
     .catch((err) => console.log(err))
     //console.log("RESULT: ", result)
-
-    if(result.status === 200) {
+    
+    if(result && result.status === 200) {
       setRecipe(result.data)
     }
 
@@ -327,17 +325,17 @@ const RecipeBar = (props) => {
     }
     setPhaseModal(initPhaseModal);
     props.fetchPhases()
+    axios.post(`/api/recipes/regenerate_JSON/`, {"id":props.recipe.id});
   }
 
 
     /*
-  Input from: phaseModal
+  Input from: phaseModal form object
   Outputs to: render()
   Created by: Kelvin F @ 08/31/2022
   Last Edit: Kelvin F @ 08/31/2022
   Purpose: Renders phaseModal to allow manipulation of a particular recipe phase
   */
-
   function renderPhaseModal(){
     return (
       <Popup open={phaseModal.show} onClose={() => setPhaseModal({...phaseModal, show: false})} modal nested>
@@ -377,7 +375,6 @@ const RecipeBar = (props) => {
         </div>
         )}
     </Popup>
-
     )
   }
 

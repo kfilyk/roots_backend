@@ -52,9 +52,6 @@ const Dashboard = (props) => {
   function renderNav() {
     return (
       <div className="nav">
-        <Link to={"devices"} className={selectedTab === "devices" ? "nav-link active" : "nav-link"} onClick={() => setSelectedTab("devices" )}>
-          DEVICES
-        </Link>
         <Link to={"experiments"} className={selectedTab === "experiments" ? "nav-link active" : "nav-link"} onClick={() => setSelectedTab("experiments" )}>
           EXPERIMENTS
         </Link>
