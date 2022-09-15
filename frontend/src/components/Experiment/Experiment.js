@@ -409,7 +409,7 @@ const Device = () => {
                         <div className="object_top">
                             <div className="object_description">
                                 <div className="bold_font tooltip" data-tooltip={"DEVICE ID: "+item.device_id + "\nMAC: " + item.mac_address.toUpperCase()}>
-                                    {item.device_name+ " | " + item.status+ " | "}<span className="normal_font">{item.name}</span> 
+                                    {item.device_name+ " | "}{item.status === 1 ? <span style={{color:"red"}}>TERMINATED</span>:<span style={{color:"green"}}>CONCLUDED</span>}<span className="normal_font">{" | "+item.name}</span> 
                                 </div>
                                 {item.score !== null ? <div>Score: { item.score } </div>: <></>}
                             </div>
@@ -420,8 +420,6 @@ const Device = () => {
                         <RecipeBar phaseList = {phaseList} recipe = {item.recipe_id} recipe_name = {item.current_recipe} experiment = {item}></RecipeBar>
                         <div className='object_actions'>
                             <img className="menu_icon" src={menu_icon} alt="NO IMG!"/>
-                            {<li key="terminate"><button onClick={() => { if (window.confirm(`Terminate experiment "${item.name}"?`)) terminateExperiment(item.id) }}>TERMINATE</button></li> }
-
                             {<li key="delete"><button onClick={() => { if (window.confirm(`Delete experiment "${item.name}"?`)) deleteExperiment(item.id) }}>DELETE EXPERIMENT</button></li> }
                         </div>
                     </div>
