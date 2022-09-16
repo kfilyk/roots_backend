@@ -103,6 +103,7 @@ const PlantList = () => {
                 {item.medical_uses ? <div className="bold_font">{"\n"}MEDICAL USES<span className="normal_font">{" | "+item.medical_uses}</span></div> : <></>}
                 {item.nutritional_benefits ? <div className="bold_font">{"\n"}NUTRITIONAL BENEFITS<span className="normal_font">{" | "+item.nutritional_benefits}</span></div> : <></>}
                 {item.storage ? <div className="bold_font">{"\n"}STORAGE<span className="normal_font">{" | "+item.storage}</span></div> : <></>}
+                <div className="bold_font">{"\n"}TEST<span className="normal_font">{" | 123123123231"}</span></div> <></>
               </div>
 
             </div>

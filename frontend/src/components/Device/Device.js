@@ -76,7 +76,10 @@ const Device = () => {
         response: {}
     });
 
-
+    //Open up a graph window
+    const [tempdata, openGraph] = useState({
+        //TODO, figure out how to open the graph page :')
+    })
 
     /*
     Input from: None
@@ -371,6 +374,7 @@ const Device = () => {
                             {item.end_date === null && <li key="conclude"><button onClick={() => { if (window.confirm(`Conclude experiment "${item.name}"?`)) concludeExperiment(item.id) }}> CONCLUDE EXPERIMENT</button></li> }
                             <li key="addReading"><ExperimentReading exp_id={item.id} exp_name={item.name}></ExperimentReading></li>
                             <li key="sendCommand"><button onClick={() => set_command({...command, show: true, device: item.device_id})}>SEND COMMAND</button></li>
+                            <li key="expData"><button>VIEW EXPERIMENT DATA</button></li>
                         </div>
                     </div>
                 )
