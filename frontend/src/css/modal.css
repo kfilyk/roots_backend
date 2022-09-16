@@ -47,14 +47,20 @@ POPUP MODAL
   border-radius: 20px;
 }
 
-.pod_selection_active {
-  font-family: "Brandon Grotesque";
-  margin: 2px;
-  border: 1px #1b372a solid;
+.phase_selection {
+  margin:0px;
+  padding: 0px;
+  border-radius: 0px;
+  border: 0px;
+}
+
+.phase_selection_active {
   background-color: #1b372a;
   color: #ffffff;;
-  padding: 6px 12px;
-  border-radius: 20px;
+  margin:0px;
+  padding: 0px;
+  border-radius: 0px;
+  border: 0px;
 }
 
 
@@ -262,12 +268,6 @@ input:valid+span:after {
   row-gap: 3vh;
 }
 
-.exp_r_input {
-  border: none;
-  border-bottom: 1px solid;
-  color: #1b372a;
-}
-
 .pod_r_modal_2{
   text-align: center;
   border: 1px solid #1b372a;
@@ -315,10 +315,9 @@ input:valid+span:after {
   margin-left: 0px;
 }
 
-.createRecipeLeft {
+.create-recipe-left {
   width: 50%;
   display: inline;
-  margin-right: 25%;
 }
 
 .create-phase-right {

@@ -62,6 +62,7 @@ class Experiment(models.Model):
     start_date = models.DateTimeField(db_column='e_start_date', blank=True, null=True) 
     end_date = models.DateTimeField(db_column='e_end_date', blank=True, null=True)  
     recipe = models.ForeignKey("Recipe", models.DO_NOTHING, related_name='+', db_column='e_recipe_id',blank=True, null=True)
+    status = models.IntegerField(db_column='e_status', default = 0) # 0 = active, 1 = terminated, 2 = concluded
 
     class Meta:
         managed = True
@@ -159,6 +160,7 @@ class Pod(models.Model):
     score = models.DecimalField(db_column='po_score', max_digits=2, decimal_places=2, blank=True, null=True) # Averaged score of Experiment Readings for a specific pod
     start_date = models.DateTimeField(db_column='po_start_date', blank=True, null=True) # start date is 
     end_date = models.DateTimeField(db_column='po_end_date', blank=True, null=True)  
+    status = models.IntegerField(db_column='po_status', default = 0) # 0 = active, 1 = terminated, 2 = concluded
     
     class Meta:
         managed = True
@@ -167,8 +169,7 @@ class Pod(models.Model):
 # phases can be used by many recipes/experiments
 class Phase(models.Model): # generic periodic phase setting to be used by a recipe 
     id = models.AutoField(db_column='ph_id', primary_key=True)  
-    name = models.CharField(db_column='ph_name', max_length=45) # name of phase - not necessarily a nubmer
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, db_column='ph_user', on_delete=models.CASCADE, blank=True, null=True) # denotes creator
+    #user = models.ForeignKey(settings.AUTH_USER_MODEL, db_column='ph_user', on_delete=models.CASCADE, blank=True, null=True) # denotes creator
     days = models.IntegerField(db_column = 'ph_days')
     type = models.CharField(db_column='ph_type', max_length=45) # germination / seedling / veggie growth/ harvest /... / other
     waterings_per_day = models.IntegerField(db_column = 'ph_waterings_per_day') # number of times per day watered

@@ -2,7 +2,7 @@ from urllib3 import HTTPResponse
 from dashboard.models import Device, Experiment, Phase, Plant, Pod, ExperimentReading, PodReading, Recipe
 from rest_framework import viewsets
 from django.forms.models import model_to_dict
-from .serializers import DeviceSerializer, ExperimentSerializer, CreateUserSerializer, UserSerializer, PhaseSerializer, PlantSerializer, PodSerializer, ExperimentReadingSerializer, RecipeSerializer
+from .serializers import DeviceSerializer, ExperimentSerializer, CreateUserSerializer, UserSerializer, PhaseSerializer, PlantSerializer, PodSerializer, ExperimentReadingSerializer, RecipeSerializer, PodReadingSerializer
 from django.core import serializers
 from django_filters import rest_framework as filters
 from django.db.models.functions import Length
@@ -26,7 +26,7 @@ from .v2_mqtt import MQTT
 from .generic_mqtt_client import GenericMQTT
 import json
 from django.utils import timezone
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from django.db import IntegrityError
 
 # https://www.digitalocean.com/community/tutorials/build-a-to-do-application-using-django-and-react
@@ -282,28 +282,79 @@ class ExperimentView(viewsets.ModelViewSet):
     Last Edit: Stella T 08/30/2022
     Purpose: Retrieve a list of devices with no experiments running on them
     """    
-    @action(detail=False, methods=['GET'], name='available_devices')
-    def available_devices(self, request):
+    @action(detail=False, methods=['GET'], name='free_devices')
+    def free_devices(self, request):
         excluded = Experiment.objects.filter(end_date__isnull=True).filter(device__isnull=False).values('device') # list of all devices referenced by currently active experiments
         query = Device.objects.exclude(id__in=excluded).order_by(Length('name').asc(), 'name') # exclude from device list all devices which an active experiment references
         data = list(query.values('id', 'name', 'capacity', 'mac_address', 'is_online'))
         return JsonResponse(data, safe=False)
 
     """
-    Input from: Device.js/fetchLoadedDevices(); 
-    Outputs to: Device.js/fetchLoadedDevices(); 
+    Input from: Device.js/fetchActiveDevices(); 
+    Outputs to: Device.js/fetchActiveDevices(); 
     Created by: Stella T 08/30/2022
     Last Edit: Stella T 08/30/2022
     Purpose: Retrieve a list of devices with an active experiment running on them
     TO-DO: need to filter: loaded devices exclude those with a non-null "end_date"
     """  
-    @action(detail=False, methods=['GET'], name='loaded_devices')
-    def loaded_devices(self, request):
+    @action(detail=False, methods=['GET'], name='active')
+    def active(self, request):
         devices = Experiment.objects.filter(end_date__isnull=True)
         devices = devices.filter(device__isnull=False).select_related('device').order_by(Length('name').asc(), 'name')
         data = list(devices.values().annotate(device_name=F('device__name')).annotate(is_online=F('device__is_online')).annotate(mac_address=F('device__mac_address')).annotate(current_recipe=F('recipe__name'))) # 
         return JsonResponse(data, safe=False)
 
+    """
+    Input from: Experiment.js/fetchActiveDevices(); 
+    Outputs to: Experiment.js/fetchActiveDevices(); 
+    Created by: Stella T 08/30/2022
+    Last Edit: Stella T 08/30/2022
+    Purpose: Retrieve a list of devices with an active experiment running on them
+    TO-DO: need to filter: loaded devices exclude those with a non-null "end_date"
+    """  
+    @action(detail=False, methods=['GET'], name='completed')
+    def completed(self, request):
+        devices = Experiment.objects.filter(end_date__isnull=False)
+        devices = devices.filter(device__isnull=False).select_related('device').order_by(Length('name').asc(), 'name')
+        data = list(devices.values().annotate(device_name=F('device__name')).annotate(is_online=F('device__is_online')).annotate(mac_address=F('device__mac_address')).annotate(current_recipe=F('recipe__name'))) # 
+        return JsonResponse(data, safe=False)
+
+
+    """
+    Input from: Experiment.js/terminateExperiment(); 
+    Outputs to: Experiment.js/terminateExperiment(); 
+    Created by: Kelvin F 09/10/2022
+    Last Edit: Kelvin F 09/10/2022
+    Purpose: Terminate an experiment/pods prematurely
+    """  
+    @action(detail=False, methods=['POST'], name='terminate')
+    def terminate(self, request):
+        exp_id=json.loads(request.body)["id"]
+        end_date = json.loads(request.body)["end_date"]
+        exp = Experiment.objects.get(id = exp_id)
+        exp.end_date = end_date
+        exp.status = 1
+        exp.save()
+        pods = Pod.objects.filter(experiment=exp_id, end_date__isnull=True)
+        pods.update(end_date=end_date, status = 1)
+
+        return JsonResponse({"status": "200"}, safe=False)
+
+    """
+    Input from: Experiment.js/deleteExperiment(); 
+    Outputs to: Experiment.js/deleteExperiment(); 
+    Created by: Kelvin F 09/10/2022
+    Last Edit: Kelvin F 09/10/2022
+    Purpose: Delete an experiment and all associated pods/readings
+    """  
+    @action(detail=False, methods=['POST'], name='delete')
+    def delete(self, request):
+        exp_id=json.loads(request.body)["id"]
+        PodReading.objects.filter(experiment = exp_id).delete()
+        ExperimentReading.objects.filter(experiment = exp_id).delete()
+        Pod.objects.filter(experiment=exp_id).delete()
+        Experiment.objects.filter(id = exp_id).delete()
+        return JsonResponse({"status": "200"}, safe=False)
 
     """
     Input from: Experiment.js/fetchExperiments(); 
@@ -330,7 +381,7 @@ class PhaseView(viewsets.ModelViewSet):
     Purpose: Retrieves all phases including the user who created them
     """  
     def get_queryset(self):
-        return Phase.objects.all().annotate(user_name=F('user__username'))
+        return Phase.objects.all()
 
 class PodView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
@@ -358,11 +409,21 @@ class PodView(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"], name='populate_pod_carousel')
     def populate_pod_carousel(self, request):
         exp_id=json.loads(request.body)["id"]
-        qs = Pod.objects.filter(experiment = exp_id).filter(end_date__isnull=True).annotate(plant_name=F('plant__name')) #(experiment = exp_id, end_date__isnull=True)
+        exp_status = json.loads(request.body)["status"]
+        qs = Pod.objects.filter(experiment = exp_id, status=exp_status).annotate(plant_name=F('plant__name')) #(experiment = exp_id, end_date__isnull=True)
         pods = list(qs.values())
         capacity = Experiment.objects.get(id=exp_id).device.capacity
         return JsonResponse({"capacity": capacity, "pods": pods}, safe=False)       
         
+class PodReadingView(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated,) 
+    serializer_class = PodReadingSerializer
+    
+    def get_queryset(self):
+        return PodReading.objects.all()
+
+
+
 class RecipeView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
     serializer_class = RecipeSerializer
@@ -456,6 +517,17 @@ class RecipeView(viewsets.ModelViewSet):
     Last Edit: Stella T 08/30/2022
     Purpose: Generates the JSON format of a recipe given a recipe id
     """  
+
+    @action(detail=False, methods=["post"], name='generate_JSON')
+    def regenerate_JSON(self, request):
+        rec_id = json.loads(request.body)["id"]
+        recipe = Recipe.objects.get(id = rec_id)
+        recipe.recipe_json = RecipeView.generate_JSON(rec_id)
+        recipe.save()
+        return Response(data=recipe.recipe_json, status=200)
+
+
+
     @staticmethod
     def generate_JSON(recipe_id):
         recipe = Recipe.objects.filter(id=recipe_id) \

@@ -52,17 +52,11 @@ const Dashboard = (props) => {
   function renderNav() {
     return (
       <div className="nav">
-        <Link to={"devices"} className={selectedTab === "devices" ? "nav-link active" : "nav-link"} onClick={() => setSelectedTab("devices" )}>
-          DEVICES
-        </Link>
         <Link to={"experiments"} className={selectedTab === "experiments" ? "nav-link active" : "nav-link"} onClick={() => setSelectedTab("experiments" )}>
           EXPERIMENTS
         </Link>
         <Link to={"recipes"} className={selectedTab === "recipes" ? "nav-link active" : "nav-link"} onClick={() => setSelectedTab("recipes" )}>
           RECIPES
-        </Link>
-        <Link to={"phases"} className={selectedTab === "phases" ? "nav-link active" : "nav-link"} onClick={() => setSelectedTab("phases" )}>
-          PHASES
         </Link>
         <Link to={"plants"} className={selectedTab === "plants" ? "nav-link active" : "nav-link"} onClick={() => setSelectedTab("plants" )}>
           PLANTS
@@ -72,6 +66,9 @@ const Dashboard = (props) => {
         </Link>
         <Link to={"mqtt"} className={selectedTab === "mqtt" ? "nav-link active" : "nav-link"} onClick={() => setSelectedTab("mqtt" )}>
           MQTT
+        </Link>
+        <Link to={"analysis"} className={selectedTab === "analysis" ? "nav-link active" : "nav-link"} onClick={() => setSelectedTab("analysis" )}>
+          ANALYSIS
         </Link>
       </div>
     );

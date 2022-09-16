@@ -1,510 +1,738 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import Popup from "reactjs-popup";
-import PodCarousel from "./PodCarousel"
+import React, { useState, useEffect, useRef } from 'react';
+import axios from "axios";
 import menu_icon from "../../img/menu_icon.png"
+import Popup from "reactjs-popup";
+import PodCarousel from "../Experiment/PodCarousel"
 import ExperimentReading from "../Experiment/ExperimentReading"
 import RecipeBar from '../Recipe/RecipeBar';
+import "./experiment.css"
 
 /*
 Date Variables used in:
-setExperiment()
+terminateExperiment()
 */
-let today_date = new Date();
-console.log("CURRENT DATE: ", today_date)
-let year = today_date.getUTCFullYear();
-let month = today_date.getUTCMonth() + 1;
+let todayDate = new Date();
+let year = todayDate.getUTCFullYear();
+let month = todayDate.getUTCMonth() + 1;
 month = month > 9 ? month : '0'+month;
-let day = today_date.getUTCDate();
+let day = todayDate.getUTCDate();
 day = day > 9 ? day : '0'+day;
 
+const Device = () => {
+    /*
+    TWO DEVICE STATES:
+        Active - Active devices with a experiment loaded
+        Available - Devices not running an experiment at the moment
+        All - Both active and available
+    */
+    const [activeExperiments, setActiveExperiments] = useState([]); // list of device objects
+    const [availableDevices, setAvailableDevices] = useState([]); // list of device objects
+    const [completedExperiments, setCompletedExperiments] = useState([]);
+    const [selectedDeviceStatus, setSelectedDeviceStatus] = useState("active");
+    
+    //LISTS OF ALL PHASES, RECIPES, PLANTS
+    const [phaseList, setPhaseList] = useState([])
+    const [recipeList, setRecipeList] = useState([])
+    const [plantList, setPlantList] = useState([]);
 
-const ExperimentList = () => {
+    //USED FOR ADDING A NEW DEVICE & EDITING A CURRENT ONE
+    const [device, setDevice] = useState({
+        add: true, 
+        show: false, 
+        id: -1, 
+        experiment: -1, 
+        recipe: -1,
+        name: null, 
+        mac_address: null
+    });
 
-  // Store all experiments, plants, recipes, phases for future use by the Experiment tab
-  const [experimentList, setExperimentList] = useState([]);
-  const [plantList, setPlantList] = useState([]);
-  const [recipeList, setRecipeList] = useState([]);
-  const [phaseList, setPhaseList] = useState([])
-  const [modal, setModal] = useState({
-    show: false,
-    add: false
-  })
+    //USED FOR ADDING A NEW EXP
+    const [experiment, setExperiment] = useState({
+        id: null,
+        name: null,
+        device: null,
+        device_name:null,
+        device_capacity: null,
+        pods: [],
+        pod_selection: {},
+        start_date: year+"-"+month+"-"+day,
+        recipe: null
+      })
 
-  // store available devices able to be allocated an experiment
-  const [available_devices, setAvailableDevices] = useState([])
+    /*
+        Saves parameter details for sending mqtt commands,
+        See sendCommand() function below
+        and renderCommand()
+    */
+    const [command, set_command] = useState({
+        show: false,
+        id: 0,
+        device: -1,
+        hour: 0,
+        minute: 0,
+        cycle: 0,
+        stage: 0,
+        timezone: "Etc/GMT-7",
+        response: {}
+    });
 
-  // store experiment currently being created/edited via pop-up modal 
-  const [experiment, setExperiment] = useState({
-    id: null,
-    name: null,
-    device: null,
-    device_name: null,
-    device_capacity: null,
-    pods: [],
-    pod_selection: {},
-    start_date: year+"-"+month+"-"+day,
-    recipe: null
-  })
+
 
     /*
     Input from: None
-    Outputs to: experimentList
-    Created by: Kelvin F @ 08/26/2022
-    Last Edit: Kelvin F @ 08/26/2022
-    Purpose: Fetches all experiment objects (active or completed)
+    Outputs to: activeExperiments
+    Created by: Stella T 08/26/2022
+    Last Edit: Stella T 08/26/2022
+    Purpose: Fetches all the active devices from DB
     */
-  async function fetchExperiments() {
-    const result = await axios(
-      '/api/experiments/',
-    );
-    setExperimentList(result.data)
-  } 
+    async function fetchActiveExperiments() {
+        const result = await axios(
+          '/api/experiments/active/',
+        );
+        setActiveExperiments(result.data)
+    } 
+    
+    /*
+    Input from: None
+    Outputs to: availableDevices
+    Created by: Stella T 08/26/2022
+    Last Edit: Stella T 08/26/2022
+    Purpose: Fetches all the available devices from DB
+    */
+    async function fetchAvailableDevices() {
+        const result = await axios(
+          '/api/experiments/free_devices/',
+        );
+        setAvailableDevices(result.data)
+    } 
 
-  /*
-  Input from: None
-  Outputs to: phaseList
-  Created by: Kelvin F @ 08/26/2022
-  Last Edit: Kelvin F @ 08/26/2022
-  Purpose: Fetches all phase objects
-  */
-  async function fetchPhases() {
-    const result = await axios(
-      '/api/phases/',
-    );
-    setPhaseList(result.data)
-  } 
-
-  /*
-  Input from: None
-  Outputs to: recipeList
-  Created by: Kelvin F @ 08/26/2022
-  Last Edit: Kelvin F @ 08/26/2022
-  Purpose: Fetches all recipe objects
-  */
-  async function fetchRecipes() {
-    const result = await axios(
-      '/api/recipes/',
-    );
-    setRecipeList(result.data)
-  } 
-
-  /*
-  Input from: None
-  Outputs to: plantList
-  Created by: Kelvin F @ 08/26/2022
-  Last Edit: Kelvin F @ 08/26/2022
-  Purpose: Fetches all plant objects
-  */
-  async function fetchPlants() {
-    const result = await axios(
-      '/api/plants/',
-    );
-    setPlantList(result.data)
-  }
-  
-  /*
-  Input from: None
-  Outputs to: availableDevices
-  Created by: Kelvin F @ 08/26/2022
-  Last Edit: Kelvin F @ 08/26/2022
-  Purpose: Fetches all available devices without a currently running experiment
-  */
-  async function fetchAvailableDevices() {
-    const result = await axios(
-      '/api/experiments/available_devices/',
-    );
-    setAvailableDevices(result.data)
-  }
-
-  /*
-  Input from: None
-  Outputs to: None
-  Created by: Kelvin F @ 08/26/2022
-  Last Edit: Kelvin F @ 08/26/2022
-  Purpose: Runs once (denoted by '[]') at the start to load content by calling various fetch functions
-  */
-  useEffect(() => {
-    fetchExperiments();
-    fetchPhases();
-    fetchPlants();
-    fetchRecipes();
-  }, []);
-
-  /*
-  Input from: React frontend (modal)
-  Outputs to: Database (target experiment object)
-  Created by: Kelvin F @ 08/26/2022
-  Last Edit: Kelvin F @ 08/26/2022
-  Purpose: Concludes an experiment and updates it accordingly in the backend. 
-  */
-  async function concludeExperiment(id) {
-    await axios.patch(`/api/experiments/${id}/`, { end_date: year+"-"+month+"-"+day});
-    fetchExperiments()
-  }
-
-  /*
-  Input from: Modal react object
-  Outputs to: openModal()
-  Created by: Kelvin F @ 08/26/2022
-  Last Edit: Kelvin F @ 08/26/2022
-  Purpose: Passes the list of active pods from a given experiment to the frontend Modal editor
-  */
-  async function getPods(id) {
-    let result = await axios(
-      `/api/pods/?experiment=${id}`
-      )
-      .catch((err) => console.log(err)); 
-    result = result.data.filter(pod => pod.end_date === null)
-    return result
-  }
-
-  /*
-  Input from: Modal react object
-  Outputs to: openModal()
-  Created by: Kelvin F @ 08/26/2022
-  Last Edit: Kelvin F @ 08/26/2022
-  Purpose: Passes the device object associated with the experiment to the frontend Modal editor
-  */
-  async function getDevice(id){
-    console.log(id)
-    const device = await axios(
-      `/api/devices/${id}/`
-      )
-      .catch((err) => console.log("ERROR: ", err));
-    return device.data
-  }
-
-  /*
-  Input from: Frontend button click (React)
-  Outputs to: Frontend modal experiment editor
-  Created by: Kelvin F @ 08/26/2022
-  Last Edit: Kelvin F @ 08/26/2022
-  Purpose: Upon experiment add/edit button click, modal is opened for making changes to experiment form
-  */
-  function openModal(exp){
-    if (exp === null ){
-      fetchAvailableDevices()
-      setModal({add: true, show: true})
-    } else {
-
-      // get pods first, then device
-      getPods(exp.id).then(res1 => {
-        getDevice(exp.device).then(res2 => {
-          fetchAvailableDevices()
-          setAvailableDevices([...available_devices, res2]) // add current editable device to available devices
-          setExperiment({...experiment, id: exp.id, device: exp.device, device_name: res2.name, device_capacity:res2.capacity, name: exp.name, start_date: exp.start_date.substring(0,10), pods: res1})
-          setModal({add: false, show: true})
-        })
-      })
-    }
-  }
-
-  /*
-  Input from: Frontend modal editor (react)
-  Outputs to: addExperiment(), editExperiment()
-  Created by: Kelvin F @ 08/26/2022
-  Last Edit: Kelvin F @ 08/26/2022
-  Purpose: Verifies integrity of created/edited experiment object, closes modal editor
-  Issues: Add more integrity checks
-  */   
-  function submitModal(close){
-    if (experiment.name === null || experiment.name === ""){
-      alert("Experiment name cannot be null.")
-      return
-    }
-
-    if(modal.add){
-      if(experiment.device === null){
-        alert("Device cannot be null.")
-        return
-      }
-
-      addExperiment()
-    } else {
-      editExperiment()
-    }
-    close();
-  }
-
-  /*
-  Input from: submitModal()
-  Outputs to: API -> database (backend)
-  Created by: Kelvin F @ 08/26/2022
-  Last Edit: Kelvin F @ 08/26/2022
-  Purpose: Pushes newly created 'experiment' object to backend
-  */   
-  async function addExperiment(e) {
-    console.log("POD SELECTION: ", experiment.pod_selection)
-    await axios
-      .post(`/api/experiments/`, 
-        { 
-          name: experiment.name,
-          device: experiment.device,
-          pod_selection: experiment.pod_selection,
-          start_date: experiment.start_date,
-          recipe: experiment.recipe
-        })
-      .catch((err) => console.log(err));
-    fetchExperiments();
-  };
-
-  /*
-  Input from: submitModal()
-  Outputs to: API -> database (backend)
-  Created by: Kelvin F @ 08/26/2022
-  Last Edit: Kelvin F @ 08/26/2022
-  Purpose: Pushes edited 'experiment' object changes to backend. Also patches pod changes
-  */   
-  async function editExperiment(e) {
-    await axios
-      .patch(`/api/experiments/${experiment.id}/`, 
-      { 
-        name: experiment.name,
-        device: experiment.device,
-        recipe: experiment.recipe
-      })
-      .then((res) => {
-        fetchExperiments()
-      })
-      .catch((err) => console.log(err));
-
-    for (const [key, value] of Object.entries(experiment.pod_selection)) {
-      let pod_found = false;
-      // pod 0: [{position: 1, ...}]
-      // what if experiment.pods does not have all filled pods? what if only 4 pods in pod list, but not a fifth?
-      for(let p = 0; p < experiment.pods.length; p++) {
-        // found the pod to be replaced
-        if(experiment.pods[p].position === parseInt(key)) {
-          axios
-            .patch(`/api/pods/${experiment.pods[p].id}/`, { end_date: experiment.start_date }) // end date set to today
-            .catch((err) => console.log(err));
-          
-          // if a new pod was specified for replacement and it WASNT the empty pod option
-          if(value !== '') {  
-            axios
-            .post(`/api/pods/`, { start_date: experiment.start_date, position: parseInt(key), plant: parseInt(value), experiment: experiment.id }) // end date set to today
-            .catch((err) => console.log(err));
-          }
-          pod_found = true
-          break
-        }
-      }
-
-      // otherwise, if no replaceable pod is found, just create a new one
-      if(!pod_found) {
-        axios
-          .post(`/api/pods/`, 
-            { 
-              start_date: experiment.start_date,
-              position: parseInt(key),
-              plant: parseInt(value), 
-              experiment: experiment.id,
-            })
-          .catch((err) => console.log(err));
-      }
-    }
-    fetchExperiments();
-  };
-
-  /*
-  Input from: renderAvailableDevices()
-  Outputs to: Experiment object
-  Created by: Kelvin F @ 08/26/2022
-  Last Edit: Kelvin F @ 08/26/2022
-  Purpose: Sets the device to be used during experiment selection in modal
-  */   
-  function setDevice(e){
-    let selected_device = available_devices.find(device => device.id.toString() === e.target.value)
-    //console.log("SELECTED DEVICE ID: ", selected_device)
-    if(selected_device === undefined) {
-      setExperiment({...experiment, device: null, device_capacity: null})
-    } else {
-      setExperiment({...experiment, device: selected_device.id, device_capacity: selected_device.capacity})
-    }
-  }
-
-  /*
-  Input from: renderModal()
-  Outputs to: Frontend experiment form
-  Created by: Kelvin F @ 08/26/2022
-  Last Edit: Kelvin F @ 08/26/2022
-  Purpose: Render a list of available devices an experiment can be allocated to
-  */   
-  function renderAvailableDevices(){
-    return (
-      <select className="device_selection" defaultValue={experiment.device} name="device" onChange={(e) => setDevice(e)}>
-        { modal.add ? <option key={null} value={null}>SELECT DEVICE</option> : <option key={experiment.device} value={experiment.device}> {experiment.device_name ?? null} </option>  }
-        {available_devices.map(item => (
-            <option key={item.id} value={item.id}> {item.name} </option>
-        ))}
-        
-      </select>
-    )
-  }
-
-  /*
-  Input from: renderPodSelection()
-  Outputs to: setExperiment()
-  Created by: Kelvin F @ 08/26/2022
-  Last Edit: Kelvin F @ 08/26/2022
-  Purpose: Save a pod object into the experiment creation form upon pod selection 
-  */   
-  function setPod(e){
-    let position = e.target.name.substring(4); 
-    let temp = experiment.pod_selection
-    temp[position] = e.target.value
-    setExperiment({...experiment, pod_selection: temp})
-    //console.log(experiment.pod_selection)
-  }
-
-  /*
-  Input from: renderModal()
-  Outputs to: experiment form object
-  Created by: Kelvin F @ 08/26/2022
-  Last Edit: Kelvin F @ 08/26/2022
-  Purpose: Render numerous pod selection lists to a frontend experiment creation form
-  */  
-  function renderPodSelection(){
-    let pod_container = []
-    // so long as pods is loaded
-    if (experiment.device !== null) {
-      for(let i = 0; i < experiment.device_capacity; i++) {
-        let curr_pod = experiment.pods.filter(pod => pod.position === (i+1))[0] ?? null
-        let plant = null;      
-
-        if (curr_pod !== null){
-          plant = curr_pod['plant']
-        }
-
-        pod_container.push(
-          <select className="pod" name={"pod_"+(i+1)} defaultValue={plant} onChange={(e) => setPod(e)}>
-              <option value={null}></option>
-              {plantList.map(item => (
-                  <option key={item.id} value={item.id}> {item.name} </option>
-              ))}
-          </select>
-        )
-      }
-    }
-    return pod_container
-  }
+     /*
+    Input from: None
+    Outputs to: completedExperiments
+    Created by: Kelvin F 09/10/2022
+    Last Edit: Kelvin F 09/10/2022
+    Purpose: Fetches all completed experiments from DB
+    */
+    async function fetchCompletedExperiments() {
+        const result = await axios(
+          '/api/experiments/completed/',
+        );
+        setCompletedExperiments(result.data)
+    } 
 
     /*
-  Input from: renderModal()
-  Outputs to: experiment form object
-  Created by: Kelvin F @ 08/26/2022
-  Last Edit: Kelvin F @ 08/26/2022
-  Purpose: Render a recipe selection list to a frontend experiment creation form
-  */  
-  function renderRecipeSelection(){
-    return (
-      <select className="experiment_recipe_selection" name="experiment_recipe_selection" default_value="null" onChange={(e) => setExperiment({...experiment, recipe: e.target.value})}>
-        <option value={null}></option>
-        {recipeList.map(item => (
-          <option key={item.id} value={item.id}> {item.name} </option>
-        ))}
-      </select>
-    )
+    Input from: None
+    Outputs to: phaseList
+    Created by: Stella T 08/26/2022
+    Last Edit: Stella T 08/26/2022
+    Purpose: Fetches all the phases from DB
+    */
+    async function fetchPhases() {
+        const result = await axios(
+          '/api/phases/',
+        );
+        setPhaseList(result.data)
+    } 
+
+    /*
+    Input from: None
+    Outputs to: recipeList
+    Created by: Stella T 08/26/2022
+    Last Edit: Stella T 08/26/2022
+    Purpose: Fetches all the recipes from DB
+    */
+    async function fetchRecipes() {
+        const result = await axios(
+          '/api/recipes/',
+        );
+        setRecipeList(result.data)
+      } 
+
+    /*
+    Input from: None
+    Outputs to: plantList
+    Created by: Stella T 08/26/2022
+    Last Edit: Stella T 08/26/2022
+    Purpose: Fetches all the plants from DB
+    */
+    async function fetchPlants() {
+        const result = await axios(
+          '/api/plants/',
+        );
+        setPlantList(result.data)
+      }
+
+    /*
+    Input from: renderDevices
+    Outputs to: activeExperiments, availableDevices
+    Created by: Kelvin F 08/26/2022
+    Last Edit: Kelvin F 08/26/2022
+    Purpose: Terminates an experiment by pushing end date, status=1 to DB object
+    */
+    async function terminateExperiment(id) {
+        let todayDate = new Date();
+        let year = todayDate.getUTCFullYear();
+        let month = todayDate.getUTCMonth() + 1;
+        month = month > 9 ? month : '0'+month;
+        let day = todayDate.getUTCDate();
+        day = day > 9 ? day : '0'+day;
+
+        await axios.post(`/api/experiments/terminate/`, {id: id, end_date: year+"-"+month+"-"+day});
+        fetchActiveExperiments()
+        fetchAvailableDevices()
+        fetchCompletedExperiments()
+    }
+
+    /*
+    Input from: renderDevices
+    Outputs to: activeExperiments, availableDevices
+    Created by: Kelvin F 08/26/2022
+    Last Edit: Kelvin F 08/26/2022
+    Purpose: Deletes an experiment object and all associated readings and pods
+    */
+    async function deleteExperiment(id) {
+      await axios.post(`/api/experiments/delete/`, {id: id});
+      fetchCompletedExperiments()
   }
- 
-  /*
-  Input/Called from: Main render (return) function
-  Outputs to: experiment form object
-  Created by: Kelvin F @ 08/26/2022
-  Last Edit: Kelvin F @ 08/26/2022
-  Purpose: Render selection lists for an experiment name, pods and recipes to a frontend experiment creation form 
-  */  
-  function renderModal(){
-    return (
-      <Popup open={modal.show} onClose={() => closeModal()} modal nested>
-      {(close) => (
-        <div className="modal" onClick={close}>
-          <div className="modal_body" onClick={e => e.stopPropagation()}>
-            <div className="modal_type"> { modal.add === true ? "Add Experiment" : "Edit Experiment" } </div>
-            <div className="modal_content">
-              <div className="form_row">
-                <input name="name" value={experiment.name} placeholder = {"Experiment Name"} onChange={(e) => setExperiment({...experiment, name: e.target.value})} />
-              </div>
-              <div className="form_row">
-                {renderAvailableDevices()}
-              </div>
-              <div className="form_row">
-                <input className="date_selection" type="date" name="start_date" value={experiment.start_date} onChange={(e) => setExperiment({...experiment, start_date: e.target.value})} />
-              </div>
-              <div className="form_row">{renderPodSelection()}</div>
-              <div className="form_row">{renderRecipeSelection()}</div>
-
-              <button className='save' onClick={() => {submitModal(close);}}>Save</button>
-            </div>
-          </div>
-         </div>
-      )}
-      </Popup>
+    /*
+    Input from: None
+    Outputs to: activeExperiments, availableDevices, phaseList, recipeList, plantList
+    Created by: Kelvin F 08/26/2022
+    Last Edit: Kelvin F 08/26/2022
+    Purpose: Upon page load, it runs once and gets available + active devices; phases; recipes; and plants
+    */
+    useEffect(() => {
+        fetchAvailableDevices();
+        fetchActiveExperiments();
+        fetchCompletedExperiments();
+        fetchPhases();
+        fetchRecipes();
+        fetchPlants();
+    }, []); // run once after start
 
 
-    )
-  }
+    /*
+    Input from: None
+    Outputs to: None
+    Created by: Stella T 08/26/2022
+    Last Edit: Stella T 08/26/2022
+    Purpose: Given a function X and a time interval Y,
+    This function will wait Y then call X over and over.
+    In other words, a frontend cronjob.
+    See useInterval() in use below for an example
+    */
+    function useInterval(callback, delay) {
+        const savedCallback = useRef();
+      
+        // Remember the latest function.
+        useEffect(() => {
+          savedCallback.current = callback;
+        }, [callback]);
+      
+        // Set up the interval.
+        useEffect(() => {
+          function tick() {
+            savedCallback.current();
+          }
+          if (delay !== null) {
+            let id = setInterval(tick, delay);
+            return () => clearInterval(id);
+          }
+        }, [delay]);
+      }
 
-  /*
-  Input/Called from: Main render (return) function
-  Outputs to: None
-  Created by: Kelvin F @ 08/26/2022
-  Last Edit: Kelvin F @ 08/26/2022
-  Purpose: Close and reset the modal/experiment form
-  */  
-  function closeModal(){
-    setModal({...modal, show: false}) 
-    setExperiment({name: null, device: null, device_name: null, pods: [], start_date: year+"-"+month+"-"+day, pod_selection: {}})
-  }
+    /*
+    Input from: None
+    Outputs to: activeExperiments
+    Created by: Stella T 08/26/2022
+    Last Edit: Stella T 08/26/2022
+    Purpose: Checks if devices are online according to the DATABASE. NOT THE INDIVIDUAL DEVICES.
+    To check if an individual device is offline, send a command to it to verify.
+    */
+    function checkDevicesOnline(){
+        axios
+            .post(`/api/devices/check_devices_online/`)
+            .then((res) => {
 
-  /*
-  Input/Called from: Dashboard.js
-  Outputs to: Frontend
-  Created by: Kelvin F @ 08/26/2022
-  Last Edit: Kelvin F @ 08/26/2022
-  Purpose: Display experiments tab, experiment edit modal
-  */  
-  return (
-    <div>
-        <button onClick={() => openModal(null)}>+</button>
-        {experimentList.map(item => (
-            <div key={item.id} className="item">
-                <div className="object_container">
-                  <div className="object_top">
-
-                    <div className="object_description">
-                        <div className="bold_font">
-                            {item.device_name} <span className="normal_font">{ " | " + item.name + ": "} </span>
-                            <div style={{display:'inline', color: item.end_date === null ? 'gold':'green'}}>{item.end_date === null ? "ACTIVE":"CONCLUDED"}</div>
-                        </div>
-                        {item.score !== null ? <div>Score: { item.score } </div> : <></>}
-                    </div>
-                    <div className="object_content">                          
-                        <PodCarousel experimentID={item.id} deviceId={item.device}></PodCarousel>
-                    </div>
-                    <div className='object_actions'>
-                        {item.end_date === null ? 
-                          <>
-                            <img className="menu_icon" src={menu_icon} alt="NO IMG!"/> 
-                            <li key="edit"><button onClick={() => openModal(item)}>EDIT</button></li>
-                            <li key="conclude"><button onClick={() => { if (window.confirm(`You are about to conclude experiment ${item.id}, ${item.name}`)) concludeExperiment(item.id) }}>CONCLUDE EXPERIMENT</button></li>
-                            <li key="add_reading"><ExperimentReading exp_id={item.id}></ExperimentReading></li>
-                          </>
-                        :
-                          <img src={menu_icon} alt="NO IMG!"/> 
+                // for each device, determine if online or offline
+                res.data.forEach((device) => {
+                    let index = activeExperiments.findIndex(d => d.device_id === device.id)
+                    if(index === -1) {
+                        index = availableDevices.findIndex(d => d.id === device.id)
+                        if (availableDevices[index].is_online !== device.is_online){
+                            let updated_device = availableDevices[index]
+                            updated_device.is_online = device.is_online
+                            setAvailableDevices([
+                            ...availableDevices.slice(0, index),
+                            updated_device,
+                            ...availableDevices.slice(index + 1)
+                            ])
                         }
+                    } else {
+                        if (activeExperiments[index].is_online !== device.is_online){
+                            let updated_device = activeExperiments[index]
+                            updated_device.is_online = device.is_online
+                            setActiveExperiments([
+                            ...activeExperiments.slice(0, index),
+                            updated_device,
+                            ...activeExperiments.slice(index + 1)
+                            ])
+                        }
+                    }
+                })
+            }).catch((err) => console.log("LD error: ", err))
+    }
+
+    /*
+    Input from: None
+    Outputs to: activeExperiments, see checkDevicesOnline()
+    Created by: Stella T 08/26/2022
+    Last Edit: Stella T 08/26/2022
+    Purpose:     Checks if devices are offline every minute
+    It is 60000 because time in Javascript is done via milliseconds. 
+    */
+    useInterval(() => {
+        checkDevicesOnline()
+    }, 60000);
+
+    /*
+    Input from: None
+    Outputs to: selectedDeviceStatus
+    Created by: Stella T 08/26/2022
+    Last Edit: Stella T 08/26/2022
+    Purpose: Renders experiment status nav bar; experiment states include: active, completed,  free
+    */
+    function renderNav() {
+        return (
+          <div className="nav" id="nav" style={{fontSize: "12px"}}>
+            <span className={selectedDeviceStatus === "active" ? "nav-link active" : "nav-link"} onClick={() => setSelectedDeviceStatus("active")}>
+              ACTIVE
+            </span>
+            <span className={selectedDeviceStatus === "completed" ? "nav-link active" : "nav-link"} onClick={() => setSelectedDeviceStatus("completed")}>
+              COMPLETED
+            </span>
+            <span className={selectedDeviceStatus === "free" ? "nav-link active" : "nav-link"} onClick={() => setSelectedDeviceStatus("free")}>
+              FREE DEVICES
+            </span>
+          </div>
+        );
+      };
+
+    /*
+    Input from: renderCommand() & renderCommandParameters()
+    Outputs to: command
+    Created by: Stella T 08/26/2022
+    Last Edit: Stella T 08/26/2022
+    Purpose: MakesAPI Call that sends a command to an individual device
+    */
+    async function sendCommand(e){
+        e.preventDefault()
+        set_command({...command, response: {}})
+        const result = await axios
+          .post(`/api/devices/send_command/`, 
+            { 
+                id: command.id,
+                parameters: command
+            });
+        
+        set_command({...command, response: result.data})
+    }
+
+    /*
+    Input from: experiment & renderRecipeSelection()
+    Outputs to: activeExperiments
+    Created by: Stella T 08/26/2022
+    Last Edit: Stella T 08/26/2022
+    Purpose: Makes API Call that sends the recipe of an experiment to a device via MQTT
+    */
+    async function changeRecipe(){
+        const result = await axios
+        .post(`/api/devices/change_recipe/`, 
+          { 
+              device_id: experiment.device,
+              new_recipe_id: parseInt(experiment.recipe)
+
+          });
+        let index = activeExperiments.findIndex(d => d.id === device.id)
+        if(index !== -1) {
+            let updated_device = activeExperiments[index]
+            updated_device['current_recipe'] = result.data.current_recipe
+            updated_device['dailyStartTime'] = result.data.dailyStartTime
+            setActiveExperiments([
+                ...activeExperiments.slice(0, index),
+                updated_device,
+                ...activeExperiments.slice(index + 1)
+            ])
+        }
+    }
+
+    /*
+    Input from: selectedDeviceStatus, activeExperiments, availableDevices
+    Outputs to: renderModal
+    Created by: Stella T 08/26/2022
+    Last Edit: Stella T 08/26/2022
+    Purpose: Renders device modules to screen 
+    */
+    function renderDevices(){
+        const deviceList = []
+        if (selectedDeviceStatus === 'active'){   
+            activeExperiments.map((item) => {
+                deviceList.push(
+                    <div key={'active_' + item.id} className="object_container">
+                        <div className="object_top">
+                            <div className="object_description">
+                                <div className="bold_font tooltip" data-tooltip={"DEVICE ID: "+item.device_id + "\nMAC: " + item.mac_address.toUpperCase()}>
+                                    {item.device_name}<span className="blink_me" style={{ color: item.is_online ? 'green': 'red'}}>{"\u00a0"}● {"\u00a0"}</span><span className="normal_font">{item.name}</span> 
+                                </div>
+                                {item.score !== null ? <div>Score: { item.score } </div>: <></>}
+                            </div>
+                            <div className="object_content">                          
+                                <PodCarousel experimentID={item.id} deviceId={item.device} status={item.status}></PodCarousel>
+                            </div>
+                        </div>
+                        <RecipeBar phaseList = {phaseList} recipe = {recipeList?.filter(obj => obj.id === item.recipe_id)[0]} recipe_name = {item.current_recipe} experiment = {item}></RecipeBar>
+
+                        <div className='object_actions'>
+                            <img className="menu_icon" src={menu_icon} alt="NO IMG!"/>
+                            {item.end_date === null && <li key="terminate"><button onClick={() => { if (window.confirm(`Terminate experiment "${item.name}"?`)) terminateExperiment(item.id) }}>TERMINATE</button></li> }
+                            <li key="addReading"><ExperimentReading exp_id={item.id} exp_name={item.name}></ExperimentReading></li>
+                            <li key="sendCommand"><button onClick={() => set_command({...command, show: true, device: item.device_id})}>SEND COMMAND</button></li>
+                        </div>
                     </div>
-                  </div>
-                  <RecipeBar recipe={item.recipe} phaseList={phaseList} recipe_name = {item.recipe_name} experiment={item}></RecipeBar>
-              </div>
-            </div>
-        ))}
-        {renderModal()}
+                )
+            })
+        } else if  (selectedDeviceStatus === 'completed'){
+            completedExperiments.map((item) => {
+                deviceList.push(
+                    <div key={'active_' + item.id} className="object_container">
+                        <div className="object_top">
+                            <div className="object_description">
+                                <div className="bold_font tooltip" data-tooltip={"DEVICE ID: "+item.device_id + "\nMAC: " + item.mac_address.toUpperCase()}>
+                                    {item.device_name+ " | "}{item.status === 1 ? <span style={{color:"red"}}>TERMINATED</span>:<span style={{color:"green"}}>CONCLUDED</span>}<span className="normal_font">{" | "+item.name}</span> 
+                                </div>
+                                {item.score !== null ? <div>Score: { item.score } </div>: <></>}
+                            </div>
+                            <div className="object_content">                          
+                                <PodCarousel experimentID={item.id} deviceId={item.device} status={item.status}></PodCarousel>
+                            </div>
+                        </div>
+                        <RecipeBar phaseList = {phaseList} recipe = {recipeList?.filter(obj => obj.id === item.recipe_id)[0]} recipe_name = {item.current_recipe} experiment = {item}></RecipeBar>
+                        <div className='object_actions'>
+                            <img className="menu_icon" src={menu_icon} alt="NO IMG!"/>
+                            {<li key="delete"><button onClick={() => { if (window.confirm(`Delete experiment "${item.name}"?`)) deleteExperiment(item.id) }}>DELETE EXPERIMENT</button></li> }
+                        </div>
+                    </div>
+                )
+            })
+        } else if  (selectedDeviceStatus === 'free'){
+            availableDevices.map((item) => {
+                deviceList.push(
+                    <div key={'free_' + item.id}  className="object_container">
+                        <div className="object_top">
+                            <div className="object_description">
+                              <div className="bold_font tooltip" data-tooltip={"DEVICE ID: "+item.id + " | MAC: " + item.mac_address.toUpperCase()} >
+                                  {item.name}<span className="blink_me" style={{ color: item.is_online ? 'green': 'red'}}>{"\u00a0"}● {"\u00a0"}</span>
+                              </div>
+                              {/* <div>Registered: { item.registration_date.substring(0, 10) }</div> */}
+                            </div>
+                        </div>
+                        {item.is_online ?  <div className= "empty_object" onClick={() => {setDevice({...device, show:true}); setExperiment({...experiment, device:item.id, device_name:item.name, device_capacity:item.capacity});}}>  ADD EXPERIMENT</div> : <div className= "empty_object">DEVICE OFFLINE</div>}
+                       
+                        <div className='object_actions'>
+                            <img className="menu_icon" src={menu_icon} alt="NO IMG!"/>
+                            <li key="sendCommand"><button onClick={() => set_command({...command, show: true, device: item.id})}>SEND COMMAND</button></li>
+                        </div>
+                    </div>
+                )
+            })
+        }
+        return deviceList
+    }
 
-    </div>
+    /*
+    Input from: renderPodSelection
+    Outputs to: experiment
+    Created by: Kelvin F 08/26/2022
+    Last Edit: Kelvin F 08/26/2022
+    Purpose: Sets the plant selected for a given pod of an experiment
+    */
+    function setPod(e){
+        let position = e.target.name.substring(4); 
+        let temp = experiment.pod_selection
+        temp[position] = e.target.value
+        setExperiment({...experiment, pod_selection: temp})
+    }
+    
 
-  );
+    /*
+    Input from: experiment
+    Outputs to: renderModal()
+    Created by: Kelvin F 08/26/2022
+    Last Edit: Kelvin F 08/26/2022
+    Purpose: Sets the plant selected for a given pod of an experiment
+    */
+    function renderPodSelection(){
+        let podContainer = []
+        // so long as pods are loaded
+        for(let i = 0; i < experiment.device_capacity; i++) {
+            let currPod = experiment.pods.filter(pod => pod.position === (i+1))[0] ?? null
+            let plant = null;      
+
+            if (currPod !== null){
+                plant = currPod['plant']
+            }
+
+            podContainer.push(
+                <select className="pod" name={"pod_"+(i+1)} defaultValue={plant} onChange={(e) => setPod(e)}>
+                    <option value={null}></option>
+                    {plantList.map(item => (
+                        <option key={item.id} value={item.id}> {item.name} </option>
+                    ))}
+                </select>
+            )
+        }
+        return podContainer
+    }
+
+    /*
+    Input from: recipeList
+    Outputs to: renderModal()
+    Created by: Stella T 08/26/2022
+    Last Edit: Stella T 08/26/2022
+    Purpose: Renders a dropdown of recipes, used to change the recipe on a device
+    */
+    function renderRecipeSelection(){
+        return (
+            <select className="experiment_recipe_selection" name="experiment_recipe_selection" default_value="null" onChange={(e) => setExperiment({...experiment, recipe: e.target.value})}>
+                <option value={null}></option>
+                {recipeList.map(item => (
+                    <option key={item.id} value={item.id}> {item.name} </option>
+                ))}
+            </select>
+        )
+    }
+
+    /*
+    Input from: experiment
+    Outputs to: availableDevices, activeExperiments, experiment
+    Created by: Stella T 08/26/2022
+    Last Edit: Stella T 08/26/2022
+    Purpose: Makes API call to create another experiment and change the recipe on the device running the experiment
+    */
+    function submitModal(close){
+        if (experiment.name === null || experiment.name === ""){
+          alert("Experiment name cannot be null.")
+          return
+        }
+        axios
+        .post(`/api/experiments/`, 
+          { 
+            name: experiment.name,
+            device: experiment.device,
+            pod_selection: experiment.pod_selection,
+            start_date: experiment.start_date,
+            recipe: experiment.recipe
+          })
+        .then(res =>{
+            changeRecipe()
+            fetchAvailableDevices();
+            fetchActiveExperiments();
+        })
+        .catch((err) => console.log(err));
+        
+        close();
+
+    }
+
+    /*
+    Input from: device
+    Outputs to: experiment & submitModal()
+    Created by: Stella T 08/26/2022
+    Last Edit: Stella T 08/26/2022
+    Purpose: Renders modal where you can create an experiment on a given device
+    */
+    function renderModal(){
+        return (
+            <Popup open={device.show} onClose={() => {setDevice({...device, show: false}); closeModal();} } modal nested>
+                {(close) => (
+                <div className="modal" onClick={close}>
+                    <div className="modal_body"  onClick={e => e.stopPropagation()}>
+                        <div className="modal_content">
+                            <div> DEVICE {experiment.device_name} </div>
+                            <div className="form_row">
+                                <input name="name" value={experiment.name} placeholder = {"Experiment Name"} onChange={(e) => setExperiment({...experiment, name: e.target.value})} />
+                            </div>
+                            <div className="form_row">
+                                <input className="date_selection" type="date" name="start_date" value={experiment.start_date} onChange={(e) => setExperiment({...experiment, start_date: e.target.value})} />
+                            </div>
+                            <div className="form_row">{renderPodSelection()}</div>
+                            <div className="form_row">{renderRecipeSelection()}</div>
+
+                            <button className='save' onClick={() => {
+                                submitModal(close);
+                            }}>Save</button>
+
+                        </div>
+                    </div>
+                </div>
+                )}
+            </Popup>
+        )
+    }
+
+    /*
+    Input from: renderModal()
+    Outputs to: experiment
+    Created by: Stella T 08/26/2022
+    Last Edit: Stella T 08/26/2022
+    Purpose: Resets experiment's state upon closing the add experiment module (renderModal())
+    */
+    function closeModal(){
+        setExperiment({name: null, device: null, device_name: null, pods: [], start_date: year+"-"+month+"-"+day, pod_selection: {}})
+    }
+
+
+    /*
+    Input from: renderCommand()
+    Outputs to: renderCommand()
+    Created by: Stella T 08/26/2022
+    Last Edit: Stella T 08/26/2022
+    Purpose: Based on the command to be sent to a device, loads the parameters that needed to be filled out. 
+    */
+    function renderCommandParameters(id){
+        switch(true) {
+            case id === '7':
+                return(
+                    <div>
+                        <div>
+                            Select Timezone
+                            <select value={command.timezone} onChange={(e) => set_command({...command, timezone: e.target.value})} >
+                                <option value="Etc/GMT-12">Etc/GMT+12</option>
+                                <option value="Etc/GMT-11">Etc/GMT+11</option>
+                                <option value="Etc/GMT-10">Etc/GMT+10</option>
+                                <option value="Etc/GMT-9">Etc/GMT+9</option>
+                                <option value="Etc/GMT-8">Etc/GMT+8</option>
+                                <option value="Etc/GMT-7">Etc/GMT+7</option>
+                                <option value="Etc/GMT-6">Etc/GMT+6</option>
+                                <option value="Etc/GMT-5">Etc/GMT+5</option>
+                                <option value="Etc/GMT-4">Etc/GMT+4</option>
+                                <option value="Etc/GMT-3">Etc/GMT+3</option>
+                                <option value="Etc/GMT-2">Etc/GMT+2</option>
+                                <option value="Etc/GMT-1">Etc/GMT+1</option>
+                                <option value="Etc/GMT">Etc/GMT</option>
+                                <option value="Etc/GMT+1">Etc/GMT-1</option>
+                                <option value="Etc/GMT+2">Etc/GMT-2</option>
+                                <option value="Etc/GMT+3">Etc/GMT-3</option>
+                                <option value="Etc/GMT+4">Etc/GMT-4</option>
+                                <option value="Etc/GMT+5">Etc/GMT-5</option>
+                                <option value="Etc/GMT+6">Etc/GMT-6</option>
+                                <option value="Etc/GMT+7">Etc/GMT-7</option>
+                                <option value="Etc/GMT+8">Etc/GMT-8</option>
+                                <option value="Etc/GMT+9">Etc/GMT-9</option>
+                                <option value="Etc/GMT+10">Etc/GMT-10</option>
+                                <option value="Etc/GMT+11">Etc/GMT-11</option>
+                                <option value="Etc/GMT+12">Etc/GMT-12</option>
+                            </select>
+                        </div>
+                        <div>
+                        </div>
+                    </div>
+                )
+            case id === '11':
+                return(
+                    <div>
+                        <div>
+                            Hour (0 to 23):
+                            <input type="number" value={command.hour} min={0} max={23} onChange={(e) => {set_command({...command, hour: e.target.value})}} />
+                        </div>
+                        <div>
+                            Minute (0 to 59):
+                            <input type="number" value={command.minute} min={0} max={59} onChange={(e) => {set_command({...command, minute: e.target.value})}} />
+                        </div>
+                    </div>
+                )
+            case id === '14':
+                return(
+                    <div>
+                        <div>
+                            Stage:
+                            <input type="number" value={command.stage} min={0} onChange={(e) => {set_command({...command, stage: e.target.value})}} />
+                        </div>
+                        <div>
+                            Cycle:
+                            <input type="number" value={command.cycle} min={0} onChange={(e) => {set_command({...command, cycle: e.target.value})}} />
+                        </div>
+                    </div>
+            )
+            default:
+                return(<></>)
+        } 
+    }
+
+    /*
+    Input from: command
+    Outputs to: sendCommand()
+    Created by: Stella T 08/26/2022
+    Last Edit: Stella T 08/26/2022
+    Purpose: Renders the module to send MQTT commands to a given device. 
+    */
+    function renderCommand(){
+        return (
+            <Popup open={command.show} onClose={() => set_command({...command, response: {}, show: false})} modal nested>
+                {(close) => (
+                <div className="modal" onClick={close}>
+                    <div className="modal_body"  onClick={e => e.stopPropagation()}>
+                        <div className="modal_content">
+                            <div style={{width: 'max-content'}}>     
+                                
+                            </div>
+                            <div className="form_row">
+                                Device ID: {command.device}
+                            </div>
+                            <div className="form_row">
+                                <select value={command.id} onChange={(e) => set_command({...command, id: e.target.value})} >
+                                    <option value="0">Get Device State</option>
+                                    {/* <option value="1">Get Device Logs</option> */}
+                                    <option value="7">Change Timezone</option>
+                                    <option value="11">Change Start Time</option>
+                                    <option value="12">Trigger OTA</option>
+                                    <option value="14">Change Stage and Cycle</option>
+                                </select>
+                            </div>
+                            {renderCommandParameters(command.id)}
+                            <div className='form-row'>
+                                Response: 
+                                <pre>{JSON.stringify(command.response, null, 2) }</pre>
+                                {/* <button className='save' onClick={() => {navigator.clipboard.writeText(JSON.stringify(command.response))}}>COPY RESPONSE</button> */}
+                            </div>
+                            <button className='save' onClick={(e) => {
+                                sendCommand(e)
+                                // close()
+                            }}>Send Command</button>
+                        </div>
+                    </div>
+                </div>
+                )}
+            </Popup>
+        )
+    }
+
+    /*
+    Input from: None
+    Outputs to: None
+    Created by: Stella T 08/26/2022
+    Last Edit: Stella T 08/26/2022
+    Purpose: Renders the container that renders everything on the page. 
+    Determines the order of the other modules on the page
+    */
+    return (
+        <div>
+            {renderNav()}
+            {renderDevices()}
+            {renderModal()}
+            {renderCommand()}
+        </div>
+      );
 }
 
-export default ExperimentList;
+export default Device

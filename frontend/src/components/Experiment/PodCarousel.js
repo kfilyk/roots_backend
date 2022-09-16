@@ -15,8 +15,8 @@ const PodCarousel = (props) => {
   Last Edit: Kelvin F 08/31/2022
   Purpose: Given an experiment id, retrieves its device's capacity and info about its pods including plant name
   */
-  async function fetchData(id) {
-    const result = await axios.post(`/api/pods/populate_pod_carousel/`, {"id":id});
+  async function fetchData(id, status) {
+    const result = await axios.post(`/api/pods/populate_pod_carousel/`, {"id":id, "status":status});
     setPodList(result.data.pods)
     setCapacity(result.data.capacity)
   } 
@@ -29,8 +29,8 @@ const PodCarousel = (props) => {
   Purpose: Upon page load, grabs the device capacity and pods for a particular experiment
   */
   useEffect(() => {
-    fetchData(props?.experimentID);
-  }, [props?.experimentID]);
+    fetchData(props?.experimentID, props?.status);
+  }, [props?.experimentID, props?.status]);
 
   /*
   Input from: podList
@@ -41,7 +41,7 @@ const PodCarousel = (props) => {
   */
   function renderProgressCircle(pod, pos){
     //console.log(pod)
-    if (pod === null || pod.end_date !== null) {
+    if (pod === null) {
       pod = {'plant_name': 'Empty', 'score': 0, 'key': "empty_pod_"+pos} 
     } else {
       pod.key = "exp=" +pod.experiment + "_position=" + pod.position + "_plant=" + pod.plant_id

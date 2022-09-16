@@ -43,9 +43,12 @@ def update_experiments_daily():
             # if the experiment has a recipe allocated to it, and the current date does not exceed the max date range
             if (curr_exp.start_date.date() + timedelta(curr_exp.recipe_days)) < curr_date.date():
                 curr_exp.end_date = curr_date - timedelta(1)
+                curr_exp.status = 2
                 curr_exp.save()
                 pods = Pod.objects.filter(experiment = curr_exp.id, end_date__isnull=True)
                 pods.update(end_date=curr_date)
+                pods.update(status=2)
+
             else: 
                 # this results in a summation of days from each phase up until the exact day is reached
                 curr_exp_day = curr_exp.day

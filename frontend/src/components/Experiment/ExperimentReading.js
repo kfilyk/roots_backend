@@ -219,94 +219,94 @@ const ExperimentReading = (props) => {
             return (
                 <div className='pod_r_modal'>
                     <div className="exp_r_form_row">
-                        <input className="exp_r_input" placeholder="Node Count" type="number" value={findSelectedPodValue('node_count') || ""} name={"node_count"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
+                        <input placeholder="Node Count" type="number" value={findSelectedPodValue('node_count') || ""} name={"node_count"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
                     </div>
                     <div className="exp_r_form_row">
-                        <input className="exp_r_input" placeholder="Mean Internode Distance" type="number" value={findSelectedPodValue('internode_distance') || ""} name={"internode_distance"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
+                        <input placeholder="Mean Internode Distance" type="number" value={findSelectedPodValue('internode_distance') || ""} name={"internode_distance"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
                     </div>
                     <div className="exp_r_form_row">
-                        <input className="exp_r_input" placeholder="Leaf Count" type="number" value={findSelectedPodValue('leaf_count') || ""} name={"leaf_count"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
+                        <input placeholder="Leaf Count" type="number" value={findSelectedPodValue('leaf_count') || ""} name={"leaf_count"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
                     </div>
                     <div className="exp_r_form_row">
-                        <input className="exp_r_input" placeholder="Germination Rate" type="number" value={findSelectedPodValue('germination_rate') || ""} name={"germination_rate"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
+                        <input placeholder="Germination Rate" type="number" value={findSelectedPodValue('germination_rate') || ""} name={"germination_rate"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
                     </div>
                     <div className='pr_coverage'>
                         <label> Pest Coverage: {findSelectedPodValue('pest_coverage') || 0}% </label>
-                        <input className="exp_r_input" name="pest_coverage" value={findSelectedPodValue('pest_coverage') || 0} type="range" min={0} max={100} onChange={(e) => {setSelectedPodValue(e)}} />
+                        <input name="pest_coverage" value={findSelectedPodValue('pest_coverage') || 0} type="range" min={0} max={100} onChange={(e) => {setSelectedPodValue(e)}} />
                     </div>
                     <div className='pr_coverage'>
                         <label> Algae Coverage: {findSelectedPodValue('algae_coverage') || 0}% </label>
-                        <input className="exp_r_input" name="algae_coverage" value={findSelectedPodValue('algae_coverage') || 0} type="range" min={0} max={100} onChange={(e) => {setSelectedPodValue(e)}} />
+                        <input name="algae_coverage" value={findSelectedPodValue('algae_coverage') || 0} type="range" min={0} max={100} onChange={(e) => {setSelectedPodValue(e)}} />
                     </div>
                     <div className='pr_coverage'>
                         <label> Blight Coverage: {findSelectedPodValue('blight_coverage') || 0}% </label>
-                        <input className="exp_r_input" name="blight_coverage" value={findSelectedPodValue('blight_coverage') || 0} type="range" min={0} max={100} onChange={(e) => {setSelectedPodValue(e)}} />
+                        <input name="blight_coverage" value={findSelectedPodValue('blight_coverage') || 0} type="range" min={0} max={100} onChange={(e) => {setSelectedPodValue(e)}} />
                     </div>
                     <div className="exp_r_form_row">
-                        <input className="exp_r_input" placeholder="Harvest Weight" type="number" value={findSelectedPodValue('harvest_weight') || ""} name={"harvest_weight"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
+                        <input placeholder="Harvest Weight" type="number" value={findSelectedPodValue('harvest_weight') || ""} name={"harvest_weight"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
                     </div>
                     <div className="exp_r_form_row">
-                        <input className="exp_r_input" placeholder="Harvest Count" type="number" value={findSelectedPodValue('harvest_count') || ""} name={"harvest_count"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
+                        <input placeholder="Harvest Count" type="number" value={findSelectedPodValue('harvest_count') || ""} name={"harvest_count"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
                     </div>
                     <div className="exp_r_form_row">
-                        <input className="exp_r_input" placeholder="Harvest Quality" type="number" value={findSelectedPodValue('harvest_quality') || ""} name={"harvest_quality"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
+                        <input placeholder="Harvest Quality" type="number" value={findSelectedPodValue('harvest_quality') || ""} name={"harvest_quality"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
                     </div>
                     <div className="exp_r_form_row">
-                        <input className="exp_r_input" placeholder="Flower Quality" type="number" value={findSelectedPodValue('flower_quality') || ""} name={"flower_quality"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
+                        <input placeholder="Flower Quality" type="number" value={findSelectedPodValue('flower_quality') || ""} name={"flower_quality"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
                     </div>
                     <div className='pr_comment'>
                         <textarea name={"comment"} placeholder="[comment]" value={findSelectedPodValue('comment') || ""} onChange={(e) => {setSelectedPodValue(e)} } cols="40" rows="5"></textarea>
                     </div>
                     <div className="exp_r_form_row">
-                        <input className="exp_r_input" placeholder="Bud Count" type="number" value={findSelectedPodValue('bud_count') || ""} name={"bud_count"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
+                        <input placeholder="Bud Count" type="number" value={findSelectedPodValue('bud_count') || ""} name={"bud_count"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
                     </div>
                     <div className="exp_r_form_row">
-                        <input className="exp_r_input"  placeholder="Flower Count" type="number" value={findSelectedPodValue('flower_count') || ""} name={"flower_count"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
+                        <input  placeholder="Flower Count" type="number" value={findSelectedPodValue('flower_count') || ""} name={"flower_count"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
                     </div>
                     <div className="exp_r_form_row">
-                        <input className="exp_r_input"  placeholder="Fruit Ripe #" type="number" value={findSelectedPodValue('fruit_ripe_count') || ""} name={"fruit_ripe_count"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
+                        <input  placeholder="Fruit Ripe #" type="number" value={findSelectedPodValue('fruit_ripe_count') || ""} name={"fruit_ripe_count"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
                     </div>
                     <div className="exp_r_form_row">
-                        <input className="exp_r_input" placeholder="Fruit Unripe" type="number" value={findSelectedPodValue('fruit_unripe_count') || ""} name={"fruit_unripe_count"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
+                        <input placeholder="Fruit Unripe" type="number" value={findSelectedPodValue('fruit_unripe_count') || ""} name={"fruit_unripe_count"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
                     </div>
                     <div className="exp_r_form_row">
-                        <input className="exp_r_input" placeholder="Mean Leaf Area" type="number" value={findSelectedPodValue('leaf_area_avg') || ""} name={"leaf_area_avg"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
+                        <input placeholder="Mean Leaf Area" type="number" value={findSelectedPodValue('leaf_area_avg') || ""} name={"leaf_area_avg"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
                     </div>
                     <div className="exp_r_form_row">
-                        <input className="exp_r_input" placeholder="Max Height" type="number" value={findSelectedPodValue('max_height') || ""} name={"max_height"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
+                        <input placeholder="Max Height" type="number" value={findSelectedPodValue('max_height') || ""} name={"max_height"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
                     </div>
                     <div className="exp_r_form_row">
-                        <input className="exp_r_input"  placeholder="Min Height" type="number" value={findSelectedPodValue('min_height') || ""} name={"min_height"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
+                        <input  placeholder="Min Height" type="number" value={findSelectedPodValue('min_height') || ""} name={"min_height"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
                     </div>
                     <div className="exp_r_form_row">
-                        <input className="exp_r_input" placeholder="Media to BGP" type="number" value={findSelectedPodValue('media_to_bgp') || ""} name={"media_to_bgp"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
+                        <input placeholder="Media to BGP" type="number" value={findSelectedPodValue('media_to_bgp') || ""} name={"media_to_bgp"} min={0} onChange={(e) => {setSelectedPodValue(e)}} />
                     </div>
                     <div className="exp_r_form_row">
-                        <label><input className="exp_r_input" type="checkbox" name="removed_dome" onChange={(e) => {setSelectedPodValue(e)}} />Removed Dome</label>
+                        <label><input type="checkbox" name="removed_dome" onChange={(e) => {setSelectedPodValue(e)}} />Removed Dome</label>
                     </div>
                     <div className="exp_r_form_row">
-                        <label><input className="exp_r_input" type="checkbox" name="pollinated" onChange={(e) => {setSelectedPodValue(e)}} />Pollinated</label>
+                        <label><input type="checkbox" name="pollinated" onChange={(e) => {setSelectedPodValue(e)}} />Pollinated</label>
                     </div>
                     <div className="exp_r_form_row">
-                        <label><input className="exp_r_input" type="checkbox" name="trellis_adjustment" onChange={(e) => {setSelectedPodValue(e)}} />Trellis Adjustment</label>
+                        <label><input type="checkbox" name="trellis_adjustment" onChange={(e) => {setSelectedPodValue(e)}} />Trellis Adjustment</label>
                     </div>
                     <div className="exp_r_form_row">
-                        <label><input className="exp_r_input" type="checkbox" name="pest_removal" onChange={(e) => {setSelectedPodValue(e)}} />Pest Removal</label>
+                        <label><input type="checkbox" name="pest_removal" onChange={(e) => {setSelectedPodValue(e)}} />Pest Removal</label>
                     </div>
                     <div className="exp_r_form_row">
-                        <label><input className="exp_r_input" type="checkbox" name="prune_thinned" onChange={(e) => {setSelectedPodValue(e)}} />Thinned</label>
+                        <label><input type="checkbox" name="prune_thinned" onChange={(e) => {setSelectedPodValue(e)}} />Thinned</label>
                     </div>
                     <div className="exp_r_form_row">
-                        <label><input className="exp_r_input" type="checkbox" name="prune_topped" onChange={(e) => {setSelectedPodValue(e)}} />Topped</label>
+                        <label><input type="checkbox" name="prune_topped" onChange={(e) => {setSelectedPodValue(e)}} />Topped</label>
                     </div>
                     <div className="exp_r_form_row">
-                        <label><input className="exp_r_input" type="checkbox" name="prune_dead_foliage" onChange={(e) => {setSelectedPodValue(e)}} />Removed Dead Foliage</label>
+                        <label><input type="checkbox" name="prune_dead_foliage" onChange={(e) => {setSelectedPodValue(e)}} />Removed Dead Foliage</label>
                     </div>
                     <div className="exp_r_form_row">
-                        <label><input className="exp_r_input" type="checkbox" name="prune_living_foliage" onChange={(e) => {setSelectedPodValue(e)}} />Removed Living Foliage</label>
+                        <label><input type="checkbox" name="prune_living_foliage" onChange={(e) => {setSelectedPodValue(e)}} />Removed Living Foliage</label>
                     </div>
                     <div className="exp_r_form_row">
-                        <label><input className="exp_r_input" type="checkbox" name="prune_dead_heading" onChange={(e) => {setSelectedPodValue(e); console.log(e)}} />Dead Headed</label>
+                        <label><input type="checkbox" name="prune_dead_heading" onChange={(e) => {setSelectedPodValue(e); console.log(e)}} />Dead Headed</label>
                     </div>
 
                     <div className="exp_r_form_row">
@@ -330,8 +330,8 @@ const ExperimentReading = (props) => {
             { 
                 exp_id: exp_id
             });
-        if (result.status === 200) {
-            if (result.data.latest_reading.exp_id !== -1 ){
+        if (result?.status === 200) {
+            if (result?.data?.latest_reading.exp_id !== -1 ){
                 // note: dont carry forward the booleans
                 setExperimentReading({...experimentReading, 
                     electrical_conductance: result.data.latest_reading.electrical_conductance,
@@ -379,12 +379,12 @@ const ExperimentReading = (props) => {
 
     function changeSelectedPod(e, pod){
         if (selectedPod !== pod){
-            Array.from(document.querySelectorAll('.pod_selection')).forEach((el) => el.classList.remove('pod_selection_active'));
-            e.currentTarget.classList.toggle('pod_selection_active');
+            Array.from(document.querySelectorAll('.pod_selection')).forEach((el) => el.classList.remove('selection_active'));
+            e.currentTarget.classList.toggle('selection_active');
             setSelectedPod(pod)
         } else {
             //To remove the pod reading form
-            e.currentTarget.classList.remove('pod_selection_active');
+            e.currentTarget.classList.remove('selection_active');
             setSelectedPod(-1)
 
         }
@@ -420,32 +420,32 @@ const ExperimentReading = (props) => {
                     <div className="exp_pr_modal_content">
                         <div className="exp_general">
                             <div className="exp_r_form_row">
-                                    <input className="exp_r_input"  placeholder="Electrical Conductance" type="number" value={experimentReading.electrical_conductance} onChange={(e) => setExperimentReading({...experimentReading, electrical_conductance: e.target.value})} />
+                                    <input  placeholder="Electrical Conductance" type="number" value={experimentReading.electrical_conductance} onChange={(e) => setExperimentReading({...experimentReading, electrical_conductance: e.target.value})} />
                             </div>
                             <div className="exp_r_form_row">
-                                    <input className="exp_r_input" placeholder="PH" type="number" value={experimentReading.reservoir_ph} onChange={(e) => setExperimentReading({...experimentReading, reservoir_ph: e.target.value})} min={0} max={14}/>
+                                    <input placeholder="PH" type="number" value={experimentReading.reservoir_ph} onChange={(e) => setExperimentReading({...experimentReading, reservoir_ph: e.target.value})} min={0} max={14}/>
                             </div>
                             <div className="exp_r_form_row">
-                                    <input className="exp_r_input"  placeholder="Temperature" type="number" value= {experimentReading.temperature} onChange= {(e) => setExperimentReading({...experimentReading, temperature: e.target.value})} min={-100} max={100}></input>ºC
+                                    <input  placeholder="Temperature" type="number" value= {experimentReading.temperature} onChange= {(e) => setExperimentReading({...experimentReading, temperature: e.target.value})} min={-100} max={100}></input>ºC
                             </div>
                             <div className="exp_r_form_row">
-                                    <input className="exp_r_input" placeholder="Humidity" type="number" value= {experimentReading.humidity} onChange= {(e) => setExperimentReading({...experimentReading, humidity: e.target.value})} min={0} max={100}></input>%
+                                    <input placeholder="Humidity" type="number" value= {experimentReading.humidity} onChange= {(e) => setExperimentReading({...experimentReading, humidity: e.target.value})} min={0} max={100}></input>%
                             </div>
                             <div className="exp_r_form_row">
 
-                                <label> <input className="exp_r_input" type="checkbox" value= {experimentReading.flushed_reservoir} onChange={(e) => {setExperimentReading({...experimentReading, flushed_reservoir: e.target.checked})}}/> Flushed Reservoir </label>
+                                <label> <input type="checkbox" value= {experimentReading.flushed_reservoir} onChange={(e) => {setExperimentReading({...experimentReading, flushed_reservoir: e.target.checked})}}/> Flushed Reservoir </label>
                             </div>
                             <div className="exp_r_form_row">
-                                <label> <input className="exp_r_input" type="checkbox" value= {experimentReading.raised_light} onChange={(e) => setExperimentReading({...experimentReading, raised_light: e.target.checked})}/> Raised Light </label>
+                                <label> <input type="checkbox" value= {experimentReading.raised_light} onChange={(e) => setExperimentReading({...experimentReading, raised_light: e.target.checked})}/> Raised Light </label>
                             </div>
                             <div className="exp_r_form_row">
-                                <label> <input className="exp_r_input" type="checkbox" value= {experimentReading.failed_pump} onChange={(e) => setExperimentReading({...experimentReading, failed_pump: e.target.checked})}/> Failed Pump </label>
+                                <label> <input type="checkbox" value= {experimentReading.failed_pump} onChange={(e) => setExperimentReading({...experimentReading, failed_pump: e.target.checked})}/> Failed Pump </label>
                             </div>
                             <div className="exp_r_form_row">
-                                <label> <input className="exp_r_input" type="checkbox" value= {experimentReading.went_offline} onChange={(e) => setExperimentReading({...experimentReading, went_offline: e.target.checked})}/> Went Offline </label>
+                                <label> <input type="checkbox" value= {experimentReading.went_offline} onChange={(e) => setExperimentReading({...experimentReading, went_offline: e.target.checked})}/> Went Offline </label>
                             </div>
                             <div className="exp_r_form_row">
-                                <label> <input className="exp_r_input" type="checkbox" value= {experimentReading.lost_power} onChange={(e) => setExperimentReading({...experimentReading, lost_power: e.target.checked})}/> Lost Power </label>
+                                <label> <input type="checkbox" value= {experimentReading.lost_power} onChange={(e) => setExperimentReading({...experimentReading, lost_power: e.target.checked})}/> Lost Power </label>
                             </div>
 
                         </div>
