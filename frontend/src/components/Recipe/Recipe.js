@@ -20,12 +20,29 @@ const RecipeList = () => {
   })
 
 
+  // initial phase object state prior to add/edit
+  const initPhaseModal = {
+    id: -1,
+    days: null,
+    waterings_per_day: null,
+    watering_duration: null,
+    blue_intensity: 99,
+    red_intensity: 99,
+    white_intensity: 99,
+    lights_on_hours: null,
+    type: "",
+  }
+  
+  //Used to create a new phase
+  const [phaseModal, setPhaseModal] = useState(initPhaseModal)
+  const [selectedPhase, setSelectedPhase] = useState(1);
+
   //Used to add and edit a recipe
   const [recipeModal, setRecipeModal] = useState({
       show: false,
       add: true,
       name: null,
-      phase1: null,
+      phase1: initPhaseModal,
       phase2: null,
       phase3: null,
       phase4: null,
@@ -38,22 +55,6 @@ const RecipeList = () => {
     }
   );
 
-  // initial phase object state prior to add/edit
-  const initPhaseModal = {
-    id: -1,
-    days: null,
-    waterings_per_day: null,
-    watering_duration: null,
-    blue_intensity: null,
-    red_intensity: null,
-    white_intensity: null,
-    lights_on_hours: null,
-    score: null,
-    type: null,
-  }
-  
-  //Used to create a new phase
-  const [phaseModal, setPhaseModal] = useState(initPhaseModal)
 
   /*
   Input from: phase
@@ -109,6 +110,19 @@ const RecipeList = () => {
     fetchPhases();
     fetchRecipes();
   }, []);
+
+  /*
+    Input from: phaseModal
+    Outputs to: recipeModal
+    Created by: Kelvin F @ 09/15/2022
+    Last Edit: Kelvin F @ 09/15/2022
+    Purpose: on change to PhaseModal, 
+  */
+  useEffect(() => {
+    console.log(phaseModal)
+    setRecipeModal({...recipeModal, ["phase"+selectedPhase]:phaseModal})
+
+  }, [phaseModal]);
 
   /*
   Input from: None
@@ -278,6 +292,25 @@ const RecipeList = () => {
     })
   }
 
+  /*
+  Input from: renderPhaseSelection()
+  Outputs to: renderPhaseSelection()
+  Created by: Kelvin F @ 09/12/2022
+  Last Edit: Kelvin F @ 09/12/2022
+  Purpose: First, set button focus as 'active' for the selected phase of the ten phases
+  */
+  function changePhaseFocus(e, i){
+    if (selectedPhase !== i){
+        Array.from(document.querySelectorAll('.phase_selection')).forEach((el) => el.classList.remove('phase_selection_active'));
+        e.currentTarget.classList.toggle('phase_selection_active');
+        if(recipeModal["phase"+i] === null) {
+          setPhaseModal(initPhaseModal)
+        } else {
+          setPhaseModal(recipeModal["phase"+i])
+        }
+        setSelectedPhase(i)
+    }
+}
 
     /*
   Input from: recipe
@@ -286,27 +319,28 @@ const RecipeList = () => {
   Last Edit: Kelvin F @ 08/31/2022
   Purpose: Generates a dropdown of all phases to select from to build/edit a recipe
   */
-
   function renderPhaseSelection(){
     let phase_selection = [];
+
     for(let i = 1; i<=10; i++) {
 
-      if(i===1 || recipeModal['phase'+(i-1)]!== null) {
+      if(i===1 || (recipeModal['phase'+(i-1)] !== null && recipeModal['phase'+(i-1)]?.type !== "")) {
         phase_selection.push(
-          <div key={i} className='form-row'>
-            <button onClick={() => { 
-
-              if(recipeModal["phase"+i] !== null) {
-                // load in a particular recipe's phase into frontend form
-                setPhaseModal(recipeModal["phase"+i]);
-              } else {
-                // allocate a new phase in the recipe
-                setRecipeModal({...recipeModal, ["phase"+i]:initPhaseModal}); 
-              }
-            
-            }}> {"PHASE "+i} </button>
-          </div>
+          <button key={i} className={i===1 ? 'form-row phase_selection phase_selection_active': 'form-row phase_selection'} onClick={(e) => { changePhaseFocus(e, i) }}> 
+            <select className="form_row" value={recipeModal['phase'+i]?.type} onChange={(e) => setPhaseModal({...phaseModal, type: e.target.value})} >
+              <option value=""></option>
+              <option value="Germination">Germination</option>
+              <option value="Seedling">Seedling</option>
+              <option value="Vegetative">Vegetative</option>
+              <option value="Flowering">Flowering</option>
+              <option value="Harvest">Harvest</option>
+              <option value="Other">Other</option>
+            </select>          
+          </button>
         )
+      } else {
+        // when phase is deleted, if selectedPhase is
+        recipeModal["phase"+i] = null
       }
     }
     return <div>{phase_selection}</div>;
@@ -322,14 +356,6 @@ const RecipeList = () => {
   function renderPhaseModal(){
     return (
       <div className="modal_content">
-          <select className="form_row" value={phaseModal.type} onChange={(e) => setPhaseModal({...phaseModal, type: e.target.value})} >
-            <option value="Germination">Germination</option>
-            <option value="Seedling">Seedling</option>
-            <option value="Vegetative">Vegetative Growth</option>
-            <option value="Flowering">Flowering</option>
-            <option value="Harvest">Harvest</option>
-            <option value="Other">Other</option>
-          </select>
           <input className="form_row" value={phaseModal.days} placeholder={"Days"} min="1" type="number" onKeyPress= {(e) => {if(e.charCode === 45) {e.preventDefault()}}} onChange={(e) => setPhaseModal({...phaseModal, days: e.target.value})} />
           <input className="form_row" value={phaseModal.waterings_per_day} placeholder={"Waterings Per Day"} onChange={(e) => setPhaseModal({...phaseModal, waterings_per_day: e.target.value})} />
           <input className="form_row" value={phaseModal.watering_duration} placeholder={"Watering Duration"} onChange={(e) => setPhaseModal({...phaseModal, watering_duration: e.target.value})} />

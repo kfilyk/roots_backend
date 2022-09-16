@@ -330,8 +330,8 @@ const ExperimentReading = (props) => {
             { 
                 exp_id: exp_id
             });
-        if (result.status === 200) {
-            if (result.data.latest_reading.exp_id !== -1 ){
+        if (result?.status === 200) {
+            if (result?.data?.latest_reading.exp_id !== -1 ){
                 // note: dont carry forward the booleans
                 setExperimentReading({...experimentReading, 
                     electrical_conductance: result.data.latest_reading.electrical_conductance,
@@ -379,12 +379,12 @@ const ExperimentReading = (props) => {
 
     function changeSelectedPod(e, pod){
         if (selectedPod !== pod){
-            Array.from(document.querySelectorAll('.pod_selection')).forEach((el) => el.classList.remove('pod_selection_active'));
-            e.currentTarget.classList.toggle('pod_selection_active');
+            Array.from(document.querySelectorAll('.pod_selection')).forEach((el) => el.classList.remove('selection_active'));
+            e.currentTarget.classList.toggle('selection_active');
             setSelectedPod(pod)
         } else {
             //To remove the pod reading form
-            e.currentTarget.classList.remove('pod_selection_active');
+            e.currentTarget.classList.remove('selection_active');
             setSelectedPod(-1)
 
         }

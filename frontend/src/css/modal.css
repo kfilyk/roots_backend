@@ -47,14 +47,20 @@ POPUP MODAL
   border-radius: 20px;
 }
 
-.pod_selection_active {
-  font-family: "Brandon Grotesque";
-  margin: 2px;
-  border: 1px #1b372a solid;
+.phase_selection {
+  margin:0px;
+  padding: 0px;
+  border-radius: 0px;
+  border: 0px;
+}
+
+.phase_selection_active {
   background-color: #1b372a;
   color: #ffffff;;
-  padding: 6px 12px;
-  border-radius: 20px;
+  margin:0px;
+  padding: 0px;
+  border-radius: 0px;
+  border: 0px;
 }
 
 

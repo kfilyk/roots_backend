@@ -12,7 +12,6 @@ Date Variables used in:
 terminateExperiment()
 */
 let todayDate = new Date();
-console.log("CURRENT DATE: ", todayDate)
 let year = todayDate.getUTCFullYear();
 let month = todayDate.getUTCMonth() + 1;
 month = month > 9 ? month : '0'+month;
@@ -147,7 +146,6 @@ const Device = () => {
           '/api/recipes/',
         );
         setRecipeList(result.data)
-        console.log(result.data.filter(obj => obj.id === 23)[0])
       } 
 
     /*
@@ -204,7 +202,6 @@ const Device = () => {
     Purpose: Upon page load, it runs once and gets available + active devices; phases; recipes; and plants
     */
     useEffect(() => {
-        console.log("FLAG!!!!")
         fetchAvailableDevices();
         fetchActiveExperiments();
         fetchCompletedExperiments();

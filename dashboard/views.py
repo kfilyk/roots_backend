@@ -2,7 +2,7 @@ from urllib3 import HTTPResponse
 from dashboard.models import Device, Experiment, Phase, Plant, Pod, ExperimentReading, PodReading, Recipe
 from rest_framework import viewsets
 from django.forms.models import model_to_dict
-from .serializers import DeviceSerializer, ExperimentSerializer, CreateUserSerializer, UserSerializer, PhaseSerializer, PlantSerializer, PodSerializer, ExperimentReadingSerializer, RecipeSerializer
+from .serializers import DeviceSerializer, ExperimentSerializer, CreateUserSerializer, UserSerializer, PhaseSerializer, PlantSerializer, PodSerializer, ExperimentReadingSerializer, RecipeSerializer, PodReadingSerializer
 from django.core import serializers
 from django_filters import rest_framework as filters
 from django.db.models.functions import Length
@@ -415,6 +415,15 @@ class PodView(viewsets.ModelViewSet):
         capacity = Experiment.objects.get(id=exp_id).device.capacity
         return JsonResponse({"capacity": capacity, "pods": pods}, safe=False)       
         
+class PodReadingView(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated,) 
+    serializer_class = PodReadingSerializer
+    
+    def get_queryset(self):
+        return PodReading.objects.all()
+
+
+
 class RecipeView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
     serializer_class = RecipeSerializer

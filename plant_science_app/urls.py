@@ -30,6 +30,7 @@ router.register(r'recipes', views.RecipeView, 'dashboard')
 router.register(r'phases', views.PhaseView, 'dashboard')
 router.register(r'plants', views.PlantView, 'dashboard')
 router.register(r'pods', views.PodView, 'dashboard')
+router.register(r'podreadings', views.PodReadingView, 'dashboard')
 router.register(r'experimentreadings', views.ExperimentReadingView, 'dashboard')
 
 """

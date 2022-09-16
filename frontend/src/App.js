@@ -11,6 +11,8 @@ import Recipe from './components/Recipe/Recipe';
 import Plant from "./components/Plant/Plant";
 import Help from './components/Help/Help';
 import MQTT from './components/MQTT/MQTT';
+import Analysis from './components/Analysis/Analysis';
+
 /*
 OVERALL FILE PURPOSE: 
 Sets the axios base url then adds routing paths
@@ -74,6 +76,8 @@ const App = () => {
           <Route path={"plants"} element={<Plant/>}/>
           <Route path={"help"} element={<Help/>}/>
           <Route path={"mqtt"} element={<MQTT/>}/>
+          <Route path={"analysis"} element={<Analysis/>}/>
+
 
         </Route>
         <Route index element={<Login />} />

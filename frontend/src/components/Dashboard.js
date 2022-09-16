@@ -67,6 +67,9 @@ const Dashboard = (props) => {
         <Link to={"mqtt"} className={selectedTab === "mqtt" ? "nav-link active" : "nav-link"} onClick={() => setSelectedTab("mqtt" )}>
           MQTT
         </Link>
+        <Link to={"analysis"} className={selectedTab === "analysis" ? "nav-link active" : "nav-link"} onClick={() => setSelectedTab("analysis" )}>
+          ANALYSIS
+        </Link>
       </div>
     );
   };

@@ -66,11 +66,9 @@ const RecipeBar = (props) => {
   Purpose: Fetches all experiment readings for an experiment given a experiment id
   */
   async function getReadings(id) {
-    const result = await axios.post(`/api/experimentreadings/exp_reading_dates/`,
-    { 
-      exp_id: id
-    }).catch((err) => console.log(err))
-    if (result.status === 200){
+    const result = await axios.post(`/api/experimentreadings/exp_reading_dates/`, {exp_id: id})
+      .catch((err) => console.log(err))
+    if (result?.status === 200){
       setExpReadingDates(result.data)
     }
   }
@@ -101,7 +99,6 @@ const RecipeBar = (props) => {
     // can either send a recipe object OR the id of a recipe to this function
     //console.log("PROPS RECIPE: ", props.recipe)
     setRecipe(props?.recipe)
-
     if(props?.experiment?.id !== undefined){
       getReadings(props.experiment.id)
       setEndDate(props.experiment.end_date)
@@ -120,13 +117,15 @@ const RecipeBar = (props) => {
     setRecipe(props?.recipe)  
 
     if(recipe !== null && (typeof props?.experiment !== 'undefined')) {
-      let sd = new Date(props.experiment.start_date)
+      let sd = new Date(props?.experiment?.start_date)
       sd.setDate(sd.getDate()+recipe?.days)
       setEndDate(sd.getFullYear()+ "-"+(sd.getMonth()+1)+"-"+sd.getDate())
       calcCompletionPercentage(props.experiment?.day, recipe?.days)
     }
+
   }, [props]); // useEffect runs when props OR recipe changes
 
+  
   /*
   Input from: render()
   Outputs to: render()
