@@ -436,12 +436,101 @@ class RecipeView(viewsets.ModelViewSet):
     Purpose: Creates a recipe object in the database including the recipe json data based on the phases passed in.
     """  
     def create(self, request, *args, **kwargs):
-        recipe_id = super().create(request, *args, **kwargs).data['id']
-        recipe = Recipe.objects.get(id=recipe_id)
-        recipe.name = recipe.name.replace(" ", "_")
-        recipe.recipe_json = RecipeView.generate_JSON(recipe_id)
+        recipe = request.data
+        recipe['author'] = self.request.user
+
+        del recipe['show']
+        del recipe['add']
+        del recipe['id']
+        for i in range(1, 11):
+            ph = recipe["phase"+str(i)]
+            del ph['id'] # shouldn't have a preexisting id before being entered
+            if ph['type'] != "":
+                recipe["phase"+str(i)] = Phase.objects.create(**ph)
+            else:
+                recipe["phase"+str(i)] = None
+        
+        r = Recipe.objects.create(**recipe)
+        r.recipe_json = RecipeView.generate_JSON(r.id)
+        r.save()
+
+        #recipe_id = super().create(request, *args, **kwargs).data['id']
+        #recipe = Recipe.objects.get(id=recipe_id)
+        #recipe.name = recipe.name.replace(" ", "_")
+        #recipe.recipe_json = ""
+        return JsonResponse(model_to_dict(r), safe=False) 
+
+
+    """
+    Input from: Recipe.js/editRecipe(); 
+    Outputs to: Recipe.js/editRecipe(); 
+    Created by: Kelvin F 09/16/2022
+    Last Edit: Kelvin F 09/16/2022
+    Purpose: Edits a recipe object, including pushing changes to phases
+    """  
+    @action(detail=False, methods=['POST'], name='edit')
+    def edit(self, request):
+        new = request.data
+        del new['show']
+        del new['add']
+
+        recipe = Recipe.objects.get(id=new['id'])
+        recipe.name = new['name']
+
+        for i in range(1, 11):
+            ph = new["phase"+str(i)]
+            if ph['id'] == -1:
+                del ph['id'] # if new phase, create new id. otherwise, use old id
+
+            #new phase specified
+            if ph['type'] != "":
+                if(getattr(recipe, "phase"+str(i)) == None):
+                    setattr(recipe, "phase"+str(i), Phase.objects.create(**ph))
+                else :
+                    Phase.objects.filter(id=ph['id']).update(**ph)
+            else:
+                phase_del = getattr(recipe, "phase"+str(i))
+                setattr(recipe, "phase"+str(i), None)
+                recipe.save()
+                try:
+                    phase_del.delete()
+                except:
+                    print("phase deleted.")
+
+        recipe.recipe_json = RecipeView.generate_JSON(recipe.id)
+        print("RECIPE: ", recipe)
         recipe.save()
-        return JsonResponse(model_to_dict(recipe), safe=False) 
+
+        return JsonResponse({"status": "200"}, safe=False)
+
+    """
+    Input from: Recipe.js/deleteRecipe(); 
+    Outputs to: Recipe.js/deleteRecipe(); 
+    Created by: Kelvin F 09/16/2022
+    Last Edit: Kelvin F 09/16/2022
+    Purpose: Deletes a recipe object in the database including all related phases.
+    """  
+    @action(detail=False, methods=['POST'], name='delete')
+    def delete(self, request):
+        rec_id = json.loads(request.body)['id']
+        recipe = Recipe.objects.get(id = rec_id)
+        recipe.delete()
+        print(model_to_dict(recipe))
+        try:
+            recipe.phase1.delete()
+            recipe.phase2.delete()
+            recipe.phase3.delete()
+            recipe.phase4.delete()
+            recipe.phase5.delete()
+            recipe.phase6.delete()
+            recipe.phase7.delete()
+            recipe.phase8.delete()
+            recipe.phase9.delete()
+            recipe.phase10.delete()
+        except:
+            print("Phases deleted.")
+        
+        return JsonResponse({"status": "200"}, safe=False)
 
     """
     Input from: Recipe.js/editRecipe(); 
@@ -452,12 +541,14 @@ class RecipeView(viewsets.ModelViewSet):
     """  
     def perform_update(self, serializer):
         # Save with the new value for the target model fields
+        '''
         serializer.save()
         recipe_id = self.get_object().id
         recipe_name = self.get_object().name
         recipe_json = RecipeView.generate_JSON(recipe_id)
         days = RecipeView.calculate_days(recipe_id)
         serializer.save(recipe_json=recipe_json, days=days, name = recipe_name.replace(" ", "_"))
+        '''
 
 
     """

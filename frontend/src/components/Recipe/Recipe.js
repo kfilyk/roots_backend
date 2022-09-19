@@ -14,22 +14,19 @@ const RecipeList = () => {
   //Used to show a recipe JSON given a recipe id
   const [recipeJSON, setRecipeJSON] = useState({
     show: false,
-    name: null,
-    recipe_id: -1,
     json: {}
   })
-
 
   // initial phase object state prior to add/edit
   const initPhaseModal = {
     id: -1,
-    days: null,
-    waterings_per_day: null,
-    watering_duration: null,
+    days: 7,
+    waterings_per_day: 1,
+    watering_duration: 1,
     blue_intensity: 99,
     red_intensity: 99,
     white_intensity: 99,
-    lights_on_hours: null,
+    lights_on_hours: 16,
     type: "",
   }
   
@@ -38,22 +35,26 @@ const RecipeList = () => {
   const [selectedPhase, setSelectedPhase] = useState(1);
 
   //Used to add and edit a recipe
-  const [recipeModal, setRecipeModal] = useState({
-      show: false,
-      add: true,
-      name: null,
-      phase1: initPhaseModal,
-      phase2: null,
-      phase3: null,
-      phase4: null,
-      phase5: null,
-      phase6: null,
-      phase7: null,
-      phase8: null,
-      phase9: null,
-      phase10: null,
-    }
-  );
+
+  const initRecipeModal = {
+    id: -1,
+    show: false,
+    add: false,
+    name: null,
+    days: 0,
+    phase1: initPhaseModal,
+    phase2: initPhaseModal,
+    phase3: initPhaseModal,
+    phase4: initPhaseModal,
+    phase5: initPhaseModal,
+    phase6: initPhaseModal,
+    phase7: initPhaseModal,
+    phase8: initPhaseModal,
+    phase9: initPhaseModal,
+    phase10: initPhaseModal,
+  }
+
+  const [recipeModal, setRecipeModal] = useState(initRecipeModal);
 
 
   /*
@@ -112,19 +113,6 @@ const RecipeList = () => {
   }, []);
 
   /*
-    Input from: phaseModal
-    Outputs to: recipeModal
-    Created by: Kelvin F @ 09/15/2022
-    Last Edit: Kelvin F @ 09/15/2022
-    Purpose: on change to PhaseModal, 
-  */
-  useEffect(() => {
-    console.log(phaseModal)
-    setRecipeModal({...recipeModal, ["phase"+selectedPhase]:phaseModal})
-
-  }, [phaseModal]);
-
-  /*
   Input from: None
   Outputs to: phaseList
   Created by: Kelvin F @ 08/31/2022
@@ -146,10 +134,11 @@ const RecipeList = () => {
   Purpose: Makes an API call to delete a recipe from the database.
   At the moment, this does not work as intended because of foreign key restraints to the Phase Table. See models.py
   */
-  async function deleteEntry(id) {
-    await axios.delete(`/api/recipes/${id}/`);
-    setRecipeList(recipeList.filter(recipe => recipe.id !== id))
-  }
+  async function deleteRecipe(id) {
+    await axios.post(`/api/recipes/delete/`, {id: id})
+      .catch((err) => console.log("Error during delete recipe: ", err));
+      fetchRecipes()
+    }
 
   /*
   Input from: recipe
@@ -161,8 +150,8 @@ const RecipeList = () => {
   function countDays() {
     let days = 0;
     for(let i = 1; i<=10; i++) {
-      if (recipeModal["phase"+i] !== null) {
-        days += phaseList.find(phase => phase.id === parseInt(recipeModal["phase"+i])).days
+      if (recipeModal["phase"+i].type !== null) {
+        days += recipeModal["phase"+i].days
       }
     }
     recipeModal.days = days;
@@ -176,9 +165,10 @@ const RecipeList = () => {
   Purpose: Makes an API call to create a recipe in the database.
   */
   async function addRecipe(e) {
-    const result = await axios
-      .post(`/api/recipes/`, recipeModal);
-      setRecipeList(recipeList => [...recipeList, result.data])
+    await axios.post(`/api/recipes/`, recipeModal)
+      .catch((err) => console.log("Error during add recipe: ", err));
+    fetchRecipes()
+    fetchPhases()
   };
 
   /*
@@ -189,30 +179,12 @@ const RecipeList = () => {
   Purpose: Makes an API call to edit a recipe in the database.
   */
   async function editRecipe(e) {
-    const result = await axios
-      .patch(`/api/recipes/${recipeModal.id}/`, recipeModal)
+    
+    await axios.post(`/api/recipes/edit/`, recipeModal)
       .catch((err) => console.log("Error during edit recipe: ", err))
-
-    const index = recipeList.findIndex(r => r.id === recipeModal.id);
-    const updatedItem = result.data
-    setRecipeList([
-      ...recipeList.slice(0, index),
-      updatedItem,
-      ...recipeList.slice(index + 1)
-    ])
-  };
-
-  /*
-  Input from: showJSON()
-  Outputs to: recipeJSON
-  Created by: Kelvin F @ 08/31/2022
-  Last Edit: Kelvin F @ 08/31/2022
-  Purpose: Makes an API call to create a recipe in the database.
-  */
-  async function getRecipeJSON(id) {
-    const result = await axios
-      .post(`/api/recipes/get_JSON/`, {recipe_id: id});
-      setRecipeJSON({recipe_id: id, show: true, json: result.data})
+    
+    fetchRecipes()
+    fetchPhases()
   };
 
   /*
@@ -222,13 +194,20 @@ const RecipeList = () => {
   Last Edit: Kelvin F @ 08/31/2022
   Purpose: Determines whether modal to be opened is for adding or editing a recipe
   */
-  function openModal(r){
+  function openRecipeModal(recipe){
     // if no item passed, we are adding a new one
-    if (r === null){
+    if (recipe === null){
       setRecipeModal({...recipeModal, add: true, show: true})
     } else {
+      let r = {...recipe}
+
+      for(let i = 1; i<= 10; i++) {
+        r['phase'+i] = phaseList.filter(phase => phase.id === r['phase'+i])[0] ?? initPhaseModal
+      }
       r['add']= false;
       r['show']= true;
+      console.log("RECIPE: ", r)
+      setPhaseModal(r['phase1'])
       setRecipeModal(r)
     }
   }
@@ -236,8 +215,8 @@ const RecipeList = () => {
   /*
   Input from: return()
   Outputs to: modal, recipe
-  Created by: Kelvin F @ 08/31/2022
-  Last Edit: Kelvin F @ 08/31/2022
+  Created by: Kelvin F @ 09/16/2022
+  Last Edit: Kelvin F @ 09/16/2022
   Purpose: Verifies recipe constraints (need recipe name + min. 1 phase); calculates total recipe day then makes API call to create recipe
   */
 
@@ -245,19 +224,10 @@ const RecipeList = () => {
     if(recipeModal.name === null || recipeModal.name === ""){
       alert("Please provide a recipe name.")
       return
-    } else if(recipeModal.phase1 === null) {
-      alert("Recipe must have at least 1 phase.")
-      return
     }
-
-    for(let i = 1; i <= recipeModal.phases; i++){
-      let phase = `phase${i}`
-      if(recipeModal[phase] === null){
-        alert(`Phase ${i} cannot be null`)
-        return
-      }
-    }
+    // Count days and update before pushing add or edit 
     countDays();
+
     if(recipeModal.add) {
       addRecipe()
     } else {
@@ -275,42 +245,49 @@ const RecipeList = () => {
   */
  
   function closeModal(){
-    setRecipeModal({
-      show: false,
-      name: null,
-      days: 0,
-      phase1: null,
-      phase2: null,
-      phase3: null,
-      phase4: null,
-      phase5: null,
-      phase6: null,
-      phase7: null,
-      phase8: null,
-      phase9: null,
-      phase10: null,
-    })
+    console.log("FLAG!!")
+    setRecipeModal(initRecipeModal)
+    setPhaseModal(initPhaseModal)
+    setSelectedPhase(1)
   }
+
+    /*
+  Input from: None
+  Outputs to: phaseList; recipeList
+  Created by: Kelvin F @ 09/15/2022
+  Last Edit: Kelvin F @ 08/15/2022
+  Purpose: 
+  */
+ 
+  useEffect(() => {
+    setRecipeModal({...recipeModal, ["phase"+selectedPhase]:phaseModal}) // save the recipe's phase when a different phase is selected
+
+    //console.log("(USE EFFECT) PHASE: ", selectedPhase)
+    //console.log("(USE EFFECT) PHASE MODAL: ", phaseModal)
+    //console.log("(USE EFFECT) RECIPE MODAL: ", recipeModal["phase"+selectedPhase])
+  }, [phaseModal]);
+  
 
   /*
   Input from: renderPhaseSelection()
   Outputs to: renderPhaseSelection()
   Created by: Kelvin F @ 09/12/2022
   Last Edit: Kelvin F @ 09/12/2022
-  Purpose: First, set button focus as 'active' for the selected phase of the ten phases
+  Purpose: First, set button focus as 'active' for the selected phase of the ten phases. Then, given a new phase selection "i", save the old phase selection to the recipe and switch to new modal context
   */
   function changePhaseFocus(e, i){
     if (selectedPhase !== i){
-        Array.from(document.querySelectorAll('.phase_selection')).forEach((el) => el.classList.remove('phase_selection_active'));
-        e.currentTarget.classList.toggle('phase_selection_active');
-        if(recipeModal["phase"+i] === null) {
-          setPhaseModal(initPhaseModal)
-        } else {
-          setPhaseModal(recipeModal["phase"+i])
-        }
-        setSelectedPhase(i)
-    }
-}
+
+      //console.log("SELECTED PHASE: ", selectedPhase)
+      //console.log("NEW PHASE: ", i)
+      Array.from(document.querySelectorAll('.phase_selection')).forEach((el) => el.classList.remove('phase_selection_active'));
+      e.currentTarget.classList.toggle('phase_selection_active');
+      //setRecipeModal({...recipeModal, ["phase"+selectedPhase]:phaseModal}) // save the recipe's phase when a different phase is selected
+      setSelectedPhase(i)
+      setPhaseModal(recipeModal["phase"+i])
+
+    } 
+  }
 
     /*
   Input from: recipe
@@ -324,26 +301,17 @@ const RecipeList = () => {
 
     for(let i = 1; i<=10; i++) {
 
-      if(i===1 || (recipeModal['phase'+(i-1)] !== null && recipeModal['phase'+(i-1)]?.type !== "")) {
+      // only render the next phase selection form if the previous one has been given a specified type
+      if(i===1 || recipeModal['phase'+(i-1)].type !== "") {
         phase_selection.push(
-          <button key={i} className={i===1 ? 'form-row phase_selection phase_selection_active': 'form-row phase_selection'} onClick={(e) => { changePhaseFocus(e, i) }}> 
-            <select className="form_row" value={recipeModal['phase'+i]?.type} onChange={(e) => setPhaseModal({...phaseModal, type: e.target.value})} >
-              <option value=""></option>
-              <option value="Germination">Germination</option>
-              <option value="Seedling">Seedling</option>
-              <option value="Vegetative">Vegetative</option>
-              <option value="Flowering">Flowering</option>
-              <option value="Harvest">Harvest</option>
-              <option value="Other">Other</option>
-            </select>          
-          </button>
+          <button key={i} className={i===1 ? 'form_row phase_selection phase_selection_active': 'form_row phase_selection'} onClick={(e) => changePhaseFocus(e, i) }>{recipeModal['phase'+i].type ? recipeModal['phase'+i].type : "New Phase..." }</button>
         )
       } else {
         // when phase is deleted, if selectedPhase is
-        recipeModal["phase"+i] = null
+        recipeModal["phase"+i] = initPhaseModal
       }
     }
-    return <div>{phase_selection}</div>;
+    return phase_selection;
   }
 
     /*
@@ -356,9 +324,19 @@ const RecipeList = () => {
   function renderPhaseModal(){
     return (
       <div className="modal_content">
-          <input className="form_row" value={phaseModal.days} placeholder={"Days"} min="1" type="number" onKeyPress= {(e) => {if(e.charCode === 45) {e.preventDefault()}}} onChange={(e) => setPhaseModal({...phaseModal, days: e.target.value})} />
-          <input className="form_row" value={phaseModal.waterings_per_day} placeholder={"Waterings Per Day"} onChange={(e) => setPhaseModal({...phaseModal, waterings_per_day: e.target.value})} />
-          <input className="form_row" value={phaseModal.watering_duration} placeholder={"Watering Duration"} onChange={(e) => setPhaseModal({...phaseModal, watering_duration: e.target.value})} />
+          <div className="form_row"><select value={phaseModal.type} onChange={(e) => setPhaseModal({...phaseModal, type: e.target.value})} >
+            <option value=""></option>
+            <option value="Germination">Germination</option>
+            <option value="Seedling">Seedling</option>
+            <option value="Vegetative">Vegetative</option>
+            <option value="Flowering">Flowering</option>
+            <option value="Harvest">Harvest</option>
+            <option value="Other">Other</option>
+          </select>Phase </div>
+          <div className="form_row"><input className="phase_number_input" value={phaseModal.days} min="1" step="1" type="number" onKeyPress= {(e) => {if(e.charCode === 45) {e.preventDefault()}}} onChange={(e) => setPhaseModal({...phaseModal, days: e.target.value})} /> Days</div>
+          <div className="form_row"><input className="phase_number_input" value={phaseModal.waterings_per_day} min="0" step="1" type="number" onKeyPress= {(e) => {if(e.charCode === 45) {e.preventDefault()}}} onChange={(e) => setPhaseModal({...phaseModal, waterings_per_day: e.target.value})} /> Waterings Per Day</div>
+          <div className="form_row"><input className="phase_number_input" value={phaseModal.watering_duration} min="0" step="1" type="number" onKeyPress= {(e) => {if(e.charCode === 45) {e.preventDefault()}}} onChange={(e) => setPhaseModal({...phaseModal, watering_duration: e.target.value})} /> Watering Duration (Min)</div>
+          <div className="form_row"><input className="phase_number_input" value={phaseModal.lights_on_hours} min="0" step="1" type="number" onKeyPress= {(e) => {if(e.charCode === 45) {e.preventDefault()}}} onChange={(e) => setPhaseModal({...phaseModal, lights_on_hours: e.target.value})} />Lights On Hours</div>
           <div className="form_row">
             <input value={phaseModal.blue_intensity} id="blue_intensity_slider" className="slider" type="range" min={0} max={99} onChange={(e) => setPhaseModal({...phaseModal, blue_intensity: e.target.value})}/>
             <div className='intensity_text_overlay'>{phaseModal.blue_intensity}</div>
@@ -371,7 +349,6 @@ const RecipeList = () => {
             <input value={phaseModal.white_intensity}  id="white_intensity_slider" className="slider" type="range" min={0} max={99} onChange={(e) => setPhaseModal({...phaseModal, white_intensity: e.target.value})} />
             <div className='intensity_text_overlay'>{phaseModal.white_intensity}</div>
           </div>   
-          <input className="form_row" value={phaseModal.lights_on_hours} placeholder={"Lights On Hours"} onChange={(e) => setPhaseModal({...phaseModal, lights_on_hours: e.target.value})} />
       </div>
     )
   }
@@ -390,12 +367,13 @@ const RecipeList = () => {
             {(close) => (
             <div className="modal" onClick={close}>
               <div className="modal_body" onClick={e => e.stopPropagation()}>
-                <div className="modal_content">
-                            
+                <div className="modal_content">     
                   <div className="form_row">
                     <div className='create-recipe-left'>
-                      { recipeModal.add === true ? "Create Recipe" : "Edit Recipe" }
-                      <input name="name" value={recipeModal.name || ""} placeholder="Name" onChange={(e) => setRecipeModal({...recipeModal, name: e.target.value})} />
+                      <div className="form_row">
+                        { recipeModal.add === true ? "Create " : "Edit " }
+                        <input name="name" size="12" value={recipeModal.name || ""} placeholder="Recipe Name" onChange={(e) => setRecipeModal({...recipeModal, name: e.target.value})} />
+                      </div>
                       {renderPhaseSelection()}
                     </div>
                     <div className='create-phase-right'>
@@ -418,11 +396,13 @@ const RecipeList = () => {
   Outputs to: return()
   Created by: Kelvin F @ 08/31/2022
   Last Edit: Kelvin F @ 08/31/2022
-  Purpose: Calls method that makes API call to get JSON form of recipe
+  Purpose: Makes an API call to get JSON form of recipe.
   */
-  function showJSON(id){
-    getRecipeJSON(id)
-  }
+  async function showRecipeJSON(id) {
+    const result = await axios
+      .post(`/api/recipes/get_JSON/`, {recipe_id: id});
+      setRecipeJSON({recipe_id: id, show: true, json: result.data})
+  };
 
   /*
   Input from: recipeList; modal; recipeJSON
@@ -433,7 +413,7 @@ const RecipeList = () => {
   */
   return (
     <div>
-      <button onClick={() => openModal(null)}>+</button>
+      <button onClick={() => openRecipeModal(null)}>+</button>
       {recipeList.map(item => (
 
         <div key={ item.id } className="item" >
@@ -446,9 +426,9 @@ const RecipeList = () => {
               
               <div className='object_actions'>
                 <img className="menu_icon" src={menu_icon} alt="NO IMG!"/>
-                <button onClick={() => openModal(item)}>EDIT</button>
-                <button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) deleteEntry(item.id) }}> DELETE </button>
-                <button onClick={() => showJSON(item.id)}>SHOW JSON</button>
+                <button onClick={() => openRecipeModal(item)}>EDIT</button>
+                <button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) deleteRecipe(item.id) }}> DELETE </button>
+                <button onClick={() => showRecipeJSON(item.id)}>SHOW JSON</button>
               </div>
             </div>
             <RecipeBar phaseList = {phaseList} recipe = {item} experiment={undefined} is_object={true} fetchPhases={fetchPhases}></RecipeBar> 
