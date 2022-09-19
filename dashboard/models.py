@@ -166,10 +166,9 @@ class Pod(models.Model):
         managed = True
         db_table = 'pod'
 
-# phases can be used by many recipes/experiments
+# A phase are used by a single recipe
 class Phase(models.Model): # generic periodic phase setting to be used by a recipe 
     id = models.AutoField(db_column='ph_id', primary_key=True)  
-    #user = models.ForeignKey(settings.AUTH_USER_MODEL, db_column='ph_user', on_delete=models.CASCADE, blank=True, null=True) # denotes creator
     days = models.IntegerField(db_column = 'ph_days')
     type = models.CharField(db_column='ph_type', max_length=45) # germination / seedling / veggie growth/ harvest /... / other
     waterings_per_day = models.IntegerField(db_column = 'ph_waterings_per_day') # number of times per day watered
@@ -183,7 +182,7 @@ class Phase(models.Model): # generic periodic phase setting to be used by a reci
         managed = True
         db_table = 'phase'
 
-# multiple rows in the recipe tab make up a single recipe. Multiple references to a single phase can be used. ALSO, multiple Experiments can use the same recipe. So Experiment should have a reference to recipe
+# multiple rows in the recipe tab make up a single recipe. multiple Experiments can use the same recipe. So Experiment should have a reference to recipe
 class Recipe(models.Model):
     id = models.AutoField(db_column='r_id', primary_key=True)  
     name = models.CharField(db_column='r_name', max_length=45, default="NO RECIPE NAME")
