@@ -235,7 +235,7 @@ class MQTT:
     Outputs to: views.py/send_command()
     Created by: Stella T 08/18/2022
     Last Edit: Kelvin Filyk 08/19/2022
-    Purpose: Gets the entire device state for all devices. Returns a list of all online devices.
+    Purpose: Get all devices states + returns a list of all online devices.
     """ 
     def get_device_data(self):
         self.client.connect(self.broker, port=self.port)#connect
@@ -248,7 +248,7 @@ class MQTT:
             self.client.publish(f'avagrows/device/server/{device}/devicecommand','{"command": 0}') #publish
             i = i+1
 
-        time.sleep(30) 
+        time.sleep(60) 
 
         for device in devices:
             self.client.unsubscribe(f'avagrows/device/client/{device}/deviceState')

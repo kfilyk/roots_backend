@@ -37,16 +37,6 @@ POPUP MODAL
   z-index: 2;
 }
 
-.pod_selection {
-  font-family: "Brandon Grotesque";
-  margin: 2px;
-  border: 1px #1b372a solid;
-  background-color: #ffffff;
-  color: #1b372a;;
-  padding: 6px 12px;
-  border-radius: 20px;
-}
-
 .phase_selection {
   margin:0px;
   padding:5px;
@@ -57,12 +47,6 @@ POPUP MODAL
   min-width: 100%;
   border-radius: 5px;
 }
-
-.phase_selection_active {
-  color: #ffffff;;
-  background-color: #1b372a;
-}
-
 
 .modal_header {
   display: table;
@@ -91,13 +75,11 @@ POPUP MODAL
 .form_row {
   display: flex;
   margin: 5px;
-  margin-bottom: 2%;
   position:relative;
   font-size: 12px;
   width:min-content; /* dont change this! needed to keep Phases light_intensity_overlay in position over slider */
   white-space:nowrap;
 }
-
 
 .form_row input::-webkit-input-placeholder { /* Chrome/Opera/Safari */
   font-size: 12px;

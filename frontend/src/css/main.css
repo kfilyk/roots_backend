@@ -26,6 +26,8 @@
 
   input {
     font-family: "Brandon Grotesque";
+    margin-left:5px;
+    margin-right:5px;
   }
 
   input.name {

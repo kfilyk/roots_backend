@@ -32,25 +32,36 @@ td {
   padding:10px;
 }
 
+
+/* ==========================================================================================
+BUTTON & ACTIVE BUTTON SELECTORS
+============================================================================================ */
+
+
 button {
   font-family: "Brandon Grotesque";
   margin: 10px;
-  border: 1px #1b372a solid;
+  border: 1px #1b372a88 solid;
   color: #1b372a88;
   background-color: #ffffff;
   padding: 6px 12px;
   border-radius: 20px;
+  transition: 0.1s;
 }
 
+
 button:hover {
+  cursor:pointer;
   transition: 0.25s;
   background-color: #1b372a;
   color: #FFFFFF;;
 }
 
-/* ==========================================================================================
-DEVICE
-============================================================================================ */
+.selected {
+  transition: 0.25s;
+  color: #ffffff;;
+  background-color: #1b372a;
+}
 
 /* ==========================================================================================
 OBJECT CONTAINERS (DEVICE, EXPERIMENT, ETC)

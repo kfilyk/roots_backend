@@ -34,8 +34,8 @@ const Analysis = () => {
   return (
     <div>
 
-      { JSON.stringify(er_list)}
-      { JSON.stringify(pr_list)}
+      { JSON.stringify(er_list) }
+      { JSON.stringify(pr_list) }
 
     </div>
   );

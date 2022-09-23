@@ -107,11 +107,9 @@ const PlantList = () => {
       <Popup open={plantModal.show} onClose={() => {setPlantModal(initPlantModal)}} modal nested>
             {(close) => (
             <div className="modal" onClick={close}>
-              <div className="modal_body_2"  onClick={e => e.stopPropagation()}>
+              <div className="modal_body"  onClick={e => e.stopPropagation()}>
                 <div className="modal_content">
-                  <div className="form_row">
-                    <input name="name" value={plantModal.name}  placeholder={"Plant Name"} onChange={(e) => setPlantModal({...plantModal, name: e.target.value})} />
-                  </div>
+                  <input className="form_row" value={plantModal.name}  placeholder={"Plant Name"} onChange={(e) => setPlantModal({...plantModal, name: e.target.value})} />
                   <input className="form_row" value={plantModal.scientific_name} placeholder={"Scientific Name"} onChange={(e) => setPlantModal({...plantModal, scientific_name: e.target.value})} />
                   <input className="form_row" value={plantModal.profile} placeholder={"Profile"} onChange={(e) => setPlantModal({...plantModal, profile: e.target.value})} />
                   <input className="form_row" value={plantModal.culinary} placeholder={"Culinary"} onChange={(e) => setPlantModal({...plantModal, culinary: e.target.value})} />

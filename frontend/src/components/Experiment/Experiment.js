@@ -76,7 +76,10 @@ const Device = () => {
         response: {}
     });
 
-
+    const [experimentReadingInput, setExperimentReadingInput] = useState({
+        show: false,
+        experiment: null,
+    })
 
     /*
     Input from: None
@@ -368,7 +371,7 @@ const Device = () => {
 
     /*
     Input from: selectedDeviceStatus, activeExperiments, availableDevices
-    Outputs to: renderModal
+    Outputs to: renderExperimentModal
     Created by: Stella T 08/26/2022
     Last Edit: Stella T 08/26/2022
     Purpose: Renders device modules to screen 
@@ -395,7 +398,7 @@ const Device = () => {
                         <div className='object_actions'>
                             <img className="menu_icon" src={menu_icon} alt="NO IMG!"/>
                             {item.end_date === null && <li key="terminate"><button onClick={() => { if (window.confirm(`Terminate experiment "${item.name}"?`)) terminateExperiment(item.id) }}>TERMINATE</button></li> }
-                            <li key="addReading"><ExperimentReading exp_id={item.id} exp_name={item.name}></ExperimentReading></li>
+                            <li key="addReading"><button onClick={() => setExperimentReadingInput({show:true, experiment: item, add:true})}>ADD READING</button></li>
                             <li key="sendCommand"><button onClick={() => set_command({...command, show: true, device: item.device_id})}>SEND COMMAND</button></li>
                         </div>
                     </div>
@@ -466,7 +469,7 @@ const Device = () => {
 
     /*
     Input from: experiment
-    Outputs to: renderModal()
+    Outputs to: renderExperimentModal()
     Created by: Kelvin F 08/26/2022
     Last Edit: Kelvin F 08/26/2022
     Purpose: Sets the plant selected for a given pod of an experiment
@@ -496,7 +499,7 @@ const Device = () => {
 
     /*
     Input from: recipeList
-    Outputs to: renderModal()
+    Outputs to: renderExperimentModal()
     Created by: Stella T 08/26/2022
     Last Edit: Stella T 08/26/2022
     Purpose: Renders a dropdown of recipes, used to change the recipe on a device
@@ -519,7 +522,7 @@ const Device = () => {
     Last Edit: Stella T 08/26/2022
     Purpose: Makes API call to create another experiment and change the recipe on the device running the experiment
     */
-    function submitModal(close){
+    function submitExperimentModal(close){
         if (experiment.name === null || experiment.name === ""){
           alert("Experiment name cannot be null.")
           return
@@ -546,14 +549,14 @@ const Device = () => {
 
     /*
     Input from: device
-    Outputs to: experiment & submitModal()
+    Outputs to: experiment & submitExperimentModal()
     Created by: Stella T 08/26/2022
     Last Edit: Stella T 08/26/2022
     Purpose: Renders modal where you can create an experiment on a given device
     */
-    function renderModal(){
+    function renderExperimentModal(){
         return (
-            <Popup open={device.show} onClose={() => {setDevice({...device, show: false}); closeModal();} } modal nested>
+            <Popup open={device.show} onClose={() => {setDevice({...device, show: false}); closeExperimentModal();} } modal nested>
                 {(close) => (
                 <div className="modal" onClick={close}>
                     <div className="modal_body"  onClick={e => e.stopPropagation()}>
@@ -569,7 +572,7 @@ const Device = () => {
                             <div className="form_row">{renderRecipeSelection()}</div>
 
                             <button className='save' onClick={() => {
-                                submitModal(close);
+                                submitExperimentModal(close);
                             }}>Save</button>
 
                         </div>
@@ -581,13 +584,13 @@ const Device = () => {
     }
 
     /*
-    Input from: renderModal()
+    Input from: renderExperimentModal()
     Outputs to: experiment
     Created by: Stella T 08/26/2022
     Last Edit: Stella T 08/26/2022
-    Purpose: Resets experiment's state upon closing the add experiment module (renderModal())
+    Purpose: Resets experiment's state upon closing the add experiment module (renderExperimentModal())
     */
-    function closeModal(){
+    function closeExperimentModal(){
         setExperiment({name: null, device: null, device_name: null, pods: [], start_date: year+"-"+month+"-"+day, pod_selection: {}})
     }
 
@@ -729,8 +732,9 @@ const Device = () => {
         <div>
             {renderNav()}
             {renderDevices()}
-            {renderModal()}
+            {renderExperimentModal()}
             {renderCommand()}
+            {experimentReadingInput.show ? <ExperimentReading input={experimentReadingInput} setExperimentReadingInput={setExperimentReadingInput}/> : <></>}
         </div>
       );
 }

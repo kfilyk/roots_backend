@@ -6,6 +6,7 @@ import white_light_icon from "../../img/white_light_icon.png"
 import blue_light_icon from "../../img/blue_light_icon.png"
 import red_light_icon from "../../img/red_light_icon.png"
 import water_icon from "../../img/water_icon.png"
+import ExperimentReading from "../Experiment/ExperimentReading"
 
 const RecipeBar = (props) => {
   // we NEED this recipe state object, because the props is variably a recipe id OR a recipe object
@@ -22,7 +23,7 @@ const RecipeBar = (props) => {
   const [completionPercentage, setCompletionPercentage] = useState(0);
 
   //List of all dates where readings were taken
-  const [expReadingDates, setExpReadingDates] = useState([])
+  const [experimentReadingList, setExperimentReadingList] = useState([])
 
   // initial phase object state prior to add/edit
   const initPhaseModal = {
@@ -41,51 +42,23 @@ const RecipeBar = (props) => {
   }
   const [phaseModal, setPhaseModal] = useState(initPhaseModal)
 
-  //Saves state as we record a new experiment reading
-  const [experimentReadingModal, setExperimentReadingModal] = useState({
+  const [experimentReadingInput, setExperimentReadingInput] = useState({
     show: false,
-    add: false,
-    id: -1,
-    reading_date: null, 
-    electrical_conductance: null,
-    reservoir_ph: null,
-    temperature: null,
-    humidity: null,
-    failed_pump: null,
-    lost_power: null,
-    flushed_reservoir: null,
-    went_offline: null,
-    raised_light: null,
-  });
-
+    experiment: null,
+  })
   /*
   Input from: None
-  Outputs to: expReadingDates
+  Outputs to: experimentReadingList
   Created by: Kelvin F @ 08/31/2022
   Last Edit: Kelvin F @ 08/31/2022
   Purpose: Fetches all experiment readings for an experiment given a experiment id
   */
-  async function getReadings(id) {
-    const result = await axios.post(`/api/experimentreadings/exp_reading_dates/`, {exp_id: id})
+  async function getExperimentReadings(id) {
+    const result = await axios.post(`/api/experimentreadings/get_experiment_readings/`, {exp_id: id})
       .catch((err) => console.log(err))
     if (result?.status === 200){
-      setExpReadingDates(result.data)
+      setExperimentReadingList(result.data)
     }
-  }
-
-  /*
-  Input from: None
-  Outputs to: experimentReadingModal
-  Created by: Kelvin F @ 08/31/2022
-  Last Edit: Kelvin F @ 08/31/2022
-  Purpose: Fetches a specific experiment reading given a experiment reading id
-  */
-  async function getSingleReading(id) {
-    const result = await axios(
-      `/api/experimentreadings/${id}`
-    )
-    .catch((err) => console.log(err))
-    setExperimentReadingModal(result.data)
   }
 
   /*
@@ -100,9 +73,10 @@ const RecipeBar = (props) => {
     //console.log("PROPS RECIPE: ", props.recipe)
     setRecipe(props?.recipe)
     if(props?.experiment?.id !== undefined){
-      getReadings(props.experiment.id)
+      getExperimentReadings(props.experiment.id)
       setEndDate(props.experiment.end_date)
       setStartDate(props.experiment.start_date)
+      setExperimentReadingInput({...experimentReadingInput, experiment: props.experiment})
     }
   }, []); // [] causes useEffect to only happen ONCE after initial render - will not be called as a result of any other change
   
@@ -162,30 +136,20 @@ const RecipeBar = (props) => {
     return style;
   };
 
-  /*
-  Input from: renderExpReadingTags()
-  Outputs to: expReadingDates
-  Created by: Kelvin F @ 08/31/2022
-  Last Edit: Kelvin F @ 08/31/2022
-  Purpose: Given an exp reading id, sends an API call to get details of exp reading
-  */
-  async function show_exp_reading(id){
-    await getSingleReading(id)
-    setExperimentReadingModal({...experimentReadingModal, show:true})
-  }
+
 
 
   /*
-  Input from: expReadingDates
+  Input from: experimentReadingList
   Outputs to: render()
   Created by: Kelvin F @ 08/31/2022
   Last Edit: Kelvin F @ 09/03/2022
   Purpose: Given a list of exp reading dates, calculates where they should be placed on timeline, and returns positions accordingly
   */
   function renderExpReadingTags(){
-    if (expReadingDates !== undefined){
+    if (experimentReadingList !== undefined){
       let tags = []
-      expReadingDates.map((er, index) => {
+      experimentReadingList.map((er, index) => {
         let date = new Date(er.reading_date)
         let date_string = date.toISOString().substring(5,10)
         let start = new Date(start_date)
@@ -195,7 +159,7 @@ const RecipeBar = (props) => {
         // console.log("START DATE: ", start_date)
         // console.log("ADD DATE: ", mid, start, end, style)
         tags.push(
-            <a key={`${er.id}_${index}`} onClick={() => show_exp_reading(er.id)} style={{left: `calc(${style})`}} className="tooltip exp_reading_triangle" data-tooltip={date_string}>▼</a>
+            <a key={`${er.id}_${index}`} onClick={() => setExperimentReadingInput({...experimentReadingInput, ...er, show: true})} style={{left: `calc(${style})`}} className="tooltip exp_reading_triangle" data-tooltip={date_string}>▼</a>
         )
       })
       return tags
@@ -241,42 +205,6 @@ const RecipeBar = (props) => {
     setCompletionPercentage(percent)
   }
 
-  /*
-  Input from: experimentReadingModal
-  Outputs to: render()
-  Created by: Kelvin F @ 08/31/2022
-  Last Edit: Kelvin F @ 08/31/2022
-  Purpose: Renders experimentReadingModal that display info about a particular experiment reading.
-  */
-  function renderExperimentReadingModal(){
-    return (
-        <Popup open={experimentReadingModal.show} onClose={() => setExperimentReadingModal({...experimentReadingModal, show:false})} modal nested>
-            {(close) => (
-            <div className="modal" onClick={close}>
-                <div className="modal_body_2"  onClick={e => e.stopPropagation()}>
-                    <div className="modal_content">
-                        <div className="exp_general">
-                            <div className="exp_r_form_row">Reading Date: {experimentReadingModal.reading_date || "N/A"} </div>
-                            <div className="exp_r_form_row">Electrical Conductance: {experimentReadingModal.electrical_conductance || "N/A"}</div>
-                            <div className="exp_r_form_row">Reservoir PH: {experimentReadingModal.reservoir_ph || "N/A"}</div>
-                            <div className="exp_r_form_row">Temperature: {experimentReadingModal.temperature || "N/A"}</div>
-                            <div className="exp_r_form_row">Humidity: {experimentReadingModal.humidity || "N/A"}</div>
-                            {experimentReadingModal.failed_pump ? <div className="experimentReading_indicator">Failed Pump </div> : <></>}
-                            {experimentReadingModal.flushed_reservoir ? <div className="experimentReading_indicator">Flushed Reservoir</div>: <></>}
-                            {experimentReadingModal.lost_power ? <div className="experimentReading_indicator">Lost Power</div>: <></>}
-                            {experimentReadingModal.raised_light ? <div className="experimentReading_indicator">Raised Light</div>: <></>}
-                            {experimentReadingModal.went_offline ? <div className="experimentReading_indicator">Went Offline</div>: <></>}
-
-                          </div>
-                        <button className='save' onClick={() => { close(); }}>Close</button>
-                    </div>
-                </div>
-            </div>
-            )}
-        </Popup>
-    )
-  }
-
 
   async function submitPhaseModal(e){
     if(phaseModal.add){
@@ -303,19 +231,23 @@ const RecipeBar = (props) => {
         {(close) => (
         <div className="modal" onClick={close}>
             <div className="modal_body"  onClick={e => e.stopPropagation()}>
-            <div className="modal_type"> { phaseModal.add === true ? "Add Phase" : "Edit Phase" } </div>
                 <div className="modal_content">
-                    <select className="form_row" value={phaseModal.type} onChange={(e) => setPhaseModal({...phaseModal, type: e.target.value})} >
+                    <div className= "form_row">
+                    {recipe.name + " | "}
+                    <select value={phaseModal.type} onChange={(e) => setPhaseModal({...phaseModal, type: e.target.value})} >
                       <option value="Germination">Germination</option>
                       <option value="Seedling">Seedling</option>
-                      <option value="Vegetative">Vegetative Growth</option>
+                      <option value="Vegetative">Vegetative</option>
                       <option value="Flowering">Flowering</option>
                       <option value="Harvest">Harvest</option>
                       <option value="Other">Other</option>
                     </select>
-                    <input className="form_row" value={phaseModal.days} placeholder={"Days"} min="1" type="number" onKeyPress= {(e) => {if(e.charCode === 45) {e.preventDefault()}}} onChange={(e) => setPhaseModal({...phaseModal, days: e.target.value})} />
-                    <input className="form_row" value={phaseModal.waterings_per_day} placeholder={"Waterings Per Day"} onChange={(e) => setPhaseModal({...phaseModal, waterings_per_day: e.target.value})} />
-                    <input className="form_row" value={phaseModal.watering_duration} placeholder={"Watering Duration"} onChange={(e) => setPhaseModal({...phaseModal, watering_duration: e.target.value})} />
+                    Phase
+                    </div>
+                    <div className="form_row"><input className="phase_number_input" value={phaseModal.days} min="1" step="1" type="number" onKeyPress= {(e) => {if(e.charCode === 45) {e.preventDefault()}}} onChange={(e) => setPhaseModal({...phaseModal, days: e.target.value})} /> Days</div>
+                    <div className="form_row"><input className="phase_number_input" value={phaseModal.waterings_per_day} min="0" step="1" type="number" onKeyPress= {(e) => {if(e.charCode === 45) {e.preventDefault()}}} onChange={(e) => setPhaseModal({...phaseModal, waterings_per_day: e.target.value})} /> Waterings Per Day</div>
+                    <div className="form_row"><input className="phase_number_input" value={phaseModal.watering_duration} min="0" step="1" type="number" onKeyPress= {(e) => {if(e.charCode === 45) {e.preventDefault()}}} onChange={(e) => setPhaseModal({...phaseModal, watering_duration: e.target.value})} /> Watering Duration (Min)</div>
+                    <div className="form_row"><input className="phase_number_input" value={phaseModal.lights_on_hours} min="0" step="1" type="number" onKeyPress= {(e) => {if(e.charCode === 45) {e.preventDefault()}}} onChange={(e) => setPhaseModal({...phaseModal, lights_on_hours: e.target.value})} />Lights On Hours</div>
                     <div className="form_row">
                       <input value={phaseModal.blue_intensity} id="blue_intensity_slider" className="slider" type="range" min={0} max={99} onChange={(e) => setPhaseModal({...phaseModal, blue_intensity: e.target.value})}/>
                       <div className='intensity_text_overlay'>{phaseModal.blue_intensity}</div>
@@ -328,7 +260,6 @@ const RecipeBar = (props) => {
                       <input value={phaseModal.white_intensity}  id="white_intensity_slider" className="slider" type="range" min={0} max={99} onChange={(e) => setPhaseModal({...phaseModal, white_intensity: e.target.value})} />
                       <div className='intensity_text_overlay'>{phaseModal.white_intensity}</div>
                     </div>   
-                    <input className="form_row" value={phaseModal.lights_on_hours} placeholder={"Lights On Hours"} onChange={(e) => setPhaseModal({...phaseModal, lights_on_hours: e.target.value})} />
 
                     <button className='save' onClick={() => { submitPhaseModal(); close(); }}>Save</button>
                 </div>
@@ -352,20 +283,20 @@ const RecipeBar = (props) => {
 
             return waterings;
           })()}
-          / day, {ph.watering_duration} minute(s) each
+          / day for {ph.watering_duration} minute(s)
         </div>
         <div className="phase_lighting">
           <div style={{minWidth:'20px', maxWidth:'20px', padding:'3px', paddingBottom:'0px'}}> <img src={blue_light_icon} alt="Blue Light"></img> <div className="light_intensity" >{ph.blue_intensity}</div> </div>
           <div style={{minWidth:'20px', maxWidth:'20px', padding:'3px', paddingBottom:'0px'}}> <img src={red_light_icon} alt="Red Light" ></img> <div className="light_intensity">{ph.red_intensity}</div> </div>
           <div style={{minWidth:'20px', maxWidth:'20px', padding:'3px', paddingBottom:'0px'}}> <img src={white_light_icon} alt="White Light"></img> <div className="light_intensity">{ph.white_intensity}</div> </div>
-          , { ph.lights_on_hours } hours per day
+          , { ph.lights_on_hours } hours / day
         </div>
       </div>
     )
   }
 
   /*
-  Input from: phaseList, renderExpReadingTags(); renderTimestamps(); phases; renderExperimentReadingModal();
+  Input from: phaseList, renderExpReadingTags(); renderTimestamps(); phases; experimentReadingInput();
   Outputs to: return()
   Created by: Kelvin F @ 08/31/2022
   Last Edit: Kelvin F @ 08/31/2022
@@ -415,8 +346,8 @@ const RecipeBar = (props) => {
           <div className="recipe_bar_phases"> 
             {phases} 
           </div>
-          {renderExperimentReadingModal()}
           {renderPhaseModal()}
+          {experimentReadingInput.show ? <ExperimentReading input={experimentReadingInput} setExperimentReadingInput={setExperimentReadingInput}/> : <></>}
 
         </div>
       )
@@ -428,7 +359,7 @@ const RecipeBar = (props) => {
   Outputs to: Screen
   Created by: Kelvin F @ 08/31/2022
   Last Edit: Kelvin F @ 08/31/2022
-  Purpose: Renders the entire RecipeBar oobject
+  Purpose: Renders the entire RecipeBar object
   */
   return (
     render()

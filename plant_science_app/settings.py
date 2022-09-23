@@ -174,6 +174,6 @@ CRONTAB_LOCK_JOBS = True
 
 CRONJOBS = [
     ('0 1 * * *', 'dashboard.cron.update_experiments_daily'),
-    ('* * * * *', 'dashboard.cron.check_devices'), 
+    ('*/2 * * * *', 'dashboard.cron.check_devices'),  # every two minutes, update device states
     ('* * * * *', 'dashboard.cron.poll_mongo_db')
 ]

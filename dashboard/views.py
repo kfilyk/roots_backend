@@ -231,12 +231,12 @@ class ExperimentReadingView(viewsets.ModelViewSet):
     Outputs to: RecipeBar.js/getReadings()
     Created by: Stella T 08/30/2022
     Last Edit: Stella T 08/30/2022
-    Purpose: Gets all reading dates of an experiment
+    Purpose: Gets all experiment readings for an experiment
     """
-    @action(detail=False, methods=['POST'], name='exp_reading_dates')
-    def exp_reading_dates(self, request):
+    @action(detail=False, methods=['POST'], name='get_experiment_readings')
+    def get_experiment_readings(self, request):
         qs = ExperimentReading.objects.filter(experiment=request.data['exp_id']).order_by('reading_date')
-        return JsonResponse(list(qs.values('id', 'reading_date')), safe=False)
+        return JsonResponse(list(qs.values()), safe=False)
         
 
 class ExperimentView(viewsets.ModelViewSet):
@@ -400,14 +400,14 @@ class PodView(viewsets.ModelViewSet):
         return Pod.objects.all().annotate(plant_name=F('plant__name')) # return joined plant.name
 
     """
-    Input from: PodCarousel.js/fetchData(); 
-    Outputs to: PodCarousel.js/fetchData(); 
+    Input from: PodCarousel.js/getPods(); 
+    Outputs to: PodCarousel.js/getPods(); 
     Created by: Kelvin F 08/30/2022
     Last Edit: Kelvin F 08/30/2022
     Purpose: Given an experiment id, retrieves its device's capacity and info about its pods including plant name
     """  
-    @action(detail=False, methods=["post"], name='populate_pod_carousel')
-    def populate_pod_carousel(self, request):
+    @action(detail=False, methods=["post"], name='get_pods')
+    def get_pods(self, request):
         exp_id=json.loads(request.body)["id"]
         exp_status = json.loads(request.body)["status"]
         qs = Pod.objects.filter(experiment = exp_id, status=exp_status).annotate(plant_name=F('plant__name')) #(experiment = exp_id, end_date__isnull=True)
@@ -415,14 +415,29 @@ class PodView(viewsets.ModelViewSet):
         capacity = Experiment.objects.get(id=exp_id).device.capacity
         return JsonResponse({"capacity": capacity, "pods": pods}, safe=False)       
         
+
 class PodReadingView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
     serializer_class = PodReadingSerializer
     
     def get_queryset(self):
-        return PodReading.objects.all()
+        return PodReading.objects.all().annotate(reading_date=F('experiment_reading__reading_date'))
 
-
+    """
+    Input from: RecipeBar.js/getPodReadings(); 
+    Outputs to: RecipeBar.js/getPodReadings(); 
+    Created by: Kelvin F 08/30/2022
+    Last Edit: Kelvin F 08/30/2022
+    Purpose: Given a pod_id and an experiment_reading_id, get a reading
+    """
+    @action(detail=False, methods=["post"], name='get_pod_reading')
+    def get_pod_reading(self, request):
+        er_id=json.loads(request.body)["er_id"]
+        p_id=json.loads(request.body)["p_id"]
+        pr = PodReading.objects.filter(experiment_reading = er_id, pod=p_id)
+        if pr:
+            return JsonResponse(list(pr.values())[0], safe=False)    
+        return JsonResponse({}, safe=False)
 
 class RecipeView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 

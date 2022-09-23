@@ -56,36 +56,6 @@ const RecipeList = () => {
 
   const [recipeModal, setRecipeModal] = useState(initRecipeModal);
 
-
-  /*
-  Input from: phase
-  Outputs to: renderCreatePhase()
-  Created by: Stella T 08/31/2022
-  Last Edit: Stella T 08/31/2022
-  Purpose: Makes an API call to create a new phase according to phase variable
-  */
-
-  /*
-  async function addPhase(e) {
-    console.log("DD: ", phase)
-    const result = await axios
-      .post(`/api/phases/`, 
-        { 
-            type: phase.type,
-            days: phase.days,
-            waterings_per_day: phase.waterings_per_day,
-            watering_duration: phase.watering_duration,
-            blue_intensity: phase.blue_intensity,
-            red_intensity: phase.red_intensity,
-            white_intensity: phase.white_intensity,
-            lights_on_hours: phase.lights_on_hours
-        });
-    if(result.status === 201 || result.status === 200){
-      setPhaseList([...phaseList, result.data])
-    }
-  };
-  */
-
   /*
   Input from: None
   Outputs to: recipeList
@@ -280,8 +250,8 @@ const RecipeList = () => {
 
       //console.log("SELECTED PHASE: ", selectedPhase)
       //console.log("NEW PHASE: ", i)
-      Array.from(document.querySelectorAll('.phase_selection')).forEach((el) => el.classList.remove('phase_selection_active'));
-      e.currentTarget.classList.toggle('phase_selection_active');
+      Array.from(document.querySelectorAll('.phase_selection')).forEach((el) => el.classList.remove('selected'));
+      e.currentTarget.classList.toggle('selected');
       //setRecipeModal({...recipeModal, ["phase"+selectedPhase]:phaseModal}) // save the recipe's phase when a different phase is selected
       setSelectedPhase(i)
       setPhaseModal(recipeModal["phase"+i])
@@ -304,7 +274,7 @@ const RecipeList = () => {
       // only render the next phase selection form if the previous one has been given a specified type
       if(i===1 || recipeModal['phase'+(i-1)].type !== "") {
         phase_selection.push(
-          <button key={i} className={i===1 ? 'form_row phase_selection phase_selection_active': 'form_row phase_selection'} onClick={(e) => changePhaseFocus(e, i) }>{recipeModal['phase'+i].type ? recipeModal['phase'+i].type : "New Phase..." }</button>
+          <button key={i} className={i===1 ? 'form_row phase_selection selected': 'form_row phase_selection'} onClick={(e) => changePhaseFocus(e, i) }>{recipeModal['phase'+i].type ? recipeModal['phase'+i].type : "New Phase..." }</button>
         )
       } else {
         // when phase is deleted, if selectedPhase is
