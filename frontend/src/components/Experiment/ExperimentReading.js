@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import Popup from "reactjs-popup";
-import AWS from 'aws-sdk';
 
 const ExperimentReading = (props) => {
     // store experiment reading form to be edited by frontend experiment reading modal
