@@ -132,9 +132,9 @@ class PodReading(models.Model):
     max_height = models.DecimalField(db_column='pr_max_height', max_digits=5, decimal_places=2, blank=True, null=True)
     leaf_area_avg = models.DecimalField(db_column='pr_leaf_area_avg', max_digits=5, decimal_places=2, blank=True, null=True)
 
-    pest_coverage = models.IntegerField(db_column='pr_pest_coverage', default=False, validators=PERCENTAGE_VALIDATOR) 
-    algae_coverage =  models.IntegerField(db_column='pr_algae_coverage', default=False, validators=PERCENTAGE_VALIDATOR)  
-    blight_coverage = models.IntegerField(db_column='pr_blight_coverage', default=False, validators=PERCENTAGE_VALIDATOR)  
+    pest_coverage = models.IntegerField(db_column='pr_pest_coverage', default=False, validators=PERCENTAGE_VALIDATOR, blank=True, null=True) 
+    algae_coverage =  models.IntegerField(db_column='pr_algae_coverage', default=False, validators=PERCENTAGE_VALIDATOR, blank=True, null=True)  
+    blight_coverage = models.IntegerField(db_column='pr_blight_coverage', default=False, validators=PERCENTAGE_VALIDATOR, blank=True, null=True)  
 
     bud_count = models.IntegerField(db_column='pr_bud_count', blank=True, null=True)
     flower_count = models.IntegerField(db_column='pr_flower_count', blank=True, null=True)

@@ -3,7 +3,6 @@ import axios from "axios";
 import menu_icon from "../../img/menu_icon.png"
 import Popup from "reactjs-popup";
 import PodCarousel from "../Experiment/PodCarousel"
-import ExperimentReading from "../Experiment/ExperimentReading"
 import RecipeBar from '../Recipe/RecipeBar';
 import "./experiment.css"
 
@@ -12,11 +11,7 @@ Date Variables used in:
 terminateExperiment()
 */
 let todayDate = new Date();
-let year = todayDate.getUTCFullYear();
-let month = todayDate.getUTCMonth() + 1;
-month = month > 9 ? month : '0'+month;
-let day = todayDate.getUTCDate();
-day = day > 9 ? day : '0'+day;
+console.log("TODAY: ", todayDate)
 
 const Device = () => {
     /*
@@ -55,8 +50,10 @@ const Device = () => {
         device_capacity: null,
         pods: [],
         pod_selection: {},
-        start_date: year+"-"+month+"-"+day,
-        recipe: null
+        start_date: todayDate,
+        end_date: null,
+        recipe: null,
+        phase: null
       })
 
     /*
@@ -68,6 +65,7 @@ const Device = () => {
         show: false,
         id: 0,
         device: -1,
+        device_name: null,
         hour: 0,
         minute: 0,
         cycle: 0,
@@ -75,11 +73,6 @@ const Device = () => {
         timezone: "Etc/GMT-7",
         response: {}
     });
-
-    const [experimentReadingInput, setExperimentReadingInput] = useState({
-        show: false,
-        experiment: null,
-    })
 
     /*
     Input from: None
@@ -173,14 +166,7 @@ const Device = () => {
     Purpose: Terminates an experiment by pushing end date, status=1 to DB object
     */
     async function terminateExperiment(id) {
-        let todayDate = new Date();
-        let year = todayDate.getUTCFullYear();
-        let month = todayDate.getUTCMonth() + 1;
-        month = month > 9 ? month : '0'+month;
-        let day = todayDate.getUTCDate();
-        day = day > 9 ? day : '0'+day;
-
-        await axios.post(`/api/experiments/terminate/`, {id: id, end_date: year+"-"+month+"-"+day});
+        await axios.post(`/api/experiments/terminate/`, {id: id});
         fetchActiveExperiments()
         fetchAvailableDevices()
         fetchCompletedExperiments()
@@ -213,6 +199,13 @@ const Device = () => {
         fetchPlants();
     }, []); // run once after start
 
+    useEffect(() => {
+        let ed = new Date(experiment.start_date)
+        const recipe = recipeList?.filter(recipe => recipe?.id === parseInt(experiment?.recipe))[0]
+        ed = new Date(ed.setDate(ed.getDate() + recipe?.days))
+        console.log("END DATE: ", ed)
+        setExperiment({...experiment, end_date: ed, phase: recipe?.phase1})
+    }, [experiment.recipe, experiment.start_date])
 
     /*
     Input from: None
@@ -397,9 +390,8 @@ const Device = () => {
 
                         <div className='object_actions'>
                             <img className="menu_icon" src={menu_icon} alt="NO IMG!"/>
-                            {item.end_date === null && <li key="terminate"><button onClick={() => { if (window.confirm(`Terminate experiment "${item.name}"?`)) terminateExperiment(item.id) }}>TERMINATE</button></li> }
-                            <li key="addReading"><button onClick={() => setExperimentReadingInput({show:true, experiment: item, add:true})}>ADD READING</button></li>
-                            <li key="sendCommand"><button onClick={() => set_command({...command, show: true, device: item.device_id})}>SEND COMMAND</button></li>
+                            {item.status === 0 && <li key="terminate"><button onClick={() => { if (window.confirm(`Terminate experiment "${item.name}"?`)) terminateExperiment(item.id) }}>TERMINATE</button></li> }
+                            <li key="sendCommand"><button onClick={() => set_command({...command, show: true, device: item.device_id, device_name: item.device_name})}>SEND COMMAND</button></li>
                         </div>
                     </div>
                 )
@@ -439,11 +431,11 @@ const Device = () => {
                               {/* <div>Registered: { item.registration_date.substring(0, 10) }</div> */}
                             </div>
                         </div>
-                        {item.is_online ?  <div className= "empty_object" onClick={() => {setDevice({...device, show:true}); setExperiment({...experiment, device:item.id, device_name:item.name, device_capacity:item.capacity});}}>  ADD EXPERIMENT</div> : <div className= "empty_object">DEVICE OFFLINE</div>}
+                        {item.is_online ?  <div className= "empty_object" onClick={() => {setDevice({...device, show:true}); setExperiment({...experiment, device:item.id, device_name:item.name, device_capacity:item.capacity, start_date:todayDate});}}>  ADD EXPERIMENT</div> : <div className= "empty_object">DEVICE OFFLINE</div>}
                        
                         <div className='object_actions'>
                             <img className="menu_icon" src={menu_icon} alt="NO IMG!"/>
-                            <li key="sendCommand"><button onClick={() => set_command({...command, show: true, device: item.id})}>SEND COMMAND</button></li>
+                            <li key="sendCommand"><button onClick={() => set_command({...command, show: true, device: item.id, device_name: item.name})}>SEND COMMAND</button></li>
                         </div>
                     </div>
                 )
@@ -520,23 +512,26 @@ const Device = () => {
     Outputs to: availableDevices, activeExperiments, experiment
     Created by: Stella T 08/26/2022
     Last Edit: Stella T 08/26/2022
-    Purpose: Makes API call to create another experiment and change the recipe on the device running the experiment
+    Purpose: Makes API call to create an experiment and change the recipe on the device running the experiment
     */
     function submitExperimentModal(close){
         if (experiment.name === null || experiment.name === ""){
           alert("Experiment name cannot be null.")
           return
         }
-        axios
-        .post(`/api/experiments/`, 
+        console.log(experiment)
+        
+        axios.post(`/api/experiments/`, 
           { 
             name: experiment.name,
             device: experiment.device,
+            phase: experiment.phase,
             pod_selection: experiment.pod_selection,
             start_date: experiment.start_date,
+            end_date: experiment.end_date,
             recipe: experiment.recipe
           })
-        .then(res =>{
+        .then(res => {
             changeRecipe()
             fetchAvailableDevices();
             fetchActiveExperiments();
@@ -544,7 +539,6 @@ const Device = () => {
         .catch((err) => console.log(err));
         
         close();
-
     }
 
     /*
@@ -566,7 +560,7 @@ const Device = () => {
                                 <input name="name" value={experiment.name} placeholder = {"Experiment Name"} onChange={(e) => setExperiment({...experiment, name: e.target.value})} />
                             </div>
                             <div className="form_row">
-                                <input className="date_selection" type="date" name="start_date" value={experiment.start_date} onChange={(e) => setExperiment({...experiment, start_date: e.target.value})} />
+                                <input className="date_selection" type="date" name="start_date" value={experiment.start_date.toISOString().substring(0,10)} onChange={(e) => setExperiment({...experiment, start_date: e.target.value})} />
                             </div>
                             <div className="form_row">{renderPodSelection()}</div>
                             <div className="form_row">{renderRecipeSelection()}</div>
@@ -591,7 +585,7 @@ const Device = () => {
     Purpose: Resets experiment's state upon closing the add experiment module (renderExperimentModal())
     */
     function closeExperimentModal(){
-        setExperiment({name: null, device: null, device_name: null, pods: [], start_date: year+"-"+month+"-"+day, pod_selection: {}})
+        setExperiment({name: null, device: null, device_name: null, pods: [], start_date: todayDate, pod_selection: {}})
     }
 
 
@@ -690,7 +684,7 @@ const Device = () => {
                                 
                             </div>
                             <div className="form_row">
-                                Device ID: {command.device}
+                                Device ID: {command.device + " | "+ command.device_name}
                             </div>
                             <div className="form_row">
                                 <select value={command.id} onChange={(e) => set_command({...command, id: e.target.value})} >
@@ -734,7 +728,6 @@ const Device = () => {
             {renderDevices()}
             {renderExperimentModal()}
             {renderCommand()}
-            {experimentReadingInput.show ? <ExperimentReading input={experimentReadingInput} setExperimentReadingInput={setExperimentReadingInput}/> : <></>}
         </div>
       );
 }

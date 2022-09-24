@@ -16,13 +16,15 @@ RECIPE BAR (OBJECT BOTTOM CHIN)
 
 .recipe_bar_start_date {
   width:100%;
+  z-index:3;
 }
 
 .recipe_bar_end_date {
   width:100%;
   text-align: right;
-}
+  z-index:3;
 
+}
 
 .recipe_bar {
   position:relative;
@@ -40,14 +42,12 @@ RECIPE BAR (OBJECT BOTTOM CHIN)
 
 .recipe_bar_phase {
   position: relative;
-  cursor: pointer;
   width: 100%;
   clear: left;
   padding: 10px;
   text-align: left;
   overflow: hidden;
   white-space: nowrap !important;
-
 }
 
 .recipe_bar_phase:hover {

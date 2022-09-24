@@ -111,23 +111,6 @@ const RecipeList = () => {
     }
 
   /*
-  Input from: recipe
-  Outputs to: submitRecipeModal()
-  Created by: Kelvin F @ 08/31/2022
-  Last Edit: Kelvin F @ 08/31/2022
-  Purpose: Calculates the total days of recipe based on summation of phase days
-  */
-  function countDays() {
-    let days = 0;
-    for(let i = 1; i<=10; i++) {
-      if (recipeModal["phase"+i].type !== null) {
-        days += recipeModal["phase"+i].days
-      }
-    }
-    recipeModal.days = days;
-  }
-
-  /*
   Input from: submitRecipeModal()
   Outputs to: recipeList
   Created by: Kelvin F @ 08/31/2022
@@ -149,10 +132,8 @@ const RecipeList = () => {
   Purpose: Makes an API call to edit a recipe in the database.
   */
   async function editRecipe(e) {
-    
     await axios.post(`/api/recipes/edit/`, recipeModal)
       .catch((err) => console.log("Error during edit recipe: ", err))
-    
     fetchRecipes()
     fetchPhases()
   };
@@ -169,14 +150,13 @@ const RecipeList = () => {
     if (recipe === null){
       setRecipeModal({...recipeModal, add: true, show: true})
     } else {
-      let r = {...recipe}
-
+      let r = {};
+      Object.assign(r, recipe)
       for(let i = 1; i<= 10; i++) {
         r['phase'+i] = phaseList.filter(phase => phase.id === r['phase'+i])[0] ?? initPhaseModal
       }
       r['add']= false;
       r['show']= true;
-      console.log("RECIPE: ", r)
       setPhaseModal(r['phase1'])
       setRecipeModal(r)
     }
@@ -189,21 +169,24 @@ const RecipeList = () => {
   Last Edit: Kelvin F @ 09/16/2022
   Purpose: Verifies recipe constraints (need recipe name + min. 1 phase); calculates total recipe day then makes API call to create recipe
   */
-
   function submitRecipeModal(close){
     if(recipeModal.name === null || recipeModal.name === ""){
       alert("Please provide a recipe name.")
       return
+    } else if (recipeModal.phase1.type === "") {
+      alert("Please provide at least one phase.")
+      return
     }
-    // Count days and update before pushing add or edit 
-    countDays();
-
-    if(recipeModal.add) {
-      addRecipe()
-    } else {
-      editRecipe()
+    console.log(recipeModal.days)
+    
+    if (recipeModal.days !== 0) {
+      if(recipeModal.add) {
+        addRecipe()
+      } else {
+        editRecipe()
+      }
+      close();
     }
-    close();
   }
 
   /*
@@ -215,28 +198,31 @@ const RecipeList = () => {
   */
  
   function closeModal(){
-    console.log("FLAG!!")
     setRecipeModal(initRecipeModal)
     setPhaseModal(initPhaseModal)
     setSelectedPhase(1)
   }
 
-    /*
+  /*
   Input from: None
   Outputs to: phaseList; recipeList
   Created by: Kelvin F @ 09/15/2022
-  Last Edit: Kelvin F @ 08/15/2022
-  Purpose: 
+  Last Edit: Kelvin F @ 09/23/2022
+  Purpose: Calculates the total days of recipe based on summation of phase days. Also appends any changes to phases to the final recipe modal
   */
- 
   useEffect(() => {
-    setRecipeModal({...recipeModal, ["phase"+selectedPhase]:phaseModal}) // save the recipe's phase when a different phase is selected
-
-    //console.log("(USE EFFECT) PHASE: ", selectedPhase)
-    //console.log("(USE EFFECT) PHASE MODAL: ", phaseModal)
-    //console.log("(USE EFFECT) RECIPE MODAL: ", recipeModal["phase"+selectedPhase])
+    let r = {...recipeModal, ["phase"+selectedPhase]:phaseModal}
+    let days = 0;
+    for(let i = 1; i<=10; i++) {
+      if (r["phase"+i].type !== "") {
+        days += parseInt(r["phase"+i].days)
+      } else {
+        break
+      }
+    }
+    r = {...r, days: days}
+    setRecipeModal(r) // save the recipe's phase and total length in days whenever phase modal is changed
   }, [phaseModal]);
-  
 
   /*
   Input from: renderPhaseSelection()

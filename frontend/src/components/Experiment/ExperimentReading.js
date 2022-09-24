@@ -63,22 +63,6 @@ const ExperimentReading = (props) => {
     const [selectedPod, setSelectedPod] = useState(-1)
 
 
-        /*
-    Input from: props.experimentID
-    Outputs to: pods, capacity
-    Created by: Kelvin F 08/31/2022
-    Last Edit: Kelvin F 08/31/2022
-    Purpose: Given an experiment reading id, retrieves its device's capacity and info about its pods including plant name
-    */
-    async function getPodReading(er_id, p_id, pod) {
-        const result = await axios.post(`/api/podreadings/get_pod_reading/`, {"er_id":er_id, "p_id":p_id});
-        //console.log("POD READING: ", result.data);
-        if(result.data !== {}) {
-            pod['pod_reading'] = result.data
-        }
-        return pod
-    } 
-
     /*
     Input from: props.experimentID
     Outputs to: pods, capacity
@@ -87,16 +71,21 @@ const ExperimentReading = (props) => {
     Purpose: Given an experiment id, retrieves its device's capacity and info about its pods including plant name
     */
     async function getPods(e_id, er_id, status) {
+        let podList = {}
         const result = await axios.post(`/api/pods/get_pods/`, {"id":e_id, "status":status});
         result.data.pods.forEach(pod => {
             pod['pod_reading'] = initPodReadingModal;
-            if(!props.input.add) {
-                pod = getPodReading(er_id, pod.id, pod)
-            }
+            podList[pod.id] = pod
         })
-
-        console.log("PODS: ", result.data.pods)
-        setPods(result.data.pods)
+        if(!props.input.add) {
+            for (const [key, value] of Object.entries(podList)) {
+                const result = await axios.post(`/api/podreadings/get_pod_reading/`, {"er_id":er_id, "p_id":key});
+                if(Object.keys(result.data).length !== 0) { // if the resultant dictionary isnt {}
+                    value['pod_reading'] = result.data
+                }
+            }
+        } 
+        setPods(podList)
     } 
 
 
@@ -109,11 +98,9 @@ const ExperimentReading = (props) => {
     Purpose: On render, set experiment, pods and experiment reading modal
     */
     useEffect(() => {
-
-        console.log("EXPERIMENT READING INPUT: ", props.input)
-
         //get experiment data including pods
         setExperiment(props.input.experiment);
+    
         getPods(props?.input.experiment.id, props?.input.id, props?.input.experiment.status)
         // set experiment reading data
         setExperimentReadingModal({...experimentReadingModal, ...props.input})
@@ -122,11 +109,11 @@ const ExperimentReading = (props) => {
 
     
     useEffect(() => {
+        //console.log(selectedPod)
         if(selectedPod !== -1) {
-            const curr_pod = pods?.filter(pod => pod.id === selectedPod)[0]
-            curr_pod['pod_reading'] = podReadingModal // sets the pod_reading of the currently active pod object while form is open
+            setPods({...pods, [selectedPod]: {...pods[selectedPod], pod_reading: podReadingModal}})// sets the pod_reading of the currently active pod object while form is open
         }
-    },[podReadingModal, pods])
+    },[podReadingModal])
     
 
     /*
@@ -137,18 +124,56 @@ const ExperimentReading = (props) => {
     Purpose: This function accesses the api and pushes the experiment reading object
     */  
     async function submitExperimentReading(){
-        if(experimentReadingModal.show){
-            const result = await axios
-            .post(`/api/experimentreadings/`, {experimentReadingModal})
-            .catch((err) => console.log(err));
+        const empty_pod_reading = JSON.stringify(initPodReadingModal)
+        let er = {}
+        Object.assign(er, experimentReadingModal);
+        Object.keys(er).forEach(key => {if(er[key] === "") er[key]= null}) // set all "" to null
+        delete er['show'];
+        delete er['add'];
+        er['experiment']=props.input.experiment.id
 
-            if (result){
-                console.log("Experiment readings and pod readings uploaded successfully")
-                // refresh devices
-            } else {
-                console.log("SERVER ERROR: Experiment + pod readings were not uploaded")
+        if(props.input.add) {
+            const result = await axios.post(`/api/experimentreadings/`, er)
+                .catch((err) => console.log(err));
+            if(result && result['status'] === 201) {
+                for (const [key, value] of Object.entries(pods)) {
+                    if(JSON.stringify(value['pod_reading']) !== empty_pod_reading) {
+                        let pr = {}
+                        Object.assign(pr, value['pod_reading']);
+                        Object.keys(pr).forEach(k => {if(pr[k] === "") pr[k]= null}) // set all "" to null
+                        pr['pod'] = parseInt(key)
+                        pr['experiment'] = props.input.experiment.id
+                        pr['experiment_reading'] = result.data.id // add the newly generated e reading id to the pod reading
+                        console.log("POD READING: ", pr);
+                        await axios.post(`/api/podreadings/`, pr).catch((err) => console.log(err));
+                    } 
+                }
+            }
+        } else {
+            const result = await axios.patch(`/api/experimentreadings/${er.id}/`, er)
+                .catch((err) => console.log(err));
+            console.log(result)
+            if(result && result['status'] === 200) {
+                for (const [key, value] of Object.entries(pods)) {
+                    if(JSON.stringify(value['pod_reading']) !== empty_pod_reading) {
+                        let pr = value['pod_reading']
+                        console.log("PR1: ", pr)
+                        if(pr['id'] === undefined) {
+                            pr['pod'] = key
+                            pr['experiment'] = props.input.experiment.id
+                            pr['experiment_reading'] = result.data.id // add the newly generated e reading id to the pod reading
+                            console.log(await axios.post(`/api/podreadings/`, pr).catch((err) => console.log(err)));
+                        } else {
+                            console.log(await axios.patch(`/api/podreadings/${pr['id']}/`, pr).catch((err) => console.log(err)));
+                        }
+
+                        console.log("POD READING: ", pr);
+                    } 
+                }
+
             }
         }
+        props.getExperimentReadings(props.input.experiment.id)
     }
 
     /*
@@ -233,11 +258,11 @@ const ExperimentReading = (props) => {
     function renderPodSelection(){
         let pod_container = []
         if (pods !== undefined) {
-            pods.forEach(pod => {
+            for (const [key, value] of Object.entries(pods)) {
                 pod_container.push(
-                    <button className="pod_selection" key={pod.position} onClick={(e) => {changeSelectedPod(e, pod)}}>{pod.plant_name}</button> 
-                )
-            })
+                    <button className="pod_selection" key={value.position} onClick={(e) => {changeSelectedPod(e, value)}}>{value.plant_name}</button> 
+                )           
+            }
         }
         return pod_container
       }
@@ -260,7 +285,7 @@ const ExperimentReading = (props) => {
                             <button value= {experimentReadingModal.raised_light} className={experimentReadingModal.raised_light === true ? "selected": ""} onClick={(e) => {e.currentTarget.classList.toggle('selected'); setExperimentReadingModal({...experimentReadingModal, raised_light: !experimentReadingModal.raised_light})}}> Raised Light </button>
                             <button value= {experimentReadingModal.failed_pump} className={experimentReadingModal.failed_pump === true ? "selected": ""} onClick={(e) => {e.currentTarget.classList.toggle('selected'); setExperimentReadingModal({...experimentReadingModal, failed_pump: !experimentReadingModal.failed_pump})}}> Failed Pump </button>
                             <button value= {experimentReadingModal.went_offline} className={experimentReadingModal.went_offline === true ? "selected": ""} onClick={(e) => {e.currentTarget.classList.toggle('selected'); setExperimentReadingModal({...experimentReadingModal, went_offline: !experimentReadingModal.went_offline})}}> Went Offline </button>
-                            <button value= {experimentReadingModal.lost_power} className={experimentReadingModal.lost_power === true ? "selected": ""} onChange={(e) => {e.currentTarget.classList.toggle('selected'); setExperimentReadingModal({...experimentReadingModal, lost_power: !experimentReadingModal.lost_power})}}> Lost Power </button>
+                            <button value= {experimentReadingModal.lost_power} className={experimentReadingModal.lost_power === true ? "selected": ""} onClick={(e) => {e.currentTarget.classList.toggle('selected'); setExperimentReadingModal({...experimentReadingModal, lost_power: !experimentReadingModal.lost_power})}}> Lost Power </button>
                         </div>
                     </div>
                     <div className='pod_r_modal_2'>
