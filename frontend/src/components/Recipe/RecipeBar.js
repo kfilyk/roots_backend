@@ -231,8 +231,6 @@ const RecipeBar = (props) => {
                   <div className="object_dropdown">
                     {renderPhaseDetails(ph)}
                   </div>
-                  {/*<div className="popup">{renderPhaseDetails(ph)}</div>*/}
-
                 </div>)
               }
           }

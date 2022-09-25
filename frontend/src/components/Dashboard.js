@@ -99,14 +99,10 @@ const Dashboard = (props) => {
     <main className="container">
       
       <div className="header">
-        <h1 className="title"><img src={roots_logo} style={{width:'25px', marginRight:'10px', marginBottom:'8px',verticalAlign:'middle'}} alt="Not Found"/>R.O.O.T.S.</h1>
+        <h1 className="title"><img src={roots_logo} style={{width:'25px', marginRight:'10px', marginBottom:'8px',verticalAlign:'middle'}} alt=""/>R.O.O.T.S.</h1>
         <div className="user_container">
-          <button id="logout" title="Logout" onClick={logout}>
-            <span>{ props.user }</span>
-          </button>
-          <div className="user_img_frame">
-            <img className="user_img" src={user_brown_icon} alt="NO IMG!"/>
-          </div>
+          <button id="logout" title="Logout" onClick={logout}><span>{props.user}</span></button>
+          <img style={{width:'25px', marginBottom:'8px',verticalAlign:'middle'}} className="user_img" src={user_brown_icon} alt=""/>
         </div>
       </div>
       

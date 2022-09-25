@@ -1,3 +1,6 @@
+html {
+  width:100%;
+}
 .dashboard {
   padding: 10px;
 }
@@ -87,7 +90,6 @@ OBJECT CONTAINERS (DEVICE, EXPERIMENT, ETC)
 .object_top {
   display:flex;
   flex-direction: row;
-
 }
 
 .object_description {
@@ -218,7 +220,7 @@ TOOLTIP
 .tooltip {
   position: relative;
   cursor: pointer;
-  white-space: pre-wrap;
+  white-space: nowrap;
 }
 
 /* Base styles for the entire tooltip */

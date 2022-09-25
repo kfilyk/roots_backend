@@ -145,7 +145,6 @@ CORS_ALLOWED_ORIGINS = [
     'https://avaroots.io'
 ]
 
-# having avaroots.io whitelisted/allowed shouldnt affect break anything...
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000',
     'http://3.232.27.231:3000',
