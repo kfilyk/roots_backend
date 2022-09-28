@@ -172,7 +172,7 @@ REST_FRAMEWORK = {
 CRONTAB_LOCK_JOBS = True
 
 CRONJOBS = [
-    ('0 1 * * *', 'dashboard.cron.update_experiments_daily'),
-    ('*/2 * * * *', 'dashboard.cron.check_devices'),  # every two minutes, update device states
+    ('0 1 * * *', 'dashboard.cron.update_experiments'),
+    ('*/5 * * * *', 'dashboard.cron.check_devices'),  # every five minutes, update device states
     ('* * * * *', 'dashboard.cron.poll_mongo_db')
 ]

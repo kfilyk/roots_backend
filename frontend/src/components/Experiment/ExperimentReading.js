@@ -207,9 +207,9 @@ const ExperimentReading = (props) => {
 
                     <div className="form_row">
                         <input placeholder="Mean Leaf Area" type="number" value={podReadingModal.leaf_area_avg} name={"leaf_area_avg"} min={0} onChange={(e) => setPodReadingModal({...podReadingModal, leaf_area_avg: e.target.value})} />
-                        <input placeholder="Max Height" type="number" value={podReadingModal.max_height} name={"max_height"} min={0} onChange={(e) => setPodReadingModal({...podReadingModal, max_height: e.target.value})} />
-                        <input  placeholder="Min Height" type="number" value={podReadingModal.min_height} name={"min_height"} min={0} onChange={(e) => setPodReadingModal({...podReadingModal, min_height: e.target.value})} />
-                        <input placeholder="Media to BGP" type="number" value={podReadingModal.media_to_bgp} name={"media_to_bgp"} min={0} onChange={(e) => setPodReadingModal({...podReadingModal, media_to_bgp: e.target.value})} />
+                        <input placeholder="Max Height (cm)" type="number" value={podReadingModal.max_height} name={"max_height"} min={0} onChange={(e) => setPodReadingModal({...podReadingModal, max_height: e.target.value})} />
+                        <input  placeholder="Min Height (cm)" type="number" value={podReadingModal.min_height} name={"min_height"} min={0} onChange={(e) => setPodReadingModal({...podReadingModal, min_height: e.target.value})} />
+                        <input placeholder="Media to BGP (cm)" type="number" value={podReadingModal.media_to_bgp} name={"media_to_bgp"} min={0} onChange={(e) => setPodReadingModal({...podReadingModal, media_to_bgp: e.target.value})} />
                     </div>
                     <div className="form_row">
                         <input placeholder="Harvest Weight" type="number" value={podReadingModal.harvest_weight} name={"harvest_weight"} min={0} onChange={(e) => setPodReadingModal({...podReadingModal, harvest_weight: e.target.value})} />

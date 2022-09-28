@@ -378,7 +378,6 @@ const RecipeList = () => {
               <div className="object_description">
                 <div className="bold_font">{item.name+" | "}<span className="normal_font">{item.days} Days</span></div>
               </div>
-
               
               <div className='object_actions'>
                 <img className="menu_icon" src={menu_icon} alt="NO IMG!"/>

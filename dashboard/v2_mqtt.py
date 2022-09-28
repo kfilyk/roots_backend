@@ -1,4 +1,5 @@
 import time
+import datetime as dt
 import paho.mqtt.client as paho
 import ssl
 import json
@@ -69,7 +70,7 @@ class MQTT:
     Outputs to: views.py/send_command()
     Created by: Stella T 08/19/2022
     Last Edit: Stella T 08/19/2022
-    Purpose: Gets the entire device state for a single device
+    Purpose: Gets the device state for a single device
     """
     def get_device_status(self, device):
         self.client.connect(self.broker, port=self.port)#connect
@@ -242,24 +243,20 @@ class MQTT:
         self.client.loop_start() #start loop to process received messages
         devices = list(Device.objects.all().values_list('id', flat=True))
 
-        i = 0
         for device in devices:
             self.client.subscribe(f'avagrows/device/client/{device}/deviceState')
             self.client.publish(f'avagrows/device/server/{device}/devicecommand','{"command": 0}') #publish
-            i = i+1
 
-        time.sleep(60) 
 
+        time.sleep(30) #dropoff of received messages goes to 0 exponentially after 30 seconds
+            
         for device in devices:
             self.client.unsubscribe(f'avagrows/device/client/{device}/deviceState')
-        
-        #print("DEVICES CONTACTED: ", i) # debug: check 
-        #print("DEVICES RETURNED: ", len(self.msgs))
+
+        print("ONLINE DEVICES: "+ str(len(self.msgs))+"/"+str(len(devices)))
 
         self.client.disconnect() 
         self.client.loop_stop()
-
-        #x = [d.deviceId for d in self.msgs if d.deviceStatus == 1] # x is the set of all online devices
         return self.msgs
 
     """
@@ -277,38 +274,22 @@ class MQTT:
         self.client.connect(self.broker, port=self.port)#connect
         self.client.loop_start() #start loop to process received messages
         self.client.subscribe(f'avagrows/device/client/{id}/deviceState')#subscribe
+
+        # change timezone to universal, because heck GMT
+        self.client.publish(f'avagrows/device/server/{id}/devicecommand', f'{{"command": 7, "timezone":"Etc/Universal"}}')
+
+        # change starttime to ~2 minutes after device  recipe is set
+        self.client.publish(f'avagrows/device/server/{id}/devicecommand', f'{{"command": 11, "hour":{dt.datetime.now().hour}, "minute":{dt.datetime.now().minute+2}}}')
+        time.sleep(5)
         self.client.publish(f'avagrows/device/server/{id}/devicecommand', \
             f'{{"command": 3, "name":"{recipe_name}", "data":{json.dumps(recipe)}}}')
         time.sleep(5)
+
         self.client.publish(f'avagrows/device/server/{id}/devicecommand', \
             f'{{"command": 4, "name":"{recipe_name}"}}')
-        time.sleep(5)
-        self.client.publish(f'avagrows/device/server/{id}/devicecommand','{"command": 0}')
-        '''
-        time.sleep(5)
-        if len(self.msgs) > 0:
-            if self.msgs[0].current_recipe == recipe_name:
-                self.client.unsubscribe(f'avagrows/device/client/{id}/deviceState')#subscribe
 
-                self.client.disconnect() #disconnect
-                self.client.loop_stop()
-                print("1: ", self.msgs[0].deviceId)
-                return {"current_recipe": recipe_name, "dailyStartTime": self.msgs[0].dailyStartTime}
-        else: 
-            self.client.publish(f'avagrows/device/server/{id}/devicecommand','{"command": 0}')
-            if len(self.msgs) > 0:
-                if self.msgs[0].current_recipe == recipe_name:
-                    self.client.unsubscribe(f'avagrows/device/client/{id}/deviceState')#subscribe
-                    self.client.disconnect() #disconnect
-                    self.client.loop_stop()
-                    print("2: ", self.msgs[0].deviceId)
-                    return {"current_recipe": recipe_name, "dailyStartTime": self.msgs[0].dailyStartTime}
-        '''
         time.sleep(5)
-        if len(self.msgs) > 0:
-            print("DEVICE STATE: \n")
-            print(self.msgs[0])
+    
         self.client.unsubscribe(f'avagrows/device/client/{id}/deviceState')#subscribe
-
         self.client.disconnect() #disconnect
         self.client.loop_stop()

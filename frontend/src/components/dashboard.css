@@ -96,8 +96,6 @@ OBJECT CONTAINERS (DEVICE, EXPERIMENT, ETC)
   display: flex;
   flex-direction: column;
   padding:10px;
-  padding-top:20px;
-
   border-bottom-left-radius: 10px;
   border-top-left-radius: 10px;
   min-width: 30%;

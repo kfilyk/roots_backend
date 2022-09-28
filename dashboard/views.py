@@ -93,43 +93,16 @@ class DeviceView(viewsets.ModelViewSet):
     Purpose: Given device id and recipe id, takes recipe id and generates JSON then sends JSON to device.
     """
     # this generates a recipe during "AddExperiment"
-    @action(detail=False, methods=['POST'], name='change_recipe')
-    def change_recipe(self, request):
-        print("CHANGE RECIPE DEVICE: ", request.data['device_id'])
-        print("CHANGE RECIPE: ", request.data['new_recipe_id'])
+    @action(detail=False, methods=['POST'], name='update_device')
+    def update_device(self, request):
+        print("CHANGE RECIPE TARGET DEVICE: ", request.data['device_id'])
+        print("RECIPE: ", request.data['new_recipe_id'])
 
         id = Device.objects.get(id=request.data['device_id']).id
-        recipe = Recipe.objects.filter(id=request.data['new_recipe_id']) \
-                        .select_related('phase1', 'phase2', 'phase3', 'phase4', 'phase5', 'phase6', 'phase7', 'phase8', 'phase9', 'phase10')
+        recipe = Recipe.objects.get(id=request.data['new_recipe_id'])
 
-        stages = []
-        if recipe[0].phase1 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase1))
-        if recipe[0].phase2 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase2))
-        if recipe[0].phase3 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase3))
-        if recipe[0].phase4 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase4))
-        if recipe[0].phase5 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase5))
-        if recipe[0].phase6 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase6))
-        if recipe[0].phase7 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase7))
-        if recipe[0].phase8 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase8))
-        if recipe[0].phase9 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase9))
-        if recipe[0].phase10 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase10))
-
-        recipe_json = {
-            "name": recipe[0].name.replace(" ", "_") + ".json",
-            "recipeFormatVersion":1,
-            "pod1GrowthRate":1.2,
-            "pod2GrowthRate":1.2,
-            "pod3GrowthRate":1.2,
-            "pod4GrowthRate":1.2,
-            "pod5GrowthRate":1.2,
-            "luxThresholdArray":"",
-            "totalLuxZones":"",
-            "waterConsumptionRate":1001.5,
-            "transitionRandomness":15,
-            "stages": stages,
-        }
         broker = MQTT()
-        data = broker.trigger_recipe(id, recipe_json, recipe[0].name.replace(" ", "_") + ".json")
+        data = broker.trigger_recipe(id, recipe.recipe_json, recipe.name.replace(" ", "_") + ".json")
         print("DATA: ", data)
         return JsonResponse(data, safe=False)
 
@@ -158,33 +131,6 @@ class DeviceView(viewsets.ModelViewSet):
         user = self.request.user
         return Device.objects.all() #filter(user = user.id)
 
-
-'''
-    def create(self, request, *args, **kwargs):
-        recipe = request.data
-        recipe['author'] = self.request.user
-
-        del recipe['show']
-        del recipe['add']
-        del recipe['id']
-        for i in range(1, 11):
-            ph = recipe["phase"+str(i)]
-            del ph['id'] # shouldn't have a preexisting id before being entered
-            if ph['type'] != "":
-                recipe["phase"+str(i)] = Phase.objects.create(**ph)
-            else:
-                recipe["phase"+str(i)] = None
-        
-        r = Recipe.objects.create(**recipe)
-        r.recipe_json = RecipeView.generate_JSON(r.id)
-        r.save()
-
-        #recipe_id = super().create(request, *args, **kwargs).data['id']
-        #recipe = Recipe.objects.get(id=recipe_id)
-        #recipe.name = recipe.name.replace(" ", "_")
-        #recipe.recipe_json = ""
-        return JsonResponse(model_to_dict(r), safe=False) 
-'''
 class ExperimentReadingView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
     serializer_class = ExperimentReadingSerializer

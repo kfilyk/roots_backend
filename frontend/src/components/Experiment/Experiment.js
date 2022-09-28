@@ -344,25 +344,15 @@ const Device = () => {
     Last Edit: Stella T 08/26/2022
     Purpose: Makes API Call that sends the recipe of an experiment to a device via MQTT
     */
-    async function changeRecipe(){
+    async function updateDevice(){
         const result = await axios
-        .post(`/api/devices/change_recipe/`, 
+        .post(`/api/devices/update_device/`, 
           { 
               device_id: experiment.device,
               new_recipe_id: parseInt(experiment.recipe)
 
           });
-        let index = activeExperiments.findIndex(d => d.id === device.id)
-        if(index !== -1) {
-            let updated_device = activeExperiments[index]
-            updated_device['current_recipe'] = result.data.current_recipe
-            updated_device['dailyStartTime'] = result.data.dailyStartTime
-            setActiveExperiments([
-                ...activeExperiments.slice(0, index),
-                updated_device,
-                ...activeExperiments.slice(index + 1)
-            ])
-        }
+        
     }
 
     /*
@@ -545,7 +535,7 @@ const Device = () => {
             recipe: experiment.recipe
           })
         .then(res => {
-            changeRecipe()
+            updateDevice();
             fetchAvailableDevices();
             fetchActiveExperiments();
         })
