@@ -17,7 +17,7 @@ from django.contrib.auth import get_user_model
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.permissions import IsAuthenticated 
-from django.db.models import F
+from django.db.models import F, Q
 from rest_framework.decorators import action
 from django.http import HttpResponse, JsonResponse
 from datetime import datetime
@@ -93,43 +93,16 @@ class DeviceView(viewsets.ModelViewSet):
     Purpose: Given device id and recipe id, takes recipe id and generates JSON then sends JSON to device.
     """
     # this generates a recipe during "AddExperiment"
-    @action(detail=False, methods=['POST'], name='change_recipe')
-    def change_recipe(self, request):
-        print("CHANGE RECIPE DEVICE: ", request.data['device_id'])
-        print("CHANGE RECIPE: ", request.data['new_recipe_id'])
+    @action(detail=False, methods=['POST'], name='update_device')
+    def update_device(self, request):
+        print("CHANGE RECIPE TARGET DEVICE: ", request.data['device_id'])
+        print("RECIPE: ", request.data['new_recipe_id'])
 
         id = Device.objects.get(id=request.data['device_id']).id
-        recipe = Recipe.objects.filter(id=request.data['new_recipe_id']) \
-                        .select_related('phase1', 'phase2', 'phase3', 'phase4', 'phase5', 'phase6', 'phase7', 'phase8', 'phase9', 'phase10')
+        recipe = Recipe.objects.get(id=request.data['new_recipe_id'])
 
-        stages = []
-        if recipe[0].phase1 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase1))
-        if recipe[0].phase2 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase2))
-        if recipe[0].phase3 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase3))
-        if recipe[0].phase4 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase4))
-        if recipe[0].phase5 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase5))
-        if recipe[0].phase6 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase6))
-        if recipe[0].phase7 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase7))
-        if recipe[0].phase8 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase8))
-        if recipe[0].phase9 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase9))
-        if recipe[0].phase10 != None: stages.append(RecipeView.create_individual_stage(recipe[0].phase10))
-
-        recipe_json = {
-            "name": recipe[0].name.replace(" ", "_") + ".json",
-            "recipeFormatVersion":1,
-            "pod1GrowthRate":1.2,
-            "pod2GrowthRate":1.2,
-            "pod3GrowthRate":1.2,
-            "pod4GrowthRate":1.2,
-            "pod5GrowthRate":1.2,
-            "luxThresholdArray":"",
-            "totalLuxZones":"",
-            "waterConsumptionRate":1001.5,
-            "transitionRandomness":15,
-            "stages": stages,
-        }
         broker = MQTT()
-        data = broker.trigger_recipe(id, recipe_json, recipe[0].name.replace(" ", "_") + ".json")
+        data = broker.trigger_recipe(id, recipe.recipe_json, recipe.name.replace(" ", "_") + ".json")
         print("DATA: ", data)
         return JsonResponse(data, safe=False)
 
@@ -158,41 +131,11 @@ class DeviceView(viewsets.ModelViewSet):
         user = self.request.user
         return Device.objects.all() #filter(user = user.id)
 
-
 class ExperimentReadingView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
     serializer_class = ExperimentReadingSerializer
     filter_backends = [filters.DjangoFilterBackend,]
     filterset_fields = ['experiment']
-
-    """
-    Input from: ExperimentReading.js/create_readings()
-    Outputs to: ExperimentReading.js/create_readings()
-    Created by: Stella T 08/30/2022
-    Last Edit: Stella T 08/30/2022
-    Purpose: Not only records Experiment Reading values but pod reading values as well. 
-    Pod readings cannot exist without an experiment reading even if the experiment reading is blank. 
-    """
-    def create(self, request, *args, **kwargs):
-        try:
-            print("FLAG R DATA: ", request.data)
-            pr_values = request.data.get('pod_readings')
-            ec = None if request.data.get('electrical_conductance') == '' else request.data.get('electrical_conductance')
-            ph = None if request.data.get('reservoir_ph')  == '' else request.data.get('reservoir_ph')
-            temp = None if request.data.get('temperature') == '' else request.data.get('temperature')
-            hum = None if request.data.get('humidity')  == '' else request.data.get('humidity')
-            #exp_r = ExperimentReading.objects.create(experiment=Experiment.objects.get(id=request.data.get('experiment')), electrical_conductance= request.data.get('electrical_conductance'), reservoir_ph=request.data.get('reservoir_ph'), temperature=request.data.get('temperature'), humidity=request.data.get('humidity'))
-            exp_r = ExperimentReading.objects.create(experiment=Experiment.objects.get(id=request.data.get('experiment')), electrical_conductance= ec, reservoir_ph=ph, temperature=temp, humidity=hum, flushed_reservoir=request.data.get('flushed_reservoir'), raised_light = request.data.get('raised_light'), failed_pump=request.data.get('failed_pump'), went_offline= request.data.get('went_offline'), lost_power = request.data.get('lost_power'))
-            exp_id = exp_r.experiment_id
-            pod_readings = []
-            for i in range(len(pr_values)):
-                pod_id = pr_values[i].pop('pod', None)
-                pod_readings.append(PodReading(experiment=Experiment.objects.get(id=exp_id), experiment_reading=ExperimentReading.objects.get(id=exp_r.id), pod=Pod.objects.get(id=pod_id), **pr_values[i]))
-            PodReading.objects.bulk_create(pod_readings)
-            return Response("Reading created", status=200)
-        except Exception as e: 
-            print("ERROR IN EXPERIMENT_READING_VIEW: create ", e)
-            return Response(status=500)
 
     """
     Input from: Not in use.
@@ -231,12 +174,12 @@ class ExperimentReadingView(viewsets.ModelViewSet):
     Outputs to: RecipeBar.js/getReadings()
     Created by: Stella T 08/30/2022
     Last Edit: Stella T 08/30/2022
-    Purpose: Gets all reading dates of an experiment
+    Purpose: Gets all experiment readings for an experiment
     """
-    @action(detail=False, methods=['POST'], name='exp_reading_dates')
-    def exp_reading_dates(self, request):
+    @action(detail=False, methods=['POST'], name='get_experiment_readings')
+    def get_experiment_readings(self, request):
         qs = ExperimentReading.objects.filter(experiment=request.data['exp_id']).order_by('reading_date')
-        return JsonResponse(list(qs.values('id', 'reading_date')), safe=False)
+        return JsonResponse(list(qs.values()), safe=False)
         
 
 class ExperimentView(viewsets.ModelViewSet):
@@ -264,15 +207,12 @@ class ExperimentView(viewsets.ModelViewSet):
         exp_id = super().create(request, *args, **kwargs).data['id']
         exp = Experiment.objects.get(id=exp_id)
         pod_selection = request.data['pod_selection']
-        #start_date = make_aware(datetime.strptime(request.data['start_date'], '%Y-%m-%d-%H-%M'))
-        start_date = make_aware(datetime.strptime(request.data['start_date'], '%Y-%m-%d'))
-        print(start_date)
         phase = 0
 
         #new_pods = []
         for p in pod_selection:
             #new_pods.append(Pod(start_date=start_date, phase=phase, position=p, plant=Plant.objects.get(id=pods[p]), experiment=exp))
-            Pod.objects.create(start_date=start_date, phase=phase, position=p, plant=Plant.objects.get(id=pod_selection[p]), experiment=exp)
+            Pod.objects.create(start_date=request.data['start_date'], end_date=request.data['end_date'], phase=phase, position=p, plant=Plant.objects.get(id=pod_selection[p]), experiment=exp)
         return JsonResponse(model_to_dict(exp), safe=False) # should this be list?
 
     """
@@ -284,7 +224,7 @@ class ExperimentView(viewsets.ModelViewSet):
     """    
     @action(detail=False, methods=['GET'], name='free_devices')
     def free_devices(self, request):
-        excluded = Experiment.objects.filter(end_date__isnull=True).filter(device__isnull=False).values('device') # list of all devices referenced by currently active experiments
+        excluded = Experiment.objects.filter(status=0).filter(device__isnull=False).values('device') # list of all devices referenced by currently active experiments
         query = Device.objects.exclude(id__in=excluded).order_by(Length('name').asc(), 'name') # exclude from device list all devices which an active experiment references
         data = list(query.values('id', 'name', 'capacity', 'mac_address', 'is_online'))
         return JsonResponse(data, safe=False)
@@ -299,7 +239,7 @@ class ExperimentView(viewsets.ModelViewSet):
     """  
     @action(detail=False, methods=['GET'], name='active')
     def active(self, request):
-        devices = Experiment.objects.filter(end_date__isnull=True)
+        devices = Experiment.objects.filter(status=0)
         devices = devices.filter(device__isnull=False).select_related('device').order_by(Length('name').asc(), 'name')
         data = list(devices.values().annotate(device_name=F('device__name')).annotate(is_online=F('device__is_online')).annotate(mac_address=F('device__mac_address')).annotate(current_recipe=F('recipe__name'))) # 
         return JsonResponse(data, safe=False)
@@ -314,7 +254,7 @@ class ExperimentView(viewsets.ModelViewSet):
     """  
     @action(detail=False, methods=['GET'], name='completed')
     def completed(self, request):
-        devices = Experiment.objects.filter(end_date__isnull=False)
+        devices = Experiment.objects.filter(~Q(status=0))
         devices = devices.filter(device__isnull=False).select_related('device').order_by(Length('name').asc(), 'name')
         data = list(devices.values().annotate(device_name=F('device__name')).annotate(is_online=F('device__is_online')).annotate(mac_address=F('device__mac_address')).annotate(current_recipe=F('recipe__name'))) # 
         return JsonResponse(data, safe=False)
@@ -330,13 +270,11 @@ class ExperimentView(viewsets.ModelViewSet):
     @action(detail=False, methods=['POST'], name='terminate')
     def terminate(self, request):
         exp_id=json.loads(request.body)["id"]
-        end_date = json.loads(request.body)["end_date"]
         exp = Experiment.objects.get(id = exp_id)
-        exp.end_date = end_date
         exp.status = 1
         exp.save()
-        pods = Pod.objects.filter(experiment=exp_id, end_date__isnull=True)
-        pods.update(end_date=end_date, status = 1)
+        pods = Pod.objects.filter(experiment=exp_id, status = 0)
+        pods.update(status = 1)
 
         return JsonResponse({"status": "200"}, safe=False)
 
@@ -400,14 +338,14 @@ class PodView(viewsets.ModelViewSet):
         return Pod.objects.all().annotate(plant_name=F('plant__name')) # return joined plant.name
 
     """
-    Input from: PodCarousel.js/fetchData(); 
-    Outputs to: PodCarousel.js/fetchData(); 
+    Input from: PodCarousel.js/getPods(); 
+    Outputs to: PodCarousel.js/getPods(); 
     Created by: Kelvin F 08/30/2022
     Last Edit: Kelvin F 08/30/2022
     Purpose: Given an experiment id, retrieves its device's capacity and info about its pods including plant name
     """  
-    @action(detail=False, methods=["post"], name='populate_pod_carousel')
-    def populate_pod_carousel(self, request):
+    @action(detail=False, methods=["post"], name='get_pods')
+    def get_pods(self, request):
         exp_id=json.loads(request.body)["id"]
         exp_status = json.loads(request.body)["status"]
         qs = Pod.objects.filter(experiment = exp_id, status=exp_status).annotate(plant_name=F('plant__name')) #(experiment = exp_id, end_date__isnull=True)
@@ -415,6 +353,7 @@ class PodView(viewsets.ModelViewSet):
         capacity = Experiment.objects.get(id=exp_id).device.capacity
         return JsonResponse({"capacity": capacity, "pods": pods}, safe=False)       
         
+
 class PodReadingView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
     serializer_class = PodReadingSerializer
@@ -422,7 +361,21 @@ class PodReadingView(viewsets.ModelViewSet):
     def get_queryset(self):
         return PodReading.objects.all().annotate(reading_date=F('experiment_reading__reading_date'))
 
-
+    """
+    Input from: RecipeBar.js/getPodReadings(); 
+    Outputs to: RecipeBar.js/getPodReadings(); 
+    Created by: Kelvin F 08/30/2022
+    Last Edit: Kelvin F 08/30/2022
+    Purpose: Given a pod_id and an experiment_reading_id, get a reading
+    """
+    @action(detail=False, methods=["post"], name='get_pod_reading')
+    def get_pod_reading(self, request):
+        er_id=json.loads(request.body)["er_id"]
+        p_id=json.loads(request.body)["p_id"]
+        pr = PodReading.objects.filter(experiment_reading = er_id, pod=p_id)
+        if pr:
+            return JsonResponse(list(pr.values())[0], safe=False)    
+        return JsonResponse({}, safe=False)
 
 class RecipeView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
@@ -476,6 +429,7 @@ class RecipeView(viewsets.ModelViewSet):
 
         recipe = Recipe.objects.get(id=new['id'])
         recipe.name = new['name']
+        recipe.days = new['days']
 
         for i in range(1, 11):
             ph = new["phase"+str(i)]
@@ -498,9 +452,8 @@ class RecipeView(viewsets.ModelViewSet):
                     print("phase deleted.")
 
         recipe.recipe_json = RecipeView.generate_JSON(recipe.id)
-        print("RECIPE: ", recipe)
         recipe.save()
-
+        Experiment.objects.filter(recipe = recipe.id).update(end_date = F('start_date')+timedelta(days = recipe.days))
         return JsonResponse({"status": "200"}, safe=False)
 
     """
@@ -531,25 +484,6 @@ class RecipeView(viewsets.ModelViewSet):
             print("Phases deleted.")
         
         return JsonResponse({"status": "200"}, safe=False)
-
-    """
-    Input from: Recipe.js/editRecipe(); 
-    Outputs to: Recipe.js/editRecipe(); 
-    Created by: Stella T 08/30/2022
-    Last Edit: Stella T 08/30/2022
-    Purpose: Updates a recipe object in the database including the recipe json data based on the phases passed in.
-    """  
-    def perform_update(self, serializer):
-        # Save with the new value for the target model fields
-        '''
-        serializer.save()
-        recipe_id = self.get_object().id
-        recipe_name = self.get_object().name
-        recipe_json = RecipeView.generate_JSON(recipe_id)
-        days = RecipeView.calculate_days(recipe_id)
-        serializer.save(recipe_json=recipe_json, days=days, name = recipe_name.replace(" ", "_"))
-        '''
-
 
     """
     Input from: Not in use.
@@ -601,23 +535,6 @@ class RecipeView(viewsets.ModelViewSet):
         recipe = Recipe.objects.get(id=request.data['recipe_id'])
         return Response(data=recipe.recipe_json, status=200)
 
-    """
-    Input from: RecipeView.create(); RecipeView.perform_update();
-    Outputs to: RecipeView.create(); RecipeView.perform_update();
-    Created by: Stella T 08/30/2022
-    Last Edit: Stella T 08/30/2022
-    Purpose: Generates the JSON format of a recipe given a recipe id
-    """  
-
-    @action(detail=False, methods=["post"], name='generate_JSON')
-    def regenerate_JSON(self, request):
-        rec_id = json.loads(request.body)["id"]
-        recipe = Recipe.objects.get(id = rec_id)
-        recipe.recipe_json = RecipeView.generate_JSON(rec_id)
-        recipe.save()
-        return Response(data=recipe.recipe_json, status=200)
-
-
 
     @staticmethod
     def generate_JSON(recipe_id):
@@ -652,34 +569,6 @@ class RecipeView(viewsets.ModelViewSet):
         }
 
         return recipe_json
-
-    """
-    Input from: RecipeView.perform_update();
-    Outputs to: RecipeView.perform_update();
-    Created by: Stella T 08/30/2022
-    Last Edit: Stella T 08/30/2022
-    Purpose: Calculates the total number of days a recipe will last
-    """  
-    @staticmethod
-    @action(detail=False, methods=['POST'], name='calculate_days')
-    def calculate_days(recipe_id):
-        recipe = Recipe.objects.filter(id=recipe_id) \
-                               .select_related('phase1', 'phase2', 'phase3', 'phase4', 'phase5', 'phase6', 'phase7', 'phase8', 'phase9', 'phase10')
-
-        days = 0
-        
-        if recipe[0].phase1 != None: days += recipe[0].phase1.days
-        if recipe[0].phase2 != None: days += recipe[0].phase2.days
-        if recipe[0].phase3 != None: days += recipe[0].phase3.days
-        if recipe[0].phase4 != None: days += recipe[0].phase4.days
-        if recipe[0].phase5 != None: days += recipe[0].phase5.days
-        if recipe[0].phase6 != None: days += recipe[0].phase6.days
-        if recipe[0].phase7 != None: days += recipe[0].phase7.days
-        if recipe[0].phase8 != None: days += recipe[0].phase8.days
-        if recipe[0].phase9 != None: days += recipe[0].phase9.days
-        if recipe[0].phase10 != None: days += recipe[0].phase10.days
-
-        return days
 
     """
     Input from: Device.js/fetchRecipes(); Phase.js/fetchRecipes(); Recipe.js/fetchRecipes(); 

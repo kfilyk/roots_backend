@@ -142,14 +142,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://3.232.27.231:3000',
-    'http://avaroots.io'
+    'https://avaroots.io'
 ]
 
-# having avaroots.io whitelisted/allowed shouldnt affect break anything...
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000',
     'http://3.232.27.231:3000',
-    'http://avaroots.io'
+    'https://avaroots.io'
 ]
 
 REST_FRAMEWORK = {
@@ -173,7 +172,7 @@ REST_FRAMEWORK = {
 CRONTAB_LOCK_JOBS = True
 
 CRONJOBS = [
-    ('0 1 * * *', 'dashboard.cron.update_experiments_daily'),
-    ('* * * * *', 'dashboard.cron.check_devices'), 
+    ('0 1 * * *', 'dashboard.cron.update_experiments'),
+    ('*/2 * * * *', 'dashboard.cron.check_devices'),  # every five minutes, update device states
     ('* * * * *', 'dashboard.cron.poll_mongo_db')
 ]

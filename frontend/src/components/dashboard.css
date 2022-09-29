@@ -1,3 +1,6 @@
+html {
+  width:100%;
+}
 .dashboard {
   padding: 10px;
 }
@@ -32,25 +35,36 @@ td {
   padding:10px;
 }
 
+
+/* ==========================================================================================
+BUTTON & ACTIVE BUTTON SELECTORS
+============================================================================================ */
+
+
 button {
   font-family: "Brandon Grotesque";
   margin: 10px;
-  border: 1px #1b372a solid;
+  border: 1px #1b372a88 solid;
   color: #1b372a88;
   background-color: #ffffff;
   padding: 6px 12px;
   border-radius: 20px;
+  transition: 0.1s;
 }
 
+
 button:hover {
+  cursor:pointer;
   transition: 0.25s;
   background-color: #1b372a;
   color: #FFFFFF;;
 }
 
-/* ==========================================================================================
-DEVICE
-============================================================================================ */
+.selected {
+  transition: 0.25s;
+  color: #ffffff;;
+  background-color: #1b372a;
+}
 
 /* ==========================================================================================
 OBJECT CONTAINERS (DEVICE, EXPERIMENT, ETC)
@@ -76,15 +90,12 @@ OBJECT CONTAINERS (DEVICE, EXPERIMENT, ETC)
 .object_top {
   display:flex;
   flex-direction: row;
-
 }
 
 .object_description {
   display: flex;
   flex-direction: column;
   padding:10px;
-  padding-top:20px;
-
   border-bottom-left-radius: 10px;
   border-top-left-radius: 10px;
   min-width: 30%;
@@ -207,7 +218,7 @@ TOOLTIP
 .tooltip {
   position: relative;
   cursor: pointer;
-  white-space: pre-wrap;
+  white-space: nowrap;
 }
 
 /* Base styles for the entire tooltip */

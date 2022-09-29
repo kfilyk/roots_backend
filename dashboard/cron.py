@@ -19,7 +19,7 @@ Created by: Stella T 08/19/2022
 Last Edit: Stella T 08/19/2022
 Purpose: Checks to see if experiment has ended otherwise updates phase day
 """
-def update_experiments_daily():
+def update_experiments():
     print("CRON UPDATING EXPERIMENTS")
 
     curr_date = datetime.now()
@@ -27,14 +27,10 @@ def update_experiments_daily():
     curr_date = curr_date.replace(tzinfo=tz)
     phases = Recipe._meta.fields[4:14]
     print(phases)
-    active_exps = Experiment.objects.filter(end_date__isnull=True)
+    active_exps = Experiment.objects.filter(status=0)
     active_exp_ids = [exp.id for exp in active_exps if exp.start_date.date() <= curr_date.date()] # collect all experiments that have already started
     active_exps = Experiment.objects.filter(pk__in=active_exp_ids).select_related('recipe').annotate(recipe_days=F('recipe__days'))
     
-    #active_exps.update(day=F('day')+1) 
-    #active_exps.update(day=(curr_date.date() - F('start_date').date()).days()) 
-
-
     for curr_exp in active_exps:
         
         if curr_exp.recipe != None:
@@ -86,30 +82,33 @@ def check_devices():
     Device.objects.filter(id__in=device_ids).update(is_online=1)
     Device.objects.exclude(id__in=device_ids).update(is_online=0)
 
-    #confirm devices have correct recipe - if not, reset to correct recipe
+    #confirm devices have correct recipe - if not, reset to correct recipe, day and phase
     for d in online_devices:
         #print("DEVICE IN DB: ", Device.objects.filter(id = d.deviceId).values())
         e = list(Experiment.objects.filter(device_id = d.deviceId).select_related('recipe').annotate(recipe_name=F('recipe__name')).values())
 
         # if there is an experiment currently running for a given device:
-
         if e:
             r = Recipe.objects.get(id = e[0]['recipe_id'])
+
             #print(dir(r))
             #print("EXPERIMENT IN DB FOR :"+d.deviceId, e)
 
             # update recipe in byte 
             #print("EXPERIMENT RECIPE DAY/PHASE: "+ str(e[0]['day']) +" | " + str(e[0]['phase_day']))
-            print("CURRENT RECIPE IN "+d.deviceId+": ", d.currentRecipe)
-            print("CURRENT RECIPE IN DB: ", str(e[0]['recipe_name'])+ ".json: \n\n" + str(r.recipe_json))
-            if e[0]['recipe_name']+ ".json" != d.currentRecipe:
-                #print("CURRENT RECIPE IN "+d.deviceId+": ", d.currentRecipe)
-                #print("CURRENT RECIPE IN DB: ", str(e[0]['recipe_name'])+ ".json: \n\n" + str(r.recipe_json))
-                print("PHASE DAY: ", e[0]['phase_day'])
-                print("PHASE NUMBER: ", e[0]['phase_number'])
+            if d.timezone != "Etc/Universal": 
+                broker.change_timezone(d.deviceId, "Etc/Universal")
 
+            if e[0]['recipe_name']+ ".json" != d.currentRecipe:
+                print("CURRENT RECIPE IN "+d.deviceId+": ", d.currentRecipe)
+                print("CURRENT RECIPE IN DB: ", str(e[0]['recipe_name'])+ ".json: \n\n" + str(r.recipe_json))
                 broker.trigger_recipe(d.deviceId, r.recipe_json, e[0]['recipe_name']+ ".json")
-                broker.change_stage_cycle(d.deviceId, e[0]['phase_day'], e[0]['phase_number'])
+
+            # if the experiment day and stage are wrong on the byte: update with the correct ones, barring one edge case where the recipe simply hasn't started yet
+            if (d.currentCycle != -1 and d.currentStage != 0) and (int(d.currentCycle) != e[0]['phase_day'] or int(d.currentStage) != e[0]['phase_number']):
+                print(d.deviceId+" CYCLE/STAGE: "+d.currentCycle+"/"+d.currentStage)
+                print(d.deviceId+" DAY/PHASE: "+ str(e[0]['phase_day'])+ "/"+str(e[0]['phase_number']))
+                broker.change_stage_cycle(d.deviceId, e[0]['phase_number'], e[0]['phase_day'])
 
 url = "https://data.mongodb-api.com/app/data-ldetp/endpoint/data/v1/action/find"
 payload_gardens = json.dumps({
