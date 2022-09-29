@@ -416,11 +416,11 @@ class PodView(viewsets.ModelViewSet):
         return JsonResponse({"capacity": capacity, "pods": pods}, safe=False)       
         
 class PodReadingView(viewsets.ModelViewSet):
-    permission_classes = (IsAuthenticated,) 
+    permission_classes = (IsAuthenticated,)
     serializer_class = PodReadingSerializer
     
     def get_queryset(self):
-        return PodReading.objects.all()
+        return PodReading.objects.all().annotate(reading_date=F('experiment_reading__reading_date'))
 
 
 
