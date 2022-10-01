@@ -16,7 +16,7 @@ RECIPE BAR (OBJECT BOTTOM CHIN)
 
 @media only screen and (max-width: 600px) {
   .recipe_bar_timestamps {
-    font-size: 12px;
+    font-size: 10px;
   }
 }
 
@@ -99,6 +99,12 @@ Not sure if this is useful anymore? cant tell how it affects style
   position:absolute !important; /* need this for some reason */ 
   transform: translateX(-50%);
   top: 14px;
+}
+
+@media only screen and (max-width: 600px) {
+  .exp_reading_indicator {
+    top: 9px;
+  }
 }
 
 /* ==========================================================================================
