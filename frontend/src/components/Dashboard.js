@@ -78,7 +78,7 @@ const Dashboard = (props) => {
   };
 
   /*
-  Input from: renderNav(); renderScrollUp; renderPage();
+  Input from: renderNav(); renderPage();
   Outputs to: Screen
   Created by: Kelvin F 08/29/2022
   Last Edit: Kelvin F 08/29/2022

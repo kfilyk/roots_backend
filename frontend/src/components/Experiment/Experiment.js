@@ -310,7 +310,7 @@ const Device = () => {
             <span className={selectedDeviceStatus === "free" ? "nav-link active" : "nav-link"} onClick={() => {setSelectedDeviceStatus("free"); setSearch("")}}>
               FREE DEVICES
             </span>
-            <input type="text" value={search} placeholder='SEARCH' className={"nav-link"} onChange={(e) => {setSearch(e.target.value)}}/>
+            <input type="text" size="8" value={search} placeholder='SEARCH' className={"nav-link"} onChange={(e) => {setSearch(e.target.value)}}/>
           </div>
         );
       };

@@ -93,22 +93,20 @@
 }
 
 .nav {
-  text-align: center;
   display:table;
-  width: 100%;
-  table-layout: fixed;
+  table-layout: auto;
   /*box-shadow: 0 5px 6px -6px #888888;*/
   padding: 0px;
   padding-bottom: 10px;
   position: sticky;
   top:20px;
   z-index: 1;
+  white-space: nowrap;
 }
 
 /* MOBILE APP */
 @media only screen and (max-width: 600px) {
   .nav {
-    overflow-x: scroll;
   }
 }
 
