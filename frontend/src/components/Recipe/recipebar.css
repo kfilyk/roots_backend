@@ -14,6 +14,12 @@ RECIPE BAR (OBJECT BOTTOM CHIN)
   margin-top: -20px;
 }
 
+@media only screen and (max-width: 600px) {
+  .recipe_bar_timestamps {
+    font-size: 12px;
+  }
+}
+
 .recipe_bar_start_date {
   width:100%;
   z-index:3;
