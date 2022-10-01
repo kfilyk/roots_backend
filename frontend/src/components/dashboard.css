@@ -113,7 +113,7 @@ OBJECT CONTAINERS (DEVICE, EXPERIMENT, ETC)
 @media only screen and (max-width: 600px) {
   .object_description {
     padding-top:0px;
-    padding-bottom:0px;
+    padding-bottom:10px;
   }
 }
 
@@ -140,7 +140,11 @@ OBJECT CONTAINERS (DEVICE, EXPERIMENT, ETC)
 
 .object_content {
   display:flex;
-  padding:10px;
+  padding:0px;
+
+  padding-top:10px;
+  padding-bottom:10px;
+
   align-items: right; 
   flex-direction: row;
   flex:1;
@@ -150,6 +154,14 @@ OBJECT CONTAINERS (DEVICE, EXPERIMENT, ETC)
 
 @media only screen and (max-width: 600px) {
   .object_content {
+    display:none;
+    /*max-width: 100%;*/
+    padding-top: 0px;
+    padding-bottom: 30px;
+  }
+
+  .object_container:hover .object_content {
+    display:flex;
     /*max-width: 100%;*/
     padding-top: 0px;
     padding-bottom: 30px;
