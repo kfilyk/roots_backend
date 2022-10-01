@@ -11,19 +11,22 @@ ul {
   padding-inline-start: 40px;
 }
 
-.sub-nav {
-  text-decoration: none;
-  font-size: 12px;
+.nav {
   text-align: center;
   display:table;
-  width: 90%;
+  width: 100%;
   table-layout: fixed;
   /*box-shadow: 0 5px 6px -6px #888888;*/
   padding: 0px;
   padding-bottom: 10px;
-  position: absolute;
-  background-color: white;
-  z-index: 2;
+  position: sticky;
+  top:20px;
+  z-index: 1;
+}
+
+.sub-nav {
+  top:60px;
+  background-color: transparent;
 }
 
 body {

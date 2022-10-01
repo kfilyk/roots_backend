@@ -87,7 +87,7 @@ Not sure if this is useful anymore? cant tell how it affects style
   position: absolute;
 }
 
-.exp_reading_triangle {
+.exp_reading_indicator {
   font-size: 0.6em;
   line-height: 15px;
   position:absolute !important; /* need this for some reason */ 

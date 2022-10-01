@@ -130,13 +130,13 @@ const RecipeBar = (props) => {
         let style = Math.floor(( ( date - start ) / ( end - start ) ) * 100) + "%";
 
         tags.push(
-            <a key={`${er.id}_${index}`} onClick={() => setExperimentReadingInput({...experimentReadingInput, ...er, show: true, add:false})} style={{left: `calc(${style})`, zIndex:3}} className="tooltip exp_reading_triangle" data-tooltip={date_string}>▼</a>
+            <a key={`${er.id}_${index}`} onClick={() => setExperimentReadingInput({...experimentReadingInput, ...er, show: true, add:false})} style={{left: `calc(${style})`, zIndex:3}} className="tooltip exp_reading_indicator" data-tooltip={date_string}>▼</a>
         )
       })
       if(props.experiment.status === 0){
         let style = Math.floor(( ( Date.now() - start ) / ( end - start ) ) * 100) + "%";
         tags.push(
-          <a key={`new_er`} onClick={() => setExperimentReadingInput({...experimentReadingInput, show: true, add:true})} style={{left: `calc(${style})`, color: '#99ff44', fontSize: '25px', fontWeight:'bold', zIndex:2}} className="tooltip exp_reading_triangle" data-tooltip={"NEW"}>l</a>
+          <a key={`new_er`} onClick={() => setExperimentReadingInput({...experimentReadingInput, show: true, add:true})} style={{left: `calc(${style})`, color: '#99ff44', fontSize: '25px', fontWeight:'bold', zIndex:2}} className="tooltip exp_reading_indicator" data-tooltip={"NEW"}>●</a>
         )
       }
       return tags

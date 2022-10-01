@@ -1,7 +1,7 @@
 .blink_me {
     animation: blinker 2s linear infinite;
-    font-size: 1em;
-    padding-left: 5px;
+    font-size: 2em;
+    vertical-align: -4px;
   }
   
   @keyframes blinker {

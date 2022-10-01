@@ -30,7 +30,7 @@ const PodCarousel = (props) => {
   */
   useEffect(() => {
     getPods(props?.experimentID, props?.status);
-  }, [props?.experimentID, props?.status]);
+  }, []);
 
   /*
   Input from: podList

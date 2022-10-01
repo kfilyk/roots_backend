@@ -33,10 +33,3 @@
   input.name {
     font-family: "Brandon Grotesque Black";
   }
-  
-  .scrollUp{
-    position: fixed;
-    bottom: 0;
-    right: 2%;
-    z-index: 10
-  }
