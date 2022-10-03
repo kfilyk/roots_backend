@@ -610,6 +610,10 @@ class PlantView(viewsets.ModelViewSet):
     filter_backends = (OrderingFilter,)
     ordering_fields = ['name']
 
+    '''
+    Last Edit: Kelvin F 03/10/2022
+    Issue: Deprecated- plant object is simple, doesn't need custom create method. simplifiy later
+    '''
     def create(self, request, *args, **kwargs):
         plants = Plant.objects.all()
         p_id = 1

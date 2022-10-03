@@ -160,13 +160,3 @@ def poll_mongo_db():
             d = Device.objects.create(id = str(g_device_state['deviceId']), name=g['name'], user= User.objects.filter(id=61)[0], registration_date=g['createdAt'], last_update=g['updatedAt'], mac_address= g_device_state['macAddress'])
             d.save()
 
-    print("CRON POLLING MONGO DB: PLANTS")
-    response = requests.request("POST", url, headers=headers, data=payload_plants)
-    plants = json.loads(response.text) # use .keys() function to determine whats stored in object
-    for p in plants['documents']:
-        # note: g['_id'] is the id of the USER, not the garden object
-        #print(p.keys())
-        #print(str(p['idealPHrange'][0]) + ", "+ str(p['idealPHrange'][1]))
-        if Plant.objects.filter(id=p['_id']).first() == None:
-            pl = Plant.objects.create(id = str(p['_id']), name=p['name'], scientific_name= p['scientificName'], profile=p['profile'], growing_tips=p['growingTips'], harvesting_tips=p['harvestingTips'], nutritional_benefits= p['nutritionalBenefits'], medical_uses = p['medicalUses'], fun_facts = p['funFacts'], storage = p['storage'], culinary= p['culinary'], ideal_ph_min = p['idealPHrange'][0], ideal_ph_max= p['idealPHrange'][1], ideal_ec_min = p['idealECrange'][0], ideal_ec_max = p['idealECrange'][1], ideal_water_temp_min = p['idealWaterTempRange'][0], ideal_water_temp_max = p['idealWaterTempRange'][1], ideal_temp_min = p['tempRange'][0], ideal_temp_max = p['tempRange'][1], ideal_humidity_min = p['idealHumidityPercentageRange'][0], ideal_humidity_max = p['idealHumidityPercentageRange'][1], ideal_days_to_sprout_min = p['sproutsMinDays'], ideal_days_to_sprout_max = p['sproutsMaxDays'], ideal_days_to_harvest = p['growthDurationDays'] )
-            pl.save()
