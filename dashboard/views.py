@@ -1,3 +1,4 @@
+from pyexpat import model
 from urllib3 import HTTPResponse
 from dashboard.models import Device, Experiment, Phase, Plant, Pod, ExperimentReading, PodReading, Recipe
 from rest_framework import viewsets
@@ -352,6 +353,35 @@ class PodView(viewsets.ModelViewSet):
         pods = list(qs.values())
         capacity = Experiment.objects.get(id=exp_id).device.capacity
         return JsonResponse({"capacity": capacity, "pods": pods}, safe=False)       
+
+    """
+    Input from: PodCarousel.js/getPods();
+    Outputs to: PodCarousel.js/getPods();
+    Created by: Kelvin F 08/30/2022
+    Last Edit: Kelvin F 08/30/2022
+    Purpose: Given an experiment id, retrieves its device's capacity and info about its pods including plant name
+    """
+    @action(detail=False, methods=["post"], name='get_all_pod_data')
+    def get_all_pod_data(self, request):
+        exp_id=json.loads(request.body)["id"]
+        #pods = list(Pod.objects.filter(experiment = exp_id).annotate(plant_object=model_to_dict(Plant.objects.get(id = F('plant')))).values()) #(experiment = exp_id, end_date__isnull=True)
+        pods = list(Pod.objects.filter(experiment = exp_id).values()) #(experiment = exp_id, end_date__isnull=True) # this is a queryset [<podObject1> , <podObject2>, ... ]
+        #print(pods)
+        # list of dicts: [{...},{...}, ...]
+        #print("\n\n\nPODS: ", pods)
+        for pod in pods:
+            pl = model_to_dict(Plant.objects.get(id = pod['plant_id']))
+            pr = PodReading.objects.filter(pod_id = pod['id']).values()# model_to_dict creates no attribute _meta
+            #filter() makes it so its not JSON serializable
+            #print("\n\n\nPLANT: ", pl)
+            #print("\n\n\nExperiment pod reading: ", pr)
+            pod['plant_object'] = pl
+            pod['reading'] = list(pr)
+        #print("\n\n\nPODS: ", pods)
+        ##print(pods)
+        ##pods = model_to_dict(pods)
+        #return JsonResponse({"pr": pr}, safe=False)
+        return JsonResponse({"pods": pods}, safe=False)
         
 
 class PodReadingView(viewsets.ModelViewSet):

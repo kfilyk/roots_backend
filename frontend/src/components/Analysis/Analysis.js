@@ -9,8 +9,8 @@ import {Bar, Line, Scatter} from 'react-chartjs-2';
 //ChartJS.register(LinearScale, PointElement, Tooltip, Legend, TimeScale);
 
 const Analysis = () => {
-  const [er_list, setExperimentReadingList] = useState([]);
-  const [pr_list, setPodReadingList] = useState([]);
+  const [erList, setExperimentReadingList] = useState([]);
+  const [prList, setPodReadingList] = useState([]);
 
   /* this probably doesnt work when making a real stats dashboard since it needs to be dynamic */
   /* for germination count bar graph */
@@ -18,6 +18,9 @@ const Analysis = () => {
   const [labels, setLabels] = useState([]);
   const [dome, setDome] = useState([]);
   const [dates, setDates] = useState([]);
+  const [podData, setPodData] = useState([]);
+
+  
 
   /*const germinationCount = pr_list.map(a => a.germination_rate);
   const labels = pr_list.map(b => b.id);
@@ -68,17 +71,22 @@ const Analysis = () => {
     setPodReadingList(result.data)
   };
 
+  async function fetchAllPodData(id) {
+    const result = await axios.post('/api/pods/get_all_pod_data/', {"id":id});
+    setPodData(result.data)
+  }
+
   
   async function getGerminationCount() {
-    const result = pr_list.map(a => a.germination_rate);
-    const labels = pr_list.map(b => b.id);
+    const result = prList.map(a => a.germination_rate);
+    const labels = prList.map(b => b.id);
     setGerminationCount(result)
     setLabels(labels);
   };
   
   async function getDomeRemoval() {
-    const result = pr_list.map(a => Number(a.removed_dome));
-    const labels = pr_list.map(b => b.reading_date.split('T')[0]);
+    const result = prList.map(a => Number(a.removed_dome));
+    const labels = prList.map(b => b.reading_date.split('T')[0]);
     setDome(result);
     setDates(labels);
   }
@@ -88,12 +96,13 @@ const Analysis = () => {
   useEffect(() => {
     fetchExperimentReadings();
     fetchPodReadings();
+    fetchAllPodData(80);
   }, []);
 
   useEffect(() => {
     getGerminationCount();
     getDomeRemoval();
-  }, [pr_list]);
+  }, [prList]);
 
   const germData = {
     labels,
@@ -136,7 +145,9 @@ const domeData = {
   ]
 }
   return (
+
     <div>
+    {JSON.stringify(podData)}
 
     <Line data={domeData}
     options={{
@@ -219,8 +230,8 @@ const domeData = {
 
       <Line data={lineData}/>
 
-      {JSON.stringify(er_list)}
-      {JSON.stringify(pr_list)}
+      {JSON.stringify(erList)}
+      {JSON.stringify(prList)}
       {JSON.stringify(germinationCount)};
       {JSON.stringify(labels)};
       {JSON.stringify(dome)};
