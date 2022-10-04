@@ -7,7 +7,6 @@ const PodCarousel = (props) => {
   const [podList, setPodList] = useState([]);
   //Capacity of device for a particular exp
   const [capacity, setCapacity] = useState(-1);
-
   /*
   Input from: props.experimentID
   Outputs to: podList, capacity
@@ -62,6 +61,10 @@ const PodCarousel = (props) => {
         break;
     }
 
+    let plant_name_split = pod.plant_name.split(" ")
+    plant_name_split = plant_name_split.map(p => p+" ");
+
+    let plant_name_split_length = plant_name_split.length
     return (
       //https://codepen.io/sergiopedercini/pen/jmKdbj
       <div key={pod.key} className="single-chart">
@@ -82,8 +85,9 @@ const PodCarousel = (props) => {
                 <text x="18" y="20" className="caption"> {pod.plant_name}</text>
             : 
             <>
-                <text x="18" y="18" className="caption"> {pod.plant_name}</text>
-                <text x="18" y="24" className="percentage"> {pod.score * 100 + "%"}</text>
+                <text x="18" y="14" className="caption"> {plant_name_split.slice(0, plant_name_split_length/2)}</text>
+                <text x="18" y="20" className="caption"> {plant_name_split.slice(plant_name_split_length/2, plant_name_split_length)}</text>
+                <text x="18" y="26" className="percentage"> {pod.score * 100 + "%"}</text>
             </> 
             }
 

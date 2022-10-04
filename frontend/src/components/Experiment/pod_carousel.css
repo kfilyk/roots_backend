@@ -15,6 +15,7 @@
 
 .single-chart div {
   text-align: center;
+
 }
 
 .circular-chart {
@@ -22,6 +23,7 @@
   margin: 10px auto;
   max-width: 80%;
   max-height: 250px;
+  overflow: visible;
 }
 
 .circle-bg {
@@ -73,6 +75,6 @@
 .percentage {
   fill: #666;
   font-family: "Brandon Grotesque Black";
-  font-size: 0.4em;
+  font-size: 0.3em;
   text-anchor: middle;
 }

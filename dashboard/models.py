@@ -206,8 +206,7 @@ class Recipe(models.Model):
 
 class Plant(models.Model): # types: basil, 
     id = models.CharField(db_column='pl_id', max_length=255, primary_key=True)
-    name = models.CharField(db_column='pl_name', max_length=45, blank=True, null=True)   # change to common name
-    
+    name = models.CharField(db_column='pl_name', max_length=45, blank=True, null=True) 
     species = models.CharField(db_column='pl_species', max_length=45, blank=True, null=True)  
     genus = models.CharField(db_column='pl_genus', max_length=45, blank=True, null=True)  
     
