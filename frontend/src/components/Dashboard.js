@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Switch, Link, Outlet } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import axios from "axios";
 import user_brown_icon from '../img/user_brown_icon.png';
 import roots_logo from '../img/roots_logo_transparent_256.png';
@@ -62,12 +62,14 @@ const Dashboard = (props) => {
         <Link to={"plants"} className={selectedTab === "plants" ? "nav-link active" : "nav-link"} onClick={() => setSelectedTab("plants" )}>
           PLANTS
         </Link>
+        {/*
         <Link to={"help"} className={selectedTab === "help" ? "nav-link active" : "nav-link"} onClick={() => setSelectedTab("help" )}>
           HELP
         </Link>
         <Link to={"mqtt"} className={selectedTab === "mqtt" ? "nav-link active" : "nav-link"} onClick={() => setSelectedTab("mqtt" )}>
           MQTT
         </Link>
+        */}
         <Link to={"analysis"} className={selectedTab === "analysis" ? "nav-link active" : "nav-link"} onClick={() => setSelectedTab("analysis" )}>
           ANALYSIS
         </Link>
@@ -76,20 +78,7 @@ const Dashboard = (props) => {
   };
 
   /*
-  Input from: None
-  Outputs to: return()
-  Created by: Stella T 08/29/2022
-  Last Edit: Stella T 08/29/2022
-  Purpose: Creates a button in the bottom right corner that scrolls back to the top of the page.
-  */
-  function renderScrollUp(){
-    return (
-      <button className="scrollUp" onClick={() => window.scroll({top: 0, behavior: 'smooth'})}>⬆</button>
-    )
-  }
-
-  /*
-  Input from: renderNav(); renderScrollUp; renderPage();
+  Input from: renderNav(); renderPage();
   Outputs to: Screen
   Created by: Kelvin F 08/29/2022
   Last Edit: Kelvin F 08/29/2022
@@ -108,10 +97,7 @@ const Dashboard = (props) => {
       
       <div className="dashboard">
         {renderNav()}
-        <div className="list-group list-group-flush border-top-0">
-          {renderScrollUp()}
-          <Outlet/>
-        </div>
+        <Outlet/>
       </div>
 
     </main>

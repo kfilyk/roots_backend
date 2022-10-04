@@ -3,6 +3,8 @@ html {
 }
 .dashboard {
   padding: 10px;
+  padding-top:0px;
+  overflow-x: hidden;
 }
 
 ul {
@@ -87,9 +89,16 @@ OBJECT CONTAINERS (DEVICE, EXPERIMENT, ETC)
   transition: max-height 1s ease-out;
 }
 
+
 .object_top {
   display:flex;
   flex-direction: row;
+}
+
+@media only screen and (max-width: 600px) {
+  .object_top {
+    flex-direction: column;
+  }
 }
 
 .object_description {
@@ -99,6 +108,12 @@ OBJECT CONTAINERS (DEVICE, EXPERIMENT, ETC)
   border-bottom-left-radius: 10px;
   border-top-left-radius: 10px;
   min-width: 30%;
+}
+
+@media only screen and (max-width: 600px) {
+  .object_description {
+    padding-bottom:10px;
+  }
 }
 
 .bold_font {
@@ -122,22 +137,34 @@ OBJECT CONTAINERS (DEVICE, EXPERIMENT, ETC)
   transition: max-height 0.25s ease-out;
 }
 
-/*
-.object_header:hover ~ .object_dropdown {
-  max-height:2000px;
-  transition: max-height 0.25s ease-out;
-}
-*/
-
-
 .object_content {
   display:flex;
-  padding:10px;
+  padding:0px;
+
+  padding-top:10px;
+  padding-bottom:10px;
+
   align-items: right; 
   flex-direction: row;
   flex:1;
-  max-width: 50%;
+  /*max-width: 50%;*/
   order:2;
+}
+
+@media only screen and (max-width: 600px) {
+  .object_content {
+    display:none;
+    /*max-width: 100%;*/
+    padding-top: 0px;
+    padding-bottom: 30px;
+  }
+
+  .object_container:hover .object_content {
+    display:flex;
+    /*max-width: 100%;*/
+    padding-top: 0px;
+    padding-bottom: 30px;
+  }
 }
 
 /* HIDDEN start state */

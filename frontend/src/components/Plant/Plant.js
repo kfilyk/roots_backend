@@ -12,13 +12,8 @@ const PlantList = () => {
     name: null,
     scientific_name: null,
     profile: null,
-    culinary: null,
-    fun_facts: null,
     growing_tips: null,
     harvesting_tips: null, 
-    medical_uses: null,
-    nutritional_benefits: null,
-    storage: null,
   }
   const [plantModal, setPlantModal] = useState(initPlantModal);
 
@@ -86,14 +81,8 @@ const PlantList = () => {
               <div className="bold_font object_header"><span style={{ textTransform: 'uppercase'}}>{item.name}</span> <span className="normal_font">{item.scientific_name ? " ("+item.scientific_name+")": <></>}</span>{item.profile? <span className="normal_font">{": "+item.profile}</span>: <></>}</div> 
               <div className="object_dropdown">
                 
-                {item.culinary ? <div className="bold_font">{"\n"}CULINARY<span className="normal_font">{" | "+item.culinary}</span></div> : <></>}
-                {item.fun_facts ? <div className="bold_font">{"\n"}FUN FACTS<span className="normal_font">{" | "+item.fun_facts}</span></div> : <></>}
                 {item.growing_tips ? <div className="bold_font">{"\n"}GROWING TIPS<span className="normal_font">{" | "+item.growing_tips}</span></div> : <></>}
                 {item.harvesting_tips ? <div className="bold_font">{"\n"}HARVESTING TIPS<span className="normal_font">{" | "+item.harvesting_tips}</span></div> : <></>}
-                {item.medical_uses ? <div className="bold_font">{"\n"}MEDICAL USES<span className="normal_font">{" | "+item.medical_uses}</span></div> : <></>}
-                {item.nutritional_benefits ? <div className="bold_font">{"\n"}NUTRITIONAL BENEFITS<span className="normal_font">{" | "+item.nutritional_benefits}</span></div> : <></>}
-                {item.storage ? <div className="bold_font">{"\n"}STORAGE<span className="normal_font">{" | "+item.storage}</span></div> : <></>}
-                <div className="bold_font">{"\n"}TEST<span className="normal_font">{" | 123123123231"}</span></div> <></>
               </div>
 
             </div>
@@ -113,13 +102,8 @@ const PlantList = () => {
                   <input className="form_row" value={plantModal.name}  placeholder={"Plant Name"} onChange={(e) => setPlantModal({...plantModal, name: e.target.value})} />
                   <input className="form_row" value={plantModal.scientific_name} placeholder={"Scientific Name"} onChange={(e) => setPlantModal({...plantModal, scientific_name: e.target.value})} />
                   <input className="form_row" value={plantModal.profile} placeholder={"Profile"} onChange={(e) => setPlantModal({...plantModal, profile: e.target.value})} />
-                  <input className="form_row" value={plantModal.culinary} placeholder={"Culinary"} onChange={(e) => setPlantModal({...plantModal, culinary: e.target.value})} />
-                  <input className="form_row" value={plantModal.fun_facts} placeholder={"Fun Facts"} onChange={(e) => setPlantModal({...plantModal, fun_facts: e.target.value})} />
                   <input className="form_row" value={plantModal.growing_tips} placeholder={"Growing Tips"} onChange={(e) => setPlantModal({...plantModal, growing_tips: e.target.value})} />
                   <input className="form_row" value={plantModal.harvesting_tips} placeholder={"Harvesting Tips"} onChange={(e) => setPlantModal({...plantModal, harvesting_tips: e.target.value})} />
-                  <input className="form_row" value={plantModal.medical_uses} placeholder={"Medical Uses"} onChange={(e) => setPlantModal({...plantModal, medical_uses: e.target.value})} />
-                  <input className="form_row" value={plantModal.nutritional_benefits} placeholder={"Nutritional Benefits"} onChange={(e) => setPlantModal({...plantModal, nutritional_benefits: e.target.value})} />
-                  <input className="form_row" value={plantModal.storage} placeholder={"Storage"} onChange={(e) => setPlantModal({...plantModal, storage: e.target.value})} />                  
                   <button className='save' onClick={() => {
                       submitPlantModal()
                       close();

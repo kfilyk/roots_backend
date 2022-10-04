@@ -206,16 +206,15 @@ class Recipe(models.Model):
 
 class Plant(models.Model): # types: basil, 
     id = models.CharField(db_column='pl_id', max_length=255, primary_key=True)
-    name = models.CharField(db_column='pl_name', max_length=45, blank=True, null=True)  
+    name = models.CharField(db_column='pl_name', max_length=45, blank=True, null=True)   # change to common name
+    
+    species = models.CharField(db_column='pl_species', max_length=45, blank=True, null=True)  
+    genus = models.CharField(db_column='pl_genus', max_length=45, blank=True, null=True)  
+    
     scientific_name = models.CharField(db_column='pl_scientific_name', max_length=60, blank=True, null=True)  
     profile = models.CharField(db_column='pl_profile', max_length=1024, blank=True, null=True)
     growing_tips = models.CharField(db_column='pl_growing_tips', max_length=1024, blank=True, null=True)
     harvesting_tips = models.CharField(db_column='pl_harvesting_tips', max_length=1024, blank=True, null=True)
-    nutritional_benefits =  models.CharField(db_column='pl_nutritional_benefits', max_length=1024, blank=True, null=True)
-    medical_uses = models.CharField(db_column='pl_medical_uses', max_length=1024, blank=True, null=True)
-    fun_facts = models.CharField(db_column='pl_fun_facts', max_length=1024, blank=True, null=True)
-    storage = models.CharField(db_column='pl_storage', max_length=1024, blank=True, null=True)
-    culinary = models.CharField(db_column='pl_culinary', max_length=1024, blank=True, null=True)
 
     ideal_ph_min = models.DecimalField(db_column='pl_ideal_ph_min', max_digits=2, decimal_places=2,  blank=True, null=True) 
     ideal_ph_max = models.DecimalField(db_column='pl_ideal_ph_max',  max_digits=2, decimal_places=2, blank=True, null=True) 

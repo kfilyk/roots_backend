@@ -11,7 +11,6 @@ Date Variables used in:
 terminateExperiment()
 */
 let todayDate = new Date();
-console.log("TODAY: ", todayDate)
 
 const Device = () => {
     /*
@@ -205,7 +204,6 @@ const Device = () => {
         let ed = new Date(experiment.start_date)
         const recipe = recipeList?.filter(recipe => recipe?.id === parseInt(experiment?.recipe))[0]
         ed = new Date(ed.setDate(ed.getDate() + recipe?.days))
-        console.log("END DATE: ", ed)
         setExperiment({...experiment, end_date: ed, phase: recipe?.phase1})
     }, [experiment.recipe, experiment.start_date])
 
@@ -300,9 +298,9 @@ const Device = () => {
     Last Edit: Stella T 08/26/2022
     Purpose: Renders experiment status nav bar; experiment states include: active, completed,  free
     */
-    function renderNav() {
+    function renderSubNav() {
         return (
-          <div className="nav" id="nav" style={{fontSize: "12px"}}>
+          <div className="nav sub-nav" style={{fontSize: "12px"}}>
             <span className={selectedDeviceStatus === "active" ? "nav-link active" : "nav-link"} onClick={() => {setSelectedDeviceStatus("active"); setSearch("")}}>
               ACTIVE
             </span>
@@ -312,7 +310,7 @@ const Device = () => {
             <span className={selectedDeviceStatus === "free" ? "nav-link active" : "nav-link"} onClick={() => {setSelectedDeviceStatus("free"); setSearch("")}}>
               FREE DEVICES
             </span>
-            <input type="text" value={search} placeholder='SEARCH' className={"nav-link"} onChange={(e) => {setSearch(e.target.value)}}/>
+            <input type="text" size="8" value={search} placeholder='SEARCH' className={"nav-link"} onChange={(e) => {setSearch(e.target.value)}}/>
           </div>
         );
       };
@@ -372,7 +370,7 @@ const Device = () => {
                             <div className="object_top">
                                 <div className="object_description">
                                     <div className="bold_font">
-                                        {item.device_name}<span className="blink_me" style={{ color: item.is_online ? 'green': 'red'}}>{"\u00a0"}● {"\u00a0"}</span><span className="normal_font">{item.name}</span> 
+                                        {item.device_name}<span className="blink_me" style={{ color: item.is_online ? 'green': 'red'}}>{"\u00a0"}●{"\u00a0"}</span><span className="normal_font">{item.name}</span> 
                                         <div className="object_dropdown">
                                             <div className="bold_font">DEVICE ID: <span className="normal_font">{item.device_id}</span></div>
                                             <div className="bold_font">MAC: <span className="normal_font">{item.mac_address.toUpperCase()}</span></div>
@@ -428,7 +426,7 @@ const Device = () => {
                             <div className="object_top">
                                 <div className="object_description">
                                   <div className="bold_font tooltip" data-tooltip={"DEVICE ID: "+item.id + " | MAC: " + item.mac_address.toUpperCase()} >
-                                      {item.name}<span className="blink_me" style={{ color: item.is_online ? 'green': 'red'}}>{"\u00a0"}● {"\u00a0"}</span>
+                                      {item.name}<span className="blink_me" style={{ color: item.is_online ? 'green': 'red'}}>{"\u00a0"}●{"\u00a0"}</span>
                                   </div>
                                   {/* <div>Registered: { item.registration_date.substring(0, 10) }</div> */}
                                 </div>
@@ -727,7 +725,7 @@ const Device = () => {
     */
     return (
         <div>
-            {renderNav()}
+            {renderSubNav()}
             {renderDevices()}
             {renderExperimentModal()}
             {renderCommand()}

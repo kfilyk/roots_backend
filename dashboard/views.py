@@ -374,7 +374,7 @@ class PodView(viewsets.ModelViewSet):
             pr = PodReading.objects.filter(pod_id = pod['id']).values()# model_to_dict creates no attribute _meta
             #filter() makes it so its not JSON serializable
             #print("\n\n\nPLANT: ", pl)
-            #print("\n\n\nExperiment pod reading: ", pr)
+            print("\n\n\nExperiment pod reading: ", pr)
             pod['plant_object'] = pl
             pod['reading'] = list(pr)
         #print("\n\n\nPODS: ", pods)
@@ -382,6 +382,30 @@ class PodView(viewsets.ModelViewSet):
         ##pods = model_to_dict(pods)
         #return JsonResponse({"pr": pr}, safe=False)
         return JsonResponse({"pods": pods}, safe=False)
+        
+
+    """
+    Input from: Analysis.js/fetchAllPodsData; 
+    Outputs to: Analysis.js frontend; 
+    Created by: Kelvin F 08/30/2022
+    Last Edit: Kelvin F 08/30/2022
+    Purpose: Given an experiment id, retrieves its device's capacity and info about its pods including plant name
+    """  
+    @action(detail=False, methods=["post"], name='get_all_pod_data')
+    def get_all_pod_data(self, request):
+        exp_id=json.loads(request.body)["id"]
+        #pods = list(Pod.objects.filter(experiment = exp_id).annotate(plant_object=model_to_dict(Plant.objects.get(id = F('plant')))).values()) #(experiment = exp_id, end_date__isnull=True)
+        pods = list(Pod.objects.filter(experiment = exp_id).values()) #(experiment = exp_id, end_date__isnull=True) # this is a queryset [<podObject1> , <podObject2>, ... ]
+        # list of dicts: [{...},{...}, ...]
+        #print("\n\n\nPODS: ", pods) 
+        for pod in pods:
+            pl = model_to_dict(Plant.objects.get(id = pod['plant_id']))
+            print("\n\n\nPLANT: ", pl)
+            pod['plant_object'] = pl
+
+        print("\n\n\nPODS: ", pods) 
+
+        return JsonResponse({"pods": pods}, safe=False)       
         
 
 class PodReadingView(viewsets.ModelViewSet):
@@ -616,6 +640,10 @@ class PlantView(viewsets.ModelViewSet):
     filter_backends = (OrderingFilter,)
     ordering_fields = ['name']
 
+    '''
+    Last Edit: Kelvin F 03/10/2022
+    Issue: Deprecated- plant object is simple, doesn't need custom create method. simplifiy later
+    '''
     def create(self, request, *args, **kwargs):
         plants = Plant.objects.all()
         p_id = 1

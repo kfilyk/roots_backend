@@ -38,7 +38,7 @@ const Help = () => {
     function renderNav() {
         return (
           <div>
-            <div className="sub-nav">
+            <div className="nav sub-nav" style={{fontSize: "12px"}}>
               <span className={selected_tab === "glossary" ? "nav-link active" : "nav-link"} onMouseEnter={()=> setIsHover(true)} onMouseLeave={()=> setIsHover(false)} onClick={() => set_selected_tab("glossary")}>
                 GLOSSARY
                 <span id="plant-anatomy" style={{display: isHover ? "block" : "none"}} className="section" onClick={()=> jump('gl-plant-anatomy')}>Plant Anatomy</span>
@@ -56,8 +56,6 @@ const Help = () => {
                 ETC.
               </span>
             </div> 
-            <div className="nav">
-            </div>
           </div>
         );
       };
