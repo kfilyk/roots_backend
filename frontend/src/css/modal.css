@@ -146,6 +146,14 @@ select .pod {
   margin-left: auto;
 }
 
+.pod-selection {
+  display: block !important;
+  text-align: left !important;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+
 .slider {
   -webkit-appearance: none;
   appearance: none;
@@ -272,18 +280,17 @@ input:valid+span:after {
 .modal-pod-form {
   display: flex;
   flex-flow: row wrap;
-  padding:10px;
-  margin-top:10px;
-  padding-top:10px;
+  padding-left:10px;
+
+
   text-align: center;
   justify-content: center;
   row-gap: 1vh;
 }
 
 .modal-pod-selection {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
+  display: block;
+  flex-direction: column;
 }
 
 .exp-general-input {

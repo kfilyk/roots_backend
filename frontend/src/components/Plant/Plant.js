@@ -10,7 +10,8 @@ const PlantList = () => {
     show: false,
     add: false,
     name: null,
-    scientific_name: null,
+    genus: null,
+    species: null,
     profile: null,
     growing_tips: null,
     harvesting_tips: null, 
@@ -78,18 +79,16 @@ const PlantList = () => {
         <div key={ item.id } className="item" >
           <div className="object_container">
             <div className="object_description">
-              <div className="bold_font object_header"><span style={{ textTransform: 'uppercase'}}>{item.name}</span> <span className="normal_font">{item.scientific_name ? " ("+item.scientific_name+")": <></>}</span>{item.profile? <span className="normal_font">{": "+item.profile}</span>: <></>}</div> 
+              <div className="bold_font object_header"><span style={{ textTransform: 'uppercase'}}>{item.name}</span> <span className="normal_font">{(item.genus || item.species) ? " ("+item.genus+" "+item.species+")": <></>}</span></div> 
               <div className="object_dropdown">
-                
-                {item.growing_tips ? <div className="bold_font">{"\n"}GROWING TIPS<span className="normal_font">{" | "+item.growing_tips}</span></div> : <></>}
-                {item.harvesting_tips ? <div className="bold_font">{"\n"}HARVESTING TIPS<span className="normal_font">{" | "+item.harvesting_tips}</span></div> : <></>}
+                <span className="normal_font">{(item.profile? item.profile : "") +(item.growing_tips ? " "+item.growing_tips: "")+(item.harvesting_tips ? " "+item.harvesting_tips: "")}</span>
               </div>
 
             </div>
             <div className='object_actions'>
               <img className="menu_icon" src={menu_icon} alt="NO IMG!"/>
               <button onClick={() => openPlantModal(item)}>EDIT</button>
-              <button onClick={() => { if (window.confirm(`You are about to delete ${item.id}, ${item.name}`)) deleteEntry(item.id) }}> DELETE </button>
+              <button onClick={() => { if (window.confirm(`Delete ${item.name}?`)) deleteEntry(item.id) }}> DELETE </button>
             </div>
           </div>
         </div>
@@ -100,7 +99,8 @@ const PlantList = () => {
               <div className="modal_body"  onClick={e => e.stopPropagation()}>
                 <div className="modal_content">
                   <input className="form_row" value={plantModal.name}  placeholder={"Plant Name"} onChange={(e) => setPlantModal({...plantModal, name: e.target.value})} />
-                  <input className="form_row" value={plantModal.scientific_name} placeholder={"Scientific Name"} onChange={(e) => setPlantModal({...plantModal, scientific_name: e.target.value})} />
+                  <input className="form_row" value={plantModal.genus}  placeholder={"Genus"} onChange={(e) => setPlantModal({...plantModal, name: e.target.value})} />
+                  <input className="form_row" value={plantModal.species}  placeholder={"Species"} onChange={(e) => setPlantModal({...plantModal, name: e.target.value})} />
                   <input className="form_row" value={plantModal.profile} placeholder={"Profile"} onChange={(e) => setPlantModal({...plantModal, profile: e.target.value})} />
                   <input className="form_row" value={plantModal.growing_tips} placeholder={"Growing Tips"} onChange={(e) => setPlantModal({...plantModal, growing_tips: e.target.value})} />
                   <input className="form_row" value={plantModal.harvesting_tips} placeholder={"Harvesting Tips"} onChange={(e) => setPlantModal({...plantModal, harvesting_tips: e.target.value})} />

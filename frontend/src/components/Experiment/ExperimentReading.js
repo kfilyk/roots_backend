@@ -218,7 +218,6 @@ const ExperimentReading = (props) => {
                         <input placeholder="Unripe Fruit" type="number" value={podReadingModal.fruit_unripe_count} name={"fruit_unripe_count"} min={0} onChange={(e) => setPodReadingModal({...podReadingModal, fruit_unripe_count: e.target.value})} />
                     </div>
                     <div className="form_row">
-    
                         <input placeholder="Ripe Fruit" type="number" value={podReadingModal.fruit_ripe_count} name={"fruit_ripe_count"} min={0} onChange={(e) => setPodReadingModal({...podReadingModal, fruit_ripe_count: e.target.value})} />
                         <input placeholder="Bud Count" type="number" value={podReadingModal.bud_count} name={"bud_count"} min={0} onChange={(e) => setPodReadingModal({...podReadingModal, bud_count: e.target.value})} />
                         <input placeholder="Flower Count" type="number" value={podReadingModal.flower_count} name={"flower_count"} min={0} onChange={(e) => setPodReadingModal({...podReadingModal, flower_count: e.target.value})} />
@@ -244,13 +243,13 @@ const ExperimentReading = (props) => {
 
     function changeSelectedPod(e, pod){
         if (selectedPod !== pod.id){
-            Array.from(document.querySelectorAll('.pod_selection')).forEach((el) => el.classList.remove('selected'));
-            e.currentTarget.classList.toggle('selected');
+            Array.from(document.querySelectorAll('.nav-link')).forEach((el) => el.classList.remove('active'));
+            e.currentTarget.classList.toggle('active');
             setPodReadingModal({...initPodReadingModal, ...pod.pod_reading})
             setSelectedPod(pod.id)
         } else {
             //To remove the pod reading form
-            e.currentTarget.classList.remove('selected');
+            e.currentTarget.classList.remove('active');
             setPodReadingModal({initPodReadingModal})
             setSelectedPod(-1)
         }
@@ -261,7 +260,7 @@ const ExperimentReading = (props) => {
         if (pods !== undefined) {
             for (const [key, value] of Object.entries(pods)) {
                 pod_container.push(
-                    <button className="pod_selection" key={value.position} onClick={(e) => {changeSelectedPod(e, value)}}>{value.plant_name}</button> 
+                    <div className="pod-selection nav-link " key={value.position} onClick={(e) => {changeSelectedPod(e, value)}}>{value.position + ". "+value.plant_name}</div> 
                 )           
             }
         }
@@ -285,9 +284,9 @@ const ExperimentReading = (props) => {
                         <div className="form_row"><button value= {experimentReadingModal.failed_pump} className={experimentReadingModal.failed_pump === true ? "selected": ""} onClick={(e) => {e.currentTarget.classList.toggle('selected'); setExperimentReadingModal({...experimentReadingModal, failed_pump: !experimentReadingModal.failed_pump})}}/>Failed Pump</div>
                         <div className="form_row"><button value= {experimentReadingModal.went_offline} className={experimentReadingModal.went_offline === true ? "selected": ""} onClick={(e) => {e.currentTarget.classList.toggle('selected'); setExperimentReadingModal({...experimentReadingModal, went_offline: !experimentReadingModal.went_offline})}}/>Went Offline</div>
                         <div className="form_row"><button value= {experimentReadingModal.lost_power} className={experimentReadingModal.lost_power === true ? "selected": ""} onClick={(e) => {e.currentTarget.classList.toggle('selected'); setExperimentReadingModal({...experimentReadingModal, lost_power: !experimentReadingModal.lost_power})}}/>Lost Power</div>
+                        <div className='modal-pod-selection'>{renderPodSelection()}</div>
                     </div>
                     <div className='modal-pod-reading'>
-                        <div className='modal-pod-selection'>{renderPodSelection()}</div>
                         {renderPodReading()}
                     </div>
                 </div>
