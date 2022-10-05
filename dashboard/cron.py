@@ -50,7 +50,7 @@ def update_experiments():
                 curr_exp_day = curr_exp.day
                 phase_number = 0
                 for p in phases:
-                    curr_phase = getattr(curr_exp.recipe, p.name, None)
+                    curr_phase = getattr(curr_exp.recipe, p.name, None) # p.name = "phase1, phase2, phase3..."
                     if curr_phase is not None:
                         
                         if (curr_exp_day - curr_phase.days) < 0:

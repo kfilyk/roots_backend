@@ -92,7 +92,7 @@ POPUP MODAL
 .form_row input:-moz-placeholder { /* Firefox 18- */
   font-size: 12px;
 }
-.form_row .phase_number_input {
+.form_row .phase-modal-numerical-input {
   width:30px;
 }
 .form_row button {

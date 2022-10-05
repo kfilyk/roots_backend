@@ -1,6 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import Popup from "reactjs-popup";
+import AWS from 'aws-sdk'
+
+
+const S3_BUCKET ='ava-cv-raw-photo-bucket';
+const REGION ='ca-central-1';
+
+AWS.config.update({
+    accessKeyId: 'AKIA3N5PH5YKPJJ7VT2L',
+    secretAccessKey: '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'
+})
+
+const myBucket = new AWS.S3({
+    params: { Bucket: S3_BUCKET},
+    region: REGION,
+})
 
 const ExperimentReading = (props) => {
     // store experiment reading form to be edited by frontend experiment reading modal
@@ -55,13 +70,18 @@ const ExperimentReading = (props) => {
         prune_living_foliage: false,
         prune_dead_heading: false,
         comment: "",
+        selected_image: null,
+        image_link:"",
     }
     const [podReadingModal, setPodReadingModal] = useState({initPodReadingModal});
 
     // The selected pod id that the pod reading form is on
     const [selectedPod, setSelectedPod] = useState(-1)
 
-
+    const [progress , setProgress] = useState(0);
+    
+    const [phase, setPhase] = useState("");
+    
     /*
     Input from: props.experimentID
     Outputs to: pods, capacity
@@ -87,7 +107,10 @@ const ExperimentReading = (props) => {
         setPods(podList)
     } 
 
-
+    async function getPhase() {
+        const ret = await axios.get('/api/phases/'+props?.input.experiment['phase_id'])
+        setPhase(ret.data['type'].toLowerCase())
+    }
 
     /*
     Input/Called from: useEffect()
@@ -104,6 +127,7 @@ const ExperimentReading = (props) => {
         // set experiment reading data
         setExperimentReadingModal({...experimentReadingModal, ...props.input})
         delete experimentReadingModal.experiment;
+        getPhase(props.phase);
     }, [])
 
     
@@ -113,8 +137,30 @@ const ExperimentReading = (props) => {
             setPods({...pods, [selectedPod]: {...pods[selectedPod], pod_reading: podReadingModal}})// sets the pod_reading of the currently active pod object while form is open
         }
     },[podReadingModal])
-    
 
+    const uploadImage = (file, genus, species, id) => {
+        let fname = (species+"_"+id+"_"+phase+".jpg").toLowerCase();
+
+        const params = {
+            ACL: 'public-read',
+            Body: file,
+            Bucket: S3_BUCKET+"/RootsImages/"+genus.toLowerCase(),
+            Key: fname
+        };
+
+        myBucket.putObject(params)
+            .on('httpUploadProgress', (evt) => {
+                setProgress(Math.round((evt.loaded / evt.total) * 100))
+            })
+            .send((err) => {
+                if (err) {
+                    console.log(err);
+                    return null;
+                }
+            })
+        console.log("SUCCESSFUL IMAGE UPLOAD: https://ava-cv-raw-photo-bucket.s3.amazonaws.com/RootsImages/"+genus.toLowerCase()+"/"+fname)
+        return "https://ava-cv-raw-photo-bucket.s3.amazonaws.com/RootsImages/"+genus.toLowerCase()+"/"+fname
+    }
     /*
     Input/Called from: render()
     Outputs to: Database (backend, post to experimentReadingModals and podReadings tables) 
@@ -135,15 +181,27 @@ const ExperimentReading = (props) => {
             const result = await axios.post(`/api/experimentreadings/`, er)
                 .catch((err) => console.log(err));
             if(result && result['status'] === 201) {
+                console.log("FLAG 1!")
                 for (const [key, value] of Object.entries(pods)) {
                     if(JSON.stringify(value['pod_reading']) !== empty_pod_reading) {
+
+                        let image_link = null
+                        if (value['pod_reading']['selected_image'] != null) {
+                            image_link = uploadImage(value['pod_reading']['selected_image'], value['genus'], value['species'], value['id'])
+                        }
+                        
+                        // create pod reading object to be pushed
                         let pr = {}
+                        delete pr['selected_image']
+
                         Object.assign(pr, value['pod_reading']);
                         Object.keys(pr).forEach(k => {if(pr[k] === "") pr[k]= null}) // set all "" to null
                         pr['pod'] = parseInt(key)
                         pr['experiment'] = props.input.experiment.id
                         pr['experiment_reading'] = result.data.id // add the newly generated e reading id to the pod reading
-                        console.log("POD READING: ", pr);
+                        if(image_link != null) {
+                            pr['image_link'] = image_link
+                        }
                         await axios.post(`/api/podreadings/`, pr).catch((err) => console.log(err));
                     } 
                 }
@@ -151,16 +209,26 @@ const ExperimentReading = (props) => {
         } else {
             const result = await axios.patch(`/api/experimentreadings/${er.id}/`, er)
                 .catch((err) => console.log(err));
-            console.log(result)
+
             if(result && result['status'] === 200) {
                 for (const [key, value] of Object.entries(pods)) {
                     if(JSON.stringify(value['pod_reading']) !== empty_pod_reading) {
+
+                        let image_link = null
+                        if (value['pod_reading']['selected_image'] != null) {
+                            image_link = uploadImage(value['pod_reading']['selected_image'], value['genus'], value['species'], value['id'])
+                        }
                         let pr = value['pod_reading']
+                        delete pr['selected_image']
+
                         console.log("PR1: ", pr)
                         if(pr['id'] === undefined) {
                             pr['pod'] = key
                             pr['experiment'] = props.input.experiment.id
                             pr['experiment_reading'] = result.data.id // add the newly generated e reading id to the pod reading
+                            if(image_link != null) {
+                                pr['image_link'] = image_link
+                            }
                             console.log(await axios.post(`/api/podreadings/`, pr).catch((err) => console.log(err)));
                         } else {
                             console.log(await axios.patch(`/api/podreadings/${pr['id']}/`, pr).catch((err) => console.log(err)));
@@ -233,9 +301,11 @@ const ExperimentReading = (props) => {
                     <div className="form_row"><button name="prune_dead_foliage" className={podReadingModal.prune_dead_foliage === true ? "selected": ""} onClick={(e) => {e.currentTarget.classList.toggle('selected'); setPodReadingModal({...podReadingModal, prune_dead_foliage: !podReadingModal.prune_dead_foliage})}}/>Removed Dead Foliage</div>
                     <div className="form_row"><button name="prune_living_foliage" className={podReadingModal.prune_living_foliage === true ? "selected": ""} onClick={(e) => {e.currentTarget.classList.toggle('selected'); setPodReadingModal({...podReadingModal, prune_living_foliage: !podReadingModal.prune_living_foliage})}}/>Removed Living Foliage</div>
                     <div className="form_row"><button name="prune_dead_heading" className={podReadingModal.prune_dead_heading === true ? "selected": ""} onClick={(e) => {e.currentTarget.classList.toggle('selected'); setPodReadingModal({...podReadingModal, prune_dead_heading: !podReadingModal.prune_dead_heading})}}/>Dead Headed</div>
-                    <div className='pr_comment'>
-                        <textarea name={"comment"} placeholder="[comment]" value={podReadingModal.comment} onChange={(e) => setPodReadingModal({...podReadingModal, comment: e.target.value})} cols="40" rows="5"></textarea>
-                    </div>
+                    <textarea className ="form_row pr_comment" placeholder="[comment]" value={podReadingModal.comment} onChange={(e) => setPodReadingModal({...podReadingModal, comment: e.target.value})}></textarea>
+                    {/*<input className= "form_row" type="file" capture="camera" accept="image/*" id="cameraInput" name="cameraInput" onChange={(e) => setPodReadingModal({...podReadingModal, image_link: e.target.value})}/>  */}
+                    <div>{podReadingModal.image_link}</div>
+                
+                    <input type="file" onChange={(e) => setPodReadingModal(prevState => ({...prevState, selected_image:e.target.files[0]}))}/>
                 </div>
             )
         }

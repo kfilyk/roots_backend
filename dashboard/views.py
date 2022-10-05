@@ -348,7 +348,7 @@ class PodView(viewsets.ModelViewSet):
     def get_pods(self, request):
         exp_id=json.loads(request.body)["id"]
         exp_status = json.loads(request.body)["status"]
-        qs = Pod.objects.filter(experiment = exp_id, status=exp_status).annotate(plant_name=F('plant__name')) #(experiment = exp_id, end_date__isnull=True)
+        qs = Pod.objects.filter(experiment = exp_id, status=exp_status).annotate(plant_name=F('plant__name')).annotate(genus=F('plant__genus')).annotate(species=F('plant__species')) #(experiment = exp_id, end_date__isnull=True)
         pods = list(qs.values())
         capacity = Experiment.objects.get(id=exp_id).device.capacity
         return JsonResponse({"capacity": capacity, "pods": pods}, safe=False)       
