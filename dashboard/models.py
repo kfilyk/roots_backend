@@ -209,8 +209,7 @@ class Plant(models.Model): # types: basil,
     name = models.CharField(db_column='pl_name', max_length=45, blank=True, null=True) 
     species = models.CharField(db_column='pl_species', max_length=45, blank=True, null=True)  
     genus = models.CharField(db_column='pl_genus', max_length=45, blank=True, null=True)  
-    
-    scientific_name = models.CharField(db_column='pl_scientific_name', max_length=60, blank=True, null=True)  
+      
     profile = models.CharField(db_column='pl_profile', max_length=1024, blank=True, null=True)
     growing_tips = models.CharField(db_column='pl_growing_tips', max_length=1024, blank=True, null=True)
     harvesting_tips = models.CharField(db_column='pl_harvesting_tips', max_length=1024, blank=True, null=True)

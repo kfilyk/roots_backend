@@ -19,6 +19,7 @@ const Analysis = () => {
   const [dome, setDome] = useState([]);
   const [dates, setDates] = useState([]);
   const [podData, setPodData] = useState([]);
+  const [heightData, setHeightData] = useState([]);
 
   
 
@@ -76,7 +77,13 @@ const Analysis = () => {
     setPodData(result.data)
   }
 
-  
+  /* Trying to get the last height measurement */
+  async function getAllGraphData() {
+    const maxHeight = podData['pods'][1]
+
+    setHeightData(maxHeight)
+  }
+
   async function getGerminationCount() {
     const result = prList.map(a => a.germination_rate);
     const labels = prList.map(b => b.id);
@@ -90,6 +97,8 @@ const Analysis = () => {
     setDome(result);
     setDates(labels);
   }
+
+//  async function 
 
   /* [] : indicates that this runs ONCE at the start of render */
   /* Retrieves all the experiment/pod readings*/
@@ -147,7 +156,14 @@ const domeData = {
   return (
 
     <div>
+      {JSON.stringify(heightData)}
+    <h3>Experiment ID: 80</h3>
     {JSON.stringify(podData)}
+    <h1>@@@@@@@</h1>
+
+    {JSON.stringify(erList)}
+    <h1>#######</h1>
+    {JSON.stringify(prList)}
 
     <Line data={domeData}
     options={{
@@ -230,8 +246,6 @@ const domeData = {
 
       <Line data={lineData}/>
 
-      {JSON.stringify(erList)}
-      {JSON.stringify(prList)}
       {JSON.stringify(germinationCount)};
       {JSON.stringify(labels)};
       {JSON.stringify(dome)};
