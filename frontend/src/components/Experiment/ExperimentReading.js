@@ -181,7 +181,6 @@ const ExperimentReading = (props) => {
             const result = await axios.post(`/api/experimentreadings/`, er)
                 .catch((err) => console.log(err));
             if(result && result['status'] === 201) {
-                console.log("FLAG 1!")
                 for (const [key, value] of Object.entries(pods)) {
                     if(JSON.stringify(value['pod_reading']) !== empty_pod_reading) {
 
@@ -220,15 +219,15 @@ const ExperimentReading = (props) => {
                         }
                         let pr = value['pod_reading']
                         delete pr['selected_image']
+                        
+                        if(image_link != null) {
+                            pr['image_link'] = image_link
+                        }
 
-                        console.log("PR1: ", pr)
                         if(pr['id'] === undefined) {
                             pr['pod'] = key
                             pr['experiment'] = props.input.experiment.id
                             pr['experiment_reading'] = result.data.id // add the newly generated e reading id to the pod reading
-                            if(image_link != null) {
-                                pr['image_link'] = image_link
-                            }
                             console.log(await axios.post(`/api/podreadings/`, pr).catch((err) => console.log(err)));
                         } else {
                             console.log(await axios.patch(`/api/podreadings/${pr['id']}/`, pr).catch((err) => console.log(err)));
@@ -301,8 +300,7 @@ const ExperimentReading = (props) => {
                     <div className="form_row"><button name="prune_dead_foliage" className={podReadingModal.prune_dead_foliage === true ? "selected": ""} onClick={(e) => {e.currentTarget.classList.toggle('selected'); setPodReadingModal({...podReadingModal, prune_dead_foliage: !podReadingModal.prune_dead_foliage})}}/>Removed Dead Foliage</div>
                     <div className="form_row"><button name="prune_living_foliage" className={podReadingModal.prune_living_foliage === true ? "selected": ""} onClick={(e) => {e.currentTarget.classList.toggle('selected'); setPodReadingModal({...podReadingModal, prune_living_foliage: !podReadingModal.prune_living_foliage})}}/>Removed Living Foliage</div>
                     <div className="form_row"><button name="prune_dead_heading" className={podReadingModal.prune_dead_heading === true ? "selected": ""} onClick={(e) => {e.currentTarget.classList.toggle('selected'); setPodReadingModal({...podReadingModal, prune_dead_heading: !podReadingModal.prune_dead_heading})}}/>Dead Headed</div>
-                    <textarea className ="form_row pr_comment" placeholder="[comment]" value={podReadingModal.comment} onChange={(e) => setPodReadingModal({...podReadingModal, comment: e.target.value})}></textarea>
-                    {/*<input className= "form_row" type="file" capture="camera" accept="image/*" id="cameraInput" name="cameraInput" onChange={(e) => setPodReadingModal({...podReadingModal, image_link: e.target.value})}/>  */}
+                    <input className ="form_row pr_comment" placeholder="[comment]" type="text" value={podReadingModal.comment} onChange={(e) => setPodReadingModal({...podReadingModal, comment: e.target.value})}/>
                     <div>{podReadingModal.image_link}</div>
                 
                     <input type="file" onChange={(e) => setPodReadingModal(prevState => ({...prevState, selected_image:e.target.files[0]}))}/>
