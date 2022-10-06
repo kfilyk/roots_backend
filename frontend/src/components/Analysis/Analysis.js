@@ -5,6 +5,7 @@ import menu_icon from "../../img/menu_icon.png";
 import 'chart.js/auto'
 //import {Chart as ChartJS, LinearScale, PointElement, Tooltip, Legend, TimeScale} from "chart.js";
 import {Bar, Line, Scatter} from 'react-chartjs-2';
+import './analysis.css';
 
 //ChartJS.register(LinearScale, PointElement, Tooltip, Legend, TimeScale);
 
@@ -79,7 +80,7 @@ const Analysis = () => {
 
   /* Trying to get the last height measurement */
   async function getAllGraphData() {
-    const maxHeight = podData['pods'][1]
+    const maxHeight = podData['pods']//[0]['reading']
 
     setHeightData(maxHeight)
   }
@@ -155,7 +156,7 @@ const domeData = {
 }
   return (
 
-    <div>
+    <div className='darryl-class'>
       {JSON.stringify(heightData)}
     <h3>Experiment ID: 80</h3>
     {JSON.stringify(podData)}
