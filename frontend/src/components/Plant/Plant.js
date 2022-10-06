@@ -18,7 +18,7 @@ const PlantList = () => {
   }
   const [plantModal, setPlantModal] = useState(initPlantModal);
 
-  async function fetchData() {
+  async function fetchPlants() {
     const result = await axios(
       '/api/plants/',
     );
@@ -27,7 +27,7 @@ const PlantList = () => {
   } 
 
   useEffect(() => {
-    fetchData();
+    fetchPlants();
   }, []);
 
   async function deleteEntry(id) {

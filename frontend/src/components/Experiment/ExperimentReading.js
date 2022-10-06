@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import axios from "axios";
 import Popup from "reactjs-popup";
 import AWS from 'aws-sdk'
@@ -20,6 +20,7 @@ const myBucket = new AWS.S3({
 const ExperimentReading = (props) => {
     // store experiment reading form to be edited by frontend experiment reading modal
 
+    const img_upload = useRef()
     const [pods, setPods] = useState(undefined)
 
     const [experiment, setExperiment] = useState({})
@@ -73,7 +74,7 @@ const ExperimentReading = (props) => {
         selected_image: null,
         image_link:"",
     }
-    const [podReadingModal, setPodReadingModal] = useState({initPodReadingModal});
+    const [podReadingModal, setPodReadingModal] = useState(initPodReadingModal);
 
     // The selected pod id that the pod reading form is on
     const [selectedPod, setSelectedPod] = useState(-1)
@@ -300,10 +301,9 @@ const ExperimentReading = (props) => {
                     <div className="form_row"><button name="prune_dead_foliage" className={podReadingModal.prune_dead_foliage === true ? "selected": ""} onClick={(e) => {e.currentTarget.classList.toggle('selected'); setPodReadingModal({...podReadingModal, prune_dead_foliage: !podReadingModal.prune_dead_foliage})}}/>Removed Dead Foliage</div>
                     <div className="form_row"><button name="prune_living_foliage" className={podReadingModal.prune_living_foliage === true ? "selected": ""} onClick={(e) => {e.currentTarget.classList.toggle('selected'); setPodReadingModal({...podReadingModal, prune_living_foliage: !podReadingModal.prune_living_foliage})}}/>Removed Living Foliage</div>
                     <div className="form_row"><button name="prune_dead_heading" className={podReadingModal.prune_dead_heading === true ? "selected": ""} onClick={(e) => {e.currentTarget.classList.toggle('selected'); setPodReadingModal({...podReadingModal, prune_dead_heading: !podReadingModal.prune_dead_heading})}}/>Dead Headed</div>
-                    <input className ="form_row pr_comment" placeholder="[comment]" type="text" value={podReadingModal.comment} onChange={(e) => setPodReadingModal({...podReadingModal, comment: e.target.value})}/>
-                    <div>{podReadingModal.image_link}</div>
-                
-                    <input type="file" onChange={(e) => setPodReadingModal(prevState => ({...prevState, selected_image:e.target.files[0]}))}/>
+                    <input className ="form_row pr_comment" placeholder="[comment]" type="text" value={podReadingModal.comment !== null ? podReadingModal.comment : ""} onChange={(e) => setPodReadingModal({...podReadingModal, comment: e.target.value})}/>
+                    <input type="file" style={{"display":"none"}} ref={img_upload} onChange={(e) => setPodReadingModal(prevState => ({...prevState, selected_image:e.target.files[0]}))}/>
+                    <button onClick={() => {img_upload.current.click()}}>{podReadingModal.image_link ? podReadingModal.image_link : (podReadingModal.selected_image === null ? "Upload Image... " : "Upload "+ podReadingModal.selected_image.name) }</button>
                 </div>
             )
         }
