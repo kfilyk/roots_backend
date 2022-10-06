@@ -369,10 +369,9 @@ const Device = () => {
                         <div key={'active_' + item.id} className="object_container">
                             <div className="object_top">
                                 <div className="object_description">
-                                    <div className="bold_font">
-                                        {item.device_name}<span className="blink_me" style={{ color: item.is_online ? 'green': 'red'}}>{"\u00a0"}●{"\u00a0"}</span><span className="normal_font">{item.name}</span> 
-                                        <div className="object_dropdown">
-                                            <div className="bold_font">DEVICE ID: <span className="normal_font">{item.device_id}</span></div>
+                                    <div className="bold_font">{item.device_name}<span className="blink_me" style={{ color: item.is_online ? 'green': 'red'}}>{"\u00a0"}●{"\u00a0"}</span> <span className="normal_font">{item.name}</span> 
+                                        <div className="object_hidden">
+                                            <div className="bold_font">ID: <span className="normal_font">{item.device_id}</span></div>
                                             <div className="bold_font">MAC: <span className="normal_font">{item.mac_address.toUpperCase()}</span></div>
                                         </div>
                                     </div>

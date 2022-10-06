@@ -228,7 +228,7 @@ const RecipeBar = (props) => {
                 phases.push(<div key={`${props.experiment}_${i}`} className="recipe_bar_phase" style={s} > 
                   <span className="recipe_bar_phase_days">{ph.days}</span> 
                   <span className="recipe_bar_phase_type"> {ph.type} </span>
-                  <div className="object_dropdown">
+                  <div className="object_hidden">
                     {renderPhaseDetails(ph)}
                   </div>
                 </div>)

@@ -83,9 +83,9 @@ OBJECT CONTAINERS (DEVICE, EXPERIMENT, ETC)
   max-width: calc(100% - 20px);
 }
 
-.object_container:hover .object_dropdown {
+.object_container:hover .object_hidden {
   /*display:block;*/
-  max-height:2000px;
+  max-height:fit-content;
   transition: max-height 1s ease-out;
 }
 
@@ -124,16 +124,15 @@ OBJECT CONTAINERS (DEVICE, EXPERIMENT, ETC)
   font-family: "Brandon Grotesque";
 }
 
-.object_dropdown {
-  /*display:none;*/
+.object_hidden {
   max-height:0px;
   transition: max-height 0.25s ease-out;
   overflow:hidden;
 }
 
-.object_dropdown:hover {
+.object_hidden:hover {
   /*display:none;*/
-  max-height:2000px;
+  max-height:fit-content;
   transition: max-height 0.25s ease-out;
 }
 

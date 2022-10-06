@@ -18,7 +18,7 @@ const PlantList = () => {
   }
   const [plantModal, setPlantModal] = useState(initPlantModal);
 
-  async function fetchData() {
+  async function fetchPlants() {
     const result = await axios(
       '/api/plants/',
     );
@@ -27,7 +27,7 @@ const PlantList = () => {
   } 
 
   useEffect(() => {
-    fetchData();
+    fetchPlants();
   }, []);
 
   async function deleteEntry(id) {
@@ -80,7 +80,7 @@ const PlantList = () => {
           <div className="object_container">
             <div className="object_description">
               <div className="bold_font object_header"><span style={{ textTransform: 'uppercase'}}>{item.name}</span> <span className="normal_font">{(item.genus || item.species) ? " ("+item.genus+" "+item.species+")": <></>}</span></div> 
-              <div className="object_dropdown">
+              <div className="object_hidden">
                 <span className="normal_font">{(item.profile? item.profile : "") +(item.growing_tips ? " "+item.growing_tips: "")+(item.harvesting_tips ? " "+item.harvesting_tips: "")}</span>
               </div>
 
