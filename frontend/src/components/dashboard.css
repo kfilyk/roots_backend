@@ -2,10 +2,11 @@ html {
   width:100%;
 }
 .dashboard {
-  padding: 10px;
-  padding-top:0px;
+  padding:0px;
+  padding-bottom:10px;
   overflow-x: hidden;
 }
+
 
 ul {
   margin:0px;
@@ -89,6 +90,12 @@ OBJECT CONTAINERS (DEVICE, EXPERIMENT, ETC)
   transition: max-height 1s ease-out;
 }
 
+@media only screen and (max-width: 600px) {
+  .object_container:hover .object_description {
+    padding-bottom: 0px;
+  }
+}
+
 
 .object_top {
   display:flex;
@@ -112,7 +119,7 @@ OBJECT CONTAINERS (DEVICE, EXPERIMENT, ETC)
 
 @media only screen and (max-width: 600px) {
   .object_description {
-    padding-bottom:10px;
+    padding-bottom:20px;
   }
 }
 

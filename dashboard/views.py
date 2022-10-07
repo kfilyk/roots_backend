@@ -439,6 +439,7 @@ class RecipeView(viewsets.ModelViewSet):
         del recipe['show']
         del recipe['add']
         del recipe['id']
+
         for i in range(1, 11):
             ph = recipe["phase"+str(i)]
             del ph['id'] # shouldn't have a preexisting id before being entered
@@ -450,6 +451,13 @@ class RecipeView(viewsets.ModelViewSet):
         r = Recipe.objects.create(**recipe)
         r.recipe_json = RecipeView.generate_JSON(r.id)
         r.save()
+
+        for i in range(1, 11):
+            p = getattr(r, "phase"+str(i))
+            if p:
+                p.recipe = r
+                p.save()
+
 
         #recipe_id = super().create(request, *args, **kwargs).data['id']
         #recipe = Recipe.objects.get(id=recipe_id)
@@ -477,6 +485,8 @@ class RecipeView(viewsets.ModelViewSet):
 
         for i in range(1, 11):
             ph = new["phase"+str(i)]
+            ph['recipe'] = new['id']
+
             if ph['id'] == -1:
                 del ph['id'] # if new phase, create new id. otherwise, use old id
 
@@ -512,7 +522,6 @@ class RecipeView(viewsets.ModelViewSet):
         rec_id = json.loads(request.body)['id']
         recipe = Recipe.objects.get(id = rec_id)
         recipe.delete()
-        print(model_to_dict(recipe))
         try:
             recipe.phase1.delete()
             recipe.phase2.delete()
@@ -526,7 +535,7 @@ class RecipeView(viewsets.ModelViewSet):
             recipe.phase10.delete()
         except:
             print("Phases deleted.")
-        
+
         return JsonResponse({"status": "200"}, safe=False)
 
     """

@@ -36,8 +36,6 @@ const ExperimentReading = (props) => {
         flushed_reservoir: false,
         raised_light: false,
         failed_pump: false,
-        went_offline: false,
-        lost_power: false,
     }
     const [experimentReadingModal, setExperimentReadingModal] = useState(initExperimentReadingModal);
 
@@ -350,8 +348,6 @@ const ExperimentReading = (props) => {
                         <div className="form_row"><button value= {experimentReadingModal.flushed_reservoir} className={experimentReadingModal.flushed_reservoir === true ? "selected": ""} onClick={(e) => {e.currentTarget.classList.toggle('selected'); setExperimentReadingModal({...experimentReadingModal, flushed_reservoir: !experimentReadingModal.flushed_reservoir})}}/>Flushed Reservoir</div>
                         <div className="form_row"><button value= {experimentReadingModal.raised_light} className={experimentReadingModal.raised_light === true ? "selected": ""} onClick={(e) => {e.currentTarget.classList.toggle('selected'); setExperimentReadingModal({...experimentReadingModal, raised_light: !experimentReadingModal.raised_light})}}/>Raised Light</div>
                         <div className="form_row"><button value= {experimentReadingModal.failed_pump} className={experimentReadingModal.failed_pump === true ? "selected": ""} onClick={(e) => {e.currentTarget.classList.toggle('selected'); setExperimentReadingModal({...experimentReadingModal, failed_pump: !experimentReadingModal.failed_pump})}}/>Failed Pump</div>
-                        <div className="form_row"><button value= {experimentReadingModal.went_offline} className={experimentReadingModal.went_offline === true ? "selected": ""} onClick={(e) => {e.currentTarget.classList.toggle('selected'); setExperimentReadingModal({...experimentReadingModal, went_offline: !experimentReadingModal.went_offline})}}/>Went Offline</div>
-                        <div className="form_row"><button value= {experimentReadingModal.lost_power} className={experimentReadingModal.lost_power === true ? "selected": ""} onClick={(e) => {e.currentTarget.classList.toggle('selected'); setExperimentReadingModal({...experimentReadingModal, lost_power: !experimentReadingModal.lost_power})}}/>Lost Power</div>
                         <div className='modal-pod-selection'>{renderPodSelection()}</div>
                     </div>
                     <div className='modal-pod-reading'>

@@ -26,6 +26,12 @@
   overflow: visible;
 }
 
+@media only screen and (max-width: 600px) {
+  .circular-chart {
+    max-width: 90%;
+  }
+}
+
 .circle-bg {
   fill: none;
   stroke: #eee;
@@ -38,6 +44,8 @@
   stroke-linecap:flat;
   animation: progress 1s ease-out forwards;
 }
+
+
 
 @keyframes progress {
   0% {
