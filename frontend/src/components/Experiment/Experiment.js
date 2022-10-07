@@ -3,6 +3,7 @@ import axios from "axios";
 import menu_icon from "../../img/menu_icon.png"
 import Popup from "reactjs-popup";
 import PodCarousel from "../Experiment/PodCarousel"
+
 import RecipeBar from '../Recipe/RecipeBar';
 import "./experiment.css"
 
@@ -30,6 +31,8 @@ const Device = () => {
     const [phaseList, setPhaseList] = useState([])
     const [recipeList, setRecipeList] = useState([])
     const [plantList, setPlantList] = useState([]);
+
+    const ref = useRef()
 
     //USED FOR ADDING A NEW DEVICE & EDITING A CURRENT ONE
     const [device, setDevice] = useState({
@@ -377,11 +380,12 @@ const Device = () => {
                                     </div>
                                     {item.score !== null ? <div>Score: { item.score } </div>: <></>}
                                 </div>
-                                <div className="object_content">                          
+                                <div className="object_content">     
                                     <PodCarousel experimentID={item.id} deviceId={item.device} status={item.status}></PodCarousel>
                                 </div>
                             </div>
-                            <RecipeBar phaseList = {phaseList} recipe = {recipeList?.filter(obj => obj.id === item.recipe_id)[0]} recipe_name = {item.current_recipe} experiment = {item}></RecipeBar>
+
+                            <RecipeBar phaseList = {phaseList.filter(phase => phase.recipe === item.recipe_id)} recipe = {recipeList?.filter(obj => obj.id === item.recipe_id)[0]} recipe_name = {item.current_recipe} experiment = {item}></RecipeBar>
 
                             <div className='object_actions'>
                                 <img className="menu_icon" src={menu_icon} alt="NO IMG!"/>
@@ -430,7 +434,7 @@ const Device = () => {
                                   {/* <div>Registered: { item.registration_date.substring(0, 10) }</div> */}
                                 </div>
                             </div>
-                            {item.is_online ?  <div className= "empty_object" onClick={() => {setDevice({...device, show:true}); setExperiment({...experiment, device:item.id, device_name:item.name, device_capacity:item.capacity, start_date:todayDate});}}>  ADD EXPERIMENT</div> : <div className= "empty_object">DEVICE OFFLINE</div>}
+                            {item.is_online ? <div className= "empty_object" onClick={() => {setDevice({...device, show:true}); setExperiment({...experiment, device:item.id, device_name:item.name, device_capacity:item.capacity, start_date:todayDate});}}>  ADD EXPERIMENT</div> : <div className= "empty_object">DEVICE OFFLINE</div>}
                            
                             <div className='object_actions'>
                                 <img className="menu_icon" src={menu_icon} alt="NO IMG!"/>

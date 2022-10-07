@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import "./recipebar.css"
-import Popup from "reactjs-popup";
 import white_light_icon from "../../img/white_light_icon.png"
 import blue_light_icon from "../../img/blue_light_icon.png"
 import red_light_icon from "../../img/red_light_icon.png"

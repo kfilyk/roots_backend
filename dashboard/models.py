@@ -79,14 +79,11 @@ class ExperimentReading(models.Model):
     experiment_phase = models.IntegerField(db_column='er_experiment_phase', blank=True, null=True) 
     temperature = models.IntegerField(db_column='er_temperature', blank=True, null=True) 
     humidity = models.IntegerField(db_column='er_humidity', blank=True, null=True, validators=PERCENTAGE_VALIDATOR)
-    photo_link = models.CharField(db_column='er_photo_link', max_length=100, blank=True, null=True)
 
     # Event Bools
     flushed_reservoir = models.BooleanField(db_column='er_flushed_reservoir', default = 0)
     raised_light = models.BooleanField(db_column='er_raised_light', default = 0)
     failed_pump = models.BooleanField(db_column='er_failed_pump', default = 0)
-    went_offline = models.BooleanField(db_column='er_went_offline', default = 0)
-    lost_power = models.BooleanField(db_column='er_lost_power', default = 0)
 
     class Meta:
         managed = True
@@ -170,6 +167,7 @@ class Pod(models.Model):
 # A phase are used by a single recipe
 class Phase(models.Model): # generic periodic phase setting to be used by a recipe 
     id = models.AutoField(db_column='ph_id', primary_key=True)  
+    recipe = models.ForeignKey("Recipe", on_delete=models.SET_NULL, db_column='ph_recipe_id', null=True)  # pods created automatically when an experiment is created
     days = models.IntegerField(db_column = 'ph_days')
     type = models.CharField(db_column='ph_type', max_length=45) # germination / seedling / veggie growth/ harvest /... / other
     waterings_per_day = models.IntegerField(db_column = 'ph_waterings_per_day') # number of times per day watered
