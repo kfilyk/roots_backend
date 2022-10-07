@@ -80,7 +80,7 @@ const Analysis = () => {
 
   /* Trying to get the last height measurement */
   async function getAllGraphData() {
-    const maxHeight = podData['pods']//[0]['reading']
+    const maxHeight = podData['pods'][1]//['reading'][-1]
 
     setHeightData(maxHeight)
   }
@@ -112,7 +112,8 @@ const Analysis = () => {
   useEffect(() => {
     getGerminationCount();
     getDomeRemoval();
-  }, [prList]);
+    getAllGraphData();
+  }, [prList, podData]);
 
   const germData = {
     labels,
@@ -154,12 +155,18 @@ const domeData = {
     }
   ]
 }
+
+/*@@@@@@@@@@@@@@*/
   return (
 
     <div className='darryl-class'>
-      {JSON.stringify(heightData)}
+    {JSON.stringify(heightData)}
     <h3>Experiment ID: 80</h3>
     {JSON.stringify(podData)}
+    
+    
+    
+    
     <h1>@@@@@@@</h1>
 
     {JSON.stringify(erList)}
