@@ -65,8 +65,11 @@ const ExperimentReading = (props) => {
         prune_living_foliage: false,
         prune_dead_heading: false,
         comment: "",
-        selected_image: null,
-        image_link:"",
+        selected_images: null,
+        image_link_1:"",
+        image_link_2:"",
+        image_link_3:"",
+        image_link_4:"",
     }
     const [podReadingModal, setPodReadingModal] = useState(initPodReadingModal);
 
@@ -142,13 +145,13 @@ const ExperimentReading = (props) => {
         }
     },[podReadingModal])
 
-    const uploadImage = (file, species, id) => {
-        let fname = (id+"_"+phase+".jpg").toLowerCase();
+    const uploadImage = (file, species, id, i) => {
+        let fname = (id+"_"+phase+"_"+i+"_"+Date.now()+".jpg").toLowerCase();
 
         const params = {
             ACL: 'public-read',
             Body: file,
-            Bucket: S3_BUCKET+"/RootsImages/"+species.toLowerCase(),
+            Bucket: S3_BUCKET+"/RootsImages/"+species,
             Key: fname
         };
 
@@ -162,8 +165,8 @@ const ExperimentReading = (props) => {
                     return null;
                 }
             })
-        console.log("SUCCESSFUL IMAGE UPLOAD: https://ava-cv-raw-photo-bucket.s3.amazonaws.com/RootsImages/"+species.toLowerCase()+"/"+fname)
-        return "https://ava-cv-raw-photo-bucket.s3.amazonaws.com/RootsImages/"+species.toLowerCase()+"/"+fname
+        console.log("SUCCESSFUL IMAGE UPLOAD: https://ava-cv-raw-photo-bucket.s3.amazonaws.com/RootsImages/"+species+"/"+fname)
+        return "https://ava-cv-raw-photo-bucket.s3.amazonaws.com/RootsImages/"+species+"/"+fname
     }
 
     function closeExperimentReading() {
@@ -200,24 +203,34 @@ const ExperimentReading = (props) => {
                 for (const [key, value] of Object.entries(podList)) {
                     if(JSON.stringify(value['pod_reading']) !== empty_pod_reading) {
 
-                        let image_link = null
-                        if (value['pod_reading']['selected_image'] != null) {
-                            image_link = uploadImage(value['pod_reading']['selected_image'], value['species'], value['id'])
+                        let image_links = []
+                        if (value['pod_reading']['selected_images'] != null) {
+                            let i = 1
+                            console.log(value['pod_reading']['selected_images'])
+                            Array.from(value['pod_reading']['selected_images']).forEach(img => {
+                                if(i <= 4) {
+                                    image_links.push(uploadImage(img, value['species'].toLowerCase(), value['id'], i))
+                                    i = i+1
+                                }
+                            })
                         }
                         
                         // create pod reading object to be pushed
                         let pr = {}
-                        delete pr['selected_image']
 
                         Object.assign(pr, value['pod_reading']);
                         Object.keys(pr).forEach(k => {if(pr[k] === "") pr[k]= null}) // set all "" to null
                         pr['pod'] = parseInt(key)
                         pr['experiment'] = props.experiment.id
                         pr['experiment_reading'] = result.data.id // add the newly generated e reading id to the pod reading
-                        if(image_link != null) {
-                            pr['image_link'] = image_link
-                        }
+                        let i = 1
+                        image_links.forEach(link => {
+                            pr['image_link_'+i] = link
+                            i = i+1
+                        })
+
                         await axios.post(`/api/podreadings/`, pr).catch((err) => console.log(err));
+                        console.log("ADDED POD READING: ", pr)
                     } 
                 }
             }
@@ -229,27 +242,42 @@ const ExperimentReading = (props) => {
                 for (const [key, value] of Object.entries(podList)) {
                     if(JSON.stringify(value['pod_reading']) !== empty_pod_reading) {
 
-                        let image_link = null
-                        if (value['pod_reading']['selected_image'] != null) {
-                            image_link = uploadImage(value['pod_reading']['selected_image'], value['species'], value['id'])
+                        let image_links = []
+                        if (value['pod_reading']['selected_images'] != null) {
+                            let i = 1
+                            console.log(value['pod_reading']['selected_images'])
+                            Array.from(value['pod_reading']['selected_images']).forEach(img => {
+                                if(i <= 4) {
+                                    image_links.push(uploadImage(img, value['species'].toLowerCase(), value['id'], i))
+                                    i = i+1
+                                }
+                            })
                         }
-                        let pr = value['pod_reading']
-                        delete pr['selected_image']
-                        
-                        if(image_link != null) {
-                            pr['image_link'] = image_link
-                        }
+
+                        let pr = {}
+                        Object.assign(pr, value['pod_reading']);
+                        Object.keys(pr).forEach(k => {if(pr[k] === "") pr[k]= null}) // set all "" to null
+                        delete pr['selected_images']
+
+                        let i = 1
+                        image_links.forEach(link => {
+                            pr['image_link_'+i] = link
+                            i = i+1
+                        })
 
                         if(pr['id'] === undefined) {
-                            pr['pod'] = key
+                            pr['pod'] =parseInt(key)
                             pr['experiment'] = props.experiment.id
                             pr['experiment_reading'] = result.data.id // add the newly generated e reading id to the pod reading
-                            console.log(await axios.post(`/api/podreadings/`, pr).catch((err) => console.log(err)));
+
+                            await axios.post(`/api/podreadings/`, pr).catch((err) => console.log("ERROR: ", err));
+                            console.log("ADDED POD READING: ", pr);
+
                         } else {
-                            console.log(await axios.patch(`/api/podreadings/${pr['id']}/`, pr).catch((err) => console.log(err)));
+                            await axios.patch(`/api/podreadings/${pr['id']}/`, pr).catch((err) => console.log(err));
+                            console.log("EDITED POD READING: ", pr);
                         }
 
-                        console.log("POD READING: ", pr);
                     } 
                 }
 
@@ -319,8 +347,8 @@ const ExperimentReading = (props) => {
                     <div className="form_row"><button name="prune_living_foliage" className={podReadingModal.prune_living_foliage === true ? "selected": ""} onClick={(e) => {e.currentTarget.classList.toggle('selected'); setPodReadingModal({...podReadingModal, prune_living_foliage: !podReadingModal.prune_living_foliage})}}/>Removed Living Foliage</div>
                     <div className="form_row"><button name="prune_dead_heading" className={podReadingModal.prune_dead_heading === true ? "selected": ""} onClick={(e) => {e.currentTarget.classList.toggle('selected'); setPodReadingModal({...podReadingModal, prune_dead_heading: !podReadingModal.prune_dead_heading})}}/>Dead Headed</div>
                     <input className ="form_row pr_comment" placeholder="[comment]" type="text" value={podReadingModal.comment !== null ? podReadingModal.comment : ""} onChange={(e) => setPodReadingModal({...podReadingModal, comment: e.target.value})}/>
-                    <input type="file" style={{"display":"none"}} ref={img_upload} onChange={(e) => setPodReadingModal(prevState => ({...prevState, selected_image:e.target.files[0]}))}/>
-                    <button onClick={() => {img_upload.current.click()}}>{podReadingModal.image_link ? podReadingModal.image_link : (podReadingModal.selected_image === null ? "Upload Image... " : "Upload "+ podReadingModal.selected_image?.name) }</button>
+                    <input type="file" style={{"display":"none"}} ref={img_upload} onChange={(e) => setPodReadingModal(prevState => ({...prevState, selected_images:e.target.files}))} multiple/>
+                    <button onClick={() => {img_upload.current.click()}}>{podReadingModal.image_link_1 ? podReadingModal.image_link_1 : (podReadingModal.selected_images === null ? "Upload Images... " : "Upload "+ podReadingModal.selected_images[0].name+ ", ...") }</button>
                 </div>
             )
         }

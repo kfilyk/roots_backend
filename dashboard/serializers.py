@@ -33,7 +33,6 @@ class ExperimentSerializer(serializers.ModelSerializer):
         read_only_fields = ['user']
 
 class PodReadingSerializer(serializers.ModelSerializer):
-    reading_date = serializers.DateTimeField(allow_null=True, required=False)
 
     class Meta:
         model = PodReading

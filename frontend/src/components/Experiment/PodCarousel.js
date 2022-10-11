@@ -41,8 +41,8 @@ const PodCarousel = (props) => {
     return (
       //https://codepen.io/sergiopedercini/pen/jmKdbj
 
-      <div key={pod.key} className="single-chart" onClick={() =>{ props.selectedPod === pod.id ?  props.setSelectedPod(-1) : props.setSelectedPod(pod.id || -1)}}>
-          <svg viewBox="0 0 36 36" className={'circular-chart ' + pod.colour} >
+      <div key={pod.key} className="single-chart">
+          <svg viewBox="0 0 36 36" className={'circular-chart ' + pod.colour} onClick={() =>{ props.selectedPod === pod.id ?  props.setSelectedPod(-1) : props.setSelectedPod(pod.id || -1)}}>
             <path className={(props.selectedPod === pod.id) ? "circle-bg-selected" : "circle-bg"}
                 d="M18 2.0845
                 a 16 16 0 0 1 0 32

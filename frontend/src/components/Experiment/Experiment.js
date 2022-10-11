@@ -421,7 +421,7 @@ const Experiment = () => {
             activeExperiments.map((item) => {
                 if (item.name.includes(search) || item.device_name.includes(search) || item.device_id.includes(search) || item.current_recipe.includes(search)) {         
                     deviceList.push(
-                        <div key={'active_' + item.id} className="object_container" onClick={() => {if(selectedExperiment !== item.id); setSelectedExperiment(item.id); }}>
+                        <div key={'active_' + item.id} className="object_container" onClick={() => {if(selectedExperiment !== item.id) {setSelectedExperiment(item.id); setSelectedPod(-1); }}}>
                             <div className="object_top">
                                 <div className="object_description">
                                     <div className="bold_font">{item.device_name} <span className="blink_me" style={{ color: item.is_online ? 'green': 'red'}}>{"\u00a0"}●{"\u00a0"}</span> <span className="normal_font">{item.name}</span> 

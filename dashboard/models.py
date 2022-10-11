@@ -142,7 +142,10 @@ class PodReading(models.Model):
     harvest_count = models.IntegerField(db_column='pr_harvest_count',  blank=True, null=True)  
     harvest_weight = models.DecimalField(db_column='pr_harvest_weight', max_digits=5, decimal_places=2, blank=True, null=True)
     harvest_quality = models.IntegerField(db_column='pr_harvest_quality',blank=True, null=True, validators=PERCENTAGE_VALIDATOR)  
-    image_link = models.URLField(db_column='pr_image_link', max_length = 200, blank=True, null=True)
+    image_link_1 = models.URLField(db_column='pr_image_link_1', max_length = 200, blank=True, null=True)
+    image_link_2 = models.URLField(db_column='pr_image_link_2', max_length = 200, blank=True, null=True)
+    image_link_3 = models.URLField(db_column='pr_image_link_3', max_length = 200, blank=True, null=True)
+    image_link_4 = models.URLField(db_column='pr_image_link_4', max_length = 200, blank=True, null=True)
 
     class Meta:
         managed = True
