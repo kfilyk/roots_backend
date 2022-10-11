@@ -13,7 +13,7 @@ terminateExperiment()
 */
 let todayDate = new Date();
 
-const Device = () => {
+const Experiment = () => {
     /*
     TWO DEVICE STATES:
         Active - Active devices with a experiment loaded
@@ -27,12 +27,14 @@ const Device = () => {
 
     const [search, setSearch] = useState("");
     
-    //LISTS OF ALL PHASES, RECIPES, PLANTS
+    //LISTS OF ALL PHASES, RECIPES, PLANTS, EXPERIMENT READINGS, PODS
+    const [podList, setPodList] = useState([])
     const [phaseList, setPhaseList] = useState([])
     const [recipeList, setRecipeList] = useState([])
     const [plantList, setPlantList] = useState([]);
+    const [experimentReadingList, setExperimentReadingList] = useState([])
+    const [podReadingList, setPodReadingList] = useState([])
 
-    const ref = useRef()
 
     //USED FOR ADDING A NEW DEVICE & EDITING A CURRENT ONE
     const [device, setDevice] = useState({
@@ -51,7 +53,6 @@ const Device = () => {
         name: null,
         device: null,
         device_name:null,
-        device_capacity: null,
         pods: [],
         pod_selection: {},
         start_date: todayDate,
@@ -78,14 +79,18 @@ const Device = () => {
         response: {}
     });
 
+    const [selectedPod, setSelectedPod] = useState(-1)
+    const [selectedExperiment, setSelectedExperiment] = useState(-1)
+    const [selectedExperimentReading, setSelectedExperimentReading] = useState(-1);
+
     /*
     Input from: None
     Outputs to: activeExperiments
     Created by: Stella T 08/26/2022
     Last Edit: Stella T 08/26/2022
-    Purpose: Fetches all the active devices from DB
+    Purpose: Gets all the active devices from DB
     */
-    async function fetchActiveExperiments() {
+    async function getActiveExperiments() {
         const result = await axios(
           '/api/experiments/active/',
         );
@@ -97,9 +102,9 @@ const Device = () => {
     Outputs to: availableDevices
     Created by: Stella T 08/26/2022
     Last Edit: Stella T 08/26/2022
-    Purpose: Fetches all the available devices from DB
+    Purpose: getes all the available devices from DB
     */
-    async function fetchAvailableDevices() {
+    async function getAvailableDevices() {
         const result = await axios(
           '/api/experiments/free_devices/',
         );
@@ -111,13 +116,27 @@ const Device = () => {
     Outputs to: completedExperiments
     Created by: Kelvin F 09/10/2022
     Last Edit: Kelvin F 09/10/2022
-    Purpose: Fetches all completed experiments from DB
+    Purpose: getes all completed experiments from DB
     */
-    async function fetchCompletedExperiments() {
+    async function getCompletedExperiments() {
         const result = await axios(
           '/api/experiments/completed/',
         );
         setCompletedExperiments(result.data)
+    } 
+
+        /*
+    Input from: None
+    Outputs to: podList
+    Created by: Stella T 08/26/2022
+    Last Edit: Stella T 08/26/2022
+    Purpose: getes all the pods from DB
+    */
+    async function getPods() {
+        const result = await axios(
+          '/api/pods/',
+        );
+        setPodList(result.data)
     } 
 
     /*
@@ -125,9 +144,9 @@ const Device = () => {
     Outputs to: phaseList
     Created by: Stella T 08/26/2022
     Last Edit: Stella T 08/26/2022
-    Purpose: Fetches all the phases from DB
+    Purpose: getes all the phases from DB
     */
-    async function fetchPhases() {
+    async function getPhases() {
         const result = await axios(
           '/api/phases/',
         );
@@ -139,9 +158,9 @@ const Device = () => {
     Outputs to: recipeList
     Created by: Stella T 08/26/2022
     Last Edit: Stella T 08/26/2022
-    Purpose: Fetches all the recipes from DB
+    Purpose: getes all the recipes from DB
     */
-    async function fetchRecipes() {
+    async function getRecipes() {
         const result = await axios(
           '/api/recipes/',
         );
@@ -153,14 +172,43 @@ const Device = () => {
     Outputs to: plantList
     Created by: Stella T 08/26/2022
     Last Edit: Stella T 08/26/2022
-    Purpose: Fetches all the plants from DB
+    Purpose: getes all the plants from DB
     */
-    async function fetchPlants() {
-        const result = await axios(
-          '/api/plants/',
-        );
-        setPlantList(result.data)
+    async function getPlants() {
+        const result = await axios('/api/plants/').catch((err) => console.log(err))
+        if (result?.status === 200){
+            setPlantList(result?.data)
+        }
       }
+
+    /*
+    Input from: None
+    Outputs to: experimentReadingList
+    Created by: Kelvin F @ 08/31/2022
+    Last Edit: Kelvin F @ 08/31/2022
+    Purpose: get all experiment readings
+    */
+    async function getExperimentReadings() {
+        const result = await axios(`/api/experimentreadings/`).catch((err) => console.log(err))
+        if (result?.status === 200){
+            setExperimentReadingList(result?.data)
+        }
+    }
+
+    /*
+    Input from: None
+    Outputs to: podReadingList
+    Created by: Kelvin F @ 08/31/2022
+    Last Edit: Kelvin F @ 08/31/2022
+    Purpose: get all pods readings
+    */
+    async function getPodReadings() {
+        const result = await axios(`/api/podreadings/`).catch((err) => console.log(err))
+        if (result?.status === 200){
+            setPodReadingList(result?.data)
+        }
+    }
+
 
     /*
     Input from: renderDevices
@@ -171,9 +219,9 @@ const Device = () => {
     */
     async function terminateExperiment(id) {
         await axios.post(`/api/experiments/terminate/`, {id: id});
-        fetchActiveExperiments()
-        fetchAvailableDevices()
-        fetchCompletedExperiments()
+        getActiveExperiments()
+        getAvailableDevices()
+        getCompletedExperiments()
     }
 
     /*
@@ -185,7 +233,7 @@ const Device = () => {
     */
     async function deleteExperiment(id) {
       await axios.post(`/api/experiments/delete/`, {id: id});
-      fetchCompletedExperiments()
+      getCompletedExperiments()
   }
     /*
     Input from: None
@@ -195,12 +243,16 @@ const Device = () => {
     Purpose: Upon page load, it runs once and gets available + active devices; phases; recipes; and plants
     */
     useEffect(() => {
-        fetchAvailableDevices();
-        fetchActiveExperiments();
-        fetchCompletedExperiments();
-        fetchPhases();
-        fetchRecipes();
-        fetchPlants();
+        getAvailableDevices();
+        getActiveExperiments();
+        getCompletedExperiments();
+        getPhases();
+        getRecipes();
+        getPlants();
+        getPods();
+        getExperimentReadings();
+        getPodReadings();
+
     }, []); // run once after start
 
     useEffect(() => {
@@ -369,10 +421,10 @@ const Device = () => {
             activeExperiments.map((item) => {
                 if (item.name.includes(search) || item.device_name.includes(search) || item.device_id.includes(search) || item.current_recipe.includes(search)) {         
                     deviceList.push(
-                        <div key={'active_' + item.id} className="object_container">
+                        <div key={'active_' + item.id} className="object_container" onClick={() => {if(selectedExperiment !== item.id); setSelectedExperiment(item.id); }}>
                             <div className="object_top">
                                 <div className="object_description">
-                                    <div className="bold_font">{item.device_name}<span className="blink_me" style={{ color: item.is_online ? 'green': 'red'}}>{"\u00a0"}●{"\u00a0"}</span> <span className="normal_font">{item.name}</span> 
+                                    <div className="bold_font">{item.device_name} <span className="blink_me" style={{ color: item.is_online ? 'green': 'red'}}>{"\u00a0"}●{"\u00a0"}</span> <span className="normal_font">{item.name}</span> 
                                         <div className="object_hidden">
                                             <div className="bold_font">ID: <span className="normal_font">{item.device_id}</span></div>
                                             <div className="bold_font">MAC: <span className="normal_font">{item.mac_address.toUpperCase()}</span></div>
@@ -381,11 +433,10 @@ const Device = () => {
                                     {item.score !== null ? <div>Score: { item.score } </div>: <></>}
                                 </div>
                                 <div className="object_content">     
-                                    <PodCarousel experimentID={item.id} deviceId={item.device} status={item.status}></PodCarousel>
+                                    <PodCarousel experimentID={item.id} deviceId={item.device} status={item.status} podList = {podList.filter(pod => (pod.status === item.status && pod.experiment === item.id))} selectedPod = {selectedPod} setSelectedPod={setSelectedPod} selectedExperiment={selectedExperiment}></PodCarousel>
                                 </div>
                             </div>
-
-                            <RecipeBar phaseList = {phaseList.filter(phase => phase.recipe === item.recipe_id)} recipe = {recipeList?.filter(obj => obj.id === item.recipe_id)[0]} recipe_name = {item.current_recipe} experiment = {item}></RecipeBar>
+                            <RecipeBar experimentReadingList = {experimentReadingList.filter(er => er.experiment === item.id)} podReadingList = {podReadingList.filter(pr => pr.experiment === item.id)} phaseList = {phaseList.filter(phase => phase.recipe === item.recipe_id)} recipe = {recipeList?.filter(obj => obj.id === item.recipe_id)[0]} recipe_name = {item.current_recipe} experiment = {item} getExperimentReadings={getExperimentReadings} getPodReadings={getPodReadings} podList = {podList.filter(pod => (pod.status === item.status && pod.experiment === item.id))} selectedPod = {selectedPod} setSelectedPod = {setSelectedPod} selectedExperiment= {selectedExperiment} setSelectedExperiment = {setSelectedExperiment} selectedExperimentReading = {selectedExperimentReading} setSelectedExperimentReading={setSelectedExperimentReading}></RecipeBar>
 
                             <div className='object_actions'>
                                 <img className="menu_icon" src={menu_icon} alt="NO IMG!"/>
@@ -400,7 +451,7 @@ const Device = () => {
             completedExperiments.map((item) => {
                 if (item.name.includes(search) || item.device_name.includes(search) || item.device_id.includes(search) || item.current_recipe.includes(search)) {         
                     deviceList.push(
-                        <div key={'active_' + item.id} className="object_container">
+                        <div key={'completed_' + item.id} className="object_container" onClick={() => {setSelectedExperiment(item.id)}}>
                             <div className="object_top">
                                 <div className="object_description">
                                     <div className="bold_font tooltip" data-tooltip={"DEVICE ID: "+item.device_id + "\nMAC: " + item.mac_address.toUpperCase()}>
@@ -409,10 +460,10 @@ const Device = () => {
                                     {item.score !== null ? <div>Score: { item.score } </div>: <></>}
                                 </div>
                                 <div className="object_content">                          
-                                    <PodCarousel experimentID={item.id} deviceId={item.device} status={item.status}></PodCarousel>
+                                    <PodCarousel experimentID={item.id} deviceId={item.device} status={item.status} podList = {podList.filter(pod => (pod.status === item.status && pod.experiment === item.id))} selectedPod = {selectedPod} setSelectedPod={setSelectedPod} selectedExperiment={selectedExperiment}></PodCarousel>
                                 </div>
                             </div>
-                            <RecipeBar phaseList = {phaseList} recipe = {recipeList?.filter(obj => obj.id === item.recipe_id)[0]} recipe_name = {item.current_recipe} experiment = {item}></RecipeBar>
+                            <RecipeBar experimentReadingList = {experimentReadingList.filter(er => er.experiment === item.id)} podReadingList = {podReadingList.filter(pr => pr.experiment === item.id)} phaseList = {phaseList.filter(phase => phase.recipe === item.recipe_id)} recipe = {recipeList?.filter(obj => obj.id === item.recipe_id)[0]} recipe_name = {item.current_recipe} experiment = {item} getExperimentReadings={getExperimentReadings} getPodReadings={getPodReadings} podList = {podList.filter(pod => (pod.status === item.status && pod.experiment === item.id))} selectedPod = {selectedPod} setSelectedPod = {setSelectedPod} selectedExperiment= {selectedExperiment} setSelectedExperiment = {setSelectedExperiment} selectedExperimentReading = {selectedExperimentReading} setSelectedExperimentReading={setSelectedExperimentReading}></RecipeBar>
                             <div className='object_actions'>
                                 <img className="menu_icon" src={menu_icon} alt="NO IMG!"/>
                                 {<li key="delete"><button onClick={() => { if (window.confirm(`Delete experiment "${item.name}"?`)) deleteExperiment(item.id) }}>DELETE EXPERIMENT</button></li> }
@@ -434,7 +485,7 @@ const Device = () => {
                                   {/* <div>Registered: { item.registration_date.substring(0, 10) }</div> */}
                                 </div>
                             </div>
-                            {item.is_online ? <div className= "empty_object" onClick={() => {setDevice({...device, show:true}); setExperiment({...experiment, device:item.id, device_name:item.name, device_capacity:item.capacity, start_date:todayDate});}}>  ADD EXPERIMENT</div> : <div className= "empty_object">DEVICE OFFLINE</div>}
+                            {item.is_online ? <div className= "empty_object" onClick={() => {setDevice({...device, show:true}); setExperiment({...experiment, device:item.id, device_name:item.name, start_date:todayDate});}}>  ADD EXPERIMENT</div> : <div className= "empty_object">DEVICE OFFLINE</div>}
                            
                             <div className='object_actions'>
                                 <img className="menu_icon" src={menu_icon} alt="NO IMG!"/>
@@ -473,7 +524,7 @@ const Device = () => {
     function renderPodSelection(){
         let podContainer = []
         // so long as pods are loaded
-        for(let i = 0; i < experiment.device_capacity; i++) {
+        for(let i = 0; i < 5; i++) {
             let currPod = experiment.pods.filter(pod => pod.position === (i+1))[0] ?? null
             let plant = null;      
 
@@ -537,8 +588,8 @@ const Device = () => {
           })
         .then(res => {
             updateDevice();
-            fetchAvailableDevices();
-            fetchActiveExperiments();
+            getAvailableDevices();
+            getActiveExperiments();
         })
         .catch((err) => console.log(err));
         
@@ -736,4 +787,4 @@ const Device = () => {
       );
 }
 
-export default Device
+export default Experiment

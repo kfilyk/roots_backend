@@ -35,8 +35,17 @@
 .circle-bg {
   fill: none;
   stroke: #eee;
+  transition: 0.25s;
   stroke-width: 4;
 }
+
+.circle-bg-selected {
+  fill: none;
+  stroke: #bbb;
+  transition: 0.25s;
+  stroke-width: 4;
+}
+
 
 .circle {
   fill: none;

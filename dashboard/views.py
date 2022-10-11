@@ -147,27 +147,6 @@ class ExperimentReadingView(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         return ExperimentReading.objects.all()
-    
-    """
-    Input from: ExperimentReading.js/fetchData()
-    Outputs to: ExperimentReading.js/fetchData()
-    Created by: Stella T 08/30/2022
-    Last Edit: Stella T 08/30/2022
-    Purpose: Gets last reading of experiment if one exists then will update the frontend code accordingly
-    """
-    @action(detail=False, methods=['POST'], name='get_last_reading')
-    def get_last_reading(self, request):
-        exp_id = request.data['exp_id']
-        qs = Pod.objects.filter(experiment = exp_id, end_date__isnull=True).annotate(plant_name=F('plant__name'))
-        pods = list(qs.values())
-        capacity = Device.objects.get(id=Experiment.objects.get(id=exp_id).device.id).capacity
-        try:
-            latest = ExperimentReading.objects.filter(experiment=exp_id).latest('reading_date')
-            return JsonResponse({"latest_reading": model_to_dict(latest), "pods": pods, "capacity": capacity}, safe=False)
-        except ExperimentReading.DoesNotExist:
-            latest = {"exp_id": -1}
-            return JsonResponse({"latest_reading": latest, "pods": pods, "capacity": capacity}, safe=False)
-
 
     """
     Input from: RecipeBar.js/getReadings()
@@ -226,7 +205,7 @@ class ExperimentView(viewsets.ModelViewSet):
     def free_devices(self, request):
         excluded = Experiment.objects.filter(status=0).filter(device__isnull=False).values('device') # list of all devices referenced by currently active experiments
         query = Device.objects.exclude(id__in=excluded).order_by(Length('name').asc(), 'name') # exclude from device list all devices which an active experiment references
-        data = list(query.values('id', 'name', 'capacity', 'mac_address', 'is_online'))
+        data = list(query.values('id', 'name', 'mac_address', 'is_online'))
         return JsonResponse(data, safe=False)
 
     """
@@ -335,7 +314,7 @@ class PodView(viewsets.ModelViewSet):
     Purpose: Retrieves all pods including their plant name
     """  
     def get_queryset(self):
-        return Pod.objects.all().annotate(plant_name=F('plant__name')) # return joined plant.name
+        return Pod.objects.all().annotate(plant_name=F('plant__name')).annotate(species=F('plant__species')) # return joined plant.name
 
     """
     Input from: PodCarousel.js/getPods(); 
@@ -346,9 +325,10 @@ class PodView(viewsets.ModelViewSet):
     """  
     @action(detail=False, methods=["post"], name='get_pods')
     def get_pods(self, request):
+        print("FLAG: ", request.body)
         exp_id=json.loads(request.body)["id"]
         exp_status = json.loads(request.body)["status"]
-        qs = Pod.objects.filter(experiment = exp_id, status=exp_status).annotate(plant_name=F('plant__name')).annotate(genus=F('plant__genus')).annotate(species=F('plant__species')) #(experiment = exp_id, end_date__isnull=True)
+        qs = Pod.objects.filter(experiment = exp_id, status=exp_status).annotate(plant_name=F('plant__name')).annotate(species=F('plant__species')) #(experiment = exp_id, end_date__isnull=True)
         pods = list(qs.values())
         capacity = Experiment.objects.get(id=exp_id).device.capacity
         return JsonResponse({"capacity": capacity, "pods": pods}, safe=False)       
@@ -359,7 +339,7 @@ class PodView(viewsets.ModelViewSet):
     Outputs to: Analysis.js frontend; 
     Created by: Kelvin F 08/30/2022
     Last Edit: Kelvin F 08/30/2022
-    Purpose: Given an experiment id, retrieves its device's capacity and info about its pods including plant name
+    Purpose: Given an experiment id, retrieves info about its pods including plant name
     """  
     @action(detail=False, methods=["post"], name='get_all_pod_data')
     def get_all_pod_data(self, request):
@@ -397,6 +377,7 @@ class PodReadingView(viewsets.ModelViewSet):
         er_id=json.loads(request.body)["er_id"]
         p_id=json.loads(request.body)["p_id"]
         pr = PodReading.objects.filter(experiment_reading = er_id, pod=p_id)
+        print(pr)
         if pr:
             return JsonResponse(list(pr.values())[0], safe=False)    
         return JsonResponse({}, safe=False)

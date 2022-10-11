@@ -1,6 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
 import axios from "axios";
-import Popup from "reactjs-popup";
 import AWS from 'aws-sdk'
 
 
@@ -21,14 +20,11 @@ const ExperimentReading = (props) => {
     // store experiment reading form to be edited by frontend experiment reading modal
 
     const img_upload = useRef()
-    const [pods, setPods] = useState(undefined)
-
-    const [experiment, setExperiment] = useState({})
+    const [podList, setPodList] = useState(undefined)
 
     const initExperimentReadingModal = {
         show: false,
         add: false,
-        pod_capacity: "",
         electrical_conductance: "",
         reservoir_ph: "",
         temperature: "",
@@ -74,40 +70,29 @@ const ExperimentReading = (props) => {
     }
     const [podReadingModal, setPodReadingModal] = useState(initPodReadingModal);
 
-    // The selected pod id that the pod reading form is on
-    const [selectedPod, setSelectedPod] = useState(-1)
-
-    const [progress , setProgress] = useState(0);
+    const [progress, setProgress] = useState(0);
     
     const [phase, setPhase] = useState("");
     
     /*
     Input from: props.experimentID
-    Outputs to: pods, capacity
+    Outputs to: podList, capacity
     Created by: Kelvin F 08/31/2022
     Last Edit: Kelvin F 08/31/2022
     Purpose: Given an experiment id, retrieves its device's capacity and info about its pods including plant name
     */
-    async function getPods(e_id, er_id, status) {
+    async function setPodReadingsList() {
+        //console.log(props.podList)
         let podList = {}
-        const result = await axios.post(`/api/pods/get_pods/`, {"id":e_id, "status":status});
-        result.data.pods.forEach(pod => {
-            pod['pod_reading'] = initPodReadingModal;
+        props.podList.forEach(pod => {
+            pod['pod_reading'] = props.podReadingList.filter(pr => parseInt(pr.pod) === parseInt(pod.id))[0] || initPodReadingModal;
             podList[pod.id] = pod
         })
-        if(!props.input.add) {
-            for (const [key, value] of Object.entries(podList)) {
-                const result = await axios.post(`/api/podreadings/get_pod_reading/`, {"er_id":er_id, "p_id":key});
-                if(Object.keys(result.data).length !== 0) { // if the resultant dictionary isnt {}
-                    value['pod_reading'] = result.data
-                }
-            }
-        } 
-        setPods(podList)
+        setPodList(podList)
     } 
 
     async function getPhase() {
-        const ret = await axios.get('/api/phases/'+props?.input.experiment['phase_id'])
+        const ret = await axios.get('/api/phases/'+props.experiment['phase_id'])
         setPhase(ret.data['type'].toLowerCase())
     }
 
@@ -116,34 +101,54 @@ const ExperimentReading = (props) => {
     Outputs to: experimentReadingModal object
     Created by: Kelvin F @ 08/26/2022
     Last Edit: Kelvin F @ 08/26/2022
-    Purpose: On render, set experiment, pods and experiment reading modal
+    Purpose: On any changes to props (including on render), set experiment, podList and experiment reading modal
     */
     useEffect(() => {
-        //get experiment data including pods
-        setExperiment(props.input.experiment);
-    
-        getPods(props?.input.experiment.id, props?.input.id, props?.input.experiment.status)
+        setPodReadingsList()
         // set experiment reading data
-        setExperimentReadingModal({...experimentReadingModal, ...props.input})
-        delete experimentReadingModal.experiment;
+        setExperimentReadingModal({...experimentReadingModal, ...props.experimentReading})
+       // delete experimentReadingModal.experiment;
         getPhase(props.phase);
     }, [])
 
-    
+    /* whenever a pod reading is selected, update the pods + podreadings + experimentreading modals with the selected info */
     useEffect(() => {
-        //console.log(selectedPod)
-        if(selectedPod !== -1) {
-            setPods({...pods, [selectedPod]: {...pods[selectedPod], pod_reading: podReadingModal}})// sets the pod_reading of the currently active pod object while form is open
+        if(podList) {
+            if (props.selectedPod !== -1){
+                setPodReadingModal({...initPodReadingModal, ...podList[props.selectedPod].pod_reading})
+            } else {
+                setPodReadingModal({initPodReadingModal})
+            }
+        }
+    }, [props.selectedPod])
+
+    /* whenever an experiment reading is selected, update the pods + podreadings + experimentreading modals with the selected info */
+
+    useEffect(() => {
+        setPodReadingsList()
+        if(props.selectedPod !== -1 && props.podReadingList.length !== 0) {
+            setPodReadingModal({...initPodReadingModal, ...props.podReadingList.filter(pr => pr.pod === props.selectedPod)[0]})
+        } else {
+            setPodReadingModal(initPodReadingModal)
+        }
+        setExperimentReadingModal({...experimentReadingModal, ...props.experimentReading})
+
+    } , [props.experimentReading])
+
+    /* whenever pod reading modal is changed, update the pods + podreadings + experimentreading modals with the selected info */
+    useEffect(() => {
+        if(podList) {
+            setPodList({...podList, [props.selectedPod]: {...podList[props.selectedPod], pod_reading: podReadingModal}})// sets the pod_reading of the currently active pod object while form is open
         }
     },[podReadingModal])
 
-    const uploadImage = (file, genus, species, id) => {
-        let fname = (species+"_"+id+"_"+phase+".jpg").toLowerCase();
+    const uploadImage = (file, species, id) => {
+        let fname = (id+"_"+phase+".jpg").toLowerCase();
 
         const params = {
             ACL: 'public-read',
             Body: file,
-            Bucket: S3_BUCKET+"/RootsImages/"+genus.toLowerCase(),
+            Bucket: S3_BUCKET+"/RootsImages/"+species.toLowerCase(),
             Key: fname
         };
 
@@ -157,8 +162,19 @@ const ExperimentReading = (props) => {
                     return null;
                 }
             })
-        console.log("SUCCESSFUL IMAGE UPLOAD: https://ava-cv-raw-photo-bucket.s3.amazonaws.com/RootsImages/"+genus.toLowerCase()+"/"+fname)
-        return "https://ava-cv-raw-photo-bucket.s3.amazonaws.com/RootsImages/"+genus.toLowerCase()+"/"+fname
+        console.log("SUCCESSFUL IMAGE UPLOAD: https://ava-cv-raw-photo-bucket.s3.amazonaws.com/RootsImages/"+species.toLowerCase()+"/"+fname)
+        return "https://ava-cv-raw-photo-bucket.s3.amazonaws.com/RootsImages/"+species.toLowerCase()+"/"+fname
+    }
+
+    function closeExperimentReading() {
+        setExperimentReadingModal(initExperimentReadingModal); 
+        setPodReadingModal(initPodReadingModal); 
+        props.setSelectedPod(-1); 
+        props.setSelectedExperiment(-1);
+        props.setSelectedExperimentReading(-1);
+        props.setExperimentReading({...props.experimentReading, show:false});
+        props.setExperimentReading({...props.experimentReading, show:false});
+
     }
     /*
     Input/Called from: render()
@@ -168,24 +184,25 @@ const ExperimentReading = (props) => {
     Purpose: This function accesses the api and pushes the experiment reading object
     */  
     async function submitExperimentReading(){
+        console.log("FLAG: ", props.experimentReading)
         const empty_pod_reading = JSON.stringify(initPodReadingModal)
         let er = {}
         Object.assign(er, experimentReadingModal);
         Object.keys(er).forEach(key => {if(er[key] === "") er[key]= null}) // set all "" to null
         delete er['show'];
         delete er['add'];
-        er['experiment']=props.input.experiment.id
+        er['experiment']=props.experiment.id // this shouldn't be necessary to set - experiment reading already has ID reference to experiment in question
 
-        if(props.input.add) {
+        if(props.experimentReading.add) {
             const result = await axios.post(`/api/experimentreadings/`, er)
                 .catch((err) => console.log(err));
             if(result && result['status'] === 201) {
-                for (const [key, value] of Object.entries(pods)) {
+                for (const [key, value] of Object.entries(podList)) {
                     if(JSON.stringify(value['pod_reading']) !== empty_pod_reading) {
 
                         let image_link = null
                         if (value['pod_reading']['selected_image'] != null) {
-                            image_link = uploadImage(value['pod_reading']['selected_image'], value['genus'], value['species'], value['id'])
+                            image_link = uploadImage(value['pod_reading']['selected_image'], value['species'], value['id'])
                         }
                         
                         // create pod reading object to be pushed
@@ -195,7 +212,7 @@ const ExperimentReading = (props) => {
                         Object.assign(pr, value['pod_reading']);
                         Object.keys(pr).forEach(k => {if(pr[k] === "") pr[k]= null}) // set all "" to null
                         pr['pod'] = parseInt(key)
-                        pr['experiment'] = props.input.experiment.id
+                        pr['experiment'] = props.experiment.id
                         pr['experiment_reading'] = result.data.id // add the newly generated e reading id to the pod reading
                         if(image_link != null) {
                             pr['image_link'] = image_link
@@ -209,12 +226,12 @@ const ExperimentReading = (props) => {
                 .catch((err) => console.log(err));
 
             if(result && result['status'] === 200) {
-                for (const [key, value] of Object.entries(pods)) {
+                for (const [key, value] of Object.entries(podList)) {
                     if(JSON.stringify(value['pod_reading']) !== empty_pod_reading) {
 
                         let image_link = null
                         if (value['pod_reading']['selected_image'] != null) {
-                            image_link = uploadImage(value['pod_reading']['selected_image'], value['genus'], value['species'], value['id'])
+                            image_link = uploadImage(value['pod_reading']['selected_image'], value['species'], value['id'])
                         }
                         let pr = value['pod_reading']
                         delete pr['selected_image']
@@ -225,7 +242,7 @@ const ExperimentReading = (props) => {
 
                         if(pr['id'] === undefined) {
                             pr['pod'] = key
-                            pr['experiment'] = props.input.experiment.id
+                            pr['experiment'] = props.experiment.id
                             pr['experiment_reading'] = result.data.id // add the newly generated e reading id to the pod reading
                             console.log(await axios.post(`/api/podreadings/`, pr).catch((err) => console.log(err)));
                         } else {
@@ -238,7 +255,9 @@ const ExperimentReading = (props) => {
 
             }
         }
-        props.getExperimentReadings(props.input.experiment.id)
+        props.getExperimentReadings()
+        props.getPodReadings()
+
     }
 
     /*
@@ -249,7 +268,7 @@ const ExperimentReading = (props) => {
     Purpose: Renders all form field inputs for a selected pod reading, calls auxillary setSelectedPodValue() function to store form inputs before submission to backend
     */
     function renderPodReading(){
-        if (selectedPod !== -1){
+        if (props.selectedPod !== -1){
             return (
                 <div className='modal-pod-form'>
                     <div className="form_row">
@@ -301,69 +320,31 @@ const ExperimentReading = (props) => {
                     <div className="form_row"><button name="prune_dead_heading" className={podReadingModal.prune_dead_heading === true ? "selected": ""} onClick={(e) => {e.currentTarget.classList.toggle('selected'); setPodReadingModal({...podReadingModal, prune_dead_heading: !podReadingModal.prune_dead_heading})}}/>Dead Headed</div>
                     <input className ="form_row pr_comment" placeholder="[comment]" type="text" value={podReadingModal.comment !== null ? podReadingModal.comment : ""} onChange={(e) => setPodReadingModal({...podReadingModal, comment: e.target.value})}/>
                     <input type="file" style={{"display":"none"}} ref={img_upload} onChange={(e) => setPodReadingModal(prevState => ({...prevState, selected_image:e.target.files[0]}))}/>
-                    <button onClick={() => {img_upload.current.click()}}>{podReadingModal.image_link ? podReadingModal.image_link : (podReadingModal.selected_image === null ? "Upload Image... " : "Upload "+ podReadingModal.selected_image.name) }</button>
+                    <button onClick={() => {img_upload.current.click()}}>{podReadingModal.image_link ? podReadingModal.image_link : (podReadingModal.selected_image === null ? "Upload Image... " : "Upload "+ podReadingModal.selected_image?.name) }</button>
                 </div>
             )
         }
     }
 
-    function changeSelectedPod(e, pod){
-        if (selectedPod !== pod.id){
-            Array.from(document.querySelectorAll('.nav-link')).forEach((el) => el.classList.remove('active'));
-            e.currentTarget.classList.toggle('active');
-            setPodReadingModal({...initPodReadingModal, ...pod.pod_reading})
-            setSelectedPod(pod.id)
-        } else {
-            //To remove the pod reading form
-            e.currentTarget.classList.remove('active');
-            setPodReadingModal({initPodReadingModal})
-            setSelectedPod(-1)
-        }
-    }
-
-    function renderPodSelection(){
-        let pod_container = []
-        if (pods !== undefined) {
-            for (const [key, value] of Object.entries(pods)) {
-                pod_container.push(
-                    <div className="pod-selection nav-link " key={value.position} onClick={(e) => {changeSelectedPod(e, value)}}>{value.position + ". "+value.plant_name}</div> 
-                )           
-            }
-        }
-        return pod_container
-      }
-
     return (
-        <Popup open={experimentReadingModal.show} onClose={() => {setExperimentReadingModal(initExperimentReadingModal); setPodReadingModal(initPodReadingModal); setSelectedPod(-1); props.setExperimentReadingInput({...props.input, show:false})}} modal nested>
-            {(close) => (
-            <div className="modal" onClick={close}>
-                <div className="modal_body_reading" onClick={e => e.stopPropagation()}>
-                <div className="modal_type">{experiment?.name}: Experiment Reading </div>
-                <div className="modal_content_2">
-                    <div className="modal-experiment-reading">
-                        <div className="form_row"> <input className = "exp-general-input" type="number" value={experimentReadingModal.electrical_conductance} onChange={(e) => setExperimentReadingModal({...experimentReadingModal, electrical_conductance: e.target.value})}/>Electrical Conductance</div>
-                        <div className="form_row"> <input className = "exp-general-input" type="number" value={experimentReadingModal.reservoir_ph} onChange={(e) => setExperimentReadingModal({...experimentReadingModal, reservoir_ph: e.target.value})} min={0} max={14}/>PH </div>
-                        <div className="form_row"> <input className = "exp-general-input" type="number" value= {experimentReadingModal.temperature} onChange= {(e) => setExperimentReadingModal({...experimentReadingModal, temperature: e.target.value})} min={-100} max={100}/>ºC Temperature</div>
-                        <div className="form_row"> <input className = "exp-general-input" type="number" value= {experimentReadingModal.humidity} onChange= {(e) => setExperimentReadingModal({...experimentReadingModal, humidity: e.target.value})} min={0} max={100}/>% Humidity</div>
-                        <div className="form_row"><button value= {experimentReadingModal.flushed_reservoir} className={experimentReadingModal.flushed_reservoir === true ? "selected": ""} onClick={(e) => {e.currentTarget.classList.toggle('selected'); setExperimentReadingModal({...experimentReadingModal, flushed_reservoir: !experimentReadingModal.flushed_reservoir})}}/>Flushed Reservoir</div>
-                        <div className="form_row"><button value= {experimentReadingModal.raised_light} className={experimentReadingModal.raised_light === true ? "selected": ""} onClick={(e) => {e.currentTarget.classList.toggle('selected'); setExperimentReadingModal({...experimentReadingModal, raised_light: !experimentReadingModal.raised_light})}}/>Raised Light</div>
-                        <div className="form_row"><button value= {experimentReadingModal.failed_pump} className={experimentReadingModal.failed_pump === true ? "selected": ""} onClick={(e) => {e.currentTarget.classList.toggle('selected'); setExperimentReadingModal({...experimentReadingModal, failed_pump: !experimentReadingModal.failed_pump})}}/>Failed Pump</div>
-                        <div className='modal-pod-selection'>{renderPodSelection()}</div>
-                    </div>
-                    <div className='modal-pod-reading'>
-                        {renderPodReading()}
-                    </div>
+        <div>
+            <div className="modal_content_2">
+                <div className="modal-experiment-reading">
+                    <div className="form_row"> <input className = "exp-general-input" type="number" value={experimentReadingModal.electrical_conductance} onChange={(e) => setExperimentReadingModal({...experimentReadingModal, electrical_conductance: e.target.value})}/>Electrical Conductance</div>
+                    <div className="form_row"> <input className = "exp-general-input" type="number" value={experimentReadingModal.reservoir_ph} onChange={(e) => setExperimentReadingModal({...experimentReadingModal, reservoir_ph: e.target.value})} min={0} max={14}/>PH </div>
+                    <div className="form_row"> <input className = "exp-general-input" type="number" value= {experimentReadingModal.temperature} onChange= {(e) => setExperimentReadingModal({...experimentReadingModal, temperature: e.target.value})} min={-100} max={100}/>ºC Temperature</div>
+                    <div className="form_row"> <input className = "exp-general-input" type="number" value= {experimentReadingModal.humidity} onChange= {(e) => setExperimentReadingModal({...experimentReadingModal, humidity: e.target.value})} min={0} max={100}/>% Humidity</div>
+                    <div className="form_row"><button value= {experimentReadingModal.flushed_reservoir} className={experimentReadingModal.flushed_reservoir === true ? "selected": ""} onClick={(e) => {e.currentTarget.classList.toggle('selected'); setExperimentReadingModal({...experimentReadingModal, flushed_reservoir: !experimentReadingModal.flushed_reservoir})}}/>Flushed Reservoir</div>
+                    <div className="form_row"><button value= {experimentReadingModal.raised_light} className={experimentReadingModal.raised_light === true ? "selected": ""} onClick={(e) => {e.currentTarget.classList.toggle('selected'); setExperimentReadingModal({...experimentReadingModal, raised_light: !experimentReadingModal.raised_light})}}/>Raised Light</div>
+                    <div className="form_row"><button value= {experimentReadingModal.failed_pump} className={experimentReadingModal.failed_pump === true ? "selected": ""} onClick={(e) => {e.currentTarget.classList.toggle('selected'); setExperimentReadingModal({...experimentReadingModal, failed_pump: !experimentReadingModal.failed_pump})}}/>Failed Pump</div>
                 </div>
-                <button className='save' onClick={() => {
-                    submitExperimentReading()
-                    close();
-                }}>Save</button>
+                <div className='modal-pod-reading'>
+                    {renderPodReading()}
                 </div>
             </div>
-            )}
-        </Popup>
+            <button className='save' onClick={() => {submitExperimentReading(); closeExperimentReading();}}>Save</button>
+        </div>
     )
-
 }
 
 export default ExperimentReading

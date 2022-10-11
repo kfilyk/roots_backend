@@ -81,7 +81,8 @@ class PhaseSerializer(serializers.ModelSerializer):
 
 class PodSerializer(serializers.ModelSerializer):
     plant_name = serializers.CharField(allow_blank=True, allow_null=True, required=False)
-    
+    species = serializers.CharField(allow_blank=True, allow_null=True, required=False)
+
     def create(self, validated_data):
         #print(**validated_data)
         return Pod.objects.create(**validated_data)

@@ -1,35 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import "./pod_carousel.css";
 
 const PodCarousel = (props) => {
   //List of pods for a particular exp
-  const [podList, setPodList] = useState([]);
-  //Capacity of device for a particular exp
-  const [capacity, setCapacity] = useState(-1);
-  /*
-  Input from: props.experimentID
-  Outputs to: podList, capacity
-  Created by: Kelvin F 08/31/2022
-  Last Edit: Kelvin F 08/31/2022
-  Purpose: Given an experiment id, retrieves its device's capacity and info about its pods including plant name
-  */
-  async function getPods(id, status) {
-    const result = await axios.post(`/api/pods/get_pods/`, {"id":id, "status":status});
-    setPodList(result.data.pods)
-    setCapacity(result.data.capacity)
-  } 
-
-  /*
-  Input from: None
-  Outputs to: getPods()
-  Created by: Kelvin F 08/31/2022
-  Last Edit: Kelvin F 08/31/2022
-  Purpose: Upon page load, grabs the device capacity and pods for a particular experiment
-  */
-  useEffect(() => {
-    getPods(props?.experimentID, props?.status);
-  }, []);
 
   /*
   Input from: podList
@@ -39,7 +12,6 @@ const PodCarousel = (props) => {
   Purpose: Renders the progress circle for a plant, the colour of the wheel changes based on plant's score.
   */
   function renderProgressCircle(pod, pos){
-    //console.log(pod)
     if (pod === null) {
       pod = {'plant_name': 'Empty', 'score': 0, 'key': "empty_pod_"+pos} 
     } else {
@@ -65,11 +37,13 @@ const PodCarousel = (props) => {
     plant_name_split = plant_name_split.map(p => p+" ");
 
     let plant_name_split_length = plant_name_split.length
+
     return (
       //https://codepen.io/sergiopedercini/pen/jmKdbj
-      <div key={pod.key} className="single-chart">
-          <svg viewBox="0 0 36 36" className={'circular-chart ' + pod.colour}>
-            <path className="circle-bg"
+
+      <div key={pod.key} className="single-chart" onClick={() =>{ props.selectedPod === pod.id ?  props.setSelectedPod(-1) : props.setSelectedPod(pod.id || -1)}}>
+          <svg viewBox="0 0 36 36" className={'circular-chart ' + pod.colour} >
+            <path className={(props.selectedPod === pod.id) ? "circle-bg-selected" : "circle-bg"}
                 d="M18 2.0845
                 a 16 16 0 0 1 0 32
                 a 16 16 0 0 1 0 -32"
@@ -87,7 +61,7 @@ const PodCarousel = (props) => {
             <>
                 <text x="18" y="14" className="caption"> {plant_name_split.slice(0, plant_name_split_length/2)}</text>
                 <text x="18" y="20" className="caption"> {plant_name_split.slice(plant_name_split_length/2, plant_name_split_length)}</text>
-                <text x="18" y="26" className="percentage"> {pod.score * 100 + "%"}</text>
+                {/*<text x="18" y="26" className="percentage"> {pod.score * 100 + "%"}</text>*/}
             </> 
             }
 
@@ -101,19 +75,16 @@ const PodCarousel = (props) => {
   Outputs to: return()
   Created by: Stella T 08/29/2022
   Last Edit: Stella T 08/29/2022
-  Purpose: Based on the capacity, renders a collection of progress circles (each presents a different pod)
+  Purpose: Renders a collection of progress circles (each presents a different pod)
   */
   function render(){
     let progress_circle_container = []
-    if (capacity !== -1) { // if pod list is straight up empty, we still need to render 5 "empty" pods
-      for(let i = 0; i < capacity; i++) {
-        let pod = podList.filter(pod => pod.position === (i+1))[0] ?? null;      
-        let pos = i+1  
-        progress_circle_container.push(renderProgressCircle(pod, pos)) 
-      }
-      return <> {progress_circle_container}</> ;
-    } 
-    return <></>;
+    for(let i = 0; i < 5; i++) {
+      let pod = props.podList.filter(pod => pod.position === (i+1))[0] ?? null;      
+      let pos = i+1  
+      progress_circle_container.push(renderProgressCircle(pod, pos)) 
+    }
+    return <> {progress_circle_container}</> ;
   };
 
   /*
