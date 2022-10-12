@@ -81,6 +81,14 @@ Not sure if this is useful anymore? cant tell how it affects style
 }
 
 .recipe_bar_progress_line {
+  position:relative;
+  height: 5px;
+
+}
+
+.recipe_bar_progress_line_filled {
+  position:absolute !important; /* need this for some reason */ 
+
   background-color: #99ff44;
   order: 3;
   height: 5px;
@@ -98,15 +106,38 @@ Not sure if this is useful anymore? cant tell how it affects style
   line-height: 15px;
   position:absolute !important; /* need this for some reason */ 
   transform: translateX(-50%);
-  top: 14px;
+  top: -6px;
 }
 
-@media only screen and (max-width: 600px) {
-  .exp_reading_indicator {
-    top: 9px;
+.exp_reading_indicator_selected {
+  animation: er_blinker_2 1s linear infinite;
+  font-size: 0.6em;
+  line-height: 15px;
+  position:absolute !important; /* need this for some reason */ 
+  transform: translateX(-50%);
+  top: -6px;
+}
+
+.exp_reading_indicator_new {
+  animation: er_blinker_1 1s linear infinite;
+  font-size: 0.6em;
+  line-height: 15px;
+  position:absolute !important; /* need this for some reason */ 
+  transform: translateX(-50%);
+  top: -6px;
+}
+
+@keyframes er_blinker_2 {
+  50% {
+    opacity:0;
   }
 }
 
+@keyframes er_blinker_1 {
+  50% {
+    font-size: 30px;
+  }
+}
 /* ==========================================================================================
 PHASE DETAILS (WATERING ICONS)
 ============================================================================================ */

@@ -33,7 +33,6 @@ class ExperimentSerializer(serializers.ModelSerializer):
         read_only_fields = ['user']
 
 class PodReadingSerializer(serializers.ModelSerializer):
-    reading_date = serializers.DateTimeField(allow_null=True, required=False)
 
     class Meta:
         model = PodReading
@@ -81,7 +80,8 @@ class PhaseSerializer(serializers.ModelSerializer):
 
 class PodSerializer(serializers.ModelSerializer):
     plant_name = serializers.CharField(allow_blank=True, allow_null=True, required=False)
-    
+    species = serializers.CharField(allow_blank=True, allow_null=True, required=False)
+
     def create(self, validated_data):
         #print(**validated_data)
         return Pod.objects.create(**validated_data)

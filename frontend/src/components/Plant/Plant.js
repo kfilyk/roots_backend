@@ -10,7 +10,6 @@ const PlantList = () => {
     show: false,
     add: false,
     name: null,
-    genus: null,
     species: null,
     profile: null,
     growing_tips: null,
@@ -79,7 +78,7 @@ const PlantList = () => {
         <div key={ item.id } className="item" >
           <div className="object_container">
             <div className="object_description">
-              <div className="bold_font object_header"><span style={{ textTransform: 'uppercase'}}>{item.name}</span> <span className="normal_font">{(item.genus || item.species) ? " ("+item.genus+" "+item.species+")": <></>}</span></div> 
+              <div className="bold_font object_header"><span style={{ textTransform: 'uppercase'}}>{item.name}</span></div> 
               <div className="object_hidden">
                 <span className="normal_font">{(item.profile? item.profile : "") +(item.growing_tips ? " "+item.growing_tips: "")+(item.harvesting_tips ? " "+item.harvesting_tips: "")}</span>
               </div>
@@ -99,7 +98,6 @@ const PlantList = () => {
               <div className="modal_body"  onClick={e => e.stopPropagation()}>
                 <div className="modal_content">
                   <input className="form_row" value={plantModal.name}  placeholder={"Plant Name"} onChange={(e) => setPlantModal({...plantModal, name: e.target.value})} />
-                  <input className="form_row" value={plantModal.genus}  placeholder={"Genus"} onChange={(e) => setPlantModal({...plantModal, name: e.target.value})} />
                   <input className="form_row" value={plantModal.species}  placeholder={"Species"} onChange={(e) => setPlantModal({...plantModal, name: e.target.value})} />
                   <input className="form_row" value={plantModal.profile} placeholder={"Profile"} onChange={(e) => setPlantModal({...plantModal, profile: e.target.value})} />
                   <input className="form_row" value={plantModal.growing_tips} placeholder={"Growing Tips"} onChange={(e) => setPlantModal({...plantModal, growing_tips: e.target.value})} />

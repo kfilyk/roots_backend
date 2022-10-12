@@ -97,6 +97,7 @@ class ExperimentReading(models.Model):
 # many readings per experiment - is written by a user to the db in reference to an experiment
 class PodReading(models.Model):
     id = models.AutoField(db_column='pr_id', primary_key=True)  
+
     experiment = models.ForeignKey("Experiment", on_delete=models.CASCADE, db_column='pr_experiment_id', blank=True, null=True)  # delete experiment readings if experiment is deleted
     pod = models.ForeignKey("Pod", on_delete=models.CASCADE, db_column='pr_pod_id', blank=True, null=True)
     experiment_reading = models.ForeignKey("ExperimentReading", on_delete=models.CASCADE, db_column='pr_experiment_reading_id', blank=True, null=True)  # delete experiment readings if experiment is deleted
@@ -141,7 +142,10 @@ class PodReading(models.Model):
     harvest_count = models.IntegerField(db_column='pr_harvest_count',  blank=True, null=True)  
     harvest_weight = models.DecimalField(db_column='pr_harvest_weight', max_digits=5, decimal_places=2, blank=True, null=True)
     harvest_quality = models.IntegerField(db_column='pr_harvest_quality',blank=True, null=True, validators=PERCENTAGE_VALIDATOR)  
-    image_link = models.URLField(db_column='pr_image_link', max_length = 200, blank=True, null=True)
+    image_link_1 = models.URLField(db_column='pr_image_link_1', max_length = 200, blank=True, null=True)
+    image_link_2 = models.URLField(db_column='pr_image_link_2', max_length = 200, blank=True, null=True)
+    image_link_3 = models.URLField(db_column='pr_image_link_3', max_length = 200, blank=True, null=True)
+    image_link_4 = models.URLField(db_column='pr_image_link_4', max_length = 200, blank=True, null=True)
 
     class Meta:
         managed = True
@@ -207,7 +211,6 @@ class Plant(models.Model): # types: basil,
     id = models.CharField(db_column='pl_id', max_length=255, primary_key=True)
     name = models.CharField(db_column='pl_name', max_length=45, blank=True, null=True) 
     species = models.CharField(db_column='pl_species', max_length=45, blank=True, null=True)  
-    genus = models.CharField(db_column='pl_genus', max_length=45, blank=True, null=True)      
     profile = models.CharField(db_column='pl_profile', max_length=1024, blank=True, null=True)
     growing_tips = models.CharField(db_column='pl_growing_tips', max_length=1024, blank=True, null=True)
     harvesting_tips = models.CharField(db_column='pl_harvesting_tips', max_length=1024, blank=True, null=True)

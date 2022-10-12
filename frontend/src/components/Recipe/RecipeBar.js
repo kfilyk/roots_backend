@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from "axios";
 import "./recipebar.css"
 import white_light_icon from "../../img/white_light_icon.png"
 import blue_light_icon from "../../img/blue_light_icon.png"
@@ -15,28 +14,12 @@ const RecipeBar = (props) => {
    //based on today's date and the recipe's start + end date, calculate completion as a percentage
   const [completionPercentage, setCompletionPercentage] = useState(0);
 
-  //List of all dates where readings were taken
-  const [experimentReadingList, setExperimentReadingList] = useState([])
-
-  const [experimentReadingInput, setExperimentReadingInput] = useState({
+  const [experimentReading, setExperimentReading] = useState({
     show: false,
-    experiment: null,
+    add: true,
   })
-  /*
-  Input from: None
-  Outputs to: experimentReadingList
-  Created by: Kelvin F @ 08/31/2022
-  Last Edit: Kelvin F @ 08/31/2022
-  Purpose: Fetches all experiment readings for an experiment given a experiment id
-  */
-  async function getExperimentReadings(id) {
-    const result = await axios.post(`/api/experimentreadings/get_experiment_readings/`, {exp_id: id})
-      .catch((err) => console.log(err))
-    if (result?.status === 200){
-      setExperimentReadingList(result?.data)
-    }
-  }
 
+ 
   /*
   Input from: props.recipe
   Outputs to: recipe
@@ -48,11 +31,7 @@ const RecipeBar = (props) => {
     // can either send a recipe object OR the id of a recipe to this function
     //console.log("PROPS RECIPE: ", props.recipe)
     setRecipe(props?.recipe)
-    if(props?.experiment?.id !== undefined){
-      getExperimentReadings(props?.experiment?.id)
 
-      setExperimentReadingInput({...experimentReadingInput, experiment: props.experiment})
-    }
   }, []); // [] causes useEffect to only happen ONCE after initial render - will not be called as a result of any other change
   
   /*
@@ -106,9 +85,6 @@ const RecipeBar = (props) => {
     return style;
   };
 
-
-
-
   /*
   Input from: experimentReadingList
   Outputs to: render()
@@ -117,25 +93,25 @@ const RecipeBar = (props) => {
   Purpose: Given a list of exp reading dates, calculates where they should be placed on timeline, and returns positions accordingly
   */
   function renderExpReadingTags(){
-    if (experimentReadingList !== undefined){
+    if (props.experimentReadingList !== undefined){
       let tags = []
       let start = new Date(props.experiment.start_date)
       let end = new Date(props.experiment.end_date)
 
-      experimentReadingList.map((er, index) => {
+      props.experimentReadingList.map((er, index) => {
         let date = new Date(er.reading_date)
         let date_string = date.toISOString().substring(5,10)
 
         let style = Math.floor(( ( date - start ) / ( end - start ) ) * 100) + "%";
 
         tags.push(
-            <a key={`${er.id}_${index}`} onClick={() => setExperimentReadingInput({...experimentReadingInput, ...er, show: true, add:false})} style={{left: `calc(${style})`, zIndex:3}} className="tooltip exp_reading_indicator" data-tooltip={date_string}>▼</a>
+            <a key={`${er.id}_${index}`} onClick={() => {setExperimentReading({...experimentReading, ...er, show: true, add:false}); props.setSelectedExperimentReading(er.id)}} style={{left: `calc(${style})`, zIndex:3}} className={props.selectedExperimentReading === er.id && props.selectedExperiment === props.experiment.id ? "tooltip exp_reading_indicator_selected": "tooltip exp_reading_indicator"} data-tooltip={date_string}>▼</a>
         )
       })
       if(props.experiment.status === 0){
         let style = Math.floor(( ( Date.now() - start ) / ( end - start ) ) * 100) + "%";
         tags.push(
-          <a key={`new_er`} onClick={() => setExperimentReadingInput({...experimentReadingInput, show: true, add:true})} style={{left: `calc(${style})`, color: '#99ff44', fontSize: '25px', fontWeight:'bold', zIndex:2}} className="tooltip exp_reading_indicator" data-tooltip={"NEW"}>●</a>
+          <a key={`new_er`} onClick={() => { setExperimentReading({show: true, add:true}); props.setSelectedExperimentReading(-1)}} style={{left: `calc(${style})`, color: '#99ff44', fontSize: '25px', fontWeight:'bold', zIndex:2}} className={props.selectedExperimentReading === -1 && props.selectedExperiment ===props.experiment.id ? "tooltip exp_reading_indicator_new": "tooltip exp_reading_indicator"} data-tooltip={"NEW"}>●</a>
         )
       }
       return tags
@@ -153,13 +129,13 @@ const RecipeBar = (props) => {
     if(props.experiment){
       return (
         <>
-          {renderExpReadingTags()}
           <div className="recipe_bar_timestamps">
             <div className="recipe_bar_start_date" >{props.experiment.start_date.slice(0,10) + " | "+ props.recipe_name} </div>
             <div className="recipe_bar_end_date">{props.experiment.end_date.slice(0,10)} </div>
           </div> 
-          <div>
-            <div style={ { width: `${ completionPercentage }%` } } className="recipe_bar_progress_line"></div>
+          <div className="recipe_bar_progress_line">
+            <div style={ { width: `${ completionPercentage }%` } } className="recipe_bar_progress_line_filled"></div>
+            {renderExpReadingTags()}
           </div>
         </>
       )
@@ -192,7 +168,7 @@ const RecipeBar = (props) => {
   }
 
   /*
-  Input from: phaseList, renderExpReadingTags(); renderTimestamps(); phases; experimentReadingInput();
+  Input from: phaseList, renderExpReadingTags(); renderTimestamps(); phases; experimentReading();
   Outputs to: return()
   Created by: Kelvin F @ 08/31/2022
   Last Edit: Kelvin F @ 08/31/2022
@@ -227,23 +203,18 @@ const RecipeBar = (props) => {
                 phases.push(<div key={`${props.experiment}_${i}`} className="recipe_bar_phase" style={s} > 
                   <span className="recipe_bar_phase_days">{ph.days}</span> 
                   <span className="recipe_bar_phase_type"> {ph.type} </span>
-                  <div className="object_hidden">
-                    {renderPhaseDetails(ph)}
-                  </div>
+                  {props.selectedExperiment === props.experiment.id ? renderPhaseDetails(ph) : <></> }
                 </div>)
               }
           }
       }
       return ( 
         <div className="recipe_bar">
-          {/*{renderExpReadingTags()}*/}
+          {props.selectedExperiment === props.experiment.id ? <ExperimentReading experiment={props.experiment} experimentReading={experimentReading} podReadingList = {props.podReadingList.filter(pr => pr.experiment_reading === experimentReading.id)} setExperimentReading={setExperimentReading} getExperimentReadings={props.getExperimentReadings} getPodReadings={props.getPodReadings} podList = {props.podList} selectedPod = {props.selectedPod} setSelectedPod = {props.setSelectedPod} setSelectedExperimentReading={props.setSelectedExperimentReading} setSelectedExperiment = {props.setSelectedExperiment}/>: <></>}
           {renderTimestamps()}
-          {/* <div style={ { width: `${ completionPercentage }%` } } className="recipe_bar_progress_line"></div> */}
           <div className="recipe_bar_phases"> 
             {phases} 
           </div>
-          {experimentReadingInput.show ? <ExperimentReading input={experimentReadingInput} setExperimentReadingInput={setExperimentReadingInput} getExperimentReadings={getExperimentReadings}/> : <></>}
-
         </div>
       )
     }
