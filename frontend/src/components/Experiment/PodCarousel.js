@@ -42,7 +42,13 @@ const PodCarousel = (props) => {
       //https://codepen.io/sergiopedercini/pen/jmKdbj
 
       <div key={pod.key} className="single-chart">
-          <svg viewBox="0 0 36 36" className={'circular-chart ' + pod.colour} onClick={() =>{ props.selectedPod === pod.id ?  props.setSelectedPod(-1) : props.setSelectedPod(pod.id || -1)}}>
+          <svg viewBox="0 0 36 36" className={'circular-chart ' + pod.colour} onClick={e => { 
+              e.stopPropagation();
+              props.selectedPod === pod.id ?  props.setSelectedPod(-1) : props.setSelectedPod(pod.id || -1);
+              if(props.selectedExperiment !== props.experimentID) props.setSelectedExperimentReading(-1);
+              props.setSelectedExperiment(props.experimentID)
+
+            }}>
             <path className={(props.selectedPod === pod.id) ? "circle-bg-selected" : "circle-bg"}
                 d="M18 2.0845
                 a 16 16 0 0 1 0 32
@@ -61,6 +67,8 @@ const PodCarousel = (props) => {
             <>
                 <text x="18" y="14" className="caption"> {plant_name_split.slice(0, plant_name_split_length/2)}</text>
                 <text x="18" y="20" className="caption"> {plant_name_split.slice(plant_name_split_length/2, plant_name_split_length)}</text>
+                <text x="18" y="26" className="percentage"> {pod.id}</text>
+
                 {/*<text x="18" y="26" className="percentage"> {pod.score * 100 + "%"}</text>*/}
             </> 
             }
