@@ -221,7 +221,7 @@ const RecipeBar = (props) => {
       }
       return ( 
         <div className="recipe_bar">
-          {props.selectedExperiment === props.experiment.id ? <ExperimentReading experiment={props.experiment} experimentReading={experimentReading} podReadingList = {props.podReadingList.filter(pr => pr.experiment_reading === experimentReading.id)} setExperimentReading={setExperimentReading} getExperimentReadings={props.getExperimentReadings} getPodReadings={props.getPodReadings} podList = {props.podList} selectedPod = {props.selectedPod} setSelectedPod = {props.setSelectedPod} setSelectedExperimentReading={props.setSelectedExperimentReading} setSelectedExperiment = {props.setSelectedExperiment}/>: <></>}
+          {!props.is_object && props.selectedExperiment === props?.experiment?.id ? <ExperimentReading experiment={props.experiment} experimentReading={experimentReading} podReadingList = {props.podReadingList.filter(pr => pr.experiment_reading === experimentReading.id)} setExperimentReading={setExperimentReading} getExperimentReadings={props.getExperimentReadings} getPodReadings={props.getPodReadings} podList = {props.podList} selectedPod = {props.selectedPod} setSelectedPod = {props.setSelectedPod} setSelectedExperimentReading={props.setSelectedExperimentReading} setSelectedExperiment = {props.setSelectedExperiment}/>: <></>}
           {renderTimestamps()}
           <div className="recipe_bar_phases"> 
             {phases} 
