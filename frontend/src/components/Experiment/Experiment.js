@@ -474,8 +474,10 @@ const Experiment = () => {
                                     }
                                 }>                                
                                 <div className="object_description">
-                                    <div className="bold_font tooltip" data-tooltip={"DEVICE ID: "+item.device_id + "\nMAC: " + item.mac_address.toUpperCase()}>
-                                        {item.device_name+ " | "}{item.status === 1 ? <span style={{color:"red"}}>TERMINATED</span>:<span style={{color:"green"}}>CONCLUDED</span>}<span className="normal_font">{" | "+item.name}</span> 
+                                    <div className="bold_font">{item.device_name+ " | "}{item.status === 1 ? <span style={{color:"red"}}>TERMINATED</span>:<span style={{color:"green"}}>CONCLUDED</span>}<span className="normal_font">{" | "+item.name}</span> </div>
+                                    <div className="object_hidden">
+                                            <div className="bold_font">ID: <span className="normal_font">{item.device_id}</span></div>
+                                            <div className="bold_font">MAC: <span className="normal_font">{item.mac_address.toUpperCase()}</span></div>
                                     </div>
                                     {item.score !== null ? <div>Score: { item.score } </div>: <></>}
                                 </div>
@@ -499,9 +501,11 @@ const Experiment = () => {
                         <div key={'free_' + item.id}  className="object_container">
                             <div className="object_top">
                                 <div className="object_description">
-                                  <div className="bold_font tooltip" data-tooltip={"DEVICE ID: "+item.id + " | MAC: " + item.mac_address.toUpperCase()} >
-                                      {item.name}<span className="blink_me" style={{ color: item.is_online ? 'green': 'red'}}>{"\u00a0"}●{"\u00a0"}</span>
-                                  </div>
+                                  <div className="bold_font" >{item.name}<span className="blink_me" style={{ color: item.is_online ? 'green': 'red'}}>{"\u00a0"}●{"\u00a0"}</span></div>
+                                  <div className="object_hidden">
+                                            <div className="bold_font">ID: <span className="normal_font">{item.id}</span></div>
+                                            <div className="bold_font">MAC: <span className="normal_font">{item.mac_address.toUpperCase()}</span></div>
+                                    </div>
                                   {/* <div>Registered: { item.registration_date.substring(0, 10) }</div> */}
                                 </div>
                             </div>
