@@ -262,6 +262,12 @@ const Experiment = () => {
         setExperiment({...experiment, end_date: ed, phase: recipe?.phase1})
     }, [experiment.recipe, experiment.start_date])
 
+    useEffect(() => {
+        console.log("SELECTED POD: ", selectedPod);
+        console.log("SELECTED EXPERIMENT: ", selectedExperiment);
+        console.log("SELECTED EXPERIMENT READING: ", selectedExperimentReading);
+
+    },[selectedPod, selectedExperiment, selectedExperimentReading])
     /*
     Input from: None
     Outputs to: None
@@ -421,8 +427,15 @@ const Experiment = () => {
             activeExperiments.map((item) => {
                 if (item.name.includes(search) || item.device_name.includes(search) || item.device_id.includes(search) || item.current_recipe.includes(search)) {         
                     deviceList.push(
-                        <div key={'active_' + item.id} className="object_container" onClick={() => {if(selectedExperiment !== item.id) {setSelectedExperiment(item.id); setSelectedPod(-1); }}}>
-                            <div className="object_top">
+                        <div key={'active_' + item.id} className="object_container">
+                            <div className="object_top" onClick={() => {
+                                        if(selectedExperiment !== item.id) {
+                                            setSelectedExperiment(item.id); 
+                                            setSelectedExperimentReading(-1);
+                                            setSelectedPod(podList.filter(pr => pr.experiment === item.id)[0].id)
+                                        }
+                                    }
+                                }>
                                 <div className="object_description">
                                     <div className="bold_font">{item.device_name} <span className="blink_me" style={{ color: item.is_online ? 'green': 'red'}}>{"\u00a0"}●{"\u00a0"}</span> <span className="normal_font">{item.name}</span> 
                                         <div className="object_hidden">
@@ -433,10 +446,10 @@ const Experiment = () => {
                                     {item.score !== null ? <div>Score: { item.score } </div>: <></>}
                                 </div>
                                 <div className="object_content">     
-                                    <PodCarousel experimentID={item.id} deviceId={item.device} status={item.status} podList = {podList.filter(pod => (pod.status === item.status && pod.experiment === item.id))} selectedPod = {selectedPod} setSelectedPod={setSelectedPod} selectedExperiment={selectedExperiment}></PodCarousel>
+                                    <PodCarousel experimentID={item.id} deviceId={item.device} status={item.status} podList = {podList.filter(pod => (pod.status === item.status && pod.experiment === item.id))} selectedPod = {selectedPod} setSelectedPod={setSelectedPod} selectedExperiment={selectedExperiment} setSelectedExperiment={setSelectedExperiment} selectedExperimentReading = {selectedExperimentReading} setSelectedExperimentReading={setSelectedExperimentReading}></PodCarousel>
                                 </div>
                             </div>
-                            <RecipeBar experimentReadingList = {experimentReadingList.filter(er => er.experiment === item.id)} podReadingList = {podReadingList.filter(pr => pr.experiment === item.id)} phaseList = {phaseList.filter(phase => phase.recipe === item.recipe_id)} recipe = {recipeList?.filter(obj => obj.id === item.recipe_id)[0]} recipe_name = {item.current_recipe} experiment = {item} getExperimentReadings={getExperimentReadings} getPodReadings={getPodReadings} podList = {podList.filter(pod => (pod.status === item.status && pod.experiment === item.id))} selectedPod = {selectedPod} setSelectedPod = {setSelectedPod} selectedExperiment= {selectedExperiment} setSelectedExperiment = {setSelectedExperiment} selectedExperimentReading = {selectedExperimentReading} setSelectedExperimentReading={setSelectedExperimentReading}></RecipeBar>
+                            <RecipeBar experimentReadingList = {experimentReadingList.filter(er => er.experiment === item.id)} podReadingList = {podReadingList.filter(pr => pr.experiment === item.id)} podList = {podList.filter(pod => (pod.status === item.status && pod.experiment === item.id))}  phaseList = {phaseList.filter(phase => phase.recipe === item.recipe_id)} recipe = {recipeList?.filter(obj => obj.id === item.recipe_id)[0]} recipe_name = {item.current_recipe} experiment = {item} getExperimentReadings={getExperimentReadings} getPodReadings={getPodReadings} selectedPod = {selectedPod} setSelectedPod = {setSelectedPod} selectedExperiment= {selectedExperiment} setSelectedExperiment = {setSelectedExperiment} selectedExperimentReading = {selectedExperimentReading} setSelectedExperimentReading={setSelectedExperimentReading}/>
 
                             <div className='object_actions'>
                                 <img className="menu_icon" src={menu_icon} alt="NO IMG!"/>
@@ -451,19 +464,28 @@ const Experiment = () => {
             completedExperiments.map((item) => {
                 if (item.name.includes(search) || item.device_name.includes(search) || item.device_id.includes(search) || item.current_recipe.includes(search)) {         
                     deviceList.push(
-                        <div key={'completed_' + item.id} className="object_container" onClick={() => {setSelectedExperiment(item.id)}}>
-                            <div className="object_top">
+                        <div key={'completed_' + item.id} className="object_container">
+                            <div className="object_top" onClick={() => {
+                                        if(selectedExperiment !== item.id) {
+                                            setSelectedExperiment(item.id); 
+                                            setSelectedExperimentReading(-1);
+                                            setSelectedPod(podList.filter(pr => pr.experiment === item.id)[0].id)
+                                        }
+                                    }
+                                }>                                
                                 <div className="object_description">
-                                    <div className="bold_font tooltip" data-tooltip={"DEVICE ID: "+item.device_id + "\nMAC: " + item.mac_address.toUpperCase()}>
-                                        {item.device_name+ " | "}{item.status === 1 ? <span style={{color:"red"}}>TERMINATED</span>:<span style={{color:"green"}}>CONCLUDED</span>}<span className="normal_font">{" | "+item.name}</span> 
+                                    <div className="bold_font">{item.device_name+ " | "}{item.status === 1 ? <span style={{color:"red"}}>TERMINATED</span>:<span style={{color:"green"}}>CONCLUDED</span>}<span className="normal_font">{" | "+item.name}</span> </div>
+                                    <div className="object_hidden">
+                                            <div className="bold_font">ID: <span className="normal_font">{item.device_id}</span></div>
+                                            <div className="bold_font">MAC: <span className="normal_font">{item.mac_address.toUpperCase()}</span></div>
                                     </div>
                                     {item.score !== null ? <div>Score: { item.score } </div>: <></>}
                                 </div>
                                 <div className="object_content">                          
-                                    <PodCarousel experimentID={item.id} deviceId={item.device} status={item.status} podList = {podList.filter(pod => (pod.status === item.status && pod.experiment === item.id))} selectedPod = {selectedPod} setSelectedPod={setSelectedPod} selectedExperiment={selectedExperiment}></PodCarousel>
+                                    <PodCarousel experimentID={item.id} deviceId={item.device} status={item.status} podList = {podList.filter(pod => (pod.status === item.status && pod.experiment === item.id))} selectedPod = {selectedPod} setSelectedPod={setSelectedPod} selectedExperiment={selectedExperiment} setSelectedExperiment={setSelectedExperiment} selectedExperimentReading = {selectedExperimentReading} setSelectedExperimentReading={setSelectedExperimentReading}></PodCarousel>
                                 </div>
                             </div>
-                            <RecipeBar experimentReadingList = {experimentReadingList.filter(er => er.experiment === item.id)} podReadingList = {podReadingList.filter(pr => pr.experiment === item.id)} phaseList = {phaseList.filter(phase => phase.recipe === item.recipe_id)} recipe = {recipeList?.filter(obj => obj.id === item.recipe_id)[0]} recipe_name = {item.current_recipe} experiment = {item} getExperimentReadings={getExperimentReadings} getPodReadings={getPodReadings} podList = {podList.filter(pod => (pod.status === item.status && pod.experiment === item.id))} selectedPod = {selectedPod} setSelectedPod = {setSelectedPod} selectedExperiment= {selectedExperiment} setSelectedExperiment = {setSelectedExperiment} selectedExperimentReading = {selectedExperimentReading} setSelectedExperimentReading={setSelectedExperimentReading}></RecipeBar>
+                            <RecipeBar experimentReadingList = {experimentReadingList.filter(er => er.experiment === item.id)} podReadingList = {podReadingList.filter(pr => pr.experiment === item.id)} podList = {podList.filter(pod => (pod.status === item.status && pod.experiment === item.id))}  phaseList = {phaseList.filter(phase => phase.recipe === item.recipe_id)} recipe = {recipeList?.filter(obj => obj.id === item.recipe_id)[0]} recipe_name = {item.current_recipe} experiment = {item} getExperimentReadings={getExperimentReadings} getPodReadings={getPodReadings} selectedPod = {selectedPod} setSelectedPod = {setSelectedPod} selectedExperiment= {selectedExperiment} setSelectedExperiment = {setSelectedExperiment} selectedExperimentReading = {selectedExperimentReading} setSelectedExperimentReading={setSelectedExperimentReading}/>
                             <div className='object_actions'>
                                 <img className="menu_icon" src={menu_icon} alt="NO IMG!"/>
                                 {<li key="delete"><button onClick={() => { if (window.confirm(`Delete experiment "${item.name}"?`)) deleteExperiment(item.id) }}>DELETE EXPERIMENT</button></li> }
@@ -479,9 +501,11 @@ const Experiment = () => {
                         <div key={'free_' + item.id}  className="object_container">
                             <div className="object_top">
                                 <div className="object_description">
-                                  <div className="bold_font tooltip" data-tooltip={"DEVICE ID: "+item.id + " | MAC: " + item.mac_address.toUpperCase()} >
-                                      {item.name}<span className="blink_me" style={{ color: item.is_online ? 'green': 'red'}}>{"\u00a0"}●{"\u00a0"}</span>
-                                  </div>
+                                  <div className="bold_font" >{item.name}<span className="blink_me" style={{ color: item.is_online ? 'green': 'red'}}>{"\u00a0"}●{"\u00a0"}</span></div>
+                                  <div className="object_hidden">
+                                            <div className="bold_font">ID: <span className="normal_font">{item.id}</span></div>
+                                            <div className="bold_font">MAC: <span className="normal_font">{item.mac_address.toUpperCase()}</span></div>
+                                    </div>
                                   {/* <div>Registered: { item.registration_date.substring(0, 10) }</div> */}
                                 </div>
                             </div>

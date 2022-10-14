@@ -105,13 +105,24 @@ const RecipeBar = (props) => {
         let style = Math.floor(( ( date - start ) / ( end - start ) ) * 100) + "%";
 
         tags.push(
-            <a key={`${er.id}_${index}`} onClick={() => {setExperimentReading({...experimentReading, ...er, show: true, add:false}); props.setSelectedExperimentReading(er.id)}} style={{left: `calc(${style})`, zIndex:3}} className={props.selectedExperimentReading === er.id && props.selectedExperiment === props.experiment.id ? "tooltip exp_reading_indicator_selected": "tooltip exp_reading_indicator"} data-tooltip={date_string}>▼</a>
+            <a key={`${er.id}_${index}`} onClick={() => {
+              setExperimentReading({...experimentReading, ...er, show: true, add:false}); 
+              if(er.experiment !== props.selectedExperiment) { 
+                (props.podList.length > 0) ? props.setSelectedPod(props.podList[0].id) : props.setSelectedPod(-1); 
+              } 
+              props.setSelectedExperimentReading(er.id); 
+              props.setSelectedExperiment(er.experiment);
+            }} style={{left: `calc(${style})`, zIndex:3}} className={props.selectedExperimentReading === er.id && props.selectedExperiment === props.experiment.id ? "tooltip exp_reading_indicator_selected": "tooltip exp_reading_indicator"} data-tooltip={date_string}>▼</a>
         )
       })
       if(props.experiment.status === 0){
         let style = Math.floor(( ( Date.now() - start ) / ( end - start ) ) * 100) + "%";
         tags.push(
-          <a key={`new_er`} onClick={() => { setExperimentReading({show: true, add:true}); props.setSelectedExperimentReading(-1)}} style={{left: `calc(${style})`, color: '#99ff44', fontSize: '25px', fontWeight:'bold', zIndex:2}} className={props.selectedExperimentReading === -1 && props.selectedExperiment ===props.experiment.id ? "tooltip exp_reading_indicator_new": "tooltip exp_reading_indicator"} data-tooltip={"NEW"}>●</a>
+          <a key={`new_er`} onClick={() => { 
+              setExperimentReading({show: true, add:true}); 
+              props.setSelectedExperimentReading(-1);
+            }
+          } style={{left: `calc(${style})`, color: '#99ff44', fontSize: '25px', fontWeight:'bold', zIndex:2}} className={props.selectedExperimentReading === -1 && props.selectedExperiment ===props.experiment.id ? "tooltip exp_reading_indicator_new": "tooltip exp_reading_indicator"} data-tooltip={"NEW"}>●</a>
         )
       }
       return tags
@@ -210,7 +221,7 @@ const RecipeBar = (props) => {
       }
       return ( 
         <div className="recipe_bar">
-          {props.selectedExperiment === props.experiment.id ? <ExperimentReading experiment={props.experiment} experimentReading={experimentReading} podReadingList = {props.podReadingList.filter(pr => pr.experiment_reading === experimentReading.id)} setExperimentReading={setExperimentReading} getExperimentReadings={props.getExperimentReadings} getPodReadings={props.getPodReadings} podList = {props.podList} selectedPod = {props.selectedPod} setSelectedPod = {props.setSelectedPod} setSelectedExperimentReading={props.setSelectedExperimentReading} setSelectedExperiment = {props.setSelectedExperiment}/>: <></>}
+          {!props.is_object && props.selectedExperiment === props?.experiment?.id ? <ExperimentReading experiment={props.experiment} experimentReading={experimentReading} podReadingList = {props.podReadingList.filter(pr => pr.experiment_reading === experimentReading.id)} setExperimentReading={setExperimentReading} getExperimentReadings={props.getExperimentReadings} getPodReadings={props.getPodReadings} podList = {props.podList} selectedPod = {props.selectedPod} setSelectedPod = {props.setSelectedPod} setSelectedExperimentReading={props.setSelectedExperimentReading} setSelectedExperiment = {props.setSelectedExperiment}/>: <></>}
           {renderTimestamps()}
           <div className="recipe_bar_phases"> 
             {phases} 

@@ -95,8 +95,14 @@ const ExperimentReading = (props) => {
     } 
 
     async function getPhase() {
-        const ret = await axios.get('/api/phases/'+props.experiment['phase_id'])
-        setPhase(ret.data['type'].toLowerCase())
+        if(props.experiment['phase_id'] !== -1 || props.experiment['phase_id'] !== null) {
+            const ret = await axios.get('/api/phases/'+props.experiment['phase_id'])
+            setPhase(ret.data['type'].toLowerCase())
+        } else {
+            setPhase("concluded") // fix this - if experiment is concluded or terminated, editing an old experiment reading with new photos, label as such with the phase of that reading
+
+        }
+
     }
 
     /*
@@ -120,7 +126,7 @@ const ExperimentReading = (props) => {
             if (props.selectedPod !== -1){
                 setPodReadingModal({...initPodReadingModal, ...podList[props.selectedPod].pod_reading})
             } else {
-                setPodReadingModal({initPodReadingModal})
+                setPodReadingModal(initPodReadingModal)
             }
         }
     }, [props.selectedPod])
@@ -144,6 +150,7 @@ const ExperimentReading = (props) => {
             setPodList({...podList, [props.selectedPod]: {...podList[props.selectedPod], pod_reading: podReadingModal}})// sets the pod_reading of the currently active pod object while form is open
         }
     },[podReadingModal])
+
 
     const uploadImage = (file, species, id, i) => {
         let fname = (id+"_"+phase+"_"+i+"_"+Date.now()+".jpg").toLowerCase();
@@ -349,6 +356,7 @@ const ExperimentReading = (props) => {
                     <input className ="form_row pr_comment" placeholder="[comment]" type="text" value={podReadingModal.comment !== null ? podReadingModal.comment : ""} onChange={(e) => setPodReadingModal({...podReadingModal, comment: e.target.value})}/>
                     <input type="file" style={{"display":"none"}} ref={img_upload} onChange={(e) => setPodReadingModal(prevState => ({...prevState, selected_images:e.target.files}))} multiple/>
                     <button onClick={() => {img_upload.current.click()}}>{podReadingModal.image_link_1 ? podReadingModal.image_link_1 : (podReadingModal.selected_images === null ? "Upload Images... " : "Upload "+ podReadingModal.selected_images[0].name+ ", ...") }</button>
+
                 </div>
             )
         }
