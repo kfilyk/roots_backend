@@ -18,6 +18,8 @@ const Analysis = () => {
   const [dates, setDates] = useState([]);
   const [podData, setPodData] = useState([]);
   const [heightData, setHeightData] = useState([]);
+  const [experimentData, setExperimentData] = useState([]);
+  const [plantData, setPlantData] = useState([]);
   
   // LOOK IN "urls.py":  /api/plants/, /api/pods/, etc...
   async function fetchExperimentReadings() {
@@ -35,6 +37,22 @@ const Analysis = () => {
 
     setPodReadingList(result.data)
   };
+
+  /*  */
+  async function fetchExperiments() {
+    const result = await axios(
+      '/api/experiments/',
+    );
+
+      setExperimentData(result.data)
+  };
+
+  async function fetchPlant() {
+    const result = await axios(
+      '/api/plants/',
+    );
+      setPlantData(result.data)
+  }
 
   async function fetchAllPodData(id) {
     const result = await axios.post('/api/pods/get_all_pod_data/', {"id":id});
@@ -70,6 +88,8 @@ const Analysis = () => {
     fetchExperimentReadings();
     fetchPodReadings();
     fetchAllPodData(80);
+    fetchExperiments()
+    fetchPlant()
   }, []);
 
   useEffect(() => {
@@ -110,9 +130,11 @@ const domeData = {
   return (
 
     <div className='darryl-class'>
-    {JSON.stringify(heightData)}
-    <h3>Experiment ID: 80</h3>
-    {JSON.stringify(podData)}
+      <h3>Plant Data</h3>
+      {JSON.stringify(plantData)}
+
+      <h3>Experiment Data</h3>
+      {JSON.stringify(experimentData)}
 
     <Line data={domeData}
     options={{
