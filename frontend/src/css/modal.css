@@ -101,10 +101,12 @@ POPUP MODAL
   bottom: 0px;
 }
 
-input {
+.modal-pod-form input {
   border: none;
   border-bottom: 1px solid;
   color: #1b372a;
+  min-width: 110px !important;
+
 }
 
 @media only screen and (max-width: 760px) {
@@ -284,8 +286,6 @@ input:valid+span:after {
 .modal-pod-form {
   display: flex;
   flex-flow: row wrap;
-  padding-left:10px;
-
 
   text-align: center;
   justify-content: center;
