@@ -84,28 +84,16 @@ OBJECT CONTAINERS (DEVICE, EXPERIMENT, ETC)
   max-width: calc(100% - 20px);
 }
 
+
 .object_container:hover .object_hidden {
-  /*display:block;*/
   max-height:fit-content;
   transition: max-height 1s ease-out;
-}
-
-@media only screen and (max-width: 600px) {
-  .object_container:hover .object_description {
-    padding-bottom: 0px;
-  }
 }
 
 
 .object_top {
   display:flex;
   flex-direction: row;
-}
-
-@media only screen and (max-width: 600px) {
-  .object_top {
-    flex-direction: column;
-  }
 }
 
 .object_description {
@@ -117,9 +105,14 @@ OBJECT CONTAINERS (DEVICE, EXPERIMENT, ETC)
   min-width: 30%;
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 760px) {
   .object_description {
     padding-bottom:20px;
+  }
+
+  .object_top {
+    display:flex;
+    flex-direction: column;
   }
 }
 
@@ -143,7 +136,7 @@ OBJECT CONTAINERS (DEVICE, EXPERIMENT, ETC)
   transition: max-height 0.25s ease-out;
 }
 
-.object_content {
+.object-content {
   display:flex;
   padding:0px;
 
@@ -157,20 +150,25 @@ OBJECT CONTAINERS (DEVICE, EXPERIMENT, ETC)
   order:2;
 }
 
-@media only screen and (max-width: 600px) {
-  .object_content {
+
+@media only screen and (max-width: 760px) {
+  .object-content {
     display:none;
     /*max-width: 100%;*/
     padding-top: 0px;
     padding-bottom: 30px;
   }
 
-  .object_container:hover .object_content {
+  .object-content-active {
     display:flex;
-    /*max-width: 100%;*/
-    padding-top: 0px;
-    padding-bottom: 30px;
+    padding:0px;  
+    align-items: right; 
+    flex-direction: row;
+    flex:1;
+    /*max-width: 50%;*/
+    order:2;
   }
+
 }
 
 /* HIDDEN start state */

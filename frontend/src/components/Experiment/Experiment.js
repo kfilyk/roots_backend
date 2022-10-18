@@ -445,7 +445,7 @@ const Experiment = () => {
                                     </div>
                                     {item.score !== null ? <div>Score: { item.score } </div>: <></>}
                                 </div>
-                                <div className="object_content">     
+                                <div className={selectedExperiment === item.id? "object-content object-content-active":"object-content"}>     
                                     <PodCarousel experimentID={item.id} deviceId={item.device} status={item.status} podList = {podList.filter(pod => (pod.status === item.status && pod.experiment === item.id))} selectedPod = {selectedPod} setSelectedPod={setSelectedPod} selectedExperiment={selectedExperiment} setSelectedExperiment={setSelectedExperiment} selectedExperimentReading = {selectedExperimentReading} setSelectedExperimentReading={setSelectedExperimentReading}></PodCarousel>
                                 </div>
                             </div>
@@ -481,7 +481,7 @@ const Experiment = () => {
                                     </div>
                                     {item.score !== null ? <div>Score: { item.score } </div>: <></>}
                                 </div>
-                                <div className="object_content">                          
+                                <div className="object-content">                          
                                     <PodCarousel experimentID={item.id} deviceId={item.device} status={item.status} podList = {podList.filter(pod => (pod.status === item.status && pod.experiment === item.id))} selectedPod = {selectedPod} setSelectedPod={setSelectedPod} selectedExperiment={selectedExperiment} setSelectedExperiment={setSelectedExperiment} selectedExperimentReading = {selectedExperimentReading} setSelectedExperimentReading={setSelectedExperimentReading}></PodCarousel>
                                 </div>
                             </div>

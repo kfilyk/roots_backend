@@ -66,27 +66,16 @@ POPUP MODAL
   flex-direction: column;
 }
 
-.modal_content_2 {
-  display: flex;
-  flex-direction: row;
-}
-
-@media only screen and (max-width: 600px) {
-  .modal_content_2 {
-    display: flex;
-    flex-direction: column !important;  
-  }
-}
-
-
-
 .form_row {
   display: flex;
-  margin: 5px;
+  margin-left: 5px;
+  margin-right: 5px;
+
   position:relative;
   font-size: 12px;
   width:min-content; /* dont change this! needed to keep Phases light_intensity_overlay in position over slider */
   white-space:nowrap;
+  line-height: 15px;
 }
 
 .form_row input::-webkit-input-placeholder { /* Chrome/Opera/Safari */
@@ -106,8 +95,10 @@ POPUP MODAL
 }
 .form_row button {
   margin: 0px;
-  margin-left:2px;
   margin-right:2px;
+  padding: 6px 6px;
+  height:50%;
+  bottom: 0px;
 }
 
 input {
@@ -116,13 +107,11 @@ input {
   color: #1b372a;
 }
 
-@media only screen and (max-width: 600px) {
-  .input {
-    display: flex;
-    flex-direction: column;
-  }
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
-
 
 select {
   border: none;
@@ -284,16 +273,6 @@ input:valid+span:after {
   display: table;
 }
 
-.modal-experiment-reading {
-  display: table-cell;
-  justify-content: center;
-}
-
-.modal-pod-reading{
-  display: flex;
-  flex-direction: column;
-}
-
 .modal-pod-form {
   display: flex;
   flex-flow: row wrap;
@@ -303,29 +282,13 @@ input:valid+span:after {
   text-align: center;
   justify-content: center;
   row-gap: 1vh;
-}
-
-@media only screen and (max-width: 600px) {
-  .modal-pod-form {
-    display: flex;
-    flex-direction: column !important;  
-    padding-left:0px;
-    row-gap: 0.5vh;
-  }
+  padding-bottom: 20px;
 }
 
 .modal-pod-selection {
   display: block;
   flex-direction: column;
 }
-
-.exp-general-input {
-  width:30px;
-  margin: 0px;
-  padding: 0px;
-}
-
-
 
 .pod_r_modal{
   padding:10px;
@@ -342,7 +305,7 @@ input:valid+span:after {
 }
 
 .selected_pod_div label{
-  width: 100%
+  width: 100%;
 }
 
 .pr_comment {
@@ -355,6 +318,7 @@ input:valid+span:after {
   display: flex;
   flex-direction: column;
   width: calc(100%);
+  font-size: 12px;
 }
 
 .pr_coverage div {
