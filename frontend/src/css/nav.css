@@ -97,17 +97,11 @@
   table-layout: auto;
   /*box-shadow: 0 5px 6px -6px #888888;*/
   padding: 0px;
-  padding-bottom: 10px;
+  padding-bottom: 20px;
   position: sticky;
   top:20px;
   z-index: 1;
   white-space: nowrap;
-}
-
-/* MOBILE APP */
-@media only screen and (max-width: 760px) {
-  .nav {
-  }
 }
 
 .sub-nav {
