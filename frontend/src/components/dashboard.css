@@ -106,9 +106,6 @@ OBJECT CONTAINERS (DEVICE, EXPERIMENT, ETC)
 }
 
 @media only screen and (max-width: 760px) {
-  .object_description {
-    padding-bottom:20px;
-  }
 
   .object_top {
     display:flex;

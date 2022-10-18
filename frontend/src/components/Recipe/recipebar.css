@@ -36,6 +36,12 @@ RECIPE BAR (OBJECT BOTTOM CHIN)
   position:relative;
 }
 
+@media only screen and (max-width: 760px) {
+  .recipe_bar {
+    padding-top: 10px;
+  }
+}
+
 .recipe_bar_phases {
   width:100%;
   display: flex;
