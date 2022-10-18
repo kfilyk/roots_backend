@@ -169,9 +169,9 @@ const RecipeBar = (props) => {
           / day for {ph.watering_duration} minute(s)
         </div>
         <div className="phase_lighting">
-          <div style={{minWidth:'20px', maxWidth:'20px', padding:'3px', paddingBottom:'0px'}}> <img src={blue_light_icon} alt="Blue Light"></img> <div className="light_intensity" >{ph.blue_intensity}</div> </div>
-          <div style={{minWidth:'20px', maxWidth:'20px', padding:'3px', paddingBottom:'0px'}}> <img src={red_light_icon} alt="Red Light" ></img> <div className="light_intensity">{ph.red_intensity}</div> </div>
-          <div style={{minWidth:'20px', maxWidth:'20px', padding:'3px', paddingBottom:'0px'}}> <img src={white_light_icon} alt="White Light"></img> <div className="light_intensity">{ph.white_intensity}</div> </div>
+          <div className="phase-light"> <img src={blue_light_icon} alt="Blue Light"></img> <div className="light_intensity" >{ph.blue_intensity}</div> </div>
+          <div className="phase-light"> <img src={red_light_icon} alt="Red Light" ></img> <div className="light_intensity">{ph.red_intensity}</div> </div>
+          <div className="phase-light"> <img src={white_light_icon} alt="White Light"></img> <div className="light_intensity">{ph.white_intensity}</div> </div>
           , { ph.lights_on_hours } hours / day
         </div>
       </div>
@@ -207,13 +207,13 @@ const RecipeBar = (props) => {
               if(props.is_object) {
                 phases.push(<div key={`${props.experiment}_${i}`} className="recipe_bar_phase" style={s}> 
                   <span className="recipe_bar_phase_days">{ph.days}</span> 
-                  <span className="recipe_bar_phase_type bold_font"> {ph.type} </span>
+                  <span className="recipe_bar_phase_name bold_font"> {ph.type} </span>
                   {renderPhaseDetails(ph)}
                 </div>)
               } else {
                 phases.push(<div key={`${props.experiment}_${i}`} className="recipe_bar_phase" style={s} > 
                   <span className="recipe_bar_phase_days">{ph.days}</span> 
-                  <span className="recipe_bar_phase_type"> {ph.type} </span>
+                  <span className="recipe_bar_phase_name"> {ph.type} </span>
                   {props.selectedExperiment === props.experiment.id ? renderPhaseDetails(ph) : <></> }
                 </div>)
               }

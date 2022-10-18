@@ -70,7 +70,7 @@ POPUP MODAL
   display: flex;
   margin-left: 5px;
   margin-right: 5px;
-
+  cursor: pointer;
   position:relative;
   font-size: 12px;
   width:min-content; /* dont change this! needed to keep Phases light_intensity_overlay in position over slider */

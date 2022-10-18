@@ -155,11 +155,17 @@ PHASE DETAILS (WATERING ICONS)
   align-items:center;
 }
 
+.phase-light {
+  min-width: 20px;
+  max-width: 20px; 
+  padding: 3px; 
+  padding-bottom: 0px;
+}
+
 .light_intensity {
-  padding:0px;
-  margin:0px;
   z-index: 2;
   text-align: center;
   font-family: "Brandon Grotesque Black";
   font-size: 10px;
+  line-height: 6px;
 }
