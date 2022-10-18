@@ -262,12 +262,6 @@ const Experiment = () => {
         setExperiment({...experiment, end_date: ed, phase: recipe?.phase1})
     }, [experiment.recipe, experiment.start_date])
 
-    useEffect(() => {
-        console.log("SELECTED POD: ", selectedPod);
-        console.log("SELECTED EXPERIMENT: ", selectedExperiment);
-        console.log("SELECTED EXPERIMENT READING: ", selectedExperimentReading);
-
-    },[selectedPod, selectedExperiment, selectedExperimentReading])
     /*
     Input from: None
     Outputs to: None
