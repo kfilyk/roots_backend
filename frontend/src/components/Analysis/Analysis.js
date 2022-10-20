@@ -20,6 +20,7 @@ const Analysis = () => {
   const [heightData, setHeightData] = useState([]);
   const [experimentData, setExperimentData] = useState([]);
   const [plantData, setPlantData] = useState([]);
+  const [speciesData, setSpeciesData] = useState([]);
   
   // LOOK IN "urls.py":  /api/plants/, /api/pods/, etc...
   async function fetchExperimentReadings() {
@@ -90,6 +91,7 @@ const Analysis = () => {
     fetchAllPodData(80);
     fetchExperiments()
     fetchPlant()
+    getPlantSpecies(plantData)
   }, []);
 
   useEffect(() => {
@@ -126,11 +128,24 @@ const domeData = {
   ]
 }
 
+async function getPlantSpecies(plant) {
+  const species = []
+  for (let i = 0; i < plant.length(); i++) {
+    species.push(plant[i]['species']);
+  }
+  setSpeciesData(species)
+}
+
 /*@@@@@@@@@@@@@@*/
   return (
 
     <div className='darryl-class'>
+      <h4>testtest
+      </h4>
+      {JSON.stringify(speciesData)}
+      {JSON.stringify(plantData[0]['species'])}
       <h3>Plant Data</h3>
+      
       {JSON.stringify(plantData)}
 
       <h3>Experiment Data</h3>
