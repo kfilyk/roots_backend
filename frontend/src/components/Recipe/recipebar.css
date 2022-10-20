@@ -14,7 +14,7 @@ RECIPE BAR (OBJECT BOTTOM CHIN)
   margin-top: -20px;
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 760px) {
   .recipe_bar_timestamps {
     font-size: 10px;
   }
@@ -34,6 +34,12 @@ RECIPE BAR (OBJECT BOTTOM CHIN)
 
 .recipe_bar {
   position:relative;
+}
+
+@media only screen and (max-width: 760px) {
+  .recipe_bar {
+    padding-top: 10px;
+  }
 }
 
 .recipe_bar_phases {
@@ -155,11 +161,17 @@ PHASE DETAILS (WATERING ICONS)
   align-items:center;
 }
 
+.phase-light {
+  min-width: 20px;
+  max-width: 20px; 
+  padding: 3px; 
+  padding-bottom: 0px;
+}
+
 .light_intensity {
-  padding:0px;
-  margin:0px;
   z-index: 2;
   text-align: center;
   font-family: "Brandon Grotesque Black";
   font-size: 10px;
+  line-height: 6px;
 }

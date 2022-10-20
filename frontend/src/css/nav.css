@@ -6,7 +6,7 @@
 }
 
 /* MOBILE APP */
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 760px) {
   .header {
     font-family: "Windsor D";
     display:block;
@@ -24,7 +24,7 @@
 }
   
 /* MOBILE APP */
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 760px) {
   .title {
     vertical-align: middle;
     text-align: center;
@@ -48,7 +48,7 @@
 }
 
 /* MOBILE APP */
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 760px) {
   .user_container {
     display: none;
   }
@@ -97,17 +97,11 @@
   table-layout: auto;
   /*box-shadow: 0 5px 6px -6px #888888;*/
   padding: 0px;
-  padding-bottom: 10px;
+  padding-bottom: 20px;
   position: sticky;
   top:20px;
   z-index: 1;
   white-space: nowrap;
-}
-
-/* MOBILE APP */
-@media only screen and (max-width: 600px) {
-  .nav {
-  }
 }
 
 .sub-nav {
@@ -115,7 +109,7 @@
   background-color: transparent;
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 760px) {
   .sub-nav {
     overflow-x: scroll;
   }

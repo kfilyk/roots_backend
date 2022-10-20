@@ -262,12 +262,6 @@ const Experiment = () => {
         setExperiment({...experiment, end_date: ed, phase: recipe?.phase1})
     }, [experiment.recipe, experiment.start_date])
 
-    useEffect(() => {
-        console.log("SELECTED POD: ", selectedPod);
-        console.log("SELECTED EXPERIMENT: ", selectedExperiment);
-        console.log("SELECTED EXPERIMENT READING: ", selectedExperimentReading);
-
-    },[selectedPod, selectedExperiment, selectedExperimentReading])
     /*
     Input from: None
     Outputs to: None
@@ -445,7 +439,7 @@ const Experiment = () => {
                                     </div>
                                     {item.score !== null ? <div>Score: { item.score } </div>: <></>}
                                 </div>
-                                <div className="object_content">     
+                                <div className={selectedExperiment === item.id? "object-content object-content-active":"object-content"}>     
                                     <PodCarousel experimentID={item.id} deviceId={item.device} status={item.status} podList = {podList.filter(pod => (pod.status === item.status && pod.experiment === item.id))} selectedPod = {selectedPod} setSelectedPod={setSelectedPod} selectedExperiment={selectedExperiment} setSelectedExperiment={setSelectedExperiment} selectedExperimentReading = {selectedExperimentReading} setSelectedExperimentReading={setSelectedExperimentReading}></PodCarousel>
                                 </div>
                             </div>
@@ -481,7 +475,7 @@ const Experiment = () => {
                                     </div>
                                     {item.score !== null ? <div>Score: { item.score } </div>: <></>}
                                 </div>
-                                <div className="object_content">                          
+                                <div className="object-content">                          
                                     <PodCarousel experimentID={item.id} deviceId={item.device} status={item.status} podList = {podList.filter(pod => (pod.status === item.status && pod.experiment === item.id))} selectedPod = {selectedPod} setSelectedPod={setSelectedPod} selectedExperiment={selectedExperiment} setSelectedExperiment={setSelectedExperiment} selectedExperimentReading = {selectedExperimentReading} setSelectedExperimentReading={setSelectedExperimentReading}></PodCarousel>
                                 </div>
                             </div>
