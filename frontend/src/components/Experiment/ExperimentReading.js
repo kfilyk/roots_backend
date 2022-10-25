@@ -141,6 +141,9 @@ const ExperimentReading = (props) => {
         const data = new FormData();
         data.append("file", file)
         data.append("key", "RootsImages/"+species+"/"+fname )
+        console.log("\nFILE: ", file)
+        console.log("KEY: RootsImages/"+species+"/"+fname)
+        console.log("\n")
         axios.post(`/api/podreadings/upload_image/`, data)
         
         return "https://ava-cv-raw-photo-bucket.s3.amazonaws.com/RootsImages/"+species+"/"+fname
