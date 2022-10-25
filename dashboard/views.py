@@ -407,7 +407,15 @@ class PodReadingView(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"], name='upload_image')
     def upload_image(self, request):
         s3 = boto3.client("s3")
-        s3.upload_fileobj(request.data['file'], "ava-cv-raw-photo-bucket", request.data['key'])
+        try:
+            print("DIR REQUEST: ", dir(request))
+            print("CONTENT TYPE: ", request.content_type)
+            print("AUTHENTICATORS: ", request.authenticators)
+            print("DATA: ", request.data)
+
+            s3.upload_fileobj(request.data['file'], "ava-cv-raw-photo-bucket", request.data['key'])
+        except:
+            print("ERROR UPLOADING FILE")
         return JsonResponse({"status":"200"}, safe=False)
 
 class RecipeView(viewsets.ModelViewSet):
