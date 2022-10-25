@@ -140,14 +140,13 @@ async function getPlantSpecies(plant) {
   return (
 
     <div className='darryl-class'>
-      <h4>testtest
-      </h4>
+      <h4>testtest</h4>
       {JSON.stringify(speciesData)}
       {JSON.stringify(plantData[0]['species'])}
       <h3>Plant Data</h3>
       
       {JSON.stringify(plantData)}
-
+{}
       <h3>Experiment Data</h3>
       {JSON.stringify(experimentData)}
 
