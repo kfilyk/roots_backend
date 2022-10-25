@@ -407,8 +407,6 @@ class PodReadingView(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"], name='upload_image')
     def upload_image(self, request):
         s3 = boto3.client("s3")
-        print("FILE: ", request.data['file'])
-        print("KEY: ", request.data['key'])
         try:
             s3.upload_fileobj(request.data['file'], "ava-cv-raw-photo-bucket", request.data['key'])
         except:
