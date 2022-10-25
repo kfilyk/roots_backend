@@ -411,8 +411,8 @@ class PodReadingView(viewsets.ModelViewSet):
         try:
             print("DATA: ", request.data)
             s3.upload_fileobj(request.data['file'], "ava-cv-raw-photo-bucket", request.data['key'])
-        except:
-            print("ERROR UPLOADING FILE")
+        except Exception as e:
+            print("ERROR UPLOADING FILE: ", e)
         return JsonResponse({"status":"200"}, safe=False)
 
 class RecipeView(viewsets.ModelViewSet):
