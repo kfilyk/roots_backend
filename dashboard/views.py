@@ -409,10 +409,10 @@ class PodReadingView(viewsets.ModelViewSet):
     def upload_image(self, request):
         s3 = boto3.client("s3")
         try:
-            print("DATA: ", request.data)
-            print("DATA: ", request.data['file'])
-            print("DATA: ", request.data['key'])
-            #s3.upload_fileobj(request.data['file'], "ava-cv-raw-photo-bucket", request.data['key'])
+            #print("DATA: ", request.data)
+            #print("DATA: ", request.data['file'])
+            #print("DATA: ", request.data['key'])
+            s3.upload_fileobj(request.data['file'], "ava-cv-raw-photo-bucket", request.data['key'])
 
         except Exception as e:
             print("ERROR UPLOADING FILE: ", e)
