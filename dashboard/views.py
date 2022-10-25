@@ -408,6 +408,8 @@ class PodReadingView(viewsets.ModelViewSet):
     def upload_image(self, request):
         s3 = boto3.client("s3")
         try:
+            print("DIR REQUEST: ", dir(request))
+
             print("REQUEST: ", request)
             print("DATA: ", request.data)
 
