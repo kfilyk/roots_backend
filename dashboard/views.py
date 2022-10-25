@@ -407,7 +407,7 @@ class PodReadingView(viewsets.ModelViewSet):
 
     @action(detail=False, methods=["post"], name='upload_image')
     @parser_classes((MultiPartParser, FormParser)) 
-    def upload_image(self, request, *args, **kwargs):
+    def upload_image(self, request):
         s3 = boto3.client("s3")
         try:
             print("DIR REQUEST: ", dir(request))
