@@ -18,7 +18,7 @@ OVERALL FILE PURPOSE:
 Sets the axios base url then adds routing paths
 */
 const App = () => {
-  
+
   const [auth, setAuth] = useState("");
 
   /*
@@ -30,8 +30,11 @@ const App = () => {
   */
   useEffect(() => {
     axios.defaults.baseURL = 'http://127.0.0.1:8000'; // use this to run locally
+<<<<<<< HEAD
 
     //axios.defaults.baseURL = 'http://0.0.0.0:8000'; // use this to run locally
+=======
+>>>>>>> 945c897f5daa7ed0eea4184d9df909cda9666fb6
     //axios.defaults.baseURL = 'https://avaroots.io:8000'; // use this to run on EC2
     axios.defaults.timeout = 10000;
     authenicate_user()

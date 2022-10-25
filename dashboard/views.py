@@ -1,9 +1,9 @@
 from pyexpat import model
 from urllib3 import HTTPResponse
-from dashboard.models import Device, Experiment, Phase, Plant, Pod, ExperimentReading, PodReading, Recipe
+from dashboard.models import Device, Experiment, Phase, Plant, Pod, ExperimentReading, PodReading, Recipe, Tag
 from rest_framework import viewsets
 from django.forms.models import model_to_dict
-from .serializers import DeviceSerializer, ExperimentSerializer, CreateUserSerializer, UserSerializer, PhaseSerializer, PlantSerializer, PodSerializer, ExperimentReadingSerializer, RecipeSerializer, PodReadingSerializer
+from .serializers import DeviceSerializer, ExperimentSerializer, CreateUserSerializer, UserSerializer, PhaseSerializer, PlantSerializer, PodSerializer, ExperimentReadingSerializer, RecipeSerializer, PodReadingSerializer, TagSerializer
 from django.core import serializers
 from django_filters import rest_framework as filters
 from django.db.models.functions import Length
@@ -24,6 +24,8 @@ from django.http import HttpResponse, JsonResponse
 from datetime import datetime
 from django.utils.timezone import make_aware
 from .v2_mqtt import MQTT
+import boto3
+
 from .generic_mqtt_client import GenericMQTT
 import json
 from django.utils import timezone
@@ -402,6 +404,12 @@ class PodReadingView(viewsets.ModelViewSet):
             return JsonResponse(list(pr.values())[0], safe=False)    
         return JsonResponse({}, safe=False)
 
+    @action(detail=False, methods=["post"], name='upload_image')
+    def upload_image(self, request):
+        s3 = boto3.client("s3")
+        s3.upload_fileobj(request.data['file'], "ava-cv-raw-photo-bucket", request.data['key'])
+        return JsonResponse({"status":"200"}, safe=False)
+
 class RecipeView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
     serializer_class = RecipeSerializer
@@ -647,6 +655,14 @@ class PlantView(viewsets.ModelViewSet):
     """ 
     def get_queryset(self):
         return Plant.objects.all().order_by('name')
+
+class TagView(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated,) 
+    serializer_class = TagSerializer
+
+    def get_queryset(self):
+        return Tag.objects.all()
+
 
 class CreateUserAPIView(CreateAPIView):
     serializer_class = CreateUserSerializer
