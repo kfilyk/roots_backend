@@ -409,8 +409,8 @@ class PodReadingView(viewsets.ModelViewSet):
         s3 = boto3.client("s3")
         try:
             print("DIR REQUEST: ", dir(request))
-
-            print("REQUEST: ", request)
+            print("CONTENT TYPE: ", request.content_type)
+            print("AUTHENTICATORS: ", request.authenticators)
             print("DATA: ", request.data)
 
             s3.upload_fileobj(request.data['file'], "ava-cv-raw-photo-bucket", request.data['key'])
