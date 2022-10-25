@@ -19,7 +19,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.permissions import IsAuthenticated 
 from django.db.models import F, Q
-from rest_framework.decorators import action
+from rest_framework.decorators import action, parser_classes
 from rest_framework.parsers import JSONParser, MultiPartParser, FormParser, FileUploadParser
 from django.http import HttpResponse, JsonResponse
 from datetime import datetime
@@ -384,7 +384,6 @@ class PodView(viewsets.ModelViewSet):
 class PodReadingView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
     serializer_class = PodReadingSerializer
-    parser_classes = [MultiPartParser, FormParser, JSONParser, FileUploadParser]
 
     def get_queryset(self):
         return PodReading.objects.all().annotate(reading_date=F('experiment_reading__reading_date'))
@@ -407,7 +406,8 @@ class PodReadingView(viewsets.ModelViewSet):
         return JsonResponse({}, safe=False)
 
     @action(detail=False, methods=["post"], name='upload_image')
-    def upload_image(self, request):
+    @parser_classes((MultiPartParser, FormParser)) 
+    def upload_image(self, request, *args, **kwargs):
         s3 = boto3.client("s3")
         try:
             print("DIR REQUEST: ", dir(request))
