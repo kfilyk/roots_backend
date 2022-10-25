@@ -135,13 +135,13 @@ const ExperimentReading = (props) => {
     },[podReadingModal])
 
 
-    async function uploadImage(file, species, id, i) {
+    function uploadImage(file, species, id, i) {
         let fname = (id+"_"+phase+"_"+i+"_"+Date.now()+".jpg").toLowerCase();
 
         let data = new FormData();
         data.append("file", file)
         data.append("key", "RootsImages/"+species+"/"+fname )
-        await axios({url:`/api/podreadings/upload_image/`, method: "POST", data: data, headers: {"Content-Type": "multipart/form-data"}})
+        axios({url:`/api/podreadings/upload_image/`, method: "POST", data: data, headers: {"Content-Type": "multipart/form-data"}})
         
         return "https://ava-cv-raw-photo-bucket.s3.amazonaws.com/RootsImages/"+species+"/"+fname
     }

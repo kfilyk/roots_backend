@@ -405,16 +405,11 @@ class PodReadingView(viewsets.ModelViewSet):
             return JsonResponse(list(pr.values())[0], safe=False)    
         return JsonResponse({}, safe=False)
 
-    @action(detail=False, methods=["post"], name='upload_image')
-    @parser_classes((MultiPartParser, FormParser)) 
+    @action(detail=False, methods=["post"], name='upload_image', parser_classes=[MultiPartParser, FormParser])
     def upload_image(self, request):
         s3 = boto3.client("s3")
         try:
-            print("DIR REQUEST: ", dir(request))
-            print("CONTENT TYPE: ", request.content_type)
-            print("AUTHENTICATORS: ", request.authenticators)
             print("DATA: ", request.data)
-
             s3.upload_fileobj(request.data['file'], "ava-cv-raw-photo-bucket", request.data['key'])
         except:
             print("ERROR UPLOADING FILE")
