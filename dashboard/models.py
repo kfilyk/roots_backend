@@ -16,17 +16,6 @@ python manage.py makemigrations
 python manage.py migrate
 """
 
-'''
-set FOREIGN_KEY_CHECKS = 0;
--- drop table plant_science.device cascade;
--- drop table plant_science.experiment cascade;
--- drop table plant_science.plant cascade;
--- drop table plant_science.experimentReading cascade;
--- drop table plant_science.pod cascade;
--- drop table plant_science.podPack cascade;
--- drop table plant_science.recipe cascade;
-'''
-
 PERCENTAGE_VALIDATOR = [MinValueValidator(0), MaxValueValidator(100)]
 
 # https://www.digitalocean.com/community/tutorials/build-a-to-do-application-using-django-and-react
@@ -48,10 +37,20 @@ class Device(models.Model):
         managed = True
         db_table = 'device'
 
+
+class Tag(models.Model): 
+    id = models.CharField(db_column='t_id', primary_key=True, max_length=45) 
+    name = models.CharField(db_column='t_name', max_length=45) 
+
+    class Meta:
+        managed = True
+        db_table = 'tags'
+
 class Experiment(models.Model):
     id = models.AutoField(db_column='e_id', primary_key=True)  
     name = models.CharField(db_column='e_name', max_length=128, blank=True, null=True)
     description = models.CharField(db_column='e_description', max_length=1024, blank=True, null=True)
+    tags = models.ManyToManyField(Tag)
     day = models.IntegerField(db_column='e_day', default = 0) 
     phase = models.ForeignKey("Phase", models.DO_NOTHING, related_name='+', db_column='e_phase_id',blank=True, null=True) # germination, seedling, vegetative growth, flowering, fruiting, other1, terminated, complete
     phase_day = models.IntegerField(db_column='e_phase_day', default = 0) 
@@ -279,3 +278,4 @@ class NutrientRecipe(models.Model):
     class Meta:
         managed = True
         db_table = 'nutrient_recipe'
+

@@ -1,20 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
 import axios from "axios";
-import AWS from 'aws-sdk'
-
-
-const S3_BUCKET ='ava-cv-raw-photo-bucket';
-const REGION ='ca-central-1';
-
-AWS.config.update({
-    accessKeyId: 'AKIA3N5PH5YKPJJ7VT2L',
-    secretAccessKey: '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'
-})
-
-const myBucket = new AWS.S3({
-    params: { Bucket: S3_BUCKET},
-    region: REGION,
-})
 
 const ExperimentReading = (props) => {
     // store experiment reading form to be edited by frontend experiment reading modal
@@ -150,27 +135,14 @@ const ExperimentReading = (props) => {
     },[podReadingModal])
 
 
-    const uploadImage = (file, species, id, i) => {
+    function uploadImage(file, species, id, i) {
         let fname = (id+"_"+phase+"_"+i+"_"+Date.now()+".jpg").toLowerCase();
 
-        const params = {
-            ACL: 'public-read',
-            Body: file,
-            Bucket: S3_BUCKET+"/RootsImages/"+species,
-            Key: fname
-        };
-
-        myBucket.putObject(params)
-            .on('httpUploadProgress', (evt) => {
-                setProgress(Math.round((evt.loaded / evt.total) * 100))
-            })
-            .send((err) => {
-                if (err) {
-                    console.log(err);
-                    return null;
-                }
-            })
-        console.log("SUCCESSFUL IMAGE UPLOAD: https://ava-cv-raw-photo-bucket.s3.amazonaws.com/RootsImages/"+species+"/"+fname)
+        const data = new FormData();
+        data.append("file", file)
+        data.append("key", "RootsImages/"+species+"/"+fname )
+        axios.post(`/api/podreadings/upload_image/`, data)
+        
         return "https://ava-cv-raw-photo-bucket.s3.amazonaws.com/RootsImages/"+species+"/"+fname
     }
 
@@ -211,7 +183,6 @@ const ExperimentReading = (props) => {
                         let image_links = []
                         if (value['pod_reading']['selected_images'] != null) {
                             let i = 1
-                            console.log(value['pod_reading']['selected_images'])
                             Array.from(value['pod_reading']['selected_images']).forEach(img => {
                                 if(i <= 4) {
                                     image_links.push(uploadImage(img, value['species'].toLowerCase(), value['id'], i))
@@ -233,6 +204,7 @@ const ExperimentReading = (props) => {
                             pr['image_link_'+i] = link
                             i = i+1
                         })
+                        delete pr['selected_images']
 
                         await axios.post(`/api/podreadings/`, pr).catch((err) => console.log(err));
                         console.log("ADDED POD READING: ", pr)
@@ -274,7 +246,7 @@ const ExperimentReading = (props) => {
                             pr['pod'] =parseInt(key)
                             pr['experiment'] = props.experiment.id
                             pr['experiment_reading'] = result.data.id // add the newly generated e reading id to the pod reading
-
+                            console.log("FLAG 10")
                             await axios.post(`/api/podreadings/`, pr).catch((err) => console.log("ERROR: ", err));
                             console.log("ADDED POD READING: ", pr);
 

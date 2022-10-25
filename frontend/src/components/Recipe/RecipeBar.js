@@ -120,6 +120,8 @@ const RecipeBar = (props) => {
         tags.push(
           <a key={`new_er`} onClick={() => { 
               setExperimentReading({show: true, add:true}); 
+              (props.podList.length > 0) ? props.setSelectedPod(props.podList[0].id) : props.setSelectedPod(-1); 
+              props.setSelectedExperiment(props.experiment.id);
               props.setSelectedExperimentReading(-1);
             }
           } style={{left: `calc(${style})`, color: '#99ff44', fontSize: '25px', fontWeight:'bold', zIndex:2}} className={props.selectedExperimentReading === -1 && props.selectedExperiment ===props.experiment.id ? "tooltip exp_reading_indicator_new": "tooltip exp_reading_indicator"} data-tooltip={"NEW"}>●</a>

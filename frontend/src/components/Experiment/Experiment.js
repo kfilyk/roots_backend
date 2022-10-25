@@ -32,29 +32,21 @@ const Experiment = () => {
     const [phaseList, setPhaseList] = useState([])
     const [recipeList, setRecipeList] = useState([])
     const [plantList, setPlantList] = useState([]);
+    const [tagList, setTagList] = useState([]);
     const [experimentReadingList, setExperimentReadingList] = useState([])
     const [podReadingList, setPodReadingList] = useState([])
 
-
-    //USED FOR ADDING A NEW DEVICE & EDITING A CURRENT ONE
-    const [device, setDevice] = useState({
-        add: true, 
-        show: false, 
-        id: -1, 
-        experiment: -1, 
-        recipe: -1,
-        name: null, 
-        mac_address: null
-    });
-
-    //USED FOR ADDING A NEW EXP
+    //USED FOR ADDING A NEW EXPERIMENT
     const [experiment, setExperiment] = useState({
+        add: true, 
+        show:false,
         id: null,
         name: null,
         device: null,
         device_name:null,
         pods: [],
         pod_selection: {},
+        tag_selection: {},
         start_date: todayDate,
         end_date: null,
         recipe: null,
@@ -209,6 +201,20 @@ const Experiment = () => {
         }
     }
 
+    /*
+    Input from: None
+    Outputs to: tagList
+    Created by: Kelvin F @ 10/19/2022
+    Last Edit: Kelvin F @ 10/19/2022
+    Purpose: get all tags
+    */
+    async function getTags() {
+        const result = await axios(`/api/tags/`).catch((err) => console.log(err))
+        if (result?.status === 200){
+            setTagList(result?.data)
+        }
+    }
+
 
     /*
     Input from: renderDevices
@@ -252,7 +258,7 @@ const Experiment = () => {
         getPods();
         getExperimentReadings();
         getPodReadings();
-
+        getTags();
     }, []); // run once after start
 
     useEffect(() => {
@@ -262,6 +268,15 @@ const Experiment = () => {
         setExperiment({...experiment, end_date: ed, phase: recipe?.phase1})
     }, [experiment.recipe, experiment.start_date])
 
+    /*
+    useEffect(() => {
+        console.log("")
+        console.log("P: ", selectedPod)
+        console.log("ER: ", selectedExperimentReading)
+        console.log("E: ",selectedExperiment)
+    }, [selectedPod, selectedExperimentReading, selectedExperiment])
+    */
+   
     /*
     Input from: None
     Outputs to: None
@@ -495,15 +510,11 @@ const Experiment = () => {
                         <div key={'free_' + item.id}  className="object_container">
                             <div className="object_top">
                                 <div className="object_description">
-                                  <div className="bold_font" >{item.name}<span className="blink_me" style={{ color: item.is_online ? 'green': 'red'}}>{"\u00a0"}●{"\u00a0"}</span></div>
-                                  <div className="object_hidden">
-                                            <div className="bold_font">ID: <span className="normal_font">{item.id}</span></div>
-                                            <div className="bold_font">MAC: <span className="normal_font">{item.mac_address.toUpperCase()}</span></div>
-                                    </div>
+                                  <div className="bold_font" >{item.name}<span className="blink_me" style={{ color: item.is_online ? 'green': 'red'}}>{"\u00a0"}●{"\u00a0"}</span> | <span className="normal_font">{item.id}</span> | <span className="normal_font">{item.mac_address.toUpperCase()}</span></div>
                                   {/* <div>Registered: { item.registration_date.substring(0, 10) }</div> */}
                                 </div>
                             </div>
-                            {item.is_online ? <div className= "empty_object" onClick={() => {setDevice({...device, show:true}); setExperiment({...experiment, device:item.id, device_name:item.name, start_date:todayDate});}}>  ADD EXPERIMENT</div> : <div className= "empty_object">DEVICE OFFLINE</div>}
+                            {item.is_online ? <div className= "empty_object" onClick={() => {setExperiment({...experiment, show:true, add:true, device:item.id, device_name:item.name, start_date:todayDate});}}>  ADD EXPERIMENT</div> : <div className= "empty_object">DEVICE OFFLINE</div>}
                            
                             <div className='object_actions'>
                                 <img className="menu_icon" src={menu_icon} alt="NO IMG!"/>
@@ -581,6 +592,28 @@ const Experiment = () => {
     }
 
     /*
+    Input from: tagList
+    Outputs to: renderExperimentModal()
+    Created by: Stella T 08/26/2022
+    Last Edit: Stella T 08/26/2022
+    Purpose: Renders a dropdown of tags, used to set a number of tags to be mentioned for an experiment
+    */
+    function renderTagSelection(){
+        return (
+            tagList.map(tag => (
+                <div onClick= {() => {
+                    if(experiment.tag_selection[tag.id]) {
+                        setExperiment({...experiment, tag_selection:{[tag.id]: null} });
+                    } else {
+                        setExperiment({...experiment, tag_selection:{[tag.id]: tag.name} })
+                    } 
+                    console.log(experiment.tag_selection)
+                }}> {tag.name} </div>
+            ))
+        )
+    }
+
+    /*
     Input from: experiment
     Outputs to: availableDevices, activeExperiments, experiment
     Created by: Stella T 08/26/2022
@@ -623,20 +656,17 @@ const Experiment = () => {
     */
     function renderExperimentModal(){
         return (
-            <Popup open={device.show} onClose={() => {setDevice({...device, show: false}); closeExperimentModal();} } modal nested>
+            <Popup open={experiment.show} onClose={() => closeExperimentModal() } modal nested>
                 {(close) => (
                 <div className="modal" onClick={close}>
                     <div className="modal_body"  onClick={e => e.stopPropagation()}>
                         <div className="modal_content">
                             <div> DEVICE {experiment.device_name} </div>
-                            <div className="form_row">
-                                <input name="name" value={experiment.name} placeholder = {"Experiment Name"} onChange={(e) => setExperiment({...experiment, name: e.target.value})} />
-                            </div>
-                            <div className="form_row">
-                                <input className="date_selection" type="date" name="start_date" value={experiment.start_date.toISOString().substring(0,10)} onChange={(e) => setExperiment({...experiment, start_date: e.target.value})} />
-                            </div>
+                            <input className="form_row" value={experiment.name} placeholder = {"Experiment Name"} onChange={(e) => setExperiment({...experiment, name: e.target.value})} />
+                            <input className="date_selection form_row" type="date" name="start_date" value={experiment.start_date.toISOString().substring(0,10)} onChange={(e) => setExperiment({...experiment, start_date: e.target.value})} />
                             <div className="form_row">{renderPodSelection()}</div>
                             <div className="form_row">{renderRecipeSelection()}</div>
+                            <div className="form_row">{renderTagSelection()}</div>
 
                             <button className='save' onClick={() => {
                                 submitExperimentModal(close);
@@ -658,7 +688,7 @@ const Experiment = () => {
     Purpose: Resets experiment's state upon closing the add experiment module (renderExperimentModal())
     */
     function closeExperimentModal(){
-        setExperiment({name: null, device: null, device_name: null, pods: [], start_date: todayDate, pod_selection: {}})
+        setExperiment({show: false, name: null, device: null, device_name: null, pods: [], start_date: todayDate, pod_selection: {}})
     }
 
 
@@ -744,7 +774,7 @@ const Experiment = () => {
     Outputs to: sendCommand()
     Created by: Stella T 08/26/2022
     Last Edit: Stella T 08/26/2022
-    Purpose: Renders the module to send MQTT commands to a given device. 
+    Purpose: Renders the module to send MQTT commands to a given device
     */
     function renderCommand(){
         return (
