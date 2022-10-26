@@ -60,8 +60,6 @@ const App = () => {
           console.log("FLAG: ", res.data.username)
           if(typeof res.data.username !== "undefined") {
             setAuth(res.data.username)
-          } else {
-            logout()
           }
         })
         .catch(res => {
