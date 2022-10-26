@@ -58,7 +58,9 @@ const App = () => {
         .post("/auth/token/")
         .then((res) => {
           console.log("FLAG: ", res.data.username)
-          setAuth(res.data.username)
+          if(typeof res.data.username !== "undefined") {
+            setAuth(res.data.username)
+          }
         })
         .catch(res => {
           return logout()

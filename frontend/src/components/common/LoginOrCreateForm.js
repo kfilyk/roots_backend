@@ -46,7 +46,7 @@ const LoginOrCreateForm = (props) => {
           .post("/auth/token/")
           .then(res => {
             console.log(res.data.username)
-            if (res.data.username && res.status === 200) {
+            if (typeof res.data.username !== "undefined" && res.status === 200) {
               window.location.replace("/"+res.data.username+"/experiments")
             }
           })
