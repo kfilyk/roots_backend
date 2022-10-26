@@ -122,7 +122,7 @@ const LoginOrCreateForm = (props) => {
     */
     function login(){
       const payload = { username: username, password: password } 
-
+      
       if (form) {
         payload.first_name = firstName
         payload.last_name = lastName

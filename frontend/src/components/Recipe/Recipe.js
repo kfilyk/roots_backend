@@ -1,14 +1,11 @@
-import React, { useState, useEffect, useContext} from 'react';
+import React, { useState, useEffect} from 'react';
 import axios from 'axios';
 import Popup from "reactjs-popup";
 import menu_icon from "../../img/menu_icon.png";
 import RecipeBar from "./RecipeBar";
-import UserContext from "../Dashboard";
 
 const RecipeList = () => {
 
-  const {selectedTab} = useContext(UserContext);
-  console.log(selectedTab)
   //List of all recipes
   const [recipeList, setRecipeList] = useState([]);
 
