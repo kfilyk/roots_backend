@@ -269,76 +269,76 @@ const ExperimentReading = (props) => {
         <>
         {props.selectedPod !== -1 ? 
             <div className='modal-pod-form'>
-                <div className="form_row" onClick={(e) => {e.currentTarget.firstChild.classList.toggle('selected'); setExperimentReadingModal({...experimentReadingModal, flushed_reservoir: !experimentReadingModal.flushed_reservoir})}}><button value= {experimentReadingModal.flushed_reservoir} className={experimentReadingModal.flushed_reservoir === true ? "selected": ""}/>Flushed Reservoir</div>
-                <div className="form_row" onClick={(e) => {e.currentTarget.firstChild.classList.toggle('selected'); setExperimentReadingModal({...experimentReadingModal, raised_light: !experimentReadingModal.raised_light})}}><button value= {experimentReadingModal.raised_light} className={experimentReadingModal.raised_light === true ? "selected": ""} />Raised Light</div>
-                <div className="form_row" onClick={(e) => {e.currentTarget.firstChild.classList.toggle('selected'); setExperimentReadingModal({...experimentReadingModal, failed_pump: !experimentReadingModal.failed_pump})}}><button value= {experimentReadingModal.failed_pump} className={experimentReadingModal.failed_pump === true ? "selected": ""} />Failed Pump</div>
-                <div className="form_row" onClick={(e) => {e.currentTarget.firstChild.classList.toggle('selected'); setPodReadingModal({...podReadingModal, removed_dome: !podReadingModal.removed_dome})}} ><button name="removed_dome" className={podReadingModal.removed_dome === true ? "selected": ""} />Removed Dome</div>
-                <div className="form_row" onClick={(e) => {e.currentTarget.firstChild.classList.toggle('selected'); setPodReadingModal({...podReadingModal, pollinated: !podReadingModal.pollinated})}}><button name="pollinated" className={podReadingModal.pollinated === true ? "selected": ""} />Pollinated</div>
-                <div className="form_row" onClick={(e) => {e.currentTarget.firstChild.classList.toggle('selected'); setPodReadingModal({...podReadingModal, trellis_adjustment: !podReadingModal.trellis_adjustment})}}><button name="trellis_adjustment" className={podReadingModal.trellis_adjustment === true ? "selected": ""} />Trellis Adjustment</div>
-                <div className="form_row" onClick={(e) => {e.currentTarget.firstChild.classList.toggle('selected'); setPodReadingModal({...podReadingModal, pest_removal: !podReadingModal.pest_removal})}}><button name="pest_removal" className={podReadingModal.pest_removal === true ? "selected": ""} />Pest Removal</div>
-                <div className="form_row" onClick={(e) => {e.currentTarget.firstChild.classList.toggle('selected'); setPodReadingModal({...podReadingModal, prune_thinned: !podReadingModal.prune_thinned})}}><button name="prune_thinned" className={podReadingModal.prune_thinned === true ? "selected": ""}/>Thinned</div>
-                <div className="form_row" onClick={(e) => {e.currentTarget.firstChild.classList.toggle('selected'); setPodReadingModal({...podReadingModal, prune_topped: !podReadingModal.prune_topped})}}><button name="prune_topped" className={podReadingModal.prune_topped === true ? "selected": ""}/>Topped</div>
-                <div className="form_row" onClick={(e) => {e.currentTarget.firstChild.classList.toggle('selected'); setPodReadingModal({...podReadingModal, prune_dead_foliage: !podReadingModal.prune_dead_foliage})}}><button name="prune_dead_foliage" className={podReadingModal.prune_dead_foliage === true ? "selected": ""} />Removed Dead Foliage</div>
-                <div className="form_row" onClick={(e) => {e.currentTarget.firstChild.classList.toggle('selected'); setPodReadingModal({...podReadingModal, prune_living_foliage: !podReadingModal.prune_living_foliage})}}><button name="prune_living_foliage" className={podReadingModal.prune_living_foliage === true ? "selected": ""} />Removed Living Foliage</div>
-                <div className="form_row" onClick={(e) => {e.currentTarget.firstChild.classList.toggle('selected'); setPodReadingModal({...podReadingModal, prune_dead_heading: !podReadingModal.prune_dead_heading})}}><button name="prune_dead_heading" className={podReadingModal.prune_dead_heading === true ? "selected": ""} />Dead Headed</div>
+                <div className="row" onClick={(e) => {e.currentTarget.firstChild.classList.toggle('selected'); setExperimentReadingModal({...experimentReadingModal, flushed_reservoir: !experimentReadingModal.flushed_reservoir})}}><button value= {experimentReadingModal.flushed_reservoir} className={experimentReadingModal.flushed_reservoir === true ? "selected": ""}/>Flushed Reservoir</div>
+                <div className="row" onClick={(e) => {e.currentTarget.firstChild.classList.toggle('selected'); setExperimentReadingModal({...experimentReadingModal, raised_light: !experimentReadingModal.raised_light})}}><button value= {experimentReadingModal.raised_light} className={experimentReadingModal.raised_light === true ? "selected": ""} />Raised Light</div>
+                <div className="row" onClick={(e) => {e.currentTarget.firstChild.classList.toggle('selected'); setExperimentReadingModal({...experimentReadingModal, failed_pump: !experimentReadingModal.failed_pump})}}><button value= {experimentReadingModal.failed_pump} className={experimentReadingModal.failed_pump === true ? "selected": ""} />Failed Pump</div>
+                <div className="row" onClick={(e) => {e.currentTarget.firstChild.classList.toggle('selected'); setPodReadingModal({...podReadingModal, removed_dome: !podReadingModal.removed_dome})}} ><button name="removed_dome" className={podReadingModal.removed_dome === true ? "selected": ""} />Removed Dome</div>
+                <div className="row" onClick={(e) => {e.currentTarget.firstChild.classList.toggle('selected'); setPodReadingModal({...podReadingModal, pollinated: !podReadingModal.pollinated})}}><button name="pollinated" className={podReadingModal.pollinated === true ? "selected": ""} />Pollinated</div>
+                <div className="row" onClick={(e) => {e.currentTarget.firstChild.classList.toggle('selected'); setPodReadingModal({...podReadingModal, trellis_adjustment: !podReadingModal.trellis_adjustment})}}><button name="trellis_adjustment" className={podReadingModal.trellis_adjustment === true ? "selected": ""} />Trellis Adjustment</div>
+                <div className="row" onClick={(e) => {e.currentTarget.firstChild.classList.toggle('selected'); setPodReadingModal({...podReadingModal, pest_removal: !podReadingModal.pest_removal})}}><button name="pest_removal" className={podReadingModal.pest_removal === true ? "selected": ""} />Pest Removal</div>
+                <div className="row" onClick={(e) => {e.currentTarget.firstChild.classList.toggle('selected'); setPodReadingModal({...podReadingModal, prune_thinned: !podReadingModal.prune_thinned})}}><button name="prune_thinned" className={podReadingModal.prune_thinned === true ? "selected": ""}/>Thinned</div>
+                <div className="row" onClick={(e) => {e.currentTarget.firstChild.classList.toggle('selected'); setPodReadingModal({...podReadingModal, prune_topped: !podReadingModal.prune_topped})}}><button name="prune_topped" className={podReadingModal.prune_topped === true ? "selected": ""}/>Topped</div>
+                <div className="row" onClick={(e) => {e.currentTarget.firstChild.classList.toggle('selected'); setPodReadingModal({...podReadingModal, prune_dead_foliage: !podReadingModal.prune_dead_foliage})}}><button name="prune_dead_foliage" className={podReadingModal.prune_dead_foliage === true ? "selected": ""} />Removed Dead Foliage</div>
+                <div className="row" onClick={(e) => {e.currentTarget.firstChild.classList.toggle('selected'); setPodReadingModal({...podReadingModal, prune_living_foliage: !podReadingModal.prune_living_foliage})}}><button name="prune_living_foliage" className={podReadingModal.prune_living_foliage === true ? "selected": ""} />Removed Living Foliage</div>
+                <div className="row" onClick={(e) => {e.currentTarget.firstChild.classList.toggle('selected'); setPodReadingModal({...podReadingModal, prune_dead_heading: !podReadingModal.prune_dead_heading})}}><button name="prune_dead_heading" className={podReadingModal.prune_dead_heading === true ? "selected": ""} />Dead Headed</div>
 
-                <div className="form_row">
+                <div className="row">
                     <input placeholder="Conductance"  type="number" value={experimentReadingModal.electrical_conductance} onChange={(e) => setExperimentReadingModal({...experimentReadingModal, electrical_conductance: e.target.value})} min={0} max={20}/>
                     <input placeholder="PH"  type="number" value={experimentReadingModal.reservoir_ph} onChange={(e) => setExperimentReadingModal({...experimentReadingModal, reservoir_ph: e.target.value})} min={0} max={14}/>
                 </div>
 
-                <div className="form_row">
+                <div className="row">
                     <input placeholder="Temperature (ºC)" type="number" value= {experimentReadingModal.temperature} onChange= {(e) => setExperimentReadingModal({...experimentReadingModal, temperature: e.target.value})} min={-100} max={100}/>
                     <input placeholder="Humidity (%)" type="number" value= {experimentReadingModal.humidity} onChange= {(e) => setExperimentReadingModal({...experimentReadingModal, humidity: e.target.value})} min={0} max={100}/>
                 </div>
 
-                <div className="form_row">
+                <div className="row">
                     <input placeholder="Node Count" type="number" value={podReadingModal.node_count} name={"node_count"} min={0} max={1000} onChange={(e) => setPodReadingModal({...podReadingModal, node_count: e.target.value})} />
                     <input placeholder="Internode Gap (cm)" type="number" value={podReadingModal.internode_distance} name={"internode_distance"} min={0} max={100} onChange={(e) => setPodReadingModal({...podReadingModal, internode_distance: e.target.value})} />
                 </div>
 
-                <div className="form_row">
+                <div className="row">
                     <input placeholder="Leaf Count" type="number" value={podReadingModal.leaf_count} name={"leaf_count"} min={0} max={10000} onChange={(e) => setPodReadingModal({...podReadingModal, leaf_count: e.target.value})} />
                     <input placeholder="Germination Rate (%)" type="number" value={podReadingModal.germination_rate} name={"germination_rate"} min={0} max={100} onChange={(e) => setPodReadingModal({...podReadingModal, germination_rate: e.target.value})} />
                 </div>
                 <div className='pr_coverage'>
-                    <label> Pest Coverage: {podReadingModal.pest_coverage}% </label>
+                    <label> Pest Coverage: {podReadingModal.pest_coverage || 0}% </label>
                     <input name="pest_coverage" value={podReadingModal.pest_coverage} type="range" min={0} max={100} onChange={(e) => setPodReadingModal({...podReadingModal, pest_coverage: e.target.value})} />
                 </div>
                 <div className='pr_coverage'>
-                    <label> Algae Coverage: {podReadingModal.algae_coverage}% </label>
+                    <label> Algae Coverage: {podReadingModal.algae_coverage || 0}% </label>
                     <input name="algae_coverage" value={podReadingModal.algae_coverage} type="range" min={0} max={100} onChange={(e) => setPodReadingModal({...podReadingModal, algae_coverage: e.target.value})} />
                 </div>
                 <div className='pr_coverage'>
-                    <label> Blight Coverage: {podReadingModal.blight_coverage}% </label>
+                    <label> Blight Coverage: {podReadingModal.blight_coverage || 0}% </label>
                     <input name="blight_coverage" value={podReadingModal.blight_coverage} type="range" min={0} max={100} onChange={(e) => setPodReadingModal({...podReadingModal, blight_coverage: e.target.value})} />
                 </div>
 
-                <div className="form_row">
+                <div className="row">
                     <input placeholder="Leaf Area (cm^2)" type="number" value={podReadingModal.leaf_area_avg} name={"leaf_area_avg"} min={0} max={100} onChange={(e) => setPodReadingModal({...podReadingModal, leaf_area_avg: e.target.value})} />
                     <input placeholder="Max Height (cm)" type="number" value={podReadingModal.max_height} name={"max_height"} min={0} max={10000} onChange={(e) => setPodReadingModal({...podReadingModal, max_height: e.target.value})} />
                 </div>
-                <div className="form_row">
+                <div className="row">
                     <input placeholder="Min Height (cm)" type="number" value={podReadingModal.min_height} name={"min_height"} min={0} max={10000} onChange={(e) => setPodReadingModal({...podReadingModal, min_height: e.target.value})} />
                     <input placeholder="Media to BGP (cm)" type="number" value={podReadingModal.media_to_bgp} name={"media_to_bgp"} min={0} max={100} onChange={(e) => setPodReadingModal({...podReadingModal, media_to_bgp: e.target.value})} />
                 </div>
 
-                <div className="form_row">
+                <div className="row">
                     <input placeholder="Bud Count" type="number" value={podReadingModal.bud_count} name={"bud_count"} min={0} max={10000} onChange={(e) => setPodReadingModal({...podReadingModal, bud_count: e.target.value})} />
                     <input placeholder="Flower Count" type="number" value={podReadingModal.flower_count} name={"flower_count"} min={0} max={10000} onChange={(e) => setPodReadingModal({...podReadingModal, flower_count: e.target.value})} />
                 </div>
 
-                <div className="form_row">
+                <div className="row">
                     <input placeholder="Unripe Fruit" type="number" value={podReadingModal.fruit_unripe_count} name={"fruit_unripe_count"} min={0} max={10000} onChange={(e) => setPodReadingModal({...podReadingModal, fruit_unripe_count: e.target.value})} />
                     <input placeholder="Ripe Fruit" type="number" value={podReadingModal.fruit_ripe_count} name={"fruit_ripe_count"} min={0} max={10000} onChange={(e) => setPodReadingModal({...podReadingModal, fruit_ripe_count: e.target.value})} />
                 </div>
 
-                <div className="form_row">
+                <div className="row">
                     <input placeholder="Harvest Weight (g)" type="number" value={podReadingModal.harvest_weight} name={"harvest_weight"} min={0} max={1000000} onChange={(e) => setPodReadingModal({...podReadingModal, harvest_weight: e.target.value})} />
                     <input placeholder="Harvest Count" type="number" value={podReadingModal.harvest_count} name={"harvest_count"} min={0} max={10000} onChange={(e) => setPodReadingModal({...podReadingModal, harvest_count: e.target.value})} />
                 </div>
 
-                <input className ="form_row pr_comment" placeholder="[comment]" type="text" value={podReadingModal.comment !== null ? podReadingModal.comment : ""} onChange={(e) => setPodReadingModal({...podReadingModal, comment: e.target.value})}/>
+                <input className ="row pr_comment" placeholder="[comment]" type="text" value={podReadingModal.comment !== null ? podReadingModal.comment : ""} onChange={(e) => setPodReadingModal({...podReadingModal, comment: e.target.value})}/>
                 <input type="file" style={{"display":"none"}} ref={img_upload} onChange={(e) => setPodReadingModal(prevState => ({...prevState, selected_images:e.target.files}))} multiple/>
                 <button onClick={() => {img_upload.current.click()}}>{podReadingModal.image_link_1 ? podReadingModal.image_link_1 : (podReadingModal.selected_images === null ? "Upload Images... " : "Upload "+ podReadingModal.selected_images[0].name+ ", ...") }</button>
                 <button className='save' onClick={() => {submitExperimentReading(); closeExperimentReading();}}>Save</button>

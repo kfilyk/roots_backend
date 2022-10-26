@@ -19,7 +19,8 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.permissions import IsAuthenticated 
 from django.db.models import F, Q
-from rest_framework.decorators import action
+from rest_framework.decorators import action, parser_classes
+from rest_framework.parsers import JSONParser, MultiPartParser, FormParser, FileUploadParser
 from django.http import HttpResponse, JsonResponse
 from datetime import datetime
 from django.utils.timezone import make_aware
@@ -383,7 +384,7 @@ class PodView(viewsets.ModelViewSet):
 class PodReadingView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
     serializer_class = PodReadingSerializer
-    
+
     def get_queryset(self):
         return PodReading.objects.all().annotate(reading_date=F('experiment_reading__reading_date'))
 
@@ -404,18 +405,14 @@ class PodReadingView(viewsets.ModelViewSet):
             return JsonResponse(list(pr.values())[0], safe=False)    
         return JsonResponse({}, safe=False)
 
-    @action(detail=False, methods=["post"], name='upload_image')
+    @action(detail=False, methods=["post"], name='upload_image', parser_classes=[MultiPartParser, FormParser])
     def upload_image(self, request):
         s3 = boto3.client("s3")
         try:
-            print("DIR REQUEST: ", dir(request))
-            print("CONTENT TYPE: ", request.content_type)
-            print("AUTHENTICATORS: ", request.authenticators)
-            print("DATA: ", request.data)
-
             s3.upload_fileobj(request.data['file'], "ava-cv-raw-photo-bucket", request.data['key'])
-        except:
-            print("ERROR UPLOADING FILE")
+
+        except Exception as e:
+            print("ERROR UPLOADING FILE: ", e)
         return JsonResponse({"status":"200"}, safe=False)
 
 class RecipeView(viewsets.ModelViewSet):

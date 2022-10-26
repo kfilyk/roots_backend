@@ -1,10 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext} from 'react';
 import axios from 'axios';
 import Popup from "reactjs-popup";
-import menu_icon from "../../img/menu_icon.png"
-import RecipeBar from "./RecipeBar"
+import menu_icon from "../../img/menu_icon.png";
+import RecipeBar from "./RecipeBar";
+import UserContext from "../Dashboard";
 
 const RecipeList = () => {
+
+  const {selectedTab} = useContext(UserContext);
+  console.log(selectedTab)
   //List of all recipes
   const [recipeList, setRecipeList] = useState([]);
 
@@ -260,7 +264,7 @@ const RecipeList = () => {
       // only render the next phase selection form if the previous one has been given a specified type
       if(i===1 || recipeModal['phase'+(i-1)].type !== "") {
         phase_selection.push(
-          <button key={i} className={i===1 ? 'form_row phase_selection selected': 'form_row phase_selection'} onClick={(e) => changePhaseFocus(e, i) }>{recipeModal['phase'+i].type ? recipeModal['phase'+i].type : "New Phase..." }</button>
+          <button key={i} className={i===1 ? 'row phase_selection selected': 'row phase_selection'} onClick={(e) => changePhaseFocus(e, i) }>{recipeModal['phase'+i].type ? recipeModal['phase'+i].type : "New Phase..." }</button>
         )
       } else {
         // when phase is deleted, if selectedPhase is
@@ -279,8 +283,8 @@ const RecipeList = () => {
   */
   function renderPhaseModal(){
     return (
-      <div className="modal_content">
-          <div className="form_row"><select value={phaseModal.type} onChange={(e) => setPhaseModal({...phaseModal, type: e.target.value})} >
+      <>
+          <div className="row"><select value={phaseModal.type} onChange={(e) => setPhaseModal({...phaseModal, type: e.target.value})} >
             <option value=""></option>
             <option value="Germination">Germination</option>
             <option value="Seedling">Seedling</option>
@@ -289,23 +293,23 @@ const RecipeList = () => {
             <option value="Harvest">Harvest</option>
             <option value="Other">Other</option>
           </select>Phase </div>
-          <div className="form_row"><input className="phase-modal-numerical-input" value={phaseModal.days} min="1" step="1" type="number" onKeyPress= {(e) => {if(e.charCode === 45) {e.preventDefault()}}} onChange={(e) => setPhaseModal({...phaseModal, days: e.target.value})} /> Days</div>
-          <div className="form_row"><input className="phase-modal-numerical-input" value={phaseModal.waterings_per_day} min="0" step="1" type="number" onKeyPress= {(e) => {if(e.charCode === 45) {e.preventDefault()}}} onChange={(e) => setPhaseModal({...phaseModal, waterings_per_day: e.target.value})} /> Waterings Per Day</div>
-          <div className="form_row"><input className="phase-modal-numerical-input" value={phaseModal.watering_duration} min="0" step="1" type="number" onKeyPress= {(e) => {if(e.charCode === 45) {e.preventDefault()}}} onChange={(e) => setPhaseModal({...phaseModal, watering_duration: e.target.value})} /> Watering Duration (Min)</div>
-          <div className="form_row"><input className="phase-modal-numerical-input" value={phaseModal.lights_on_hours} min="0" step="1" type="number" onKeyPress= {(e) => {if(e.charCode === 45) {e.preventDefault()}}} onChange={(e) => setPhaseModal({...phaseModal, lights_on_hours: e.target.value})} />Lights On Hours</div>
-          <div className="form_row">
+          <div className="row"><input className="phase-modal-numerical-input" value={phaseModal.days} min="1" step="1" type="number" onKeyPress= {(e) => {if(e.charCode === 45) {e.preventDefault()}}} onChange={(e) => setPhaseModal({...phaseModal, days: e.target.value})} /> Days</div>
+          <div className="row"><input className="phase-modal-numerical-input" value={phaseModal.waterings_per_day} min="0" step="1" type="number" onKeyPress= {(e) => {if(e.charCode === 45) {e.preventDefault()}}} onChange={(e) => setPhaseModal({...phaseModal, waterings_per_day: e.target.value})} /> Waterings Per Day</div>
+          <div className="row"><input className="phase-modal-numerical-input" value={phaseModal.watering_duration} min="0" step="1" type="number" onKeyPress= {(e) => {if(e.charCode === 45) {e.preventDefault()}}} onChange={(e) => setPhaseModal({...phaseModal, watering_duration: e.target.value})} /> Watering Duration (Min)</div>
+          <div className="row"><input className="phase-modal-numerical-input" value={phaseModal.lights_on_hours} min="0" step="1" type="number" onKeyPress= {(e) => {if(e.charCode === 45) {e.preventDefault()}}} onChange={(e) => setPhaseModal({...phaseModal, lights_on_hours: e.target.value})} />Lights On Hours</div>
+          <div className="row">
             <input value={phaseModal.blue_intensity} id="blue_intensity_slider" className="slider" type="range" min={0} max={99} onChange={(e) => setPhaseModal({...phaseModal, blue_intensity: e.target.value})}/>
             <div className='intensity_text_overlay'>{phaseModal.blue_intensity}</div>
           </div>
-          <div className="form_row">
+          <div className="row">
             <input value={phaseModal.red_intensity} id="red_intensity_slider" className="slider" type="range" min={0} max={99} onChange={(e) => setPhaseModal({...phaseModal, red_intensity: e.target.value})} />
             <div className='intensity_text_overlay'>{phaseModal.red_intensity}</div>
           </div>                    
-          <div className="form_row">
+          <div className="row">
             <input value={phaseModal.white_intensity}  id="white_intensity_slider" className="slider" type="range" min={0} max={99} onChange={(e) => setPhaseModal({...phaseModal, white_intensity: e.target.value})} />
             <div className='intensity_text_overlay'>{phaseModal.white_intensity}</div>
           </div>   
-      </div>
+      </>
     )
   }
 
@@ -322,22 +326,20 @@ const RecipeList = () => {
       <Popup open={recipeModal.show} onClose={() => closeModal()} modal nested>
             {(close) => (
             <div className="modal" onClick={close}>
-              <div className="modal_body" onClick={e => e.stopPropagation()}>
-                <div className="modal_content">     
-                  <div className="form_row">
-                    <div className='create-recipe-left'>
-                      <div className="form_row">
+              <div className="modal-body" onClick={e => e.stopPropagation()}>
+                  <div className="row">
+                    <div className='modal-left'>
+                      <div className="row">
                         { recipeModal.add === true ? "Create " : "Edit " }
                         <input name="name" size="12" value={recipeModal.name || ""} placeholder="Recipe Name" onChange={(e) => setRecipeModal({...recipeModal, name: e.target.value})} />
                       </div>
                       {renderPhaseSelection()}
                     </div>
-                    <div className='create-phase-right'>
+                    <div className='modal-right'>
                       {renderPhaseModal()}
                     </div>
                   </div>
                   <button className='save' onClick={() => {submitRecipeModal(close)}}>Save</button>
-                </div>
               </div>
             </div>
             )}
@@ -396,11 +398,9 @@ const RecipeList = () => {
       <Popup open={recipeJSON.show} onClose={() => setRecipeJSON({...recipeJSON, show: false})} modal nested>
             {(close) => (
             <div className="modal" onClick={close}>
-                <div className="modal_body" onClick={e => e.stopPropagation()}>
-                <div className="modal_content">
+              <div className="modal-body" onClick={e => e.stopPropagation()}>
                   <pre>{JSON.stringify(recipeJSON.json, null, 2) }</pre>
                   <button className='save' onClick={() => {navigator.clipboard.writeText(JSON.stringify(recipeJSON.json))}}>COPY</button>
-                </div>
               </div>
             </div>
             )}

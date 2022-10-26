@@ -32,7 +32,7 @@ const App = () => {
     axios.defaults.baseURL = 'http://127.0.0.1:8000'; // use this to run locally
     //axios.defaults.baseURL = 'https://avaroots.io:8000'; // use this to run on EC2
     axios.defaults.timeout = 10000;
-    authenicate_user()
+    authenticate_user()
   }, []);
 
   function logout(){
@@ -47,8 +47,9 @@ const App = () => {
     }
   }
 
-  function authenicate_user() {
+  function authenticate_user() {
     if (window.localStorage.getItem("token")) {
+      console.log("FLAG AUTH: ", auth)
 
       // if a token is found, set the authorization and attempt to validate it against the server
       axios.defaults.headers.common.Authorization = `Token ${window.localStorage.getItem("token")}`;

@@ -95,19 +95,17 @@ const PlantList = () => {
       <Popup open={plantModal.show} onClose={() => {setPlantModal(initPlantModal)}} modal nested>
             {(close) => (
             <div className="modal" onClick={close}>
-              <div className="modal_body"  onClick={e => e.stopPropagation()}>
-                <div className="modal_content">
-                  <input className="form_row" value={plantModal.name}  placeholder={"Plant Name"} onChange={(e) => setPlantModal({...plantModal, name: e.target.value})} />
-                  <input className="form_row" value={plantModal.species}  placeholder={"Species"} onChange={(e) => setPlantModal({...plantModal, name: e.target.value})} />
-                  <input className="form_row" value={plantModal.profile} placeholder={"Profile"} onChange={(e) => setPlantModal({...plantModal, profile: e.target.value})} />
-                  <input className="form_row" value={plantModal.growing_tips} placeholder={"Growing Tips"} onChange={(e) => setPlantModal({...plantModal, growing_tips: e.target.value})} />
-                  <input className="form_row" value={plantModal.harvesting_tips} placeholder={"Harvesting Tips"} onChange={(e) => setPlantModal({...plantModal, harvesting_tips: e.target.value})} />
+              <div className="modal-body"  onClick={e => e.stopPropagation()}>
+                  <input className="row" value={plantModal.name}  placeholder={"Plant Name"} onChange={(e) => setPlantModal({...plantModal, name: e.target.value})} />
+                  <input className="row" value={plantModal.species}  placeholder={"Species"} onChange={(e) => setPlantModal({...plantModal, name: e.target.value})} />
+                  <input className="row" value={plantModal.profile} placeholder={"Profile"} onChange={(e) => setPlantModal({...plantModal, profile: e.target.value})} />
+                  <input className="row" value={plantModal.growing_tips} placeholder={"Growing Tips"} onChange={(e) => setPlantModal({...plantModal, growing_tips: e.target.value})} />
+                  <input className="row" value={plantModal.harvesting_tips} placeholder={"Harvesting Tips"} onChange={(e) => setPlantModal({...plantModal, harvesting_tips: e.target.value})} />
                   <button className='save' onClick={() => {
                       submitPlantModal()
                       close();
                     }}>Save
                   </button>
-                </div>
                 </div>
               </div>
             )}
