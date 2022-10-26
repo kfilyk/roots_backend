@@ -9,6 +9,8 @@ import './analysis.css';
 const Analysis = () => {
   const [erList, setExperimentReadingList] = useState([]);
   const [prList, setPodReadingList] = useState([]);
+  const [podData, setPodData] = useState([]);
+  const [plantData, setPlantData] = useState([]);
 
   /* this probably doesnt work when making a real stats dashboard since it needs to be dynamic */
   /* for germination count bar graph */
@@ -16,10 +18,8 @@ const Analysis = () => {
   const [labels, setLabels] = useState([]);
   const [dome, setDome] = useState([]);
   const [dates, setDates] = useState([]);
-  const [podData, setPodData] = useState([]);
   const [heightData, setHeightData] = useState([]);
   const [experimentData, setExperimentData] = useState([]);
-  const [plantData, setPlantData] = useState([]);
   const [speciesData, setSpeciesData] = useState([]);
   
   // LOOK IN "urls.py":  /api/plants/, /api/pods/, etc...
@@ -60,28 +60,29 @@ const Analysis = () => {
     setPodData(result.data)
   }
 
+  
   /* Trying to get the last height measurement */
+  /*
   async function getAllGraphData() {
     const maxHeight = podData.pods[0].reading.at(-1)//[1]//['reading'][-1]
 
     setHeightData(maxHeight)
   }
-
+  */
   async function getGerminationCount() {
     const result = prList.map(a => a.germination_rate);
     const labels = prList.map(b => b.id);
     setGerminationCount(result)
     setLabels(labels);
   };
-  
+  /*
   async function getDomeRemoval() {
     const result = prList.map(a => Number(a.removed_dome));
     const labels = prList.map(b => b.reading_date.split('T')[0]);
     setDome(result);
     setDates(labels);
   }
-
-//  async function 
+  */ 
 
   /* [] : indicates that this runs ONCE at the start of render */
   /* Retrieves all the experiment/pod readings*/
@@ -89,16 +90,17 @@ const Analysis = () => {
     fetchExperimentReadings();
     fetchPodReadings();
     fetchAllPodData(80);
-    fetchExperiments()
-    fetchPlant()
-    getPlantSpecies(plantData)
+    fetchExperiments();
+    fetchPlant();
   }, []);
 
+  /* This runs every time prList and podData changes */
   useEffect(() => {
     getGerminationCount();
-    getDomeRemoval();
-    getAllGraphData();
-  }, [prList, podData]);
+    getPlantSpecies(plantData);
+    //getDomeRemoval();
+    //getAllGraphData();
+  }, [prList, erList, plantData, podData]);
 
   const germData = {
     labels,
@@ -129,11 +131,12 @@ const domeData = {
 }
 
 async function getPlantSpecies(plant) {
-  const species = []
-  for (let i = 0; i < plant.length(); i++) {
+  const species = [];
+  for (let i = 0; i < plant.length; i++) {
     species.push(plant[i]['species']);
   }
-  setSpeciesData(species)
+  
+  setSpeciesData([...new Set(species)])
 }
 
 /*@@@@@@@@@@@@@@*/
@@ -142,7 +145,7 @@ async function getPlantSpecies(plant) {
     <div className='darryl-class'>
       <h4>testtest</h4>
       {JSON.stringify(speciesData)}
-      {JSON.stringify(plantData[0]['species'])}
+      {JSON.stringify(plantData[0])}
       <h3>Plant Data</h3>
       
       {JSON.stringify(plantData)}
@@ -150,6 +153,7 @@ async function getPlantSpecies(plant) {
       <h3>Experiment Data</h3>
       {JSON.stringify(experimentData)}
 
+<h1>graphs</h1>
     <Line data={domeData}
     options={{
       scales:{
@@ -189,7 +193,6 @@ async function getPlantSpecies(plant) {
 
 
 
-      <h1>@Functioning Bar Graph@</h1>
       <Bar data={germData} 
       options={{
         scales: {
