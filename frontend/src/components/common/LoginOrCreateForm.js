@@ -48,6 +48,9 @@ const LoginOrCreateForm = (props) => {
             console.log(res.data.username)
             if (typeof res.data.username !== "undefined" && res.status === 200) {
               window.location.replace("/"+res.data.username+"/experiments")
+            } else {
+              localStorage.removeItem('token');
+              window.location.replace("/")
             }
           })
           .catch(res => console.log(res));

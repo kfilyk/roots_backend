@@ -56,15 +56,17 @@ const App = () => {
       axios
         .post("/auth/token/")
         .then((res) => {
-          console.log(res.data.username)
+          console.log("USERNAME: ", res.data.username)
           if(typeof(res.data.username) !== "undefined") {
             setAuth(res.data.username)
           } else {
-            logout()
+            localStorage.removeItem('token');
+            window.location.replace("/")
           }
         })
         .catch(res => {
-          return logout()
+          localStorage.removeItem('token');
+          window.location.replace("/")
         });
     } else if(window.location.pathname !== "/"){
       //NO LOCAL STORAGE TOKEN?? BOOTED OUT.
