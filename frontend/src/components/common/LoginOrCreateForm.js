@@ -45,8 +45,8 @@ const LoginOrCreateForm = (props) => {
         axios
           .post("/auth/token/")
           .then(res => {
-            console.log(res)
-            if (res.status === 200) {
+            console.log(res.data.username)
+            if (res.data.username && res.status === 200) {
               window.location.replace("/"+res.data.username+"/experiments")
             }
           })

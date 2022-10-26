@@ -49,6 +49,7 @@ const App = () => {
 
   function authenicate_user() {
     if (window.localStorage.getItem("token")) {
+      console.log("FLAG")
 
       // if a token is found, set the authorization and attempt to validate it against the server
       axios.defaults.headers.common.Authorization = `Token ${window.localStorage.getItem("token")}`;
@@ -56,6 +57,7 @@ const App = () => {
       axios
         .post("/auth/token/")
         .then((res) => {
+          console.log("FLAG: ", res.data.username)
           setAuth(res.data.username)
         })
         .catch(res => {

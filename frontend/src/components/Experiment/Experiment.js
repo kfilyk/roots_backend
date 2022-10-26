@@ -14,6 +14,9 @@ terminateExperiment()
 let todayDate = new Date();
 
 const Experiment = () => {
+    const [selectedDeviceStatus, setSelectedDeviceStatus] = useState("active");
+    const [search, setSearch] = useState("");
+
     /*
     TWO DEVICE STATES:
         Active - Active devices with a experiment loaded
@@ -23,9 +26,7 @@ const Experiment = () => {
     const [activeExperiments, setActiveExperiments] = useState([]); // list of device objects
     const [availableDevices, setAvailableDevices] = useState([]); // list of device objects
     const [completedExperiments, setCompletedExperiments] = useState([]);
-    const [selectedDeviceStatus, setSelectedDeviceStatus] = useState("active");
 
-    const [search, setSearch] = useState("");
     
     //LISTS OF ALL PHASES, RECIPES, PLANTS, EXPERIMENT READINGS, PODS
     const [podList, setPodList] = useState([])
@@ -241,6 +242,7 @@ const Experiment = () => {
       await axios.post(`/api/experiments/delete/`, {id: id});
       getCompletedExperiments()
   }
+
     /*
     Input from: None
     Outputs to: activeExperiments, availableDevices, phaseList, recipeList, plantList
@@ -268,15 +270,15 @@ const Experiment = () => {
         setExperiment({...experiment, end_date: ed, phase: recipe?.phase1})
     }, [experiment.recipe, experiment.start_date])
 
-    /*
+
     useEffect(() => {
         console.log("")
         console.log("P: ", selectedPod)
         console.log("ER: ", selectedExperimentReading)
         console.log("E: ",selectedExperiment)
     }, [selectedPod, selectedExperimentReading, selectedExperiment])
-    */
-   
+
+
     /*
     Input from: None
     Outputs to: None
@@ -659,20 +661,18 @@ const Experiment = () => {
             <Popup open={experiment.show} onClose={() => closeExperimentModal() } modal nested>
                 {(close) => (
                 <div className="modal" onClick={close}>
-                    <div className="modal_body"  onClick={e => e.stopPropagation()}>
-                        <div className="modal_content">
-                            <div> DEVICE {experiment.device_name} </div>
-                            <input className="form_row" value={experiment.name} placeholder = {"Experiment Name"} onChange={(e) => setExperiment({...experiment, name: e.target.value})} />
-                            <input className="date_selection form_row" type="date" name="start_date" value={experiment.start_date.toISOString().substring(0,10)} onChange={(e) => setExperiment({...experiment, start_date: e.target.value})} />
-                            <div className="form_row">{renderPodSelection()}</div>
-                            <div className="form_row">{renderRecipeSelection()}</div>
-                            <div className="form_row">{renderTagSelection()}</div>
+                    <div className="modal-body"  onClick={e => e.stopPropagation()}>
+                        <div> DEVICE {experiment.device_name} </div>
+                        <input className="row" value={experiment.name} placeholder = {"Experiment Name"} onChange={(e) => setExperiment({...experiment, name: e.target.value})} />
+                        <input className="date_selection row" type="date" name="start_date" value={experiment.start_date.toISOString().substring(0,10)} onChange={(e) => setExperiment({...experiment, start_date: e.target.value})} />
+                        <div className="row">{renderPodSelection()}</div>
+                        <div className="row">{renderRecipeSelection()}</div>
+                        <div className="row">{renderTagSelection()}</div>
 
-                            <button className='save' onClick={() => {
-                                submitExperimentModal(close);
-                            }}>Save</button>
+                        <button className='save' onClick={() => {
+                            submitExperimentModal(close);
+                        }}>Save</button>
 
-                        </div>
                     </div>
                 </div>
                 )}
@@ -781,15 +781,14 @@ const Experiment = () => {
             <Popup open={command.show} onClose={() => set_command({...command, response: {}, show: false})} modal nested>
                 {(close) => (
                 <div className="modal" onClick={close}>
-                    <div className="modal_body"  onClick={e => e.stopPropagation()}>
-                        <div className="modal_content">
+                    <div className="modal-body"  onClick={e => e.stopPropagation()}>
                             <div style={{width: 'max-content'}}>     
                                 
                             </div>
-                            <div className="form_row">
+                            <div className="row">
                                 Device ID: {command.device + " | "+ command.device_name}
                             </div>
-                            <div className="form_row">
+                            <div className="row">
                                 <select value={command.id} onChange={(e) => set_command({...command, id: e.target.value})} >
                                     <option value="0">Get Device State</option>
                                     {/* <option value="1">Get Device Logs</option> */}
@@ -810,7 +809,6 @@ const Experiment = () => {
                                 // close()
                             }}>Send Command</button>
                         </div>
-                    </div>
                 </div>
                 )}
             </Popup>
