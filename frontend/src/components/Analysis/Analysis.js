@@ -94,7 +94,7 @@ const Analysis = () => {
     fetchPlant();
   }, []);
 
-  /* This runs every time prList and podData changes */
+  /* This runs every time prList, erList, plantData, podData changes */
   useEffect(() => {
     getGerminationCount();
     getPlantSpecies(plantData);
@@ -130,13 +130,24 @@ const domeData = {
   ]
 }
 
+//Get plant type species
 async function getPlantSpecies(plant) {
   const species = [];
   for (let i = 0; i < plant.length; i++) {
     species.push(plant[i]['species']);
   }
+  //To get unique/non null values and sort alphabetically
+  setSpeciesData([...new Set(species.sort().filter(Boolean))])
+}
+
+/* set buttons */
+function plantButtons() {
+  let buttons = [];
+  for (let i = 0; i < speciesData.length; i++) {
+    buttons.push(<button>{speciesData[i]}</button>)
+  }
+  return buttons;
   
-  setSpeciesData([...new Set(species)])
 }
 
 /*@@@@@@@@@@@@@@*/
@@ -145,7 +156,7 @@ async function getPlantSpecies(plant) {
     <div className='darryl-class'>
       <h4>testtest</h4>
       {JSON.stringify(speciesData)}
-      {JSON.stringify(plantData[0])}
+      {plantButtons()}
       <h3>Plant Data</h3>
       
       {JSON.stringify(plantData)}
