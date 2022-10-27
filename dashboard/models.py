@@ -50,7 +50,7 @@ class Experiment(models.Model):
     id = models.AutoField(db_column='e_id', primary_key=True)  
     name = models.CharField(db_column='e_name', max_length=128, blank=True, null=True)
     description = models.CharField(db_column='e_description', max_length=1024, blank=True, null=True)
-    tags = models.ManyToManyField(Tag)
+    tags = models.ManyToManyField(Tag, blank= True)
     day = models.IntegerField(db_column='e_day', default = 0) 
     phase = models.ForeignKey("Phase", models.DO_NOTHING, related_name='+', db_column='e_phase_id',blank=True, null=True) # germination, seedling, vegetative growth, flowering, fruiting, other1, terminated, complete
     phase_day = models.IntegerField(db_column='e_phase_day', default = 0) 

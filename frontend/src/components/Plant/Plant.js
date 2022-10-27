@@ -50,6 +50,7 @@ const PlantList = () => {
         return
       } else {
         if(plantModal.add){
+          console.log(plantModal)
           const result = await axios.post(`/api/plants/`, plantModal).catch((err) => console.log(err));
           if(result.status === 200) {
             setPlantList(plant_list => [result.data, ...plant_list])
@@ -97,7 +98,7 @@ const PlantList = () => {
             <div className="modal" onClick={close}>
               <div className="modal-body"  onClick={e => e.stopPropagation()}>
                   <input className="row" value={plantModal.name}  placeholder={"Plant Name"} onChange={(e) => setPlantModal({...plantModal, name: e.target.value})} />
-                  <input className="row" value={plantModal.species}  placeholder={"Species"} onChange={(e) => setPlantModal({...plantModal, name: e.target.value})} />
+                  <input className="row" value={plantModal.species}  placeholder={"Species"} onChange={(e) => setPlantModal({...plantModal, species: e.target.value})} />
                   <input className="row" value={plantModal.profile} placeholder={"Profile"} onChange={(e) => setPlantModal({...plantModal, profile: e.target.value})} />
                   <input className="row" value={plantModal.growing_tips} placeholder={"Growing Tips"} onChange={(e) => setPlantModal({...plantModal, growing_tips: e.target.value})} />
                   <input className="row" value={plantModal.harvesting_tips} placeholder={"Harvesting Tips"} onChange={(e) => setPlantModal({...plantModal, harvesting_tips: e.target.value})} />

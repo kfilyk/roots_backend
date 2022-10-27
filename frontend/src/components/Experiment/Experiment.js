@@ -47,7 +47,7 @@ const Experiment = () => {
         device_name:null,
         pods: [],
         pod_selection: {},
-        tag_selection: {},
+        //tag_selection: {},
         start_date: todayDate,
         end_date: null,
         recipe: null,
@@ -600,6 +600,7 @@ const Experiment = () => {
     Last Edit: Stella T 08/26/2022
     Purpose: Renders a dropdown of tags, used to set a number of tags to be mentioned for an experiment
     */
+   /*
     function renderTagSelection(){
         return (
             tagList.map(tag => (
@@ -614,6 +615,7 @@ const Experiment = () => {
             ))
         )
     }
+    */
 
     /*
     Input from: experiment
@@ -622,30 +624,20 @@ const Experiment = () => {
     Last Edit: Stella T 08/26/2022
     Purpose: Makes API call to create an experiment and change the recipe on the device running the experiment
     */
-    function submitExperimentModal(close){
+    async function submitExperimentModal(close){
         if (experiment.name === null || experiment.name === ""){
           alert("Experiment name cannot be null.")
           return
         }
-        console.log(experiment)
         
-        axios.post(`/api/experiments/`, 
-          { 
-            name: experiment.name,
-            device: experiment.device,
-            phase: experiment.phase,
-            pod_selection: experiment.pod_selection,
-            start_date: experiment.start_date,
-            end_date: experiment.end_date,
-            recipe: experiment.recipe
-          })
+        await axios.post(`/api/experiments/`, experiment)
         .then(res => {
             updateDevice();
             getAvailableDevices();
             getActiveExperiments();
+            getPods();
         })
         .catch((err) => console.log(err));
-        
         close();
     }
 
@@ -667,7 +659,7 @@ const Experiment = () => {
                         <input className="date_selection row" type="date" name="start_date" value={experiment.start_date.toISOString().substring(0,10)} onChange={(e) => setExperiment({...experiment, start_date: e.target.value})} />
                         <div className="row">{renderPodSelection()}</div>
                         <div className="row">{renderRecipeSelection()}</div>
-                        <div className="row">{renderTagSelection()}</div>
+                        {/*<div className="row">{renderTagSelection()}</div>*/}
 
                         <button className='save' onClick={() => {
                             submitExperimentModal(close);
