@@ -261,7 +261,7 @@ const Dashboard = (props) => {
   Purpose: The container rendering all the components on the page. 
   */
   return (
-    <UserContext.Provider context = {{ selectedTab, activeExperiments,}}>
+    <UserContext.Provider value = {{ selectedTab, activeExperiments,}}>
       <main className="container">
         <div className="header">
           <h1 className="title"><img src={roots_logo} style={{width:'25px', marginRight:'10px', marginBottom:'8px',verticalAlign:'middle'}} alt=""/>R.O.O.T.S.</h1>

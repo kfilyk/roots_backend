@@ -48,6 +48,9 @@ const LoginOrCreateForm = (props) => {
             console.log(res.data.username)
             if (typeof res.data.username !== "undefined" && res.status === 200) {
               window.location.replace("/"+res.data.username+"/experiments")
+            } else {
+              localStorage.removeItem('token');
+              window.location.replace("/")
             }
           })
           .catch(res => console.log(res));
@@ -122,7 +125,7 @@ const LoginOrCreateForm = (props) => {
     */
     function login(){
       const payload = { username: username, password: password } 
-
+      
       if (form) {
         payload.first_name = firstName
         payload.last_name = lastName

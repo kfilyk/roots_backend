@@ -169,6 +169,35 @@ class ExperimentView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,) 
     serializer_class = ExperimentSerializer
 
+    def create(self, request, *args, **kwargs):
+        experiments = Experiment.objects.all()
+        e_id = 1
+        while(experiments.filter(id = e_id)):
+            e_id = e_id+1
+        #print(dir(request))
+        request.data['id'] = e_id
+        #print(request.data)
+        del request.data['device_name']
+        del request.data['show']
+        del request.data['add']
+        print(request._full_data)
+
+
+        try:
+            experiment_id = super().create(request, *args, **kwargs).data['id']
+        except Exception as e:
+            print("ERROR: ", e)
+        print("EXPERIMENT ID: ", experiment_id)
+        experiment = Experiment.objects.get(id=experiment_id)
+
+        # now create new pods
+        pod_selection = request.data['pod_selection']
+        phase = 0
+        for p in pod_selection:
+            Pod.objects.create(start_date=request.data['start_date'], end_date=request.data['end_date'], phase=phase, position=p, plant=Plant.objects.get(id=pod_selection[p]), experiment=experiment)
+
+        return JsonResponse(model_to_dict(experiment), safe=False) 
+
     """
     Input from: ExperimentView.py/create()
     Outputs to: ExperimentView.py/create()
@@ -176,9 +205,10 @@ class ExperimentView(viewsets.ModelViewSet):
     Last Edit: Stella T 08/30/2022
     Purpose: perform_create is called within the create method to call the serializer for creation once it's known the serialization is valid
     """
+    '''
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
-
+    '''
     """
     Input from: Experiment.js/addExperiment()
     Outputs to: Experiment.js/addExperiment()
@@ -186,10 +216,18 @@ class ExperimentView(viewsets.ModelViewSet):
     Last Edit: Stella T 08/30/2022
     Purpose: Creates an experiment object in the database, including the user who created it
     """
+    '''
     def create(self, request, *args, **kwargs):
-        exp_id = super().create(request, *args, **kwargs).data['id']
+        print(request.data)
+
+
+
+        exp_id = super().perform_create(request, *args, **kwargs).data['id']
+        print("EXP ID: ", exp_id)
         exp = Experiment.objects.get(id=exp_id)
         pod_selection = request.data['pod_selection']
+        print("EXP: ", exp)
+
         phase = 0
 
         #new_pods = []
@@ -197,7 +235,7 @@ class ExperimentView(viewsets.ModelViewSet):
             #new_pods.append(Pod(start_date=start_date, phase=phase, position=p, plant=Plant.objects.get(id=pods[p]), experiment=exp))
             Pod.objects.create(start_date=request.data['start_date'], end_date=request.data['end_date'], phase=phase, position=p, plant=Plant.objects.get(id=pod_selection[p]), experiment=exp)
         return JsonResponse(model_to_dict(exp), safe=False) # should this be list?
-
+    '''
     """
     Input from: Device.js/fetchAvailableDevices(); Experiment.js/fetchAvailableDevices();
     Outputs to: Device.js/fetchAvailableDevices(); Experiment.js/fetchAvailableDevices();
