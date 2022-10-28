@@ -11,6 +11,7 @@ const Analysis = () => {
   const [prList, setPodReadingList] = useState([]);
   const [podData, setPodData] = useState([]);
   const [plantData, setPlantData] = useState([]);
+  const [recipeList, setRecipeList] = useState([]);
 
   /* this probably doesnt work when making a real stats dashboard since it needs to be dynamic */
   /* for germination count bar graph */
@@ -27,7 +28,6 @@ const Analysis = () => {
     const result = await axios(
       '/api/experimentreadings/',
     );
-
     setExperimentReadingList(result.data)
   };
 
@@ -35,7 +35,6 @@ const Analysis = () => {
     const result = await axios(
       '/api/podreadings/',
     );
-
     setPodReadingList(result.data)
   };
 
@@ -44,7 +43,6 @@ const Analysis = () => {
     const result = await axios(
       '/api/experiments/',
     );
-
       setExperimentData(result.data)
   };
 
@@ -55,10 +53,36 @@ const Analysis = () => {
       setPlantData(result.data)
   }
 
+  async function fetchRecipe() {
+    const result = await axios(
+      '/api/recipes/',
+    )
+      setRecipeList(result.data)
+  }
+
   async function fetchAllPodData(id) {
     const result = await axios.post('/api/pods/get_all_pod_data/', {"id":id});
     setPodData(result.data)
   }
+
+  /* [] : indicates that this runs ONCE at the start of render */
+  /* Retrieves all the experiment/pod readings*/
+  useEffect(() => {
+    fetchExperimentReadings();
+    fetchPodReadings();
+    fetchAllPodData(80);
+    fetchExperiments();
+    fetchPlant();
+    fetchRecipe();
+  }, []);
+
+  /* This runs every time prList, erList, plantData, podData changes */
+  useEffect(() => {
+    getGerminationCount();
+    getPlantSpecies(plantData);
+    //getDomeRemoval();
+    //getAllGraphData();
+  }, [prList, erList, plantData, podData]);
 
   
   /* Trying to get the last height measurement */
@@ -83,24 +107,6 @@ const Analysis = () => {
     setDates(labels);
   }
   */ 
-
-  /* [] : indicates that this runs ONCE at the start of render */
-  /* Retrieves all the experiment/pod readings*/
-  useEffect(() => {
-    fetchExperimentReadings();
-    fetchPodReadings();
-    fetchAllPodData(80);
-    fetchExperiments();
-    fetchPlant();
-  }, []);
-
-  /* This runs every time prList, erList, plantData, podData changes */
-  useEffect(() => {
-    getGerminationCount();
-    getPlantSpecies(plantData);
-    //getDomeRemoval();
-    //getAllGraphData();
-  }, [prList, erList, plantData, podData]);
 
   const germData = {
     labels,
@@ -140,7 +146,7 @@ async function getPlantSpecies(plant) {
   setSpeciesData([...new Set(species.sort().filter(Boolean))])
 }
 
-/* set buttons */
+/* set plant buttons, no functionality rn */
 function plantButtons() {
   let buttons = [];
   for (let i = 0; i < speciesData.length; i++) {
@@ -150,17 +156,27 @@ function plantButtons() {
   
 }
 
+/* Set recipe buttons, no functionality rn */
+function recipeButtons() {
+  let buttons = [];
+  for (let i=0; i<recipeList.length; i++) {
+    buttons.push(<button>{recipeList[i]['name']}</button>)
+  }
+  return buttons;
+}
+
 /*@@@@@@@@@@@@@@*/
   return (
 
     <div className='darryl-class'>
       <h4>testtest</h4>
-      {JSON.stringify(speciesData)}
+      {JSON.stringify(recipeList)}
       {plantButtons()}
+      <h5>recipe buttons</h5>
+      {recipeButtons()}
       <h3>Plant Data</h3>
       
       {JSON.stringify(plantData)}
-{}
       <h3>Experiment Data</h3>
       {JSON.stringify(experimentData)}
 
