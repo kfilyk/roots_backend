@@ -19,6 +19,7 @@ const Analysis = () => {
   const [labels, setLabels] = useState([]);
   const [dome, setDome] = useState([]);
   const [dates, setDates] = useState([]);
+
   const [heightData, setHeightData] = useState([]);
   const [experimentData, setExperimentData] = useState([]);
   const [speciesData, setSpeciesData] = useState([]);
@@ -38,7 +39,6 @@ const Analysis = () => {
     setPodReadingList(result.data)
   };
 
-  /*  */
   async function fetchExperiments() {
     const result = await axios(
       '/api/experiments/',
@@ -124,17 +124,17 @@ const Analysis = () => {
     }]
   };
 
-const domeData = {
-  labels: dates,
-  datasets: [
-    {
-      label: 'Dome Removal',
-      data: dome,
-      borderColor: 'rgb(255, 99, 132)',
-      backgroundColor: 'rgba(255, 99, 132, 0.2)',
-    }
-  ]
-}
+  const domeData = {
+    labels: dates,
+    datasets: [
+      {
+        label: 'Dome Removal',
+        data: dome,
+        borderColor: 'rgb(255, 99, 132)',
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+      }
+    ]
+  }
 
 //Get plant type species
 async function getPlantSpecies(plant) {
@@ -165,15 +165,31 @@ function recipeButtons() {
   return buttons;
 }
 
+/* Experiment_reading tracks experiment_id which we can connect through pod_reading,
+ pod_reading notes the pod_id which connects to pod table. pod table has the plant id.
+ So maybe each button has its plant id attached to it and form there we can create the filter*/
+/* onclick of the button, filter experiment readings based on the plant type selected*/
+function plantGrabExpReadings(plant) {
+ /*TODO*/
+  //for (let i=0; i < )
+}
+
+
+/* onclick of the button, filter pod readings based on the plant type selected*/
+function plantGrabPodReadings(plant) {
+  /*TODO*/
+ 
+ }
+
 /*@@@@@@@@@@@@@@*/
   return (
 
     <div className='darryl-class'>
       <h4>testtest</h4>
-      {JSON.stringify(recipeList)}
       {plantButtons()}
       <h5>recipe buttons</h5>
       {recipeButtons()}
+      {JSON.stringify(recipeList)}
       <h3>Plant Data</h3>
       
       {JSON.stringify(plantData)}
