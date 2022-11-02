@@ -22,7 +22,8 @@ const Analysis = () => {
 
   const [heightData, setHeightData] = useState([]);
   const [experimentData, setExperimentData] = useState([]);
-  const [speciesData, setSpeciesData] = useState([]);
+  const [plantSpecies, setPlantSpecies] = useState([]);
+  const [plantID, setPlantID] = useState([]);
   
   // LOOK IN "urls.py":  /api/plants/, /api/pods/, etc...
   async function fetchExperimentReadings() {
@@ -79,7 +80,7 @@ const Analysis = () => {
   /* This runs every time prList, erList, plantData, podData changes */
   useEffect(() => {
     getGerminationCount();
-    getPlantSpecies(plantData);
+    getPlantSpeciesID(plantData);
     //getDomeRemoval();
     //getAllGraphData();
   }, [prList, erList, plantData, podData]);
@@ -137,20 +138,24 @@ const Analysis = () => {
   }
 
 //Get plant type species
-async function getPlantSpecies(plant) {
+async function getPlantSpeciesID(plant) {
   const species = [];
+  const id = [];
   for (let i = 0; i < plant.length; i++) {
     species.push(plant[i]['species']);
+    //id.push(plant[i]['id'])
   }
   //To get unique/non null values and sort alphabetically
-  setSpeciesData([...new Set(species.sort().filter(Boolean))])
+  setPlantSpecies([...new Set(species.sort().filter(Boolean))])
+  //setPlantID([...new Set(id.sort().filter(Boolean))])
 }
 
 /* set plant buttons, no functionality rn */
 function plantButtons() {
   let buttons = [];
-  for (let i = 0; i < speciesData.length; i++) {
-    buttons.push(<button>{speciesData[i]}</button>)
+  for (let i = 0; i < plantSpecies.length; i++) {
+    buttons.push(<button /*onClick={plantGrabExpReadings(plantSpecies[i])}*/>
+      {plantSpecies[i]}</button>)
   }
   return buttons;
   
@@ -174,9 +179,24 @@ function plantGrabExpReadings(plant) {
   //for (let i=0; i < )
 }
 
-
+/* Pod readings is similarly to experiment reading but without accessing experiment reading table */
 /* onclick of the button, filter pod readings based on the plant type selected*/
 function plantGrabPodReadings(plant) {
+  /*TODO*/
+ 
+ }
+
+ /* Each experiment has the recipe it is running on in the experiment tab under recipe_id. 
+ maybe each button will have the recipes id attached to the button and from there the
+ recipe can be filtered for through the recipe_id */
+ /* onclick of the button, filter pod readings based on the recipe type selected*/
+  function recipeGrabPodReadings(plant) {
+  /*TODO*/
+ 
+ }
+
+ /* onclick of the button, filter pod readings based on the recipe type selected*/
+function recipeGrabPodReadings(plant) {
   /*TODO*/
  
  }
