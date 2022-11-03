@@ -141,16 +141,21 @@ const Analysis = () => {
 //maybe append species and ID as a dictionary to a list or something
 async function getPlantSpeciesID(plant) {
   const plantList = [];
-  const id = [];
   for (let i = 0; i < plant.length; i++) {
-    var plantDict = {};
-    plantDict['species'] = plant[i]['species'];
-    plantDict['id'] = plant[i]['id'];
+    var plantDict = {species: '',id:[]};
+    //figure out how to manipulate plant list now using some()
+    if (plantList.some(a => a.species == plant[i]['species'])) {
+      //this.id.push(plant[i]['id'])
+    } else {
+      plantDict['species'] = plant[i]['species'];
+      plantDict.id.push(plant[i]['id']);
+    }
+
     plantList.push(plantDict);
     //id.push(plant[i]['id'])
   }
   //To get unique/non null values and sort alphabetically
-  setPlantSpecies([...new Set(plantList/*.sort().filter(Boolean)*/)])
+  setPlantSpecies([/*...new Set*/(plantList.filter(Boolean))])
   //setPlantID([...new Set(id.sort().filter(Boolean))])
 }
 
