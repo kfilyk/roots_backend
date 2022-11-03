@@ -140,22 +140,34 @@ const Analysis = () => {
 //Get plant type species
 //maybe append species and ID as a dictionary to a list or something
 async function getPlantSpeciesID(plant) {
-  const plantList = [];
+  const species = new Set();
+  const speciesDict = {} 
+
   for (let i = 0; i < plant.length; i++) {
-    var plantDict = {species: '',id:[]};
+    species.add(plant[i]['species'])
+  }
+
+  for (let i = 0; i < plant.length; i++) {
+
+   // species_dict[/* (species) */] = {name: plant[i].name, id: plant[i].id}
+    //var plantDict = {species: '',id:[]};
+    /*
     //figure out how to manipulate plant list now using some()
-    if (plantList.some(a => a.species == plant[i]['species'])) {
+    if (speciesList.some(a => a.species === plant[i]['species'])) {
       //this.id.push(plant[i]['id'])
     } else {
       plantDict['species'] = plant[i]['species'];
       plantDict.id.push(plant[i]['id']);
     }
 
-    plantList.push(plantDict);
+    speciesList.push(plantDict);
     //id.push(plant[i]['id'])
+    */
+
   }
+  console.log(species)
   //To get unique/non null values and sort alphabetically
-  setPlantSpecies([/*...new Set*/(plantList.filter(Boolean))])
+  //setPlantSpecies([/*...new Set*/(speciesList.filter(Boolean))])
   //setPlantID([...new Set(id.sort().filter(Boolean))])
 }
 
