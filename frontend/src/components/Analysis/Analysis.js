@@ -138,28 +138,32 @@ const Analysis = () => {
   }
 
 //Get plant type species
+//maybe append species and ID as a dictionary to a list or something
 async function getPlantSpeciesID(plant) {
-  const species = [];
+  const plantList = [];
   const id = [];
   for (let i = 0; i < plant.length; i++) {
-    species.push(plant[i]['species']);
+    var plantDict = {};
+    plantDict['species'] = plant[i]['species'];
+    plantDict['id'] = plant[i]['id'];
+    plantList.push(plantDict);
     //id.push(plant[i]['id'])
   }
   //To get unique/non null values and sort alphabetically
-  setPlantSpecies([...new Set(species.sort().filter(Boolean))])
+  setPlantSpecies([...new Set(plantList/*.sort().filter(Boolean)*/)])
   //setPlantID([...new Set(id.sort().filter(Boolean))])
 }
 
 /* set plant buttons, no functionality rn */
-function plantButtons() {
-  let buttons = [];
-  for (let i = 0; i < plantSpecies.length; i++) {
-    buttons.push(<button /*onClick={plantGrabExpReadings(plantSpecies[i])}*/>
-      {plantSpecies[i]}</button>)
-  }
-  return buttons;
-  
-}
+
+// function plantButtons() {
+//   let buttons = [];
+//   for (let i = 0; i < plantSpecies.length; i++) {
+//     buttons.push(<button /*onClick={plantGrabExpReadings(plantSpecies[i])}*/>
+//       {plantSpecies[i]}</button>)
+//   }
+//   return buttons;
+// }
 
 /* Set recipe buttons, no functionality rn */
 function recipeButtons() {
@@ -206,7 +210,8 @@ function recipeGrabPodReadings(plant) {
 
     <div className='darryl-class'>
       <h4>testtest</h4>
-      {plantButtons()}
+      plantButtons()
+      {JSON.stringify(plantSpecies)}
       <h5>recipe buttons</h5>
       {recipeButtons()}
       {JSON.stringify(recipeList)}
