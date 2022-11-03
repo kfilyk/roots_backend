@@ -11,7 +11,7 @@ const MQTT = (props) => {
     //Sets the default command parameters
     const [mqtt, setMqtt] = useState({
         show: false,
-        id: 0, // COMMAND ID, NOT DEVICE ID. 
+        command: 0, 
         device: null,
         // device: -1,
         hour: 0,
@@ -42,10 +42,13 @@ const MQTT = (props) => {
     Purpose: Makes API call to backend to send command to device
     */
     async function send_command(e){
+        if(mqtt.command === 14) {
+            // replace experiment phase, day with updated one
+        }
         const result = await axios
           .post(`/mqtt/`, 
             { 
-                command: mqtt.id,
+                command: mqtt.command,
                 device: mqtt.device,
                 env: mqtt.env,
                 parameters: mqtt
@@ -61,19 +64,19 @@ const MQTT = (props) => {
     Purpose: Based on which command is selected, the appropriate inputs are shown. 
     For example, command 0 (Get Device State) doesn't need any parameters but command 7 (change timezone) does.
     */
-    function renderCommandParameters(id){
+    function renderCommandParameters(command){
         switch(true) {
-            case id === -1:
+            case command === -1:
                 return (<textarea type="text" placeholder="Command...." onChange={(e) => setMqtt({...mqtt})} />)
 
-            case id === 3:
+            case command === 3:
                 return(
                     <div>
                         <input type="text" placeholder="recipe_name.json" onChange={(e) => setMqtt({...mqtt, recipe_name: e.target.value})} />
                         <textarea placeholder="..." value={mqtt.recipe_json} onChange={(e) => setMqtt({...mqtt, recipe_json: e.target.value})} rows="10"></textarea>
                     </div>
                 )
-            case id === 11:
+            case command === 11:
                 return(
                     <div>
                         <div>
@@ -86,7 +89,7 @@ const MQTT = (props) => {
                         </div>
                     </div>
                 )
-            case id === 14:
+            case command === 14:
                 return(
                     <div>
                         <div>
@@ -99,7 +102,7 @@ const MQTT = (props) => {
                         </div>
                     </div>
             )
-            case id === 16:
+            case command === 16:
                 return(
                     <div>
                         <p>Recipe name (spelling, capitalization must be exact. must include .json at the end)</p>
@@ -134,7 +137,7 @@ const MQTT = (props) => {
                                     <option value="dev">DEV</option>
                                     <option value="roots">ROOTS</option>
                                 </select>
-                                <select value={mqtt.id} onChange={(e) => setMqtt({...mqtt, id: parseInt(e.target.value)})} >
+                                <select value={mqtt.command} onChange={(e) => setMqtt({...mqtt, command: parseInt(e.target.value)})} >
                                     <option value="-1">Custom...</option>
                                     <option value="0">Get Device State</option>
                                     {/* <option value="1">Get Device Logs</option> */}
@@ -149,7 +152,7 @@ const MQTT = (props) => {
 
                             </div>
                             <div className='modal-right'>
-                                {renderCommandParameters(mqtt.id)}
+                                {renderCommandParameters(mqtt.command)}
                                 <textarea placeholder="Response... " value={JSON.stringify(mqtt.response, null, 2) ==="{}" ? "": JSON.stringify(mqtt.response, null, 2)}></textarea>
                             </div>
                         </div>

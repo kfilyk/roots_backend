@@ -116,6 +116,9 @@ const RecipeBar = (props) => {
         )
       })
       if(props.experiment.status === 0){
+        let date = new Date()
+        let date_string = date.toISOString().substring(5,10)
+
         let style = Math.floor(( ( Date.now() - start ) / ( end - start ) ) * 100) + "%";
         tags.push(
           <a key={`new_er`} onClick={() => { 
@@ -124,7 +127,7 @@ const RecipeBar = (props) => {
               props.setSelectedExperiment(props.experiment.id);
               props.setSelectedExperimentReading(-1);
             }
-          } style={{left: `calc(${style})`, color: '#99ff44', fontSize: '25px', fontWeight:'bold', zIndex:2}} className={props.selectedExperimentReading === -1 && props.selectedExperiment ===props.experiment.id ? "tooltip exp_reading_indicator_new": "tooltip exp_reading_indicator"} data-tooltip={"NEW"}>●</a>
+          } style={{left: `calc(${style})`, color: '#99ff44', fontSize: '25px', fontWeight:'bold', zIndex:2}} className={props.selectedExperimentReading === -1 && props.selectedExperiment ===props.experiment.id ? "tooltip exp_reading_indicator_new": "tooltip exp_reading_indicator"} data-tooltip={date_string+" - NEW"}>●</a>
         )
       }
       return tags

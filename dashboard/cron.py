@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.db.models import F
 from datetime import datetime, timedelta
 from django.utils import timezone
-from .v2_mqtt import MQTT
+from .mqtt import MQTT
 import requests
 import json
 
@@ -17,7 +17,7 @@ Input from: settings.py/CRONJOBS
 Outputs to: Directly to Database
 Created by: Stella T 08/19/2022
 Last Edit: Stella T 08/19/2022
-Purpose: Checks to see if experiment has ended otherwise updates phase day
+Purpose: Checks to see if experiment has ended; otherwise update phase & day
 """
 def update_experiments():
     print("CRON UPDATING EXPERIMENTS")
@@ -68,13 +68,13 @@ def update_experiments():
 updates isonline
 checks recipe status 
 
-Issues: Update to check for duplicate return messages from the same byte - so sayeth El Capitan. Also, the "e = list(Experiment.objects.filter(device_id = d.deviceId).select_related('recipe').annotate(recipe_name=F('recipe__name')).values())[0]" is ugly. fix it!
+Issues: Update to check for duplicate return messages from the same byte. Also, the "e = list(Experiment.objects.filter(device_id = d.deviceId).select_related('recipe').annotate(recipe_name=F('recipe__name')).values())[0]" is ugly. fix it!
 '''
 def check_devices():
     print("CRON CHECKING DEVICES")
 
     broker = MQTT()
-    online_devices = broker.get_device_data() # listed in v2_mqtt.py
+    online_devices = broker.get_device_data() # listed in mqtt.py
     device_ids = [d.deviceId for d in online_devices] 
     print("ONLINE DEVICES ("+ str(len(device_ids))+"): ", device_ids)
 

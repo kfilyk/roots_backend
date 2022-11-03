@@ -659,7 +659,7 @@ const Experiment = () => {
                         <input className="date_selection row" type="date" name="start_date" value={experiment.start_date.toISOString().substring(0,10)} onChange={(e) => setExperiment({...experiment, start_date: e.target.value})} />
                         <div className="row">{renderPodSelection()}</div>
                         <div className="row">{renderRecipeSelection()}</div>
-                        {/*<div className="row">{renderTagSelection()}</div>*/}
+                        {/*<RecipeBar phaseList = {phaseList.filter(phase => phase.recipe === item.recipe_id)} recipeList = {recipeList?.filter(obj => obj.id === item.recipe_id)[0]} recipe_name = {item.current_recipe} experiment = {item} getExperimentReadings={getExperimentReadings} getPodReadings={getPodReadings} selectedPod = {selectedPod} setSelectedPod = {setSelectedPod} selectedExperiment= {selectedExperiment} setSelectedExperiment = {setSelectedExperiment} selectedExperimentReading = {selectedExperimentReading} setSelectedExperimentReading={setSelectedExperimentReading}/> */}
 
                         <button className='save' onClick={() => {
                             submitExperimentModal(close);

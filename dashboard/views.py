@@ -24,7 +24,7 @@ from rest_framework.parsers import JSONParser, MultiPartParser, FormParser, File
 from django.http import HttpResponse, JsonResponse
 from datetime import datetime
 from django.utils.timezone import make_aware
-from .v2_mqtt import MQTT
+from .mqtt import MQTT
 import boto3
 
 from .generic_mqtt_client import GenericMQTT
@@ -55,7 +55,7 @@ class DeviceView(viewsets.ModelViewSet):
     Created by: Stella T 08/30/2022
     Last Edit: Stella T 08/30/2022
     Purpose: Takes all parameters from frontend and sends commands to devices
-    based on parameters given. Will always return a response, see v2_mqtt.py 
+    based on parameters given. Will always return a response, see mqtt.py 
     """
     @action(detail=False, methods=['POST'], name='send_command')
     def send_command(self, request):
@@ -67,7 +67,7 @@ class DeviceView(viewsets.ModelViewSet):
             data = {key: data[key] for key in data if key not in ['luxZone', 'mqttConfig', 'totalLuxZones', 'wifiCredentials']}
         elif command == 1:
             data = {}
-            # REQUIRES CHANGES TO V2_MQTT.py
+            # REQUIRES CHANGES TO MQTT.py
         elif command == 7:
             timezone = request.data['parameters']['timezone']
             data = broker.change_timezone(device, timezone)
@@ -496,7 +496,6 @@ class RecipeView(viewsets.ModelViewSet):
         #recipe.name = recipe.name.replace(" ", "_")
         #recipe.recipe_json = ""
         return JsonResponse(model_to_dict(r), safe=False) 
-
 
     """
     Input from: Recipe.js/editRecipe(); 
