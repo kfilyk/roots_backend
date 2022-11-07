@@ -2,7 +2,7 @@
 
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Redirect } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Redirect } from "react-router-dom";
 import Login from './components/Login';
 import NotFoundPage from './components/NotFoundPage';
 import Dashboard from './components/Dashboard';
@@ -75,7 +75,7 @@ const App = () => {
   }
 
   return (
-    <BrowserRouter>
+    <Router>
       <Routes>
         <Route path={"/"+auth} element={<Dashboard user = {auth}/>} >
           <Route path={"experiments"} element={<Experiment/>}/>
@@ -90,7 +90,7 @@ const App = () => {
         <Route index element={<Login />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
-    </BrowserRouter>
+    </Router>
   ); 
 }
 
