@@ -141,19 +141,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # having avaroots.io whitelisted/allowed shouldnt affect break anything...
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
-    'http://3.232.27.231:3000',
-    'https://avaroots.io',
     'https://kfilyk.github.io',
     'https://127.0.0.1'
 ]
 
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000',
-    'http://3.232.27.231:3000',
     'https://kfilyk.github.io',
-    'https://avaroots.io',
     'https://127.0.0.1'
-
 ]
 
 REST_FRAMEWORK = {
