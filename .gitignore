@@ -1,3 +1,4 @@
 *.pyc
 newenv
 __pycache__/
+frontend/
