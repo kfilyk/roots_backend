@@ -34,6 +34,7 @@ CSRF_COOKIE_SECURE = False
 # Application definition
 
 INSTALLED_APPS = [
+    "sslserver",
     'django_crontab',
     'django.contrib.admin',
     'django.contrib.auth',
