@@ -85,7 +85,7 @@ WSGI_APPLICATION = 'plant_science_app.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'plant_science',
+        'NAME': 'roots',
         'USER'    : 'admin',                     # <-- UPDATED line
         'PASSWORD': 'avagrows123',              # <-- UPDATED line
         'HOST'    : 'roots.chlzkz9qyp76.ca-central-1.rds.amazonaws.com',                # <-- UPDATED line
