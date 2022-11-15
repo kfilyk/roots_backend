@@ -1,7 +1,10 @@
 django
 pymysql
+rest_framework
+crontab
 djangorestframework
 django-cors-headers
 django-filter
 paho-mqtt
 django-crontab
+boto3

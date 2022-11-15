@@ -86,9 +86,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'plant_science',
-        'USER'    : 'root',                     # <-- UPDATED line
-        'PASSWORD': 'avabyte0126',              # <-- UPDATED line
-        'HOST'    : 'plant-science.cm9g9ozzwvhm.us-east-1.rds.amazonaws.com',                # <-- UPDATED line
+        'USER'    : 'admin',                     # <-- UPDATED line
+        'PASSWORD': 'avagrows123',              # <-- UPDATED line
+        'HOST'    : 'roots.chlzkz9qyp76.ca-central-1.rds.amazonaws.com',                # <-- UPDATED line
         'PORT'    : '3306',
         'sql_mode': 'traditional',
     }
