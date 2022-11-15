@@ -27,9 +27,13 @@ SECRET_KEY = 'django-insecure-#%=_0xek)xygnvolfjt55=cnw5&0rh9qcrp4n8xlmj2=2)t(93
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-SECURE_SSL_REDIRECT = False
+SECURE_CONTENT_TYPE_NOSNIFF = False
+SECURE_BROWSER_XSS_FILTER = False
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
+SECURE_SSL_REDIRECT = False
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+CSRF_TRUSTED_ORIGINS = ['kfilyk.github.io']
 
 # Application definition
 
