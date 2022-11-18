@@ -27,18 +27,10 @@ SECRET_KEY = 'django-insecure-#%=_0xek)xygnvolfjt55=cnw5&0rh9qcrp4n8xlmj2=2)t(93
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-SECURE_CONTENT_TYPE_NOSNIFF = False
-SECURE_BROWSER_XSS_FILTER = False
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SECURE = False
-SECURE_SSL_REDIRECT = False
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-CSRF_TRUSTED_ORIGINS = ['kfilyk.github.io']
 
 # Application definition
 
 INSTALLED_APPS = [
-    "sslserver",
     'django_crontab',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -146,17 +138,21 @@ STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # having avaroots.io whitelisted/allowed shouldnt affect break anything...
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
-    'https://kfilyk.github.io',
-    'https://127.0.0.1'
-]
 
-CORS_ORIGIN_WHITELIST = [
-    'http://localhost:3000',
-    'https://kfilyk.github.io',
-    'https://127.0.0.1'
-]
+CORS_ORIGIN_ALLOW_ALL = True
+
+if not CORS_ORIGIN_ALLOW_ALL:
+    CORS_ALLOWED_ORIGINS = [
+        'http://localhost:3000',
+        'https://kfilyk.github.io',
+        'https://127.0.0.1'
+    ]
+
+    CORS_ORIGIN_WHITELIST = [
+        'http://localhost:3000',
+        'https://kfilyk.github.io',
+        'https://127.0.0.1'
+    ]
 
 REST_FRAMEWORK = {
     'DEFAULT_PARSER_CLASSES': ['rest_framework.parsers.JSONParser', 'rest_framework.parsers.FormParser', 'rest_framework.parsers.MultiPartParser', 'rest_framework.parsers.FileUploadParser'],
