@@ -139,7 +139,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # having avaroots.io whitelisted/allowed shouldnt affect break anything...
 
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_ALLOW_ALL = False
 
 if not CORS_ORIGIN_ALLOW_ALL:
     CORS_ALLOWED_ORIGINS = [
